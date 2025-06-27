@@ -4,9 +4,9 @@ class DatabaseUtils:
     database_initialised = False
 
     def init_database():
-        if not database_initialised:
+        if not DatabaseUtils.database_initialised:
             init_db()
-            database_initialised = True
+            DatabaseUtils.database_initialised = True
         else:
             return
 
