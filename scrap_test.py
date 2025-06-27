@@ -1,6 +1,9 @@
-from utils import create_user
+from utils import init_database, create_user
 
 if __name__ == "__main__":
+    # Initialise Database
+    init_database()
+
     print("User Creation Test")
     username = input("Username: ")
     password = input("Password: ")

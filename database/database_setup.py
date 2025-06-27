@@ -25,3 +25,5 @@ def init_db():
         engine = get_engine()
         Base.metadata.create_all(engine)
         print("Database created.")
+    else:
+        print("Existing database discovered.")
