@@ -23,7 +23,7 @@ class DatabaseUtils:
             # Check if user already exists
             existing_user = session.query(User).filter(User.username == username).first()
             if existing_user:
-                logger.info(f"User '{username}' already exists!")
+                logger.debug(f"User '{username}' already exists.")
                 return False
             
             # Create new user
@@ -31,11 +31,11 @@ class DatabaseUtils:
 
             session.add(new_user)
             session.commit()
-            logger.info(f"User '{username}' created successfully!")
+            logger.info(f"User '{username}' created successfully.")
             return True
         
         except Exception as e:
-            logger.error(f"Error creating user: {e}")
+            logger.error(f"Error creating user: {e}.")
             session.rollback()
             return False
 

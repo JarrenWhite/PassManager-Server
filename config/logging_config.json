@@ -19,15 +19,22 @@
         },
         "stderr": {
             "class": "logging.StreamHandler",
-            "level": "WARNING",
             "formatter": "simple",
             "stream": "ext://sys.stderr"
         },
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "detailed",
             "filename": "logs/database.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
+        "concernfile": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "WARNING",
+            "formatter": "detailed",
+            "filename": "logs/database_concerns.log",
             "maxBytes": 1000000,
             "backupCount": 3
         }
@@ -37,8 +44,8 @@
             "level": "DEBUG",
             "handlers": [
                 "stdout",
-                "stderr",
-                "file"
+                "file",
+                "concernfile"
             ]
         }
     }
