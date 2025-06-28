@@ -3,6 +3,7 @@ from database import init_db, get_session_local, User
 class DatabaseUtils:
     database_initialised = False
 
+    @staticmethod
     def init_database():
         if not DatabaseUtils.database_initialised:
             init_db()
@@ -10,6 +11,7 @@ class DatabaseUtils:
         else:
             return
 
+    @staticmethod
     def create_user(username: str, password_hash: str):
         """Create a new user with the given username and password hash"""
         session = get_session_local()()
