@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger("database")
 
-from database import init_db, get_session_local, User
+from database import init_db, get_session_local, User, LoginSession, SecureData
 
 class DatabaseUtils:
     database_initialised = False
@@ -41,3 +41,29 @@ class DatabaseUtils:
 
         finally:
             session.close()
+
+    @staticmethod
+    def get_user(username: str):
+        """Find and return the user. Returns False if not found"""
+        session = get_session_local()()
+        return session.query(User).filter_by(username=username).first()
+
+    @staticmethod
+    def delete_user(username: str):
+        """Delete the requested user. Returns False if not found"""
+        session = get_session_local()()
+
+        # Find user in question
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            logger.warning(f"User '{username}' could not be found to be deleted.")
+            return False
+        
+        # Delete all user entries from all tables
+        session.query(LoginSession).filter_by(user_id=user.id).delete()
+        session.query(SecureData).filter_by(user_id=user.id).delete()
+        session.delete(user)
+
+        session.commit()
+        logger.info(f"User '{username}' deleted successfully.")
+        return True

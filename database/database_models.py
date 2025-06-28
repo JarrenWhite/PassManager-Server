@@ -16,7 +16,7 @@ class LoginSession(Base):
     token = Column(String, nullable=False)
     expiry = Column(DateTime, nullable=False)
 
-class SecuredData(Base):
+class SecureData(Base):
     __tablename__ = "encrypted"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
