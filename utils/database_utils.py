@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger("database")
+
 from database import init_db, get_session_local, User
 
 class DatabaseUtils:
@@ -20,7 +23,7 @@ class DatabaseUtils:
             # Check if user already exists
             existing_user = session.query(User).filter(User.username == username).first()
             if existing_user:
-                print(f"User '{username}' already exists!")
+                logger.info(f"User '{username}' already exists!")
                 return False
             
             # Create new user
@@ -28,11 +31,11 @@ class DatabaseUtils:
 
             session.add(new_user)
             session.commit()
-            print(f"User '{username}' created successfully!")
+            logger.info(f"User '{username}' created successfully!")
             return True
         
         except Exception as e:
-            print(f"Error creating user: {e}")
+            logger.error(f"Error creating user: {e}")
             session.rollback()
             return False
 
