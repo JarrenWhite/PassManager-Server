@@ -16,17 +16,12 @@ class LoginSession(Base):
     token = Column(String, nullable=False)
     expiry = Column(DateTime, nullable=False)
 
-class PasswordItem(Base):
-    __tablename__ = "password"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    encrypted_id = Column(Integer, nullable=False)
-    entry_name = Column(String)
-    website = Column(String)
-
 class Encrypted(Base):
     __tablename__ = "encrypted"
     id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    entry_name = Column(String)
+    website = Column(String)
     username = Column(String)
     password = Column(String)
-    notes = Column(String) 
+    notes = Column(String)
