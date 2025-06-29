@@ -291,14 +291,6 @@ class TestDatabaseModels(unittest.TestCase):
     
     def test_secure_data_required_fields(self):
         """Test that required fields cannot be null."""
-        # Create a test user for foreign key reference
-        test_user = User(
-            username="testuser",
-            password_hash="hashed_password_123"
-        )
-        self.session.add(test_user)
-        self.session.commit()
-
         # Create secure data without user_id
         test_secure_data_no_user_id = SecureData(
             user_id=None,
@@ -328,7 +320,7 @@ class TestDatabaseModels(unittest.TestCase):
     
     def test_secure_data_optional_fields(self):
         """Test that optional fields can be null."""
-        # Create a test user for foreign key reference
+        # Create a test user for the secure data
         test_user = User(
             username="testuser",
             password_hash="hashed_password_123"
@@ -373,37 +365,235 @@ class TestDatabaseModels(unittest.TestCase):
         # Create secure data with some optional fields filled and some null
         test_secure_data_mixed = SecureData(
             user_id=test_user.id,
-            entry_name="test_entry",
+            entry_name="test_stored_password_title",
             website=None,
-            username="test_user",
+            username="test_encrypted_username",
             password=None,
-            notes="test_notes"
+            notes="test_encrypted_notes"
         )
         self.session.add(test_secure_data_mixed)
         self.session.commit()
 
         # Verify mixed null/non-null values are handled correctly
         self.assertIsNotNone(test_secure_data_mixed.id)
-        self.assertEqual(test_secure_data_mixed.entry_name, "test_entry")
+        self.assertEqual(test_secure_data_mixed.entry_name, "test_stored_password_title")
         self.assertIsNone(test_secure_data_mixed.website)
-        self.assertEqual(test_secure_data_mixed.username, "test_user")
+        self.assertEqual(test_secure_data_mixed.username, "test_encrypted_username")
         self.assertIsNone(test_secure_data_mixed.password)
-        self.assertEqual(test_secure_data_mixed.notes, "test_notes")
+        self.assertEqual(test_secure_data_mixed.notes, "test_encrypted_notes")
     
     def test_user_login_session_relationship(self):
         """Test the relationship between User and LoginSession."""
-        # TODO: Implement test for User-LoginSession relationship
-        pass
+        # Create a test user
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create login sessions using model relationships
+        expiry1 = datetime.now() + timedelta(hours=1)
+        login_session_1 = LoginSession(
+            user=test_user,
+            token="token_1",
+            expiry=expiry1
+        )
+        expiry2 = datetime.now() + timedelta(hours=2)
+        login_session_2 = LoginSession(
+            user=test_user,
+            token="token_2",
+            expiry=expiry2
+        )
+        
+        self.session.add(login_session_1)
+        self.session.add(login_session_2)
+        self.session.commit()
+
+        # Test bidirectional navigation - User -> LoginSessions
+        self.assertEqual(len(test_user.login_sessions), 2)
+        self.assertIn(login_session_1, test_user.login_sessions)
+        self.assertIn(login_session_2, test_user.login_sessions)
+
+        # Test bidirectional navigation - LoginSession -> User
+        self.assertEqual(login_session_1.user, test_user)
+        self.assertEqual(login_session_2.user, test_user)
+
+        # Test that user_id is automatically set
+        self.assertEqual(login_session_1.user_id, test_user.id)
+        self.assertEqual(login_session_2.user_id, test_user.id)
+
+        # Test querying through relationships
+        user_sessions = self.session.query(LoginSession).filter(
+            LoginSession.user == test_user
+        ).all()
+        self.assertEqual(len(user_sessions), 2)
+
+        # Test that we can access session properties through the relationship
+        session_tokens = [session.token for session in test_user.login_sessions]
+        self.assertIn("token_1", session_tokens)
+        self.assertIn("token_2", session_tokens)
+
+        # Test that we can access user properties through the relationship
+        self.assertEqual(login_session_1.user.username, "testuser")
+        self.assertEqual(login_session_2.user.password_hash, "hashed_password_123")
     
     def test_user_secure_data_relationship(self):
         """Test the relationship between User and SecureData."""
-        # TODO: Implement test for User-SecureData relationship
-        pass
+        # Create a test user
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create secure data entries using model relationships
+        secure_data_1 = SecureData(
+            user=test_user,
+            entry_name="test_stored_password_title_1",
+            website="test_encrypted_website_1",
+            username="test_encrypted_username_1",
+            password="test_encrypted_password_1",
+            notes="test_encrypted_notes_1"
+        )
+        secure_data_2 = SecureData(
+            user=test_user,
+            entry_name="test_stored_password_title_2",
+            website="test_encrypted_website_2",
+            username="test_encrypted_username_2",
+            password="test_encrypted_password_2",
+            notes=None
+        )
+        
+        self.session.add(secure_data_1)
+        self.session.add(secure_data_2)
+        self.session.commit()
+        
+        # Test bidirectional navigation - User -> SecureData
+        self.assertEqual(len(test_user.secure_data), 2)
+        self.assertIn(secure_data_1, test_user.secure_data)
+        self.assertIn(secure_data_2, test_user.secure_data)
+
+        # Test bidirectional navigation - SecureData -> User
+        self.assertEqual(secure_data_1.user, test_user)
+        self.assertEqual(secure_data_2.user, test_user)
+
+        # Test that user_id is automatically set
+        self.assertEqual(secure_data_1.user_id, test_user.id)
+        self.assertEqual(secure_data_2.user_id, test_user.id)
+
+        # Test querying through relationships
+        user_secure_data = self.session.query(SecureData).filter(
+            SecureData.user == test_user
+        ).all()
+        self.assertEqual(len(user_secure_data), 2)
+
+        # Test that we can access secure data properties through the relationship
+        entry_names = [entry.entry_name for entry in test_user.secure_data]
+        self.assertIn("test_stored_password_title_1", entry_names)
+        self.assertIn("test_stored_password_title_2", entry_names)
+
+        # Test that we can access user properties through the relationship
+        self.assertEqual(secure_data_1.user.username, "testuser")
+        self.assertEqual(secure_data_2.user.password_hash, "hashed_password_123")
+
+        # Test filtering secure data through relationships
+        website_entries = [entry for entry in test_user.secure_data if "website_1" in entry.website]
+        self.assertEqual(len(website_entries), 1)
+        self.assertEqual(website_entries[0].entry_name, "test_stored_password_title_1")
+
+        # Test that optional fields work correctly through relationships
+        entries_with_notes = [entry for entry in test_user.secure_data if entry.notes is not None]
+        self.assertEqual(len(entries_with_notes), 1)
+        
+        entries_without_notes = [entry for entry in test_user.secure_data if entry.notes is None]
+        self.assertEqual(len(entries_without_notes), 1)
     
     def test_cascade_delete_behavior(self):
         """Test cascade delete behavior when a user is deleted."""
-        # TODO: Implement test for cascade delete behavior
-        pass
+        # Create a test user
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create login sessions for the user
+        expiry1 = datetime.now() + timedelta(hours=1)
+        expiry2 = datetime.now() + timedelta(hours=2)
+        
+        login_session_1 = LoginSession(
+            user=test_user,
+            token="token_1",
+            expiry=expiry1
+        )
+        login_session_2 = LoginSession(
+            user=test_user,
+            token="token_2",
+            expiry=expiry2
+        )
+        
+        # Create secure data entries for the user
+        secure_data_1 = SecureData(
+            user=test_user,
+            entry_name="test_stored_password_title_1",
+            website="test_encrypted_website_1",
+            username="test_encrypted_username_1",
+            password="test_encrypted_password_1",
+            notes="test_encrypted_notes_1"
+        )
+        secure_data_2 = SecureData(
+            user=test_user,
+            entry_name="test_stored_password_title_2",
+            website="test_encrypted_website_2",
+            username="test_encrypted_username_2",
+            password="test_encrypted_password_2",
+            notes="test_encrypted_notes_2"
+        )
+        
+        self.session.add(login_session_1)
+        self.session.add(login_session_2)
+        self.session.add(secure_data_1)
+        self.session.add(secure_data_2)
+        self.session.commit()
+
+        # Verify all records exist before deletion
+        self.assertEqual(len(test_user.login_sessions), 2)
+        self.assertEqual(len(test_user.secure_data), 2)
+        
+        all_login_sessions = self.session.query(LoginSession).all()
+        all_secure_data = self.session.query(SecureData).all()
+        self.assertEqual(len(all_login_sessions), 2)
+        self.assertEqual(len(all_secure_data), 2)
+
+        # Delete the user (this should trigger cascade delete)
+        self.session.delete(test_user)
+        self.session.commit()
+
+        # Verify the user was deleted
+        deleted_user = self.session.query(User).filter_by(username="testuser").first()
+        self.assertIsNone(deleted_user)
+
+        # Verify all related login sessions were automatically deleted
+        remaining_login_sessions = self.session.query(LoginSession).all()
+        self.assertEqual(len(remaining_login_sessions), 0)
+
+        # Verify all related secure data was automatically deleted
+        remaining_secure_data = self.session.query(SecureData).all()
+        self.assertEqual(len(remaining_secure_data), 0)
+
+        # Verify specific sessions and data are gone
+        deleted_session_1 = self.session.query(LoginSession).filter_by(token="token_1").first()
+        deleted_session_2 = self.session.query(LoginSession).filter_by(token="token_2").first()
+        self.assertIsNone(deleted_session_1)
+        self.assertIsNone(deleted_session_2)
+
+        deleted_secure_data_1 = self.session.query(SecureData).filter_by(entry_name="test_stored_password_title_1").first()
+        deleted_secure_data_2 = self.session.query(SecureData).filter_by(entry_name="test_stored_password_title_2").first()
+        self.assertIsNone(deleted_secure_data_1)
+        self.assertIsNone(deleted_secure_data_2)
 
 
 if __name__ == '__main__':
