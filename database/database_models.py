@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -9,12 +10,17 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
 
+    login_sessions = relationship("LoginSession", back_populates="user", cascade="all, delete-orphan")
+    secure_data = relationship("SecureData", back_populates="user", cascade="all, delete-orphan")
+
 class LoginSession(Base):
     __tablename__ = "session"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     token = Column(String, nullable=False)
     expiry = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="login_sessions")
 
 class SecureData(Base):
     __tablename__ = "encrypted"
@@ -25,3 +31,5 @@ class SecureData(Base):
     username = Column(String)
     password = Column(String)
     notes = Column(String)
+    
+    user = relationship("User", back_populates="secure_data")
