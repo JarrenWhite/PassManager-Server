@@ -135,18 +135,67 @@ class TestDatabaseModels(unittest.TestCase):
     
     def test_login_session_creation(self):
         """Test creating a LoginSession instance."""
-        # TODO: Implement test for LoginSession creation
-        pass
+        # Create a test user for the login session
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create login session
+        expiry = datetime.now() + timedelta(hours=1)
+        test_login_session = LoginSession(
+            user_id=test_user.id,
+            token="test_token_123",
+            expiry=expiry
+        )
+        self.session.add(test_login_session)
+        self.session.commit()
+
+        # Verify login session was created with an ID
+        self.assertIsNotNone(test_login_session.id)
+        self.assertIsInstance(test_login_session.id, int)
+
+        # Verify the login session data is correct
+        self.assertEqual(test_login_session.user_id, test_user.id)
+        self.assertEqual(test_login_session.token, "test_token_123")
+        self.assertEqual(test_login_session.expiry, expiry)
+
+        # Query the login session from database to ensure it was saved
+        retrieved_login_session = self.session.query(LoginSession).filter_by(token="test_token_123").first()
+        self.assertIsNotNone(retrieved_login_session)
+        self.assertEqual(retrieved_login_session.id, test_login_session.id)
+        self.assertEqual(retrieved_login_session.user_id, test_login_session.user_id)
+        self.assertEqual(retrieved_login_session.token, test_login_session.token)
+        self.assertEqual(retrieved_login_session.expiry, test_login_session.expiry)
     
     def test_login_session_foreign_key_constraint(self):
         """Test that LoginSession requires a valid user_id."""
-        # TODO: Implement test for foreign key constraint
-        pass
-    
-    def test_login_session_expiry_field(self):
-        """Test that expiry field accepts datetime values."""
-        # TODO: Implement test for expiry datetime field
-        pass
+        # Create login session without valid user id
+        expiry = datetime.now() + timedelta(hours=1)
+        test_login_session = LoginSession(
+            user_id=123456789,
+            token="test_token_123",
+            expiry=expiry
+        )
+        self.session.add(test_login_session)
+
+        # Attempt to commit
+        try:
+            self.session.commit()
+            self.fail("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            self.assertTrue(
+                "foreign key constraint failed" in error_message or "integrity" in error_message,
+                f"Expected foreign key constraint violation, got: {error_message}"
+            )
+            self.session.rollback()
+
+        # Verify no login sessions were saved to the database
+        all_login_sessions = self.session.query(LoginSession).all()
+        self.assertEqual(len(all_login_sessions), 0)
     
     def test_secure_data_creation(self):
         """Test creating a SecureData instance."""
