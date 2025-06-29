@@ -49,7 +49,7 @@ class TestDatabaseModels(unittest.TestCase):
         self.assertEqual(test_user.password_hash, "hashed_password_123")
         
         # Query the user from database to ensure it was saved
-        retrieved_user = self.session.query(User).filter_by(username="testuser").first()
+        retrieved_user = self.session.query(User).filter_by(id=test_user.id).first()
         self.assertIsNotNone(retrieved_user)
         self.assertEqual(retrieved_user.id, test_user.id)
         self.assertEqual(retrieved_user.username, test_user.username)
@@ -163,7 +163,7 @@ class TestDatabaseModels(unittest.TestCase):
         self.assertEqual(test_login_session.expiry, expiry)
 
         # Query the login session from database to ensure it was saved
-        retrieved_login_session = self.session.query(LoginSession).filter_by(token="test_token_123").first()
+        retrieved_login_session = self.session.query(LoginSession).filter_by(id=test_login_session.id).first()
         self.assertIsNotNone(retrieved_login_session)
         self.assertEqual(retrieved_login_session.id, test_login_session.id)
         self.assertEqual(retrieved_login_session.user_id, test_login_session.user_id)
@@ -247,18 +247,148 @@ class TestDatabaseModels(unittest.TestCase):
     
     def test_secure_data_creation(self):
         """Test creating a SecureData instance."""
-        # TODO: Implement test for SecureData creation
-        pass
+        # Create a test user for the secure data
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create secure data
+        test_secure_data = SecureData(
+            user_id=test_user.id,
+            entry_name="test_stored_password_title",
+            website="test_encrypted_website",
+            username="test_encrypted_username",
+            password="test_encrypted_password",
+            notes="test_encrypted_notes"
+        )
+        self.session.add(test_secure_data)
+        self.session.commit()
+
+        # Verify secure data was created with an ID
+        self.assertIsNotNone(test_secure_data.id)
+        self.assertIsInstance(test_secure_data.id, int)
+
+        # Verify the secure data data is correct
+        self.assertEqual(test_secure_data.user_id, test_user.id)
+        self.assertEqual(test_secure_data.entry_name, "test_stored_password_title")
+        self.assertEqual(test_secure_data.website, "test_encrypted_website")
+        self.assertEqual(test_secure_data.username, "test_encrypted_username")
+        self.assertEqual(test_secure_data.password, "test_encrypted_password")
+        self.assertEqual(test_secure_data.notes, "test_encrypted_notes")
+
+        # Query the secure data from database to ensure it was saved
+        retrieved_secure_data = self.session.query(SecureData).filter_by(id=test_secure_data.id).first()
+        self.assertIsNotNone(retrieved_secure_data)
+        self.assertEqual(retrieved_secure_data.user_id, test_secure_data.id)
+        self.assertEqual(retrieved_secure_data.entry_name, test_secure_data.entry_name)
+        self.assertEqual(retrieved_secure_data.website, test_secure_data.website)
+        self.assertEqual(retrieved_secure_data.username, test_secure_data.username)
+        self.assertEqual(retrieved_secure_data.password, test_secure_data.password)
+        self.assertEqual(retrieved_secure_data.notes, test_secure_data.notes)
     
-    def test_secure_data_foreign_key_constraint(self):
-        """Test that SecureData requires a valid user_id."""
-        # TODO: Implement test for foreign key constraint
-        pass
+    def test_secure_data_required_fields(self):
+        """Test that required fields cannot be null."""
+        # Create a test user for foreign key reference
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create secure data without user_id
+        test_secure_data_no_user_id = SecureData(
+            user_id=None,
+            entry_name="test_stored_password_title",
+            website="test_encrypted_website",
+            username="test_encrypted_username",
+            password="test_encrypted_password",
+            notes="test_encrypted_notes"
+        )
+        self.session.add(test_secure_data_no_user_id)
+
+        # Attempt to commit
+        try:
+            self.session.commit()
+            self.fail("Expected NOT NULL constraint violation for user_id but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            self.assertTrue(
+                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
+                f"Expected NOT NULL constraint violation, got: {error_message}"
+            )
+            self.session.rollback()
+        
+        # Verify no secure data was saved to the database
+        all_secure_data = self.session.query(SecureData).all()
+        self.assertEqual(len(all_secure_data), 0)
     
     def test_secure_data_optional_fields(self):
-        """Test that SecureData optional fields can be null."""
-        # TODO: Implement test for optional fields
-        pass
+        """Test that optional fields can be null."""
+        # Create a test user for foreign key reference
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create secure data with all optional fields as null
+        test_secure_data_all_null = SecureData(
+            user_id=test_user.id,
+            entry_name=None,
+            website=None,
+            username=None,
+            password=None,
+            notes=None
+        )
+        self.session.add(test_secure_data_all_null)
+        self.session.commit()
+
+        # Verify secure data was created with an ID
+        self.assertIsNotNone(test_secure_data_all_null.id)
+        self.assertIsInstance(test_secure_data_all_null.id, int)
+
+        # Verify the secure data has null values for optional fields
+        self.assertEqual(test_secure_data_all_null.user_id, test_user.id)
+        self.assertIsNone(test_secure_data_all_null.entry_name)
+        self.assertIsNone(test_secure_data_all_null.website)
+        self.assertIsNone(test_secure_data_all_null.username)
+        self.assertIsNone(test_secure_data_all_null.password)
+        self.assertIsNone(test_secure_data_all_null.notes)
+
+        # Query the secure data from database to ensure it was saved
+        retrieved_secure_data = self.session.query(SecureData).filter_by(id=test_secure_data_all_null.id).first()
+        self.assertIsNotNone(retrieved_secure_data)
+        self.assertEqual(retrieved_secure_data.user_id, test_secure_data_all_null.user_id)
+        self.assertIsNone(retrieved_secure_data.entry_name)
+        self.assertIsNone(retrieved_secure_data.website)
+        self.assertIsNone(retrieved_secure_data.username)
+        self.assertIsNone(retrieved_secure_data.password)
+        self.assertIsNone(retrieved_secure_data.notes)
+
+        # Create secure data with some optional fields filled and some null
+        test_secure_data_mixed = SecureData(
+            user_id=test_user.id,
+            entry_name="test_entry",
+            website=None,
+            username="test_user",
+            password=None,
+            notes="test_notes"
+        )
+        self.session.add(test_secure_data_mixed)
+        self.session.commit()
+
+        # Verify mixed null/non-null values are handled correctly
+        self.assertIsNotNone(test_secure_data_mixed.id)
+        self.assertEqual(test_secure_data_mixed.entry_name, "test_entry")
+        self.assertIsNone(test_secure_data_mixed.website)
+        self.assertEqual(test_secure_data_mixed.username, "test_user")
+        self.assertIsNone(test_secure_data_mixed.password)
+        self.assertEqual(test_secure_data_mixed.notes, "test_notes")
     
     def test_user_login_session_relationship(self):
         """Test the relationship between User and LoginSession."""
