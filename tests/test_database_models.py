@@ -170,29 +170,77 @@ class TestDatabaseModels(unittest.TestCase):
         self.assertEqual(retrieved_login_session.token, test_login_session.token)
         self.assertEqual(retrieved_login_session.expiry, test_login_session.expiry)
     
-    def test_login_session_foreign_key_constraint(self):
-        """Test that LoginSession requires a valid user_id."""
-        # Create login session without valid user id
+    def test_login_session_required_fields(self):
+        """Test that required fields cannot be null."""
+        # Create a test user for the login session
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create login session without user_id
         expiry = datetime.now() + timedelta(hours=1)
-        test_login_session = LoginSession(
-            user_id=123456789,
+        test_session_no_user_id = LoginSession(
+            user_id=None,
             token="test_token_123",
             expiry=expiry
         )
-        self.session.add(test_login_session)
+        self.session.add(test_session_no_user_id)
 
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected foreign key constraint violation but no exception was raised")
+            self.fail("Expected NOT NULL constraint violation for user_id but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             self.assertTrue(
-                "foreign key constraint failed" in error_message or "integrity" in error_message,
-                f"Expected foreign key constraint violation, got: {error_message}"
+                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
+                f"Expected NOT NULL constraint violation, got: {error_message}"
             )
             self.session.rollback()
 
+        # Create login session without token
+        test_session_no_token = LoginSession(
+            user_id=test_user.id,
+            token=None,
+            expiry=expiry
+        )
+        self.session.add(test_session_no_token)
+
+        # Attempt to commit
+        try:
+            self.session.commit()
+            self.fail("Expected NOT NULL constraint violation for token but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            self.assertTrue(
+                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
+                f"Expected NOT NULL constraint violation, got: {error_message}"
+            )
+            self.session.rollback()
+
+        # Create login session without expiry
+        test_session_no_expiry = LoginSession(
+            user_id=test_user.id,
+            token="test_token_123",
+            expiry=None
+        )
+        self.session.add(test_session_no_expiry)
+
+        # Attempt to commit
+        try:
+            self.session.commit()
+            self.fail("Expected NOT NULL constraint violation for expiry but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            self.assertTrue(
+                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
+                f"Expected NOT NULL constraint violation, got: {error_message}"
+            )
+            self.session.rollback()
+        
         # Verify no login sessions were saved to the database
         all_login_sessions = self.session.query(LoginSession).all()
         self.assertEqual(len(all_login_sessions), 0)
