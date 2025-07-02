@@ -7,6 +7,10 @@ from sqlalchemy.orm import sessionmaker
 
 from .database_models import Base
 
+# Global engine instance to avoid creating multiple engines
+_engine = None
+_session_local = None
+
 def get_db_filename():
     return os.getenv("VAULT_PATH", "data/vault.db")
 
@@ -14,10 +18,24 @@ def get_db_url():
     return f"sqlite:///{get_db_filename()}"
 
 def get_engine():
-    return create_engine(get_db_url(), pool_pre_ping=True)
+    global _engine
+    if _engine is None:
+        _engine = create_engine(get_db_url(), pool_pre_ping=True)
+    return _engine
 
 def get_session_local():
-    return sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
+    global _session_local
+    if _session_local is None:
+        _session_local = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
+    return _session_local
+
+def reset_engine():
+    """Reset the global engine and session factory. Used for testing."""
+    global _engine, _session_local
+    if _engine:
+        _engine.dispose()
+    _engine = None
+    _session_local = None
 
 def init_db():
     db_filename = get_db_filename()
