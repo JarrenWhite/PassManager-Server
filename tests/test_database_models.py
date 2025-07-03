@@ -1,6 +1,6 @@
 import os
 import sys
-import unittest
+import pytest
 from datetime import datetime, timedelta
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,11 +10,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-class TestDatabaseModels(unittest.TestCase):
+class TestDatabaseModels():
     """Test cases for database models."""
     
-    def setUp(self):
-        """Set up test fixtures before each test method."""
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        """Set up and tear down between each test method."""
         # Create an in-memory SQLite database for testing
         self.engine = create_engine('sqlite:///:memory:')
         Base.metadata.create_all(self.engine)
@@ -22,9 +23,9 @@ class TestDatabaseModels(unittest.TestCase):
         # Create a session factory
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
-    
-    def tearDown(self):
-        """Clean up after each test method."""
+
+        yield
+
         self.session.close()
         Base.metadata.drop_all(self.engine)
     
@@ -41,19 +42,19 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
         
         # Verify the user was created with an ID
-        self.assertIsNotNone(test_user.id)
-        self.assertIsInstance(test_user.id, int)
+        assert test_user.id is not None
+        assert isinstance(test_user.id, int)
         
         # Verify the user data is correct
-        self.assertEqual(test_user.username, "testuser")
-        self.assertEqual(test_user.password_hash, "hashed_password_123")
+        assert test_user.username == "testuser"
+        assert test_user.password_hash == "hashed_password_123"
         
         # Query the user from database to ensure it was saved
         retrieved_user = self.session.query(User).filter_by(id=test_user.id).first()
-        self.assertIsNotNone(retrieved_user)
-        self.assertEqual(retrieved_user.id, test_user.id)
-        self.assertEqual(retrieved_user.username, test_user.username)
-        self.assertEqual(retrieved_user.password_hash, test_user.password_hash)
+        assert retrieved_user is not None
+        assert retrieved_user.id == test_user.id
+        assert retrieved_user.username == test_user.username
+        assert retrieved_user.password_hash == test_user.password_hash
     
     def test_user_username_uniqueness(self):
         """Test that usernames must be unique."""
@@ -78,16 +79,14 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected uniqueness constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "unique constraint failed" in error_message or "integrity" in error_message,
-                f"Expected uniqueness constraint violation, got: {error_message}"
-            )
+            assert ("unique constraint failed" in error_message or
+                     "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
             self.session.rollback()
         
         # Verify only the first user exists in the database
         users = self.session.query(User).filter_by(username="testuser").all()
-        self.assertEqual(len(users), 1)
-        self.assertEqual(users[0].id, test_user_1.id)
+        assert len(users) == 1
+        assert users[0].id == test_user_1.id
     
     def test_user_required_fields(self):
         """Test that required fields cannot be null."""
@@ -104,10 +103,9 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected NOT NULL constraint violation for username but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
-                f"Expected NOT NULL constraint violation, got: {error_message}"
-            )
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                     "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
 
         # Create user without password
@@ -123,15 +121,14 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected NOT NULL constraint violation for password_hash but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
-                f"Expected NOT NULL constraint violation, got: {error_message}"
-            )
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                       "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
         
         # Verify no users were saved to the database
         all_users = self.session.query(User).all()
-        self.assertEqual(len(all_users), 0)
+        assert len(all_users) == 0
     
     def test_login_session_creation(self):
         """Test creating a LoginSession instance."""
@@ -154,21 +151,21 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
 
         # Verify login session was created with an ID
-        self.assertIsNotNone(test_login_session.id)
-        self.assertIsInstance(test_login_session.id, int)
+        assert test_login_session.id is not None
+        assert isinstance(test_login_session.id, int)
 
         # Verify the login session data is correct
-        self.assertEqual(test_login_session.user_id, test_user.id)
-        self.assertEqual(test_login_session.token, "test_token_123")
-        self.assertEqual(test_login_session.expiry, expiry)
+        assert test_login_session.user_id == test_user.id
+        assert test_login_session.token == "test_token_123"
+        assert test_login_session.expiry == expiry
 
         # Query the login session from database to ensure it was saved
         retrieved_login_session = self.session.query(LoginSession).filter_by(id=test_login_session.id).first()
-        self.assertIsNotNone(retrieved_login_session)
-        self.assertEqual(retrieved_login_session.id, test_login_session.id)
-        self.assertEqual(retrieved_login_session.user_id, test_login_session.user_id)
-        self.assertEqual(retrieved_login_session.token, test_login_session.token)
-        self.assertEqual(retrieved_login_session.expiry, test_login_session.expiry)
+        assert retrieved_login_session is not None
+        assert retrieved_login_session.id == test_login_session.id
+        assert retrieved_login_session.user_id == test_login_session.user_id
+        assert retrieved_login_session.token == test_login_session.token
+        assert retrieved_login_session.expiry == test_login_session.expiry
     
     def test_login_session_required_fields(self):
         """Test that required fields cannot be null."""
@@ -195,10 +192,9 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected NOT NULL constraint violation for user_id but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
-                f"Expected NOT NULL constraint violation, got: {error_message}"
-            )
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                       "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
 
         # Create login session without token
@@ -215,10 +211,9 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected NOT NULL constraint violation for token but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
-                f"Expected NOT NULL constraint violation, got: {error_message}"
-            )
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                       "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
 
         # Create login session without expiry
@@ -235,15 +230,14 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected NOT NULL constraint violation for expiry but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
-                f"Expected NOT NULL constraint violation, got: {error_message}"
-            )
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                       "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
         
         # Verify no login sessions were saved to the database
         all_login_sessions = self.session.query(LoginSession).all()
-        self.assertEqual(len(all_login_sessions), 0)
+        assert len(all_login_sessions) == 0
     
     def test_secure_data_creation(self):
         """Test creating a SecureData instance."""
@@ -268,26 +262,26 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
 
         # Verify secure data was created with an ID
-        self.assertIsNotNone(test_secure_data.id)
-        self.assertIsInstance(test_secure_data.id, int)
+        assert test_secure_data.id is not None
+        assert isinstance(test_secure_data.id, int)
 
         # Verify the secure data data is correct
-        self.assertEqual(test_secure_data.user_id, test_user.id)
-        self.assertEqual(test_secure_data.entry_name, "test_stored_password_title")
-        self.assertEqual(test_secure_data.website, "test_encrypted_website")
-        self.assertEqual(test_secure_data.username, "test_encrypted_username")
-        self.assertEqual(test_secure_data.password, "test_encrypted_password")
-        self.assertEqual(test_secure_data.notes, "test_encrypted_notes")
+        assert test_secure_data.user_id == test_user.id
+        assert test_secure_data.entry_name == "test_stored_password_title"
+        assert test_secure_data.website == "test_encrypted_website"
+        assert test_secure_data.username == "test_encrypted_username"
+        assert test_secure_data.password == "test_encrypted_password"
+        assert test_secure_data.notes == "test_encrypted_notes"
 
         # Query the secure data from database to ensure it was saved
         retrieved_secure_data = self.session.query(SecureData).filter_by(id=test_secure_data.id).first()
-        self.assertIsNotNone(retrieved_secure_data)
-        self.assertEqual(retrieved_secure_data.user_id, test_secure_data.id)
-        self.assertEqual(retrieved_secure_data.entry_name, test_secure_data.entry_name)
-        self.assertEqual(retrieved_secure_data.website, test_secure_data.website)
-        self.assertEqual(retrieved_secure_data.username, test_secure_data.username)
-        self.assertEqual(retrieved_secure_data.password, test_secure_data.password)
-        self.assertEqual(retrieved_secure_data.notes, test_secure_data.notes)
+        assert retrieved_secure_data is not None
+        assert retrieved_secure_data.user_id == test_secure_data.id
+        assert retrieved_secure_data.entry_name == test_secure_data.entry_name
+        assert retrieved_secure_data.website == test_secure_data.website
+        assert retrieved_secure_data.username == test_secure_data.username
+        assert retrieved_secure_data.password == test_secure_data.password
+        assert retrieved_secure_data.notes == test_secure_data.notes
     
     def test_secure_data_required_fields(self):
         """Test that required fields cannot be null."""
@@ -308,15 +302,14 @@ class TestDatabaseModels(unittest.TestCase):
             self.fail("Expected NOT NULL constraint violation for user_id but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            self.assertTrue(
-                "not null" in error_message or "null constraint" in error_message or "integrity" in error_message,
-                f"Expected NOT NULL constraint violation, got: {error_message}"
-            )
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                       "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
         
         # Verify no secure data was saved to the database
         all_secure_data = self.session.query(SecureData).all()
-        self.assertEqual(len(all_secure_data), 0)
+        assert len(all_secure_data) == 0
     
     def test_secure_data_optional_fields(self):
         """Test that optional fields can be null."""
@@ -341,26 +334,26 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
 
         # Verify secure data was created with an ID
-        self.assertIsNotNone(test_secure_data_all_null.id)
-        self.assertIsInstance(test_secure_data_all_null.id, int)
+        assert test_secure_data_all_null.id
+        assert isinstance(test_secure_data_all_null.id, int)
 
         # Verify the secure data has null values for optional fields
-        self.assertEqual(test_secure_data_all_null.user_id, test_user.id)
-        self.assertIsNone(test_secure_data_all_null.entry_name)
-        self.assertIsNone(test_secure_data_all_null.website)
-        self.assertIsNone(test_secure_data_all_null.username)
-        self.assertIsNone(test_secure_data_all_null.password)
-        self.assertIsNone(test_secure_data_all_null.notes)
+        assert test_secure_data_all_null.user_id == test_user.id
+        assert test_secure_data_all_null.entry_name is None
+        assert test_secure_data_all_null.website is None
+        assert test_secure_data_all_null.username is None
+        assert test_secure_data_all_null.password is None
+        assert test_secure_data_all_null.notes is None
 
         # Query the secure data from database to ensure it was saved
         retrieved_secure_data = self.session.query(SecureData).filter_by(id=test_secure_data_all_null.id).first()
-        self.assertIsNotNone(retrieved_secure_data)
-        self.assertEqual(retrieved_secure_data.user_id, test_secure_data_all_null.user_id)
-        self.assertIsNone(retrieved_secure_data.entry_name)
-        self.assertIsNone(retrieved_secure_data.website)
-        self.assertIsNone(retrieved_secure_data.username)
-        self.assertIsNone(retrieved_secure_data.password)
-        self.assertIsNone(retrieved_secure_data.notes)
+        assert retrieved_secure_data is not None
+        assert retrieved_secure_data.user_id == test_secure_data_all_null.user_id
+        assert retrieved_secure_data.entry_name is None
+        assert retrieved_secure_data.website is None
+        assert retrieved_secure_data.username is None
+        assert retrieved_secure_data.password is None
+        assert retrieved_secure_data.notes is None
 
         # Create secure data with some optional fields filled and some null
         test_secure_data_mixed = SecureData(
@@ -375,12 +368,12 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
 
         # Verify mixed null/non-null values are handled correctly
-        self.assertIsNotNone(test_secure_data_mixed.id)
-        self.assertEqual(test_secure_data_mixed.entry_name, "test_stored_password_title")
-        self.assertIsNone(test_secure_data_mixed.website)
-        self.assertEqual(test_secure_data_mixed.username, "test_encrypted_username")
-        self.assertIsNone(test_secure_data_mixed.password)
-        self.assertEqual(test_secure_data_mixed.notes, "test_encrypted_notes")
+        assert test_secure_data_mixed.id is not None
+        assert test_secure_data_mixed.entry_name == "test_stored_password_title"
+        assert test_secure_data_mixed.website is None
+        assert test_secure_data_mixed.username == "test_encrypted_username"
+        assert test_secure_data_mixed.password is None
+        assert test_secure_data_mixed.notes == "test_encrypted_notes"
     
     def test_user_login_session_relationship(self):
         """Test the relationship between User and LoginSession."""
@@ -411,32 +404,32 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
 
         # Test bidirectional navigation - User -> LoginSessions
-        self.assertEqual(len(test_user.login_sessions), 2)
-        self.assertIn(login_session_1, test_user.login_sessions)
-        self.assertIn(login_session_2, test_user.login_sessions)
+        assert len(test_user.login_sessions) == 2
+        assert login_session_1 in test_user.login_sessions
+        assert login_session_2 in test_user.login_sessions
 
         # Test bidirectional navigation - LoginSession -> User
-        self.assertEqual(login_session_1.user, test_user)
-        self.assertEqual(login_session_2.user, test_user)
+        assert login_session_1.user == test_user
+        assert login_session_2.user == test_user
 
         # Test that user_id is automatically set
-        self.assertEqual(login_session_1.user_id, test_user.id)
-        self.assertEqual(login_session_2.user_id, test_user.id)
+        assert login_session_1.user_id == test_user.id
+        assert login_session_2.user_id == test_user.id
 
         # Test querying through relationships
         user_sessions = self.session.query(LoginSession).filter(
             LoginSession.user == test_user
         ).all()
-        self.assertEqual(len(user_sessions), 2)
+        assert len(user_sessions) == 2
 
         # Test that we can access session properties through the relationship
         session_tokens = [session.token for session in test_user.login_sessions]
-        self.assertIn("token_1", session_tokens)
-        self.assertIn("token_2", session_tokens)
+        assert "token_1" in session_tokens
+        assert "token_2" in session_tokens
 
         # Test that we can access user properties through the relationship
-        self.assertEqual(login_session_1.user.username, "testuser")
-        self.assertEqual(login_session_2.user.password_hash, "hashed_password_123")
+        assert login_session_1.user.username == "testuser"
+        assert login_session_2.user.password_hash == "hashed_password_123"
     
     def test_user_secure_data_relationship(self):
         """Test the relationship between User and SecureData."""
@@ -471,44 +464,44 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
         
         # Test bidirectional navigation - User -> SecureData
-        self.assertEqual(len(test_user.secure_data), 2)
-        self.assertIn(secure_data_1, test_user.secure_data)
-        self.assertIn(secure_data_2, test_user.secure_data)
+        assert len(test_user.secure_data) == 2
+        assert secure_data_1 in test_user.secure_data
+        assert secure_data_2 in test_user.secure_data
 
         # Test bidirectional navigation - SecureData -> User
-        self.assertEqual(secure_data_1.user, test_user)
-        self.assertEqual(secure_data_2.user, test_user)
+        assert secure_data_1.user == test_user
+        assert secure_data_2.user == test_user
 
         # Test that user_id is automatically set
-        self.assertEqual(secure_data_1.user_id, test_user.id)
-        self.assertEqual(secure_data_2.user_id, test_user.id)
+        assert secure_data_1.user_id == test_user.id
+        assert secure_data_2.user_id == test_user.id
 
         # Test querying through relationships
         user_secure_data = self.session.query(SecureData).filter(
             SecureData.user == test_user
         ).all()
-        self.assertEqual(len(user_secure_data), 2)
+        assert len(user_secure_data) == 2
 
         # Test that we can access secure data properties through the relationship
         entry_names = [entry.entry_name for entry in test_user.secure_data]
-        self.assertIn("test_stored_password_title_1", entry_names)
-        self.assertIn("test_stored_password_title_2", entry_names)
+        assert "test_stored_password_title_1" in entry_names
+        assert "test_stored_password_title_2" in entry_names
 
         # Test that we can access user properties through the relationship
-        self.assertEqual(secure_data_1.user.username, "testuser")
-        self.assertEqual(secure_data_2.user.password_hash, "hashed_password_123")
+        assert secure_data_1.user.username == "testuser"
+        assert secure_data_2.user.password_hash == "hashed_password_123"
 
         # Test filtering secure data through relationships
         website_entries = [entry for entry in test_user.secure_data if "website_1" in entry.website]
-        self.assertEqual(len(website_entries), 1)
-        self.assertEqual(website_entries[0].entry_name, "test_stored_password_title_1")
+        assert len(website_entries) == 1
+        assert website_entries[0].entry_name == "test_stored_password_title_1"
 
         # Test that optional fields work correctly through relationships
         entries_with_notes = [entry for entry in test_user.secure_data if entry.notes is not None]
-        self.assertEqual(len(entries_with_notes), 1)
+        assert len(entries_with_notes) == 1
         
         entries_without_notes = [entry for entry in test_user.secure_data if entry.notes is None]
-        self.assertEqual(len(entries_without_notes), 1)
+        assert len(entries_without_notes) == 1
     
     def test_cascade_delete_behavior(self):
         """Test cascade delete behavior when a user is deleted."""
@@ -560,13 +553,13 @@ class TestDatabaseModels(unittest.TestCase):
         self.session.commit()
 
         # Verify all records exist before deletion
-        self.assertEqual(len(test_user.login_sessions), 2)
-        self.assertEqual(len(test_user.secure_data), 2)
+        assert len(test_user.login_sessions) == 2
+        assert len(test_user.secure_data) == 2
         
         all_login_sessions = self.session.query(LoginSession).all()
         all_secure_data = self.session.query(SecureData).all()
-        self.assertEqual(len(all_login_sessions), 2)
-        self.assertEqual(len(all_secure_data), 2)
+        assert len(all_login_sessions) == 2
+        assert len(all_secure_data) == 2
 
         # Delete the user (this should trigger cascade delete)
         self.session.delete(test_user)
@@ -574,27 +567,27 @@ class TestDatabaseModels(unittest.TestCase):
 
         # Verify the user was deleted
         deleted_user = self.session.query(User).filter_by(username="testuser").first()
-        self.assertIsNone(deleted_user)
+        assert deleted_user is None
 
         # Verify all related login sessions were automatically deleted
         remaining_login_sessions = self.session.query(LoginSession).all()
-        self.assertEqual(len(remaining_login_sessions), 0)
+        assert len(remaining_login_sessions) == 0
 
         # Verify all related secure data was automatically deleted
         remaining_secure_data = self.session.query(SecureData).all()
-        self.assertEqual(len(remaining_secure_data), 0)
+        assert len(remaining_secure_data) == 0
 
         # Verify specific sessions and data are gone
         deleted_session_1 = self.session.query(LoginSession).filter_by(token="token_1").first()
         deleted_session_2 = self.session.query(LoginSession).filter_by(token="token_2").first()
-        self.assertIsNone(deleted_session_1)
-        self.assertIsNone(deleted_session_2)
+        assert deleted_session_1 is None
+        assert deleted_session_2 is None
 
         deleted_secure_data_1 = self.session.query(SecureData).filter_by(entry_name="test_stored_password_title_1").first()
         deleted_secure_data_2 = self.session.query(SecureData).filter_by(entry_name="test_stored_password_title_2").first()
-        self.assertIsNone(deleted_secure_data_1)
-        self.assertIsNone(deleted_secure_data_2)
+        assert deleted_secure_data_1 is None
+        assert deleted_secure_data_2 is None
 
 
 if __name__ == '__main__':
-    unittest.main() 
+    pytest.main(['-v', __file__]) 
