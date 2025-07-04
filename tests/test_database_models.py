@@ -661,6 +661,61 @@ class TestDatabaseModels():
         assert len(all_login_sessions) == 0
         assert len(all_secure_data) == 0
 
+    def test_user_username_string_handling(self):
+        """Test that User username can handle various string lengths and content."""
+        # Test with very long username
+        long_username = "x" * 1000
+        test_user_long = User(
+            username=long_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_long)
+        self.session.commit()
+
+        # Test with special characters in username
+        special_chars_username = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        test_user_special = User(
+            username=special_chars_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_special)
+        self.session.commit()
+
+        # Test with unicode characters in username
+        unicode_username = "测试用户 🚀 ñáéíóú"
+        test_user_unicode = User(
+            username=unicode_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_unicode)
+        self.session.commit()
+
+        # Test with spaces and mixed case
+        mixed_username = "Test User 123 with Spaces"
+        test_user_mixed = User(
+            username=mixed_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_mixed)
+        self.session.commit()
+
+        # Verify all users were created successfully
+        assert test_user_long.id is not None
+        assert test_user_special.id is not None
+        assert test_user_unicode.id is not None
+        assert test_user_mixed.id is not None
+
+        # Verify data integrity
+        retrieved_long = self.session.query(User).filter_by(id=test_user_long.id).first()
+        retrieved_special = self.session.query(User).filter_by(id=test_user_special.id).first()
+        retrieved_unicode = self.session.query(User).filter_by(id=test_user_unicode.id).first()
+        retrieved_mixed = self.session.query(User).filter_by(id=test_user_mixed.id).first()
+
+        assert retrieved_long.username == long_username
+        assert retrieved_special.username == special_chars_username
+        assert retrieved_unicode.username == unicode_username
+        assert retrieved_mixed.username == mixed_username
+
     def test_secure_data_string_handling(self):
         """Test that SecureData can handle various string lengths and content."""
         # Create a test user
@@ -723,61 +778,6 @@ class TestDatabaseModels():
         assert retrieved_long.entry_name == long_string
         assert retrieved_special.entry_name == special_chars
         assert retrieved_unicode.entry_name == unicode_string
-
-    def test_user_username_string_handling(self):
-        """Test that User username can handle various string lengths and content."""
-        # Test with very long username
-        long_username = "x" * 1000
-        test_user_long = User(
-            username=long_username,
-            password_hash="hashed_password_123"
-        )
-        self.session.add(test_user_long)
-        self.session.commit()
-
-        # Test with special characters in username
-        special_chars_username = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        test_user_special = User(
-            username=special_chars_username,
-            password_hash="hashed_password_123"
-        )
-        self.session.add(test_user_special)
-        self.session.commit()
-
-        # Test with unicode characters in username
-        unicode_username = "测试用户 🚀 ñáéíóú"
-        test_user_unicode = User(
-            username=unicode_username,
-            password_hash="hashed_password_123"
-        )
-        self.session.add(test_user_unicode)
-        self.session.commit()
-
-        # Test with spaces and mixed case
-        mixed_username = "Test User 123 with Spaces"
-        test_user_mixed = User(
-            username=mixed_username,
-            password_hash="hashed_password_123"
-        )
-        self.session.add(test_user_mixed)
-        self.session.commit()
-
-        # Verify all users were created successfully
-        assert test_user_long.id is not None
-        assert test_user_special.id is not None
-        assert test_user_unicode.id is not None
-        assert test_user_mixed.id is not None
-
-        # Verify data integrity
-        retrieved_long = self.session.query(User).filter_by(id=test_user_long.id).first()
-        retrieved_special = self.session.query(User).filter_by(id=test_user_special.id).first()
-        retrieved_unicode = self.session.query(User).filter_by(id=test_user_unicode.id).first()
-        retrieved_mixed = self.session.query(User).filter_by(id=test_user_mixed.id).first()
-
-        assert retrieved_long.username == long_username
-        assert retrieved_special.username == special_chars_username
-        assert retrieved_unicode.username == unicode_username
-        assert retrieved_mixed.username == mixed_username
 
     def test_secure_data_fields_string_handling(self):
         """Test that SecureData individual fields can handle various string content."""
