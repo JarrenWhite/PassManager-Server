@@ -6,6 +6,8 @@ import pytest
 import time
 import gc
 
+from sqlalchemy.orm import sessionmaker
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database.database_setup import init_db, get_db_filename, get_db_url, get_engine, get_session_local, reset_engine
@@ -177,6 +179,37 @@ class TestDatabaseSetup:
         # Verify parent directory and database file were created
         assert os.path.exists(parent_dir)
         assert os.path.exists(deep_test_path)
+
+    def test_database_schema_creation(self):
+        """Test that init_db creates all expected tables"""
+        init_db()
+        
+        engine = get_engine()
+        self.engines_to_dispose.append(engine)
+        
+        # Check that all tables exist
+        expected_tables = ['user', 'session', 'encrypted']
+        with engine.connect() as connection:
+            actual_tables = engine.dialect.get_table_names(connection)
+            
+            for table in expected_tables:
+                assert table in actual_tables
+
+    def test_reset_engine_resets_session_factory(self):
+        """Test that reset_engine also resets the session factory"""
+        # Get initial session factory
+        session_factory1 = get_session_local()
+        assert isinstance(session_factory1, sessionmaker)
+        
+        # Reset engines
+        reset_engine()
+        
+        # Get new session factory
+        session_factory2 = get_session_local()
+        
+        # Should be different objects
+        assert session_factory1 is not session_factory2
+        assert isinstance(session_factory2, sessionmaker)
 
 
 if __name__ == '__main__':

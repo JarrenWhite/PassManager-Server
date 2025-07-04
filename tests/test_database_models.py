@@ -588,6 +588,322 @@ class TestDatabaseModels():
         assert deleted_secure_data_1 is None
         assert deleted_secure_data_2 is None
 
+    def test_token_uniqueness(self):
+        """Test that login session tokens must be unique."""
+        # Create a test user
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Create first login session
+        expiry1 = datetime.now() + timedelta(hours=1)
+        login_session_1 = LoginSession(
+            user_id=test_user.id,
+            token="unique_token_123",
+            expiry=expiry1
+        )
+        self.session.add(login_session_1)
+        self.session.commit()
+
+        # Create second login session with same token
+        expiry2 = datetime.now() + timedelta(hours=2)
+        login_session_2 = LoginSession(
+            user_id=test_user.id,
+            token="unique_token_123",
+            expiry=expiry2
+        )
+        self.session.add(login_session_2)
+
+        # Attempt to commit
+        try:
+            self.session.commit()
+            self.fail("Expected uniqueness constraint violation for token but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("unique constraint failed" in error_message or
+                     "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        # Verify only the first session exists
+        sessions = self.session.query(LoginSession).filter_by(token="unique_token_123").all()
+        assert len(sessions) == 1
+        assert sessions[0].id == login_session_1.id
+
+    def test_cascade_delete_user_without_related_data(self):
+        """Test cascade delete behavior when user has no related records."""
+        # Create a test user with no related data
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Verify user exists
+        assert test_user.id is not None
+        assert len(test_user.login_sessions) == 0
+        assert len(test_user.secure_data) == 0
+
+        # Delete the user
+        self.session.delete(test_user)
+        self.session.commit()
+
+        # Verify the user was deleted
+        deleted_user = self.session.query(User).filter_by(username="testuser").first()
+        assert deleted_user is None
+
+        # Verify no related data exists (should be empty anyway)
+        all_login_sessions = self.session.query(LoginSession).all()
+        all_secure_data = self.session.query(SecureData).all()
+        assert len(all_login_sessions) == 0
+        assert len(all_secure_data) == 0
+
+    def test_secure_data_string_handling(self):
+        """Test that SecureData can handle various string lengths and content."""
+        # Create a test user
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Test with very long strings
+        long_string = "x" * 1000
+        test_secure_data_long = SecureData(
+            user_id=test_user.id,
+            entry_name=long_string,
+            website=long_string,
+            username=long_string,
+            password=long_string,
+            notes=long_string
+        )
+        self.session.add(test_secure_data_long)
+        self.session.commit()
+
+        # Test with special characters
+        special_chars = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        test_secure_data_special = SecureData(
+            user_id=test_user.id,
+            entry_name=special_chars,
+            website=special_chars,
+            username=special_chars,
+            password=special_chars,
+            notes=special_chars
+        )
+        self.session.add(test_secure_data_special)
+        self.session.commit()
+
+        # Test with unicode characters
+        unicode_string = "测试数据 🚀 ñáéíóú"
+        test_secure_data_unicode = SecureData(
+            user_id=test_user.id,
+            entry_name=unicode_string,
+            website=unicode_string,
+            username=unicode_string,
+            password=unicode_string,
+            notes=unicode_string
+        )
+        self.session.add(test_secure_data_unicode)
+        self.session.commit()
+
+        # Verify all were created successfully
+        assert test_secure_data_long.id is not None
+        assert test_secure_data_special.id is not None
+        assert test_secure_data_unicode.id is not None
+
+        # Verify data integrity
+        retrieved_long = self.session.query(SecureData).filter_by(id=test_secure_data_long.id).first()
+        retrieved_special = self.session.query(SecureData).filter_by(id=test_secure_data_special.id).first()
+        retrieved_unicode = self.session.query(SecureData).filter_by(id=test_secure_data_unicode.id).first()
+
+        assert retrieved_long.entry_name == long_string
+        assert retrieved_special.entry_name == special_chars
+        assert retrieved_unicode.entry_name == unicode_string
+
+    def test_user_username_string_handling(self):
+        """Test that User username can handle various string lengths and content."""
+        # Test with very long username
+        long_username = "x" * 1000
+        test_user_long = User(
+            username=long_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_long)
+        self.session.commit()
+
+        # Test with special characters in username
+        special_chars_username = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        test_user_special = User(
+            username=special_chars_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_special)
+        self.session.commit()
+
+        # Test with unicode characters in username
+        unicode_username = "测试用户 🚀 ñáéíóú"
+        test_user_unicode = User(
+            username=unicode_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_unicode)
+        self.session.commit()
+
+        # Test with spaces and mixed case
+        mixed_username = "Test User 123 with Spaces"
+        test_user_mixed = User(
+            username=mixed_username,
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user_mixed)
+        self.session.commit()
+
+        # Verify all users were created successfully
+        assert test_user_long.id is not None
+        assert test_user_special.id is not None
+        assert test_user_unicode.id is not None
+        assert test_user_mixed.id is not None
+
+        # Verify data integrity
+        retrieved_long = self.session.query(User).filter_by(id=test_user_long.id).first()
+        retrieved_special = self.session.query(User).filter_by(id=test_user_special.id).first()
+        retrieved_unicode = self.session.query(User).filter_by(id=test_user_unicode.id).first()
+        retrieved_mixed = self.session.query(User).filter_by(id=test_user_mixed.id).first()
+
+        assert retrieved_long.username == long_username
+        assert retrieved_special.username == special_chars_username
+        assert retrieved_unicode.username == unicode_username
+        assert retrieved_mixed.username == mixed_username
+
+    def test_secure_data_fields_string_handling(self):
+        """Test that SecureData individual fields can handle various string content."""
+        # Create a test user
+        test_user = User(
+            username="testuser",
+            password_hash="hashed_password_123"
+        )
+        self.session.add(test_user)
+        self.session.commit()
+
+        # Test entry_name field with various content
+        entry_name_long = "x" * 1000
+        entry_name_special = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        entry_name_unicode = "测试条目 🚀 ñáéíóú"
+        entry_name_mixed = "Test Entry 123 with Spaces"
+
+        # Test website field with various content
+        website_long = "https://" + "x" * 1000
+        website_special = "https://site!@#$%^&*()_+-=[]{}|;':\",./<>?`~.com"
+        website_unicode = "https://测试网站🚀.com"
+        website_mixed = "https://test-site-123.com/path with spaces"
+
+        # Test username field with various content
+        username_long = "x" * 1000
+        username_special = "user!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        username_unicode = "测试用户名🚀"
+        username_mixed = "test.user@domain.com"
+
+        # Test password field with various content
+        password_long = "x" * 1000
+        password_special = "pass!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        password_unicode = "测试密码🚀"
+        password_mixed = "My Password 123!"
+
+        # Test notes field with various content
+        notes_long = "x" * 1000
+        notes_special = "notes!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        notes_unicode = "测试备注🚀"
+        notes_mixed = "Test notes with spaces and 123 numbers"
+
+        # Create SecureData entries with different field combinations
+        test_secure_data_1 = SecureData(
+            user_id=test_user.id,
+            entry_name=entry_name_long,
+            website=website_special,
+            username=username_unicode,
+            password=password_mixed,
+            notes=notes_special
+        )
+        self.session.add(test_secure_data_1)
+
+        test_secure_data_2 = SecureData(
+            user_id=test_user.id,
+            entry_name=entry_name_special,
+            website=website_unicode,
+            username=username_mixed,
+            password=password_long,
+            notes=notes_unicode
+        )
+        self.session.add(test_secure_data_2)
+
+        test_secure_data_3 = SecureData(
+            user_id=test_user.id,
+            entry_name=entry_name_unicode,
+            website=website_mixed,
+            username=username_long,
+            password=password_special,
+            notes=notes_long
+        )
+        self.session.add(test_secure_data_3)
+
+        test_secure_data_4 = SecureData(
+            user_id=test_user.id,
+            entry_name=entry_name_mixed,
+            website=website_long,
+            username=username_special,
+            password=password_unicode,
+            notes=notes_mixed
+        )
+        self.session.add(test_secure_data_4)
+
+        self.session.commit()
+
+        # Verify all entries were created successfully
+        assert test_secure_data_1.id is not None
+        assert test_secure_data_2.id is not None
+        assert test_secure_data_3.id is not None
+        assert test_secure_data_4.id is not None
+
+        # Verify data integrity for each field type
+        retrieved_1 = self.session.query(SecureData).filter_by(id=test_secure_data_1.id).first()
+        retrieved_2 = self.session.query(SecureData).filter_by(id=test_secure_data_2.id).first()
+        retrieved_3 = self.session.query(SecureData).filter_by(id=test_secure_data_3.id).first()
+        retrieved_4 = self.session.query(SecureData).filter_by(id=test_secure_data_4.id).first()
+
+        # Test entry_name field integrity
+        assert retrieved_1.entry_name == entry_name_long
+        assert retrieved_2.entry_name == entry_name_special
+        assert retrieved_3.entry_name == entry_name_unicode
+        assert retrieved_4.entry_name == entry_name_mixed
+
+        # Test website field integrity
+        assert retrieved_1.website == website_special
+        assert retrieved_2.website == website_unicode
+        assert retrieved_3.website == website_mixed
+        assert retrieved_4.website == website_long
+
+        # Test username field integrity
+        assert retrieved_1.username == username_unicode
+        assert retrieved_2.username == username_mixed
+        assert retrieved_3.username == username_long
+        assert retrieved_4.username == username_special
+
+        # Test password field integrity
+        assert retrieved_1.password == password_mixed
+        assert retrieved_2.password == password_long
+        assert retrieved_3.password == password_special
+        assert retrieved_4.password == password_unicode
+
+        # Test notes field integrity
+        assert retrieved_1.notes == notes_special
+        assert retrieved_2.notes == notes_unicode
+        assert retrieved_3.notes == notes_long
+        assert retrieved_4.notes == notes_mixed
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__]) 
