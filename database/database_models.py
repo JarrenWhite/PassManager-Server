@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -26,6 +28,7 @@ class SecureData(Base):
     __tablename__ = "encrypted"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    public_id = Column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     entry_name = Column(String)
     website = Column(String)
     username = Column(String)
