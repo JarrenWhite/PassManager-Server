@@ -3,8 +3,6 @@ from typing import Optional, List, Tuple
 import logging
 logger = logging.getLogger("database")
 
-from sqlalchemy import select
-
 from database import init_db, get_session_local, User, LoginSession, SecureData
 
 class DatabaseUtils:
@@ -48,7 +46,7 @@ class DatabaseUtils:
             session.close()
 
     @staticmethod
-    def get_user(username: str) -> Optional(User):
+    def get_user_password_hash(username: str) -> Optional[str]:
         """Find and return the user. Returns False if not found"""
         session = get_session_local()()
         
@@ -56,7 +54,6 @@ class DatabaseUtils:
             user = session.query(User).filter_by(username=username).first()
             if user:
                 return user.password_hash
-            return
             
         except Exception as e:
             logger.error(f"Error retrieving user '{username}': {e}")
@@ -128,20 +125,26 @@ class DatabaseUtils:
         pass
 
     @staticmethod
-    def edit_secure_data(secure_data_id: int,
-                         entry_name: str,
-                         website_enc: str,
-                         username_enc: str,
-                         password_enc: str,
-                         notes_enc: str) -> bool:
+    def edit_secure_data(entry_public_id: str,
+                         entry_name: Optional[str],
+                         website_enc: Optional[str],
+                         username_enc: Optional[str],
+                         password_enc: Optional[str],
+                         notes_enc: Optional[str]) -> bool:
         """Edit an existing instance of secure data"""
         pass
 
     @staticmethod
-    def get_all_secure_entries(username: str) -> List[str]:
-        """Get names and ids for all secure entries for a given user"""
+    def delete_secure_data(entry_public_id: str):
+        """Delete given secure data entry"""
         pass
 
     @staticmethod
-    def get_details_for_secure_entry(id: int) -> Tuple[]:
+    def get_secure_entries_list(username: str) -> List[Tuple[str, str]]:
+        """Get names and public ids for all secure entries for a given user"""
+        pass
+
+    @staticmethod
+    def get_secure_entry_data(public_entry_id: str) -> Optional[Tuple[str, str, str, str, str]]:
+        """Get the content of a given secure data entry, if it exists"""
         pass
