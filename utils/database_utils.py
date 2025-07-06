@@ -1,12 +1,28 @@
 from datetime import timedelta
 from typing import Optional, List, Tuple
+from contextlib import contextmanager
 import logging
 logger = logging.getLogger("database")
 
 from database import init_db, get_session_local, User, LoginSession, SecureData
+from sqlalchemy import select
 
 class DatabaseUtils:
     database_initialised = False
+
+    @staticmethod
+    @contextmanager
+    def get_db_session():
+        """Context manager for database sessions to ensure proper cleanup"""
+        session = get_session_local()()
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
     @staticmethod
     def init_database() -> bool:
@@ -20,74 +36,58 @@ class DatabaseUtils:
     @staticmethod
     def create_user(username: str, password_hash: str) -> bool:
         """Create a new user with the given username and password hash"""
-        session = get_session_local()()
-
         try:
-            # Check if user already exists
-            existing_user = session.query(User).filter(User.username == username).first()
-            if existing_user:
-                logger.debug(f"User '{username}' already exists.")
-                return False
-            
-            # Create new user
-            new_user = User(username=username, password_hash=password_hash)
-
-            session.add(new_user)
-            session.commit()
-            logger.info(f"User '{username}' created successfully.")
-            return True
-        
+            with DatabaseUtils.get_db_session() as session:
+                # Check if user already exists
+                existing_user = session.scalar(select(User).where(User.username == username))
+                if existing_user:
+                    logger.debug(f"User '{username}' already exists.")
+                    return False
+                
+                # Create new user
+                new_user = User(username=username, password_hash=password_hash)
+                session.add(new_user)
+                
+                logger.info(f"User '{username}' created successfully.")
+                return True
+                
         except Exception as e:
-            logger.error(f"Error creating user: {e}.")
-            session.rollback()
+            logger.error(f"Error creating user '{username}': {e}")
             return False
-
-        finally:
-            session.close()
 
     @staticmethod
     def get_user_password_hash(username: str) -> Optional[str]:
-        """Find and return the user. Returns False if not found"""
-        session = get_session_local()()
-        
+        """Find and return the user's password hash. Returns None if not found"""
         try:
-            user = session.query(User).filter_by(username=username).first()
-            if user:
-                return user.password_hash
-            
+            with DatabaseUtils.get_db_session() as session:
+                user = session.scalar(select(User).where(User.username == username))
+                return user.password_hash if user else None
+                
         except Exception as e:
             logger.error(f"Error retrieving user '{username}': {e}")
-            return
-            
-        finally:
-            session.close()
+            return None
 
     @staticmethod
     def delete_user(username: str) -> bool:
         """Delete the requested user. Returns False if not found"""
-        session = get_session_local()()
-
         try:
-            # Find user in question
-            user = session.query(User).filter_by(username=username).first()
-            if not user:
-                logger.warning(f"User '{username}' could not be found to be deleted.")
-                return False
+            with DatabaseUtils.get_db_session() as session:
+                # Find user in question
+                user = session.scalar(select(User).where(User.username == username))
+                if not user:
+                    logger.warning(f"User '{username}' could not be found to be deleted.")
+                    return False
             
-            # Delete the user
-            session.delete(user)
-            session.commit()
+                # Delete the user
+                session.delete(user)
+                session.commit()
             
-            logger.info(f"User '{username}' deleted successfully.")
-            return True
+                logger.info(f"User '{username}' deleted successfully.")
+                return True
             
         except Exception as e:
             logger.error(f"Error deleting user '{username}': {e}")
-            session.rollback()
             return False
-            
-        finally:
-            session.close()
 
     @staticmethod
     def create_session(username: str, token: str, duration_till_expiry: timedelta) -> bool:
