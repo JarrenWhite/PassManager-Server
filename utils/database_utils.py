@@ -41,18 +41,18 @@ class DatabaseUtils:
                 # Check if user already exists
                 existing_user = session.scalar(select(User).where(User.username == username))
                 if existing_user:
-                    logger.debug(f"User '{username}' already exists.")
+                    logger.debug(f"create_user: User '{username}' already exists.")
                     return False
 
                 # Create new user
                 new_user = User(username=username, password_hash=password_hash)
                 session.add(new_user)
 
-                logger.info(f"User '{username}' created successfully.")
+                logger.info(f"create_user: User '{username}' created successfully.")
                 return True
 
         except Exception as e:
-            logger.error(f"Error creating user '{username}': {e}")
+            logger.error(f"create_user: Error '{username}': {e}")
             return False
 
     @staticmethod
@@ -64,7 +64,7 @@ class DatabaseUtils:
                 return user.password_hash if user else None
 
         except Exception as e:
-            logger.error(f"Error retrieving user '{username}': {e}")
+            logger.error(f"get_user_password_hash: Error retrieving user '{username}': {e}")
             return None
 
     @staticmethod
@@ -75,15 +75,15 @@ class DatabaseUtils:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
-                    logger.warning(f"User '{username}' could not be found to be deleted.")
+                    logger.warning(f"delete_user: User '{username}' could not be found.")
                     return False
                 session.delete(user)
 
-                logger.info(f"User '{username}' deleted successfully.")
+                logger.info(f"delete_user: User '{username}' deleted successfully.")
                 return True
 
         except Exception as e:
-            logger.error(f"Error deleting user '{username}': {e}")
+            logger.error(f"delete_user: Error '{username}': {e}")
             return False
 
     @staticmethod
@@ -94,7 +94,7 @@ class DatabaseUtils:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
-                    logger.warning(f"User '{username}' could not be found to create login session.")
+                    logger.warning(f"create_session: User '{username}' could not be found.")
                     return False
 
                 # Create login session for them
@@ -102,10 +102,10 @@ class DatabaseUtils:
                 new_login_session = LoginSession(user=user, token=token, expiry=expiry)
 
                 session.add(new_login_session)
-                logger.info(f"User '{username}' login session created.")
+                logger.info(f"create_session: User '{username}' login session created.")
 
         except Exception as e:
-            logger.error(f"Error creating login session for '{username}': {e}")
+            logger.error(f"create_session: Error '{username}': {e}")
             return False
 
     @staticmethod
@@ -116,14 +116,14 @@ class DatabaseUtils:
                 # Find token in question
                 login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
                 if not login_session:
-                    logger.warning(f"Token '{token[:-4]}' could not be found to check login session.")
+                    logger.warning(f"check_session_token: Token '{token[:-4]}' could not be found.")
                     return
                 user = login_session.user
                 if user:
                     return user.username
 
         except Exception as e:
-            logger.error(f"Error creating login token '{token[:-4]}': {e}")
+            logger.error(f"check_session_token: Error '{token[:-4]}': {e}")
             return
 
     @staticmethod
@@ -134,14 +134,14 @@ class DatabaseUtils:
                 # Find token in question
                 login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
                 if not login_session:
-                    logger.warning(f"Token '{token[:-4]}' could not be found to delete login session.")
+                    logger.warning(f"delete_session: Token '{token[:-4]}' could not be found.")
                     return
 
                 session.delete(login_session)
-                logger.info(f"User '{token[:-4]}' deleted successfully.")
+                logger.info(f"delete_session: User '{token[:-4]}' deleted successfully.")
 
         except Exception as e:
-            logger.error(f"Error deleting login token '{token[:-4]}': {e}")
+            logger.error(f"delete_session: Error '{token[:-4]}': {e}")
             return
 
     @staticmethod
