@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("database")
 
 from database import init_db, get_session_local, User, LoginSession, SecureData
-from sqlalchemy import select
+from sqlalchemy import select, datetime
 
 class DatabaseUtils:
     database_initialised = False
@@ -92,7 +92,20 @@ class DatabaseUtils:
     @staticmethod
     def create_session(username: str, token: str, duration_till_expiry: timedelta) -> bool:
         """Create a session for the given user"""
-        pass
+        try:
+            with DatabaseUtils.get_db_session() as session:
+                # Find user in question
+                user = session.scalar(select(User).where(User.username == username))
+                if not user:
+                    logger.warning(f"User '{username}' could not be found to be deleted.")
+                    return False
+                
+                # Create login session for them
+                expiry = datetime.now() + timedelta(duration_till_expiry)
+                new_login_session = LoginSession(user=user, token=token, expiry=expiry)
+        except Exception as e:
+            logger.error(f"Error creating login session for '{username}': {e}")
+            return False
 
     @staticmethod
     def check_session_token(token: str) -> Optional[str]:
