@@ -34,5 +34,5 @@ class SecureData(Base):
     username = Column(String)
     password = Column(String)
     notes = Column(String)
-    
+
     user = relationship("User", back_populates="secure_data")
