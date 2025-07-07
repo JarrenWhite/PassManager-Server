@@ -97,12 +97,16 @@ class DatabaseUtils:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
-                    logger.warning(f"User '{username}' could not be found to be deleted.")
+                    logger.warning(f"User '{username}' could not be found to create login session.")
                     return False
                 
                 # Create login session for them
                 expiry = datetime.now() + timedelta(duration_till_expiry)
                 new_login_session = LoginSession(user=user, token=token, expiry=expiry)
+
+                session.add(new_login_session)
+                logger.info(f"User '{username}' login session created.")
+
         except Exception as e:
             logger.error(f"Error creating login session for '{username}': {e}")
             return False
