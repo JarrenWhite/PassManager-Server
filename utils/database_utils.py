@@ -138,7 +138,7 @@ class DatabaseUtils:
                     return
 
                 session.delete(login_session)
-                logger.info(f"delete_session: User '{token[:-4]}' deleted successfully.")
+                logger.info(f"delete_session: Token '{token[:-4]}' deleted successfully.")
 
         except Exception as e:
             logger.error(f"delete_session: Error '{token[:-4]}': {e}")
