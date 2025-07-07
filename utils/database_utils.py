@@ -43,14 +43,14 @@ class DatabaseUtils:
                 if existing_user:
                     logger.debug(f"User '{username}' already exists.")
                     return False
-                
+
                 # Create new user
                 new_user = User(username=username, password_hash=password_hash)
                 session.add(new_user)
-                
+
                 logger.info(f"User '{username}' created successfully.")
                 return True
-                
+
         except Exception as e:
             logger.error(f"Error creating user '{username}': {e}")
             return False
@@ -62,7 +62,7 @@ class DatabaseUtils:
             with DatabaseUtils.get_db_session() as session:
                 user = session.scalar(select(User).where(User.username == username))
                 return user.password_hash if user else None
-                
+
         except Exception as e:
             logger.error(f"Error retrieving user '{username}': {e}")
             return None
@@ -77,14 +77,11 @@ class DatabaseUtils:
                 if not user:
                     logger.warning(f"User '{username}' could not be found to be deleted.")
                     return False
-            
-                # Delete the user
                 session.delete(user)
-                session.commit()
-            
+
                 logger.info(f"User '{username}' deleted successfully.")
                 return True
-            
+
         except Exception as e:
             logger.error(f"Error deleting user '{username}': {e}")
             return False
@@ -99,7 +96,7 @@ class DatabaseUtils:
                 if not user:
                     logger.warning(f"User '{username}' could not be found to create login session.")
                     return False
-                
+
                 # Create login session for them
                 expiry = datetime.now() + timedelta(duration_till_expiry)
                 new_login_session = LoginSession(user=user, token=token, expiry=expiry)
@@ -114,12 +111,38 @@ class DatabaseUtils:
     @staticmethod
     def check_session_token(token: str) -> Optional[str]:
         """Check if a session token is valid, and if so returning the Username."""
-        pass
+        try:
+            with DatabaseUtils.get_db_session() as session:
+                # Find token in question
+                login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
+                if not login_session:
+                    logger.warning(f"Token '{token[:-4]}' could not be found to check login session.")
+                    return
+                user = login_session.user
+                if user:
+                    return user.username
+
+        except Exception as e:
+            logger.error(f"Error creating login token '{token[:-4]}': {e}")
+            return
 
     @staticmethod
     def delete_session(token: str) -> bool:
         """Delete the given session"""
-        pass
+        try:
+            with DatabaseUtils.get_db_session() as session:
+                # Find token in question
+                login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
+                if not login_session:
+                    logger.warning(f"Token '{token[:-4]}' could not be found to delete login session.")
+                    return
+
+                session.delete(login_session)
+                logger.info(f"User '{token[:-4]}' deleted successfully.")
+
+        except Exception as e:
+            logger.error(f"Error deleting login token '{token[:-4]}': {e}")
+            return
 
     @staticmethod
     def delete_all_sessions(username: str) -> bool:
