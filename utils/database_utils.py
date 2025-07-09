@@ -289,6 +289,7 @@ class DatabaseUtils:
 
         except Exception as e:
             logger.error(f"get_secure_entries_list: Error - {e}")
+
             return
 
     @staticmethod
