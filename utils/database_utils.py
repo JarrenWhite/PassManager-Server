@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 from contextlib import contextmanager
 import logging
 logger = logging.getLogger("database")
@@ -255,16 +255,62 @@ class DatabaseUtils:
             return False
 
     @staticmethod
-    def delete_secure_data(entry_public_id: str):
-        """Delete given secure data entry"""
-        pass
+    def delete_secure_data(entry_public_id: str) -> bool:
+        """Delete the given secure data entry"""
+        try:
+            with DatabaseUtils.get_db_session() as session:
+                # Find secure data in question
+                secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
+                if not secure_data:
+                    logger.warning(f"delete_secure_data: Secure Data '{entry_public_id}' could not be found.")
+                    return False
+
+                session.delete(secure_data)
+                logger.info(f"delete_secure_data: Secure Data '{entry_public_id}' deleted successfully.")
+                return True
+
+        except Exception as e:
+            logger.error(f"delete_secure_data: Error - {e}")
+            return False
 
     @staticmethod
-    def get_secure_entries_list(username: str) -> List[Tuple[str, str]]:
-        """Get names and public ids for all secure entries for a given user"""
-        pass
+    def get_secure_entries_list(username: str) -> Optional[List[Tuple[str, str]]]:
+        """Get names and public ids for all secure entries for a given user, returns (name, public_id)"""
+        try:
+            with DatabaseUtils.get_db_session() as session:
+                # Find user in question
+                user = session.scalar(select(User).where(User.username == username))
+                if not user:
+                    logger.warning(f"get_secure_entries_list: User '{username}' could not be found.")
+                    return
+
+                # Collate secure data
+                return [(data_entry.entry_name, data_entry.public_id) for data_entry in user.secure_data]
+
+        except Exception as e:
+            logger.error(f"get_secure_entries_list: Error - {e}")
+            return
 
     @staticmethod
-    def get_secure_entry_data(public_entry_id: str) -> Optional[Tuple[str, str, str, str, str]]:
+    def get_secure_entry_data(entry_public_id: str) -> Optional[Dict[str, str]]:
         """Get the content of a given secure data entry, if it exists"""
-        pass
+        try:
+            with DatabaseUtils.get_db_session() as session:
+                # Find secure data in question
+                secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
+                if not secure_data:
+                    logger.warning(f"get_secure_entry_data: Secure Data '{entry_public_id}' could not be found.")
+                    return
+
+                return {
+                    "public_id" : secure_data.public_id,
+                    "entry_name" : secure_data.entry_name,
+                    "website" : secure_data.website,
+                    "username" : secure_data.username,
+                    "password" : secure_data.password,
+                    "notes" : secure_data.notes
+                }
+
+        except Exception as e:
+            logger.error(f"get_secure_entry_data: Error - {e}")
+            return
