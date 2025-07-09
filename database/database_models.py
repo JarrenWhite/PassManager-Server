@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from typing import List
+from typing import List, Optional
 
 Base = declarative_base()
 
@@ -30,10 +30,10 @@ class SecureData(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
-    entry_name: Mapped[str] = mapped_column(String)
-    website: Mapped[str] = mapped_column(String)
-    username: Mapped[str] = mapped_column(String)
-    password: Mapped[str] = mapped_column(String)
-    notes: Mapped[str] = mapped_column(String)
+    entry_name: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    website: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    username: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    password: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="secure_data")

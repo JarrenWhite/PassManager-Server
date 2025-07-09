@@ -276,7 +276,7 @@ class TestDatabaseModels():
         # Query the secure data from database to ensure it was saved
         retrieved_secure_data = self.session.query(SecureData).filter_by(id=test_secure_data.id).first()
         assert retrieved_secure_data is not None
-        assert retrieved_secure_data.user_id == test_secure_data.id
+        assert retrieved_secure_data.user_id == test_user.id
         assert retrieved_secure_data.public_id == test_secure_data.public_id
         assert retrieved_secure_data.entry_name == test_secure_data.entry_name
         assert retrieved_secure_data.website == test_secure_data.website
