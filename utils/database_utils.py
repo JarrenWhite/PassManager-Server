@@ -1,11 +1,11 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Optional, List, Tuple, Dict
 from contextlib import contextmanager
 import logging
 logger = logging.getLogger("database")
 
 from database import init_db, get_session_local, User, LoginSession, SecureData
-from sqlalchemy import select, datetime
+from sqlalchemy import select
 
 class DatabaseUtils:
     database_initialised = False
@@ -98,7 +98,7 @@ class DatabaseUtils:
                     return False
 
                 # Create login session
-                expiry = datetime.now() + timedelta(duration_till_expiry)
+                expiry = datetime.now() + duration_till_expiry
                 new_login_session = LoginSession(user=user, token=token, expiry=expiry)
 
                 session.add(new_login_session)
@@ -274,7 +274,7 @@ class DatabaseUtils:
             return False
 
     @staticmethod
-    def get_secure_entries_list(username: str) -> Optional[List[Tuple[str, str]]]:
+    def get_secure_entries_list(username: str) -> Optional[List[Tuple[Optional[str], str]]]:
         """Get names and public ids for all secure entries for a given user, returns (name, public_id)"""
         try:
             with DatabaseUtils.get_db_session() as session:
@@ -289,11 +289,10 @@ class DatabaseUtils:
 
         except Exception as e:
             logger.error(f"get_secure_entries_list: Error - {e}")
-
             return
 
     @staticmethod
-    def get_secure_entry_data(entry_public_id: str) -> Optional[Dict[str, str]]:
+    def get_secure_entry_data(entry_public_id: str) -> Optional[Dict[str, Optional[str]]]:
         """Get the content of a given secure data entry, if it exists"""
         try:
             with DatabaseUtils.get_db_session() as session:
