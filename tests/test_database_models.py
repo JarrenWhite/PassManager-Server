@@ -76,7 +76,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected uniqueness constraint violation but no exception was raised")
+            raise AssertionError("Expected uniqueness constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("unique constraint failed" in error_message or
@@ -100,7 +100,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected NOT NULL constraint violation for username but no exception was raised")
+            raise AssertionError("Expected NOT NULL constraint violation for username but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -118,7 +118,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected NOT NULL constraint violation for password_hash but no exception was raised")
+            raise AssertionError("Expected NOT NULL constraint violation for password_hash but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -189,7 +189,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected NOT NULL constraint violation for user_id but no exception was raised")
+            raise AssertionError("Expected NOT NULL constraint violation for user_id but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -208,7 +208,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected NOT NULL constraint violation for token but no exception was raised")
+            raise AssertionError("Expected NOT NULL constraint violation for token but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -227,7 +227,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected NOT NULL constraint violation for expiry but no exception was raised")
+            raise AssertionError("Expected NOT NULL constraint violation for expiry but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -300,7 +300,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected NOT NULL constraint violation for user_id but no exception was raised")
+            raise AssertionError("Expected NOT NULL constraint violation for user_id but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -493,7 +493,10 @@ class TestDatabaseModels():
         assert secure_data_2.user.password_hash == "hashed_password_123"
 
         # Test filtering secure data through relationships
-        website_entries = [entry for entry in test_user.secure_data if "website_1" in entry.website]
+        website_entries = [
+            entry for entry in test_user.secure_data
+            if isinstance(entry.website, str) and "website_1" in entry.website
+        ]
         assert len(website_entries) == 1
         assert website_entries[0].entry_name == "test_stored_password_title_1"
 
@@ -621,7 +624,7 @@ class TestDatabaseModels():
         # Attempt to commit
         try:
             self.session.commit()
-            self.fail("Expected uniqueness constraint violation for token but no exception was raised")
+            raise AssertionError("Expected uniqueness constraint violation for token but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("unique constraint failed" in error_message or
@@ -712,6 +715,11 @@ class TestDatabaseModels():
         retrieved_unicode = self.session.query(User).filter_by(id=test_user_unicode.id).first()
         retrieved_mixed = self.session.query(User).filter_by(id=test_user_mixed.id).first()
 
+        assert retrieved_long is not None, "Long username user not found in DB"
+        assert retrieved_special is not None, "Special character username user not found in DB"
+        assert retrieved_unicode is not None, "Unicode username user not found in DB"
+        assert retrieved_mixed is not None, "Mixed username user not found in DB"
+
         assert retrieved_long.username == long_username
         assert retrieved_special.username == special_chars_username
         assert retrieved_unicode.username == unicode_username
@@ -775,6 +783,10 @@ class TestDatabaseModels():
         retrieved_long = self.session.query(SecureData).filter_by(id=test_secure_data_long.id).first()
         retrieved_special = self.session.query(SecureData).filter_by(id=test_secure_data_special.id).first()
         retrieved_unicode = self.session.query(SecureData).filter_by(id=test_secure_data_unicode.id).first()
+
+        assert retrieved_long is not None, "SecureData with long strings not found"
+        assert retrieved_special is not None, "SecureData with special characters not found"
+        assert retrieved_unicode is not None, "SecureData with unicode not found"
 
         assert retrieved_long.entry_name == long_string
         assert retrieved_special.entry_name == special_chars
@@ -874,6 +886,11 @@ class TestDatabaseModels():
         retrieved_2 = self.session.query(SecureData).filter_by(id=test_secure_data_2.id).first()
         retrieved_3 = self.session.query(SecureData).filter_by(id=test_secure_data_3.id).first()
         retrieved_4 = self.session.query(SecureData).filter_by(id=test_secure_data_4.id).first()
+
+        assert retrieved_1 is not None
+        assert retrieved_2 is not None
+        assert retrieved_3 is not None
+        assert retrieved_4 is not None
 
         # Test entry_name field integrity
         assert retrieved_1.entry_name == entry_name_long
