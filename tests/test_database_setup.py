@@ -40,14 +40,14 @@ class TestDatabaseSetup:
             try:
                 session.close()
             except Exception as e:
-                pytest.fail(f"Failed to close session during cleanup: {e}")
+                raise AssertionError(f"Failed to close session during cleanup: {e}")
 
         # Dispose tracked engines
         for engine in self.engines_to_dispose:
             try:
                 engine.dispose()
             except Exception as e:
-                pytest.fail(f"Failed to dispose engine during cleanup: {e}")
+                raise AssertionError(f"Failed to dispose engine during cleanup: {e}")
 
         # Reset the singleton engine to ensure proper cleanup
         try:
@@ -65,7 +65,7 @@ class TestDatabaseSetup:
         try:
             shutil.rmtree(self.test_dir, ignore_errors=True)
         except Exception as e:
-            pytest.fail(f"Failed to remove test database file during cleanup: {e}")
+            raise AssertionError(f"Failed to remove test database file during cleanup: {e}")
 
         # Restore original environment variable
         if self.original_vault_path is not None:
@@ -85,8 +85,7 @@ class TestDatabaseSetup:
                 return
             except (OSError, PermissionError) as e:
                 if attempt == 4:
-                    pytest.fail(f"Warning: Could not remove test database file: {e}")
-                    return
+                    raise AssertionError(f"Warning: Could not remove test database file: {e}")
                 time.sleep(0.1 * (attempt + 1))
 
     def test_get_db_filename_with_env_var(self):
