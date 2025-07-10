@@ -1,35 +1,36 @@
 import os
 import logging
+from typing import Optional
 logger = logging.getLogger("database")
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import sessionmaker, Session
 
 from .database_models import Base
 
 # Global engine instance to avoid creating multiple engines
-_engine = None
-_session_local = None
+_engine: Optional[Engine] = None
+_session_local: Optional[sessionmaker[Session]] = None
 
-def get_db_filename():
+def get_db_filename() -> str:
     return os.getenv("VAULT_PATH", "data/vault.db")
 
-def get_db_url():
+def get_db_url() -> str:
     return f"sqlite:///{get_db_filename()}"
 
-def get_engine():
+def get_engine() -> Engine:
     global _engine
     if _engine is None:
         _engine = create_engine(get_db_url(), pool_pre_ping=True)
     return _engine
 
-def get_session_local():
+def get_session_local() -> sessionmaker[Session]:
     global _session_local
     if _session_local is None:
         _session_local = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
     return _session_local
 
-def reset_engine():
+def reset_engine() -> None:
     """Reset the global engine and session factory. Used for testing."""
     global _engine, _session_local
     if _engine:
@@ -37,7 +38,7 @@ def reset_engine():
     _engine = None
     _session_local = None
 
-def init_db():
+def init_db() -> None:
     db_filename = get_db_filename()
     if not os.path.exists(db_filename):
         logger.info("init_db: Database not found. Creating new database.")
