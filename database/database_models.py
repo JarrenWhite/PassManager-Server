@@ -1,6 +1,7 @@
 import uuid
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from datetime import datetime
+from sqlalchemy import Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from typing import List, Optional
@@ -21,7 +22,7 @@ class LoginSession(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     token: Mapped[str] = mapped_column(String, nullable=False, unique=True, index=True)
-    expiry: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    expiry: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="login_sessions")
 

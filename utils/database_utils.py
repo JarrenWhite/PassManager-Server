@@ -119,6 +119,12 @@ class DatabaseUtils:
                 if not login_session:
                     logger.warning(f"check_session_token: Token '{token[:-4]}' could not be found.")
                     return
+
+                if login_session.expiry < datetime.now():
+                    logger.warning(f"check_session_token: Token '{token[:-4]}' could not be found.")
+                    session.delete(login_session)
+                    return
+
                 user = login_session.user
                 if user:
                     return user.username
