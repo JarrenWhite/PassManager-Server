@@ -24,8 +24,6 @@ class TestDatabaseSetup:
 
         # Create a temporary directory for test database
         self.test_dir = tempfile.mkdtemp()
-
-        # Set up test database path
         self.test_db_path = os.path.join(self.test_dir, "test_vault.db")
         os.environ["VAULT_PATH"] = self.test_db_path
 
@@ -35,30 +33,25 @@ class TestDatabaseSetup:
 
         yield
 
-        # Cleanup: Close all sessions
         for session in self.sessions_to_close:
             try:
                 session.close()
             except Exception as e:
                 raise AssertionError(f"Failed to close session during cleanup: {e}")
 
-        # Dispose tracked engines
         for engine in self.engines_to_dispose:
             try:
                 engine.dispose()
             except Exception as e:
                 raise AssertionError(f"Failed to dispose engine during cleanup: {e}")
 
-        # Reset the singleton engine to ensure proper cleanup
         try:
             reset_engine()
         except Exception:
             pass
 
-        # Force garbage collection to help release file handles
+        # Force garbage collection
         gc.collect()
-
-        # Try multiple times to remove the database file (Windows file locking)
         self._safe_remove_database()
 
         # Clean up the test directory
