@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.database_utils import DatabaseUtils
 from database.database_setup import reset_engine
 
+
 class TestDatabaseUtils:
     """Test cases for database utils."""
 
