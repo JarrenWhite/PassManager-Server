@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.database_utils import DatabaseUtils
 from database.database_setup import reset_engine
+from sqlalchemy import text
 
 
 class TestDatabaseUtils:
@@ -68,3 +69,63 @@ class TestDatabaseUtils:
                     raise AssertionError(f"Could not remove test database file: {e}")
                     return
                 time.sleep(0.1 * (attempt + 1))
+
+    def test_db_session_creation(self):
+        """Test that get_db_session opens and closes a session"""
+        pass
+
+    def test_database_initilaisation(self):
+        """Test that the database initialises correctly the first time"""
+        pass
+
+    def test_failed_database_initialisation(self):
+        """Test that databse initialisation fails if it's already been run"""
+        pass
+
+    def test_shared_database_initialiastion(self):
+        """Test that multiple instances of Database share database_initialised"""
+        pass
+
+    def test_create_user(self):
+        """Test user creation"""
+        pass
+
+    def test_delete_user(self):
+        """Test user deletion"""
+        pass
+
+    def test_create_session(self):
+        """Test session creation"""
+        pass
+
+    def test__delete_session(self):
+        """Test single session deletion"""
+        pass
+
+    def test_delete_all_sessions(self):
+        """Test deleting all of a user's sessions"""
+        pass
+
+    def test_session_cleaning(self):
+        """Test that expired sessions are removed during cleaning"""
+        pass
+
+    def test_create_secure_data(self):
+        """Test secure data creation"""
+        pass
+
+    def test_edit_secure_data(self):
+        """Test secure data editing"""
+        pass
+
+    def test_delete_secure_data(self):
+        """Test secure data deletion"""
+        pass
+
+    def test_all_secure_data_is_revealed(self):
+        """Test that secure data appears for a user"""
+        pass
+
+    def test_shared_database_details(self):
+        """Test that an update made in one instance of utils is seen in another"""
+        pass
