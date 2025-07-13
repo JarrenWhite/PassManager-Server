@@ -90,42 +90,131 @@ class TestDatabaseUtils:
         """Test user creation"""
         pass
 
+    def test_create_user_duplicate_username(self):
+        """Test creating a user with a username that already exists"""
+        pass
+
     def test_delete_user(self):
         """Test user deletion"""
+        pass
+
+    def test_delete_user_cascades_to_sessions(self):
+        """Test that deleting a user also removes their sessions"""
+        pass
+
+    def test_delete_user_cascades_to_secure_data(self):
+        """Test that deleting a user also removes their secure data"""
+        pass
+
+
+    def test_get_user_password_hash_existing_user(self):
+        """Test retrieving password hash for an existing user"""
+        pass
+
+    def test_get_user_password_hash_nonexistent_user(self):
+        """Test retrieving password hash for a user that doesn't exist"""
         pass
 
     def test_create_session(self):
         """Test session creation"""
         pass
 
+    def test_create_session_nonexistent_user(self):
+        """Test creating a session for a user that doesn't exist"""
+        pass
+
+    def test_check_session_token_valid_token(self):
+        """Test checking a valid, non-expired session token"""
+        pass
+
+    def test_check_session_token_expired_token(self):
+        """Test checking an expired session token (should delete and return None)"""
+        pass
+
+    def test_check_session_token_nonexistent_token(self):
+        """Test checking a token that doesn't exist"""
+        pass
+
     def test__delete_session(self):
         """Test single session deletion"""
+        pass
+
+    def test_delete_session_nonexistent_token(self):
+        """Test deleting a session token that doesn't exist"""
         pass
 
     def test_delete_all_sessions(self):
         """Test deleting all of a user's sessions"""
         pass
 
-    def test_session_cleaning(self):
-        """Test that expired sessions are removed during cleaning"""
+    def test_delete_all_sessions_nonexistent_user(self):
+        """Test deleting all sessions for a user that doesn't exist"""
+        pass
+
+    def test_clean_sessions_with_expired_sessions(self):
+        """Test cleaning sessions when there are expired sessions to remove"""
+        pass
+
+    def test_clean_sessions_with_no_expired_sessions(self):
+        """Test cleaning sessions when there are no expired sessions"""
+        pass
+
+    def test_clean_sessions_with_mix_of_expiry(self):
+        """Test cleaning sessions when there are a mix of expired sessions"""
         pass
 
     def test_create_secure_data(self):
         """Test secure data creation"""
         pass
 
+    def test_create_secure_data_nonexistent_user(self):
+        """Test creating secure data for a user that doesn't exist"""
+        pass
+
     def test_edit_secure_data(self):
         """Test secure data editing"""
+        pass
+
+    def test_edit_secure_data_partial_update(self):
+        """Test editing secure data with only some fields updated"""
+        pass
+
+    def test_edit_secure_data_nonexistent_entry(self):
+        """Test editing a secure entry that doesn't exist"""
         pass
 
     def test_delete_secure_data(self):
         """Test secure data deletion"""
         pass
 
-    def test_all_secure_data_is_revealed(self):
-        """Test that secure data appears for a user"""
+    def test_get_secure_entries_list_existing_user(self):
+        """Test getting secure entries list for a user with data"""
+        pass
+
+    def test_get_secure_entries_list_user_without_data(self):
+        """Test getting secure entries list for a user with no secure data"""
+        pass
+
+    def test_get_secure_entries_list_nonexistent_user(self):
+        """Test getting secure entries list for a user that doesn't exist"""
+        pass
+
+    def test_get_secure_entry_data_existing_entry(self):
+        """Test retrieving data for an existing secure entry"""
+        pass
+
+    def test_get_secure_entry_data_nonexistent_entry(self):
+        """Test retrieving data for a secure entry that doesn't exist"""
         pass
 
     def test_shared_database_details(self):
         """Test that an update made in one instance of utils is seen in another"""
+        pass
+
+    def test_database_session_rollback_on_exception(self):
+        """Test that database session properly rolls back on exception"""
+        pass
+
+    def test_database_session_commit_on_success(self):
+        """Test that database session properly commits on successful operations"""
         pass
