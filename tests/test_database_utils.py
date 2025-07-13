@@ -10,7 +10,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.database_utils import DatabaseUtils
 from database.database_setup import reset_engine
-from sqlalchemy import text
 
 
 class TestDatabaseUtils:
@@ -105,7 +104,6 @@ class TestDatabaseUtils:
     def test_delete_user_cascades_to_secure_data(self):
         """Test that deleting a user also removes their secure data"""
         pass
-
 
     def test_get_user_password_hash_existing_user(self):
         """Test retrieving password hash for an existing user"""
