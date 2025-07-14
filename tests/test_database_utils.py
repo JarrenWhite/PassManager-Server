@@ -6,6 +6,8 @@ import shutil
 import time
 import gc
 
+from sqlalchemy import text
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.database_utils import DatabaseUtils
@@ -70,19 +72,87 @@ class TestDatabaseUtils:
                 time.sleep(0.1 * (attempt + 1))
 
     def test_db_session_creation(self):
-        """Test that get_db_session opens and closes a session"""
-        pass
+        """Test that get_db_session opens a session (cannot verify close)"""
+        with DatabaseUtils.get_db_session() as session:
+            # Check that session exists
+            result = session.execute(text("SELECT 1")).scalar()
+            assert result == 1
+
+            # Check that session is correct
+            assert session is not None
+            assert hasattr(session, 'commit')
+            assert hasattr(session, 'rollback')
+            assert hasattr(session, 'close')
 
     def test_database_initilaisation(self):
         """Test that the database initialises correctly the first time"""
-        pass
+        # Clean up existing database and reset everything
+        reset_engine()
+        self._safe_remove_database()
+        DatabaseUtils.database_initialised = False
+        assert DatabaseUtils.database_initialised is False
+        assert not os.path.exists(self.test_db_path)
+
+        # Test that initialization returns True on first run
+        result = DatabaseUtils.init_database()
+        assert result is True
+        assert DatabaseUtils.database_initialised is True
+
+        # Verify that the database file & tables were created
+        assert os.path.exists(self.test_db_path)
+        with DatabaseUtils.get_db_session() as session:
+            tables = session.execute(text("SELECT name FROM sqlite_master WHERE type='table'")).fetchall()
+            table_names = [table[0] for table in tables]
+            assert 'user' in table_names
+            assert 'session' in table_names
+            assert 'encrypted' in table_names
 
     def test_failed_database_initialisation(self):
         """Test that databse initialisation fails if it's already been run"""
-        pass
+        # Ensure database is already initialized
+        assert DatabaseUtils.database_initialised is True
+        assert os.path.exists(self.test_db_path)
+
+        # Create some test data to verify it's the same database after failed init
+        test_username = "test_user_for_same_db_check"
+        test_password_hash = "test_hash_123"
+
+        # Insert test data into the existing database
+        with DatabaseUtils.get_db_session() as session:
+            from database.database_models import User
+            test_user = User(username=test_username, password_hash=test_password_hash)
+            session.add(test_user)
+            session.commit()
+
+            # Verify the test data was inserted
+            user_count_before = session.execute(text("SELECT COUNT(*) FROM user")).scalar()
+            assert user_count_before is not None
+            assert user_count_before >= 1
+
+        # Test that initialization returns False when already initialized
+        result = DatabaseUtils.init_database()
+        assert result is False
+        assert DatabaseUtils.database_initialised is True
+
+        # Verify database file still exists and is functional
+        assert os.path.exists(self.test_db_path)
+        with DatabaseUtils.get_db_session() as session:
+            result = session.execute(text("SELECT 1")).scalar()
+            assert result == 1
+
+            # Verify our test data is still there (proving it's the same database)
+            user_count_after = session.execute(text("SELECT COUNT(*) FROM user")).scalar()
+            assert user_count_after == user_count_before
+
+            # Verify the specific test user still exists
+            test_user_exists = session.execute(
+                text("SELECT username FROM user WHERE username = :username"),
+                {"username": test_username}
+            ).scalar()
+            assert test_user_exists == test_username
 
     def test_shared_database_initialiastion(self):
-        """Test that multiple instances of Database share database_initialised"""
+        """Test that multiple instances of DatabaseUtils share database_initialised"""
         pass
 
     def test_create_user(self):
