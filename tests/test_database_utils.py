@@ -318,3 +318,7 @@ class TestDatabaseUtils:
     def test_database_session_commit_on_success(self):
         """Test that database session properly commits on successful operations"""
         pass
+
+
+if __name__ == '__main__':
+    pytest.main(['-v', __file__])
