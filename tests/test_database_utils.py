@@ -151,21 +151,53 @@ class TestDatabaseUtils:
             ).scalar()
             assert test_user_exists == test_username
 
-    def test_shared_database_initialiastion(self):
-        """Test that multiple instances of DatabaseUtils share database_initialised"""
-        pass
-
     def test_create_user(self):
         """Test user creation"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        result = DatabaseUtils.create_user(test_username, test_password_hash)
+
+        # Confirm user was added correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
     def test_create_user_duplicate_username(self):
         """Test creating a user with a username that already exists"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        result = DatabaseUtils.create_user(test_username, test_password_hash)
+
+        # Confirm user was added correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create another user with the same username
+        second_test_password_hash = "new_hashed_password_456"
+        result = DatabaseUtils.create_user(test_username, second_test_password_hash)
+
+        # Confirm second user was not added
+        assert result is False
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
     def test_delete_user(self):
         """Test user deletion"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        result = DatabaseUtils.create_user(test_username, test_password_hash)
+
+        # Confirm user was added correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Delete user
+        result = DatabaseUtils.delete_user(test_username)
+
+        # Confirm user was deleted correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) is None
 
     def test_delete_user_cascades_to_sessions(self):
         """Test that deleting a user also removes their sessions"""
