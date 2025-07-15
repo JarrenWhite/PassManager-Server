@@ -30,6 +30,8 @@ class TestDatabaseUtils:
 
         # Reset engine and initialize database
         reset_engine()
+        self._safe_remove_database()
+        DatabaseUtils.database_initialised = False
         DatabaseUtils.init_database()
 
         yield
