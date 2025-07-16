@@ -218,7 +218,7 @@ class DatabaseUtils:
                                              notes=notes_enc)
 
                 session.add(new_secure_data)
-                logger.info(f"create_secure_data: Secure data '{new_secure_data.entry_public_id}' created successfully.")
+                logger.info(f"create_secure_data: Secure data '{new_secure_data.public_id}' created successfully.")
                 return True
 
         except Exception as e:
@@ -253,7 +253,7 @@ class DatabaseUtils:
                 if notes_enc:
                     secure_data.notes = notes_enc
 
-                logger.info(f"edit_secure_data: Secure data '{secure_data.entry_public_id}' edited successfully.")
+                logger.info(f"edit_secure_data: Secure data '{entry_public_id}' edited successfully.")
                 return True
 
         except Exception as e:

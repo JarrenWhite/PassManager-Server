@@ -284,7 +284,7 @@ class TestDatabaseUtils:
         assert DatabaseUtils.check_session_token(session_token_1) == test_username
 
         # Create additional Session
-        session_token_2 = "session_01"
+        session_token_2 = "session_02"
         session_expiry_time_2 = timedelta(hours=1)
         result = DatabaseUtils.create_session(test_username, session_token_2, session_expiry_time_2)
 
