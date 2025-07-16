@@ -161,7 +161,7 @@ class TestDatabaseUtils:
         test_password_hash = "hashed_password_123"
         result = DatabaseUtils.create_user(test_username, test_password_hash)
 
-        # Confirm user was added correctly
+        # Confirm user added
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
@@ -172,7 +172,7 @@ class TestDatabaseUtils:
         test_password_hash = "hashed_password_123"
         result = DatabaseUtils.create_user(test_username, test_password_hash)
 
-        # Confirm user was added correctly
+        # Confirm user added
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
@@ -181,7 +181,7 @@ class TestDatabaseUtils:
         session_expiry_time = timedelta(hours=1)
         result = DatabaseUtils.create_session(test_username, session_token, session_expiry_time)
 
-        # Confirm session was added correctly
+        # Confirm session added
         assert result is True
         assert DatabaseUtils.check_session_token(session_token) == test_username
 
@@ -192,7 +192,7 @@ class TestDatabaseUtils:
         test_password_hash = "hashed_password_123"
         result = DatabaseUtils.create_user(test_username, test_password_hash)
 
-        # Confirm user was added correctly
+        # Confirm user added
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
@@ -216,7 +216,7 @@ class TestDatabaseUtils:
         assert entry_public_id is not None
         assert len(entry_public_id) > 0
 
-        # Verify the secure data content was stored correctly
+        # Verify secure data content
         entry_data = DatabaseUtils.get_secure_entry_data(entry_public_id)
         assert entry_data is not None
         assert entry_data["entry_name"] == entry_name
@@ -233,7 +233,7 @@ class TestDatabaseUtils:
         test_password_hash = "hashed_password_123"
         result = DatabaseUtils.create_user(test_username, test_password_hash)
 
-        # Confirm user was added correctly
+        # Confirm user added
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
@@ -252,14 +252,14 @@ class TestDatabaseUtils:
         test_password_hash = "hashed_password_123"
         result = DatabaseUtils.create_user(test_username, test_password_hash)
 
-        # Confirm user was added correctly
+        # Confirm user added
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
         # Delete user
         result = DatabaseUtils.delete_user(test_username)
 
-        # Confirm user was deleted correctly
+        # Confirm user deleted
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) is None
 
@@ -295,11 +295,11 @@ class TestDatabaseUtils:
         # Delete user
         result = DatabaseUtils.delete_user(test_username)
 
-        # Confirm user was deleted correctly
+        # Confirm user deleted
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) is None
 
-        # Confirm sessions were deleted correctly
+        # Confirm sessions deleted
         assert DatabaseUtils.check_session_token(session_token_1) is None
         assert DatabaseUtils.check_session_token(session_token_2) is None
 
