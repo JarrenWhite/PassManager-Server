@@ -5,6 +5,7 @@ import tempfile
 import shutil
 import time
 import gc
+from datetime import datetime, timedelta
 
 from sqlalchemy import text
 
@@ -164,6 +165,67 @@ class TestDatabaseUtils:
         assert result is True
         assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
 
+    def test_create_session(self):
+        """Test session creation"""
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        result = DatabaseUtils.create_user(test_username, test_password_hash)
+
+        # Confirm user was added correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Session
+        session_token = "session_01"
+        session_expiry_time = timedelta(hours=1)
+        result = DatabaseUtils.create_session(test_username, session_token, session_expiry_time)
+
+        # Confirm session was added correctly
+        assert result is True
+        assert DatabaseUtils.check_session_token(session_token) == test_username
+
+    def test_create_secure_data(self):
+        """Test secure data creation"""
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        result = DatabaseUtils.create_user(test_username, test_password_hash)
+
+        # Confirm user was added correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Secure Data
+        entry_name = "test_stored_password_title"
+        website = "test_encrypted_website"
+        username = "test_encrypted_username"
+        password = "test_encrypted_password"
+        notes = "test_encrypted_notes"
+        result = DatabaseUtils.create_secure_data(test_username, entry_name, website, username, password, notes)
+
+        # Confirm Secure Data added
+        assert result is True
+        entries_list = DatabaseUtils.get_secure_entries_list(test_username)
+        assert entries_list is not None
+        assert len(entries_list) == 1
+
+        # Check that entry data matches
+        retrieved_entry_name, entry_public_id = entries_list[0]
+        assert retrieved_entry_name == entry_name
+        assert entry_public_id is not None
+        assert len(entry_public_id) > 0
+
+        # Verify the secure data content was stored correctly
+        entry_data = DatabaseUtils.get_secure_entry_data(entry_public_id)
+        assert entry_data is not None
+        assert entry_data["entry_name"] == entry_name
+        assert entry_data["website"] == website
+        assert entry_data["username"] == username
+        assert entry_data["password"] == password
+        assert entry_data["notes"] == notes
+        assert entry_data["public_id"] == entry_public_id
+
     def test_create_user_duplicate_username(self):
         """Test creating a user with a username that already exists"""
         # Create user
@@ -203,7 +265,43 @@ class TestDatabaseUtils:
 
     def test_delete_user_cascades_to_sessions(self):
         """Test that deleting a user also removes their sessions"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        result = DatabaseUtils.create_user(test_username, test_password_hash)
+
+        # Confirm user was added
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Session
+        session_token_1 = "session_01"
+        session_expiry_time_1 = timedelta(hours=1)
+        result = DatabaseUtils.create_session(test_username, session_token_1, session_expiry_time_1)
+
+        # Confirm session added
+        assert result is True
+        assert DatabaseUtils.check_session_token(session_token_1) == test_username
+
+        # Create additional Session
+        session_token_2 = "session_01"
+        session_expiry_time_2 = timedelta(hours=1)
+        result = DatabaseUtils.create_session(test_username, session_token_2, session_expiry_time_2)
+
+        # Confirm additional session added
+        assert result is True
+        assert DatabaseUtils.check_session_token(session_token_2) == test_username
+
+        # Delete user
+        result = DatabaseUtils.delete_user(test_username)
+
+        # Confirm user was deleted correctly
+        assert result is True
+        assert DatabaseUtils.get_user_password_hash(test_username) is None
+
+        # Confirm sessions were deleted correctly
+        assert DatabaseUtils.check_session_token(session_token_1) is None
+        assert DatabaseUtils.check_session_token(session_token_2) is None
 
     def test_delete_user_cascades_to_secure_data(self):
         """Test that deleting a user also removes their secure data"""
@@ -215,10 +313,6 @@ class TestDatabaseUtils:
 
     def test_get_user_password_hash_nonexistent_user(self):
         """Test retrieving password hash for a user that doesn't exist"""
-        pass
-
-    def test_create_session(self):
-        """Test session creation"""
         pass
 
     def test_create_session_nonexistent_user(self):
@@ -263,10 +357,6 @@ class TestDatabaseUtils:
 
     def test_clean_sessions_with_mix_of_expiry(self):
         """Test cleaning sessions when there are a mix of expired sessions"""
-        pass
-
-    def test_create_secure_data(self):
-        """Test secure data creation"""
         pass
 
     def test_create_secure_data_nonexistent_user(self):
