@@ -352,8 +352,8 @@ class TestDatabaseUtils:
 
         # Confirm Secure Data deleted
         assert DatabaseUtils.get_secure_entries_list(test_username) is None
-        assert DatabaseUtils.get_secure_entry_data(secure_data_1_public_id)
-        assert DatabaseUtils.get_secure_entry_data(secure_data_2_public_id)
+        assert DatabaseUtils.get_secure_entry_data(secure_data_1_public_id) is None
+        assert DatabaseUtils.get_secure_entry_data(secure_data_2_public_id) is None
 
     def test_get_user_password_hash_nonexistent_user(self):
         """Test retrieving password hash for a user that doesn't exist"""
@@ -379,7 +379,7 @@ class TestDatabaseUtils:
 
         # Ensure session was not created
         result = DatabaseUtils.check_session_token(session_token)
-        assert result is False
+        assert result is None
 
     def test_check_session_token_expired_token(self):
         """Test checking an expired session token (should delete and return None)"""
