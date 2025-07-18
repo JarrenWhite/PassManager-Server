@@ -265,24 +265,20 @@ class TestDatabaseUtils:
         session_expiry_time_1 = timedelta(hours=1)
         assert DatabaseUtils.create_session(test_username, session_token_1, session_expiry_time_1) is True
 
-        # Confirm session added
-        assert DatabaseUtils.check_session_token(session_token_1) == test_username
-
         # Create additional Session
         session_token_2 = "session_02"
         session_expiry_time_2 = timedelta(hours=1)
         assert DatabaseUtils.create_session(test_username, session_token_2, session_expiry_time_2) is True
 
-        # Confirm additional session added
+        # Confirm additional sessions added
+        assert DatabaseUtils.check_session_token(session_token_1) == test_username
         assert DatabaseUtils.check_session_token(session_token_2) == test_username
 
         # Delete user
         assert DatabaseUtils.delete_user(test_username) is True
 
-        # Confirm user deleted
+        # Confirm user and sessions deleted
         assert DatabaseUtils.get_user_password_hash(test_username) is None
-
-        # Confirm sessions deleted
         assert DatabaseUtils.check_session_token(session_token_1) is None
         assert DatabaseUtils.check_session_token(session_token_2) is None
 
@@ -326,10 +322,8 @@ class TestDatabaseUtils:
         # Delete user
         assert DatabaseUtils.delete_user(test_username) is True
 
-        # Confirm user deleted
+        # Confirm user & Secure Data deleted
         assert DatabaseUtils.get_user_password_hash(test_username) is None
-
-        # Confirm Secure Data deleted
         assert DatabaseUtils.get_secure_entries_list(test_username) is None
         assert DatabaseUtils.get_secure_entry_data(secure_data_1_public_id) is None
         assert DatabaseUtils.get_secure_entry_data(secure_data_2_public_id) is None
