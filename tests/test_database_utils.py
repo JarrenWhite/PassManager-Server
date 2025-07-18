@@ -728,7 +728,7 @@ class TestDatabaseUtils:
         assert DatabaseUtils.delete_secure_data(entry_public_id) is True
 
     def test_delete_secure_data_non_existing_data(self):
-        """Test deleteing secure entry which does not exist"""
+        """Test deleting secure entry which does not exist"""
         fake_public_entry_id = "public_entry_id"
         assert DatabaseUtils.delete_secure_data(fake_public_entry_id) is False
 
