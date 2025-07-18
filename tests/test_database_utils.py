@@ -564,23 +564,173 @@ class TestDatabaseUtils:
 
     def test_create_secure_data_nonexistent_user(self):
         """Test creating secure data for a user that doesn't exist"""
-        pass
+        # Confirm user does not exist
+        test_username = "test_user"
+        assert DatabaseUtils.get_user_password_hash(test_username) is None
+
+        # Create Secure Data
+        entry_name = "test_stored_password_title"
+        website = "test_encrypted_website"
+        username = "test_encrypted_username"
+        password = "test_encrypted_password"
+        notes = "test_encrypted_notes"
+        assert DatabaseUtils.create_secure_data(test_username, entry_name, website, username, password, notes) is False
 
     def test_edit_secure_data(self):
         """Test secure data editing"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        assert DatabaseUtils.create_user(test_username, test_password_hash) is True
+
+        # Confirm user added
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Secure Data
+        entry_name_1 = "test_stored_password_title_1"
+        website_1 = "test_encrypted_website_1"
+        username_1 = "test_encrypted_username_1"
+        password_1 = "test_encrypted_password_1"
+        notes_1 = "test_encrypted_notes_1"
+        assert DatabaseUtils.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1) is True
+
+        # Confirm secure data added and get public id
+        entries_list = DatabaseUtils.get_secure_entries_list(test_username)
+        assert entries_list is not None
+        assert len(entries_list) == 1
+        _, entry_public_id = entries_list[0]
+
+        # Edit secure data
+        entry_name_2 = "test_stored_password_title_2"
+        website_2 = "test_encrypted_website_2"
+        username_2 = "test_encrypted_username_2"
+        password_2 = "test_encrypted_password_2"
+        notes_2 = "test_encrypted_notes_2"
+        assert DatabaseUtils.edit_secure_data(entry_public_id, entry_name_2, website_2, username_2, password_2, notes_2) is True
+
+        # Verify edited secure data content
+        entry_data = DatabaseUtils.get_secure_entry_data(entry_public_id)
+        assert entry_data is not None
+        assert entry_data["entry_name"] == entry_name_2
+        assert entry_data["website"] == website_2
+        assert entry_data["username"] == username_2
+        assert entry_data["password"] == password_2
+        assert entry_data["notes"] == notes_2
 
     def test_edit_secure_data_partial_update(self):
         """Test editing secure data with only some fields updated"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        assert DatabaseUtils.create_user(test_username, test_password_hash) is True
+
+        # Confirm user added
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Secure Data
+        entry_name_1 = "test_stored_password_title_1"
+        website_1 = "test_encrypted_website_1"
+        username_1 = "test_encrypted_username_1"
+        password_1 = "test_encrypted_password_1"
+        notes_1 = "test_encrypted_notes_1"
+        assert DatabaseUtils.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1) is True
+
+        # Confirm secure data added and get public id
+        entries_list = DatabaseUtils.get_secure_entries_list(test_username)
+        assert entries_list is not None
+        assert len(entries_list) == 1
+        _, entry_public_id = entries_list[0]
+
+        # Edit secure data
+        entry_name_2 = "test_stored_password_title_2"
+        username_2 = "test_encrypted_username_2"
+        notes_2 = "test_encrypted_notes_2"
+        assert DatabaseUtils.edit_secure_data(entry_public_id, entry_name_2, None, username_2, None, notes_2) is True
+
+        # Verify edited secure data content
+        entry_data = DatabaseUtils.get_secure_entry_data(entry_public_id)
+        assert entry_data is not None
+        # Old details unchanged
+        assert entry_data["website"] == website_1
+        assert entry_data["password"] == password_1
+        # New details changed
+        assert entry_data["entry_name"] == entry_name_2
+        assert entry_data["username"] == username_2
+        assert entry_data["notes"] == notes_2
+
+    def test_edit_secure_data_no_update(self):
+        """Test editing secure data with no fields updated"""
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        assert DatabaseUtils.create_user(test_username, test_password_hash) is True
+
+        # Confirm user added
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Secure Data
+        entry_name = "test_stored_password_title_1"
+        website = "test_encrypted_website_1"
+        username = "test_encrypted_username_1"
+        password = "test_encrypted_password_1"
+        notes = "test_encrypted_notes_1"
+        assert DatabaseUtils.create_secure_data(test_username, entry_name, website, username, password, notes) is True
+
+        # Confirm secure data added and get public id
+        entries_list = DatabaseUtils.get_secure_entries_list(test_username)
+        assert entries_list is not None
+        assert len(entries_list) == 1
+        _, entry_public_id = entries_list[0]
+
+        # Edit secure data
+        assert DatabaseUtils.edit_secure_data(entry_public_id, None, None, None, None, None) is True
+
+        # Verify edited secure data content
+        entry_data = DatabaseUtils.get_secure_entry_data(entry_public_id)
+        assert entry_data is not None
+        # Old details unchanged
+        assert entry_data["entry_name"] == entry_name
+        assert entry_data["website"] == website
+        assert entry_data["username"] == username
+        assert entry_data["password"] == password
+        assert entry_data["notes"] == notes
 
     def test_edit_secure_data_nonexistent_entry(self):
         """Test editing a secure entry that doesn't exist"""
-        pass
+        fake_public_entry_id = "public_entry_id"
+        assert DatabaseUtils.edit_secure_data(fake_public_entry_id, None, None, None, None, None) is False
 
     def test_delete_secure_data(self):
         """Test secure data deletion"""
-        pass
+        # Create user
+        test_username = "test_user"
+        test_password_hash = "hashed_password_123"
+        assert DatabaseUtils.create_user(test_username, test_password_hash) is True
+
+        # Confirm user added
+        assert DatabaseUtils.get_user_password_hash(test_username) == test_password_hash
+
+        # Create Secure Data
+        entry_name = "test_stored_password_title"
+        website = "test_encrypted_website"
+        username = "test_encrypted_username"
+        password = "test_encrypted_password"
+        notes = "test_encrypted_notes"
+        assert DatabaseUtils.create_secure_data(test_username, entry_name, website, username, password, notes) is True
+
+        # Confirm Secure Data added & get public ID
+        entries_list = DatabaseUtils.get_secure_entries_list(test_username)
+        assert entries_list is not None
+        assert len(entries_list) == 1
+        _, entry_public_id = entries_list[0]
+
+        # Delete secure data
+        assert DatabaseUtils.delete_secure_data(entry_public_id) is True
+
+    def test_delete_secure_data_non_existing_data(self):
+        """Test deleteing secure entry which does not exist"""
+        fake_public_entry_id = "public_entry_id"
+        assert DatabaseUtils.delete_secure_data(fake_public_entry_id) is False
 
     def test_get_secure_entries_list_existing_user(self):
         """Test getting secure entries list for a user with data"""
