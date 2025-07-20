@@ -1,7 +1,7 @@
 from utils import Database
 from config import setup_logging
 from flask import Flask
-from api import user_bp
+from api import user_bp, session_bp, data_bp
 
 # While in test mode, the APIs are only visile to the local PC
 test_mode = True
@@ -13,6 +13,8 @@ def initialise_application():
 def run_app():
     app = Flask(__name__)
     app.register_blueprint(user_bp)
+    app.register_blueprint(session_bp)
+    app.register_blueprint(data_bp)
 
     if test_mode:
         print("Starting application in Test mode...")
