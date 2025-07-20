@@ -2,6 +2,34 @@
 The Server-Side implementation of the password manager.
 
 
+## APIs
+
+This application supports REST APIs.
+
+### Base URL
+- **Development/Testing**: `http://127.0.0.1:5000` (local access only)
+- **Production**: `http://0.0.0.0:5000` (network accessible)
+
+### API Structure
+
+API endpoints follow the pattern: `/api/{type}/{callName}`
+
+Where:
+- `{type}` can be: `user`, `session`, `data`
+- `{callName}` is the specific endpoint name
+
+### API Testing
+
+Example curl commands:
+
+```bash
+# Health check
+curl http://127.0.0.1:5000/api/user/health
+
+# Hello world test
+curl http://127.0.0.1:5000/api/user/hello
+```
+
 
 ## Testing
 
