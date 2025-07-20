@@ -7,8 +7,10 @@ The Server-Side implementation of the password manager.
 This application supports REST APIs.
 
 ### Base URL
-- **Development/Testing**: `http://127.0.0.1:5000` (local access only)
-- **Production**: `http://0.0.0.0:5000` (network accessible)
+- **Development/Testing**: `https://127.0.0.1:5000` (local access only)
+- **Production**: `https://0.0.0.0:5000` (network accessible)
+
+**Note**: The server uses self-signed certificates for development. You may see security warnings in browsers - this is normal and expected for development environments.
 
 ### API Structure
 
@@ -29,20 +31,20 @@ Example curl commands:
 
 ```bash
 # Health check (GET)
-curl http://127.0.0.1:5000/api/user/health
+curl -k https://127.0.0.1:5000/api/user/health
 
 # Hello world test (POST with empty body)
-curl -X POST http://127.0.0.1:5000/api/user/hello
+curl -k -X POST https://127.0.0.1:5000/api/user/hello
 
 # Hello with custom message (POST with JSON body)
-curl -X POST http://127.0.0.1:5000/api/user/hello \
+curl -k -X POST https://127.0.0.1:5000/api/user/hello \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello from README"}'
 
 # Hello with multiple arguments (POST with JSON body)
-curl -X POST http://127.0.0.1:5000/api/user/hello \
+curl -k -X POST https://127.0.0.1:5000/api/user/hello \
   -H "Content-Type: application/json" \
-  -d "{"name": "John", "age": 25, "city": "New York"}"
+  -d '{"name": "John", "age": 25, "city": "New York"}'
 ```
 
 
