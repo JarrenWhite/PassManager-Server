@@ -1,2 +1,2 @@
-from .database_utils import DatabaseUtils
+from .database_utils import Database
 

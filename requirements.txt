@@ -1,2 +1,5 @@
 sqlalchemy == 2.0.41
 pytest == 8.4.1
+flask == 3.0.0
+pyOpenSSL == 23.3.0
+cryptography == 41.0.7
