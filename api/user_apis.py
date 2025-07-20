@@ -1,7 +1,21 @@
 from flask import Blueprint, jsonify, request
 
-# Create a Blueprint for user-related API routes
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
+
+@user_bp.route('/register', methods=['POST'])
+def user_register():
+    """Register a user"""
+    return jsonify({}), 201
+
+@user_bp.route('/auth', methods=['POST'])
+def user_auth():
+    """Authorise a user"""
+    return jsonify({}), 201
+
+@user_bp.route('/delete', methods=['POST'])
+def user_delete():
+    """Delete a user"""
+    return jsonify({}), 201
 
 @user_bp.route('/hello', methods=['POST'])
 def hello_world():
@@ -15,7 +29,7 @@ def hello_world():
         'message': 'Hello World!',
         'data': data,
         'status': 'success'
-    })
+    }), 201
 
 @user_bp.route('/health', methods=['GET'])
 def health_check():
@@ -23,4 +37,4 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'user-api'
-    })
+    }), 201
