@@ -3,15 +3,17 @@ from flask import Blueprint, jsonify, request
 # Create a Blueprint for user-related API routes
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
-@user_bp.route('/hello', methods=['GET'])
+@user_bp.route('/hello', methods=['POST'])
 def hello_world():
-    """Simple test endpoint that accepts arguments and returns them in a JSON response"""
-    args = dict(request.args)
-    message = request.args.get('message', 'Hello World!')
+    """Simple test endpoint that accepts data in request body and returns it in a JSON response"""
+    if request.is_json:
+        data = request.get_json() or {}
+    else:
+        data = dict(request.form) or {}
 
     return jsonify({
-        'message': message,
-        'arguments': args,
+        'message': 'Hello World!',
+        'data': data,
         'status': 'success'
     })
 

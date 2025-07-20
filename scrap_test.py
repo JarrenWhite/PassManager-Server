@@ -3,7 +3,7 @@ from config import setup_logging
 from flask import Flask
 from api import user_bp
 
-# While in test mode, the apis are only visile to the local PC
+# While in test mode, the APIs are only visile to the local PC
 test_mode = True
 
 def initialise_application():
