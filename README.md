@@ -18,6 +18,14 @@ Where:
 - `{type}` can be: `user`, `session`, `data`
 - `{callName}` is the specific endpoint name
 
+#### Query Parameters
+
+Many endpoints accept query parameters for additional functionality:
+
+- **GET requests**: Use query parameters in the URL (e.g., `?param1=value1&param2=value2`)
+- **Parameters are optional** unless specified otherwise
+- **URL encoding** is required for special characters (spaces become `%20`, etc.)
+
 ### API Testing
 
 Example curl commands:
@@ -28,6 +36,12 @@ curl http://127.0.0.1:5000/api/user/health
 
 # Hello world test
 curl http://127.0.0.1:5000/api/user/hello
+
+# Hello with custom message
+curl "http://127.0.0.1:5000/api/user/hello?message=Hello%20from%20README"
+
+# Hello with multiple arguments
+curl "http://127.0.0.1:5000/api/user/hello?name=John&age=25&city=New%20York"
 ```
 
 
