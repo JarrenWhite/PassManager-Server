@@ -1,21 +1,40 @@
 from flask import Blueprint, jsonify, request
+from services.user_service import user_register, user_auth, user_delete
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
 @user_bp.route('/register', methods=['POST'])
-def user_register():
+def user_register_endpoint():
     """Register a user"""
-    return jsonify({}), 201
+    if request.is_json:
+        data = request.get_json() or {}
+    else:
+        data = dict(request.form) or {}
+
+    result, status_code = user_register(data)
+    return jsonify(result), status_code
 
 @user_bp.route('/auth', methods=['POST'])
-def user_auth():
+def user_auth_endpoint():
     """Authorise a user"""
-    return jsonify({}), 201
+    if request.is_json:
+        data = request.get_json() or {}
+    else:
+        data = dict(request.form) or {}
+
+    result, status_code = user_auth(data)
+    return jsonify(result), status_code
 
 @user_bp.route('/delete', methods=['POST'])
-def user_delete():
+def user_delete_endpoint():
     """Delete a user"""
-    return jsonify({}), 201
+    if request.is_json:
+        data = request.get_json() or {}
+    else:
+        data = dict(request.form) or {}
+
+    result, status_code = user_delete(data)
+    return jsonify(result), status_code
 
 @user_bp.route('/hello', methods=['POST'])
 def hello_world():
