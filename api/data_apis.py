@@ -15,7 +15,7 @@ def data_create_endpoint():
     else:
         data = dict(request.form) or {}
 
-    logger.info(f"data_create_endpoint: Called")
+    logger.info("data_create_endpoint: Called")
     result, status_code = data_create(data)
     logger.info(f"data_create_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
@@ -28,7 +28,7 @@ def data_edit_endpoint():
     else:
         data = dict(request.form) or {}
 
-    logger.info(f"data_edit_endpoint: Called")
+    logger.info("data_edit_endpoint: Called")
     result, status_code = data_edit(data)
     logger.info(f"data_edit_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
@@ -41,7 +41,7 @@ def data_delete_endpoint():
     else:
         data = dict(request.form) or {}
 
-    logger.info(f"data_delete_endpoint: Called")
+    logger.info("data_delete_endpoint: Called")
     result, status_code = data_delete(data)
     logger.info(f"data_delete_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
@@ -54,7 +54,7 @@ def data_get_endpoint():
     else:
         data = dict(request.form) or {}
 
-    logger.info(f"data_get_endpoint: Called")
+    logger.info("data_get_endpoint: Called")
     result, status_code = data_get(data)
     logger.info(f"data_get_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
@@ -67,7 +67,7 @@ def data_get_all_endpoint():
     else:
         data = dict(request.form) or {}
 
-    logger.info(f"data_get_all_endpoint: Called")
+    logger.info("data_get_all_endpoint: Called")
     result, status_code = data_get_all(data)
     logger.info(f"data_get_all_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
@@ -75,7 +75,7 @@ def data_get_all_endpoint():
 @data_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for the session API"""
-    logger.info(f"data health_check: Received")
+    logger.info("data health_check: Received")
     return jsonify({
         'status': 'healthy',
         'service': 'data-api'
