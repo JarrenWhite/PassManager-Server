@@ -15,7 +15,9 @@ def session_create_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"session_create_endpoint: Called")
     result, status_code = session_create(data)
+    logger.info(f"session_create_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @session_bp.route('/auth', methods=['POST'])
@@ -26,7 +28,9 @@ def session_auth_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"session_auth_endpoint: Called")
     result, status_code = session_auth(data)
+    logger.info(f"session_auth_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @session_bp.route('/delete', methods=['POST'])
@@ -37,7 +41,9 @@ def session_delete_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"session_delete_endpoint: Called")
     result, status_code = session_delete(data)
+    logger.info(f"session_delete_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @session_bp.route('/clean', methods=['POST'])
@@ -48,12 +54,15 @@ def session_delete_all_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"session_delete_all_endpoint: Called")
     result, status_code = session_delete_all(data)
+    logger.info(f"session_delete_all_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @session_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for the session API"""
+    logger.info(f"session health_check: Received")
     return jsonify({
         'status': 'healthy',
         'service': 'session-api'

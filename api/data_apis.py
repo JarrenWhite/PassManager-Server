@@ -15,7 +15,9 @@ def data_create_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"data_create_endpoint: Called")
     result, status_code = data_create(data)
+    logger.info(f"data_create_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @data_bp.route('/edit', methods=['POST'])
@@ -26,7 +28,9 @@ def data_edit_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"data_edit_endpoint: Called")
     result, status_code = data_edit(data)
+    logger.info(f"data_edit_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @data_bp.route('/delete', methods=['POST'])
@@ -37,7 +41,9 @@ def data_delete_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"data_delete_endpoint: Called")
     result, status_code = data_delete(data)
+    logger.info(f"data_delete_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @data_bp.route('/entry', methods=['POST'])
@@ -48,7 +54,9 @@ def data_get_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"data_get_endpoint: Called")
     result, status_code = data_get(data)
+    logger.info(f"data_get_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @data_bp.route('/list', methods=['POST'])
@@ -59,12 +67,15 @@ def data_get_all_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"data_get_all_endpoint: Called")
     result, status_code = data_get_all(data)
+    logger.info(f"data_get_all_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @data_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for the session API"""
+    logger.info(f"data health_check: Received")
     return jsonify({
         'status': 'healthy',
         'service': 'data-api'

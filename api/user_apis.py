@@ -15,7 +15,9 @@ def user_register_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"user_register_endpoint: Called")
     result, status_code = user_register(data)
+    logger.info(f"user_register_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @user_bp.route('/auth', methods=['POST'])
@@ -26,7 +28,9 @@ def user_auth_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"user_auth_endpoint: Called")
     result, status_code = user_auth(data)
+    logger.info(f"user_auth_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @user_bp.route('/delete', methods=['POST'])
@@ -37,7 +41,9 @@ def user_delete_endpoint():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"user_delete_endpoint: Called")
     result, status_code = user_delete(data)
+    logger.info(f"user_delete_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 @user_bp.route('/hello', methods=['POST'])
@@ -48,6 +54,7 @@ def hello_world():
     else:
         data = dict(request.form) or {}
 
+    logger.info(f"hello_world: {data}")
     return jsonify({
         'message': 'Hello World!',
         'data': data,
@@ -57,6 +64,7 @@ def hello_world():
 @user_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for the user API"""
+    logger.info(f"health_check: Received")
     return jsonify({
         'status': 'healthy',
         'service': 'user-api'
