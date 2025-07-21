@@ -1,4 +1,6 @@
 from typing import Dict, Any, Tuple
+import logging
+logger = logging.getLogger("services")
 
 
 def session_create(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:

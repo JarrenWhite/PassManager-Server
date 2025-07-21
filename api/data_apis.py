@@ -1,5 +1,9 @@
 from flask import Blueprint, jsonify, request
+import logging
+logger = logging.getLogger("api")
+
 from services.data_service import data_create, data_edit, data_delete, data_get, data_get_all
+
 
 data_bp = Blueprint('data', __name__, url_prefix='/api/data')
 

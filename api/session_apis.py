@@ -1,5 +1,9 @@
 from flask import Blueprint, jsonify, request
+import logging
+logger = logging.getLogger("api")
+
 from services.session_service import session_create, session_auth, session_delete, session_delete_all
+
 
 session_bp = Blueprint('session', __name__, url_prefix='/api/session')
 

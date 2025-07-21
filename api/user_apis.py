@@ -1,5 +1,9 @@
 from flask import Blueprint, jsonify, request
+import logging
+logger = logging.getLogger("api")
+
 from services.user_service import user_register, user_auth, user_delete
+
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
