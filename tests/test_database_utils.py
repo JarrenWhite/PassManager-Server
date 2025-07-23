@@ -5,13 +5,13 @@ import tempfile
 import shutil
 import time
 import gc
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from sqlalchemy import text
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.database_utils import Database
+from utils.database_utils import Database, FailureReason
 from database.database_setup import reset_engine
 
 
@@ -155,38 +155,58 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
     def test_create_session(self):
         """Test session creation"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Session
         session_token = "session_01"
         session_expiry_time = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token, session_expiry_time) is True
+        success, failure_reason = Database.create_session(test_username, session_token, session_expiry_time)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm session added
-        assert Database.check_session_token(session_token) == test_username
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
 
     def test_create_secure_data(self):
         """Test secure data creation"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name = "test_stored_password_title"
@@ -194,10 +214,14 @@ class TestDatabaseUtils:
         username = "test_encrypted_username"
         password = "test_encrypted_password"
         notes = "test_encrypted_notes"
-        assert Database.create_secure_data(test_username, entry_name, website, username, password, notes) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name, website, username, password, notes)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm Secure Data added
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 1
 
@@ -208,7 +232,9 @@ class TestDatabaseUtils:
         assert len(entry_public_id) > 0
 
         # Verify secure data content
-        entry_data = Database.get_secure_entry_data(entry_public_id)
+        success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id)
+        assert success is True
+        assert failure_reason is None
         assert entry_data is not None
         assert entry_data["entry_name"] == entry_name
         assert entry_data["website"] == website
@@ -222,80 +248,139 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create another user with the same username
         second_test_password_hash = "new_hashed_password_456"
-        assert Database.create_user(test_username, second_test_password_hash) is False
+        success, failure_reason = Database.create_user(test_username, second_test_password_hash)
+        assert success is False
+        assert failure_reason == FailureReason.ALREADY_EXISTS
 
         # Confirm second user was not added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
     def test_delete_user(self):
         """Test user deletion"""
         # Create users
         test_username_1 = "test_user_1"
         test_password_hash_1 = "hashed_password_123"
-        assert Database.create_user(test_username_1, test_password_hash_1) is True
+        success, failure_reason = Database.create_user(test_username_1, test_password_hash_1)
+        assert success is True
+        assert failure_reason is None
         test_username_2 = "test_user_2"
         test_password_hash_2 = "hashed_password_123"
-        assert Database.create_user(test_username_2, test_password_hash_2) is True
+        success, failure_reason = Database.create_user(test_username_2, test_password_hash_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm users added
-        assert Database.get_user_password_hash(test_username_1) == test_password_hash_1
-        assert Database.get_user_password_hash(test_username_2) == test_password_hash_2
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_1
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_2
 
         # Delete user
-        assert Database.delete_user(test_username_1) is True
+        success, failure_reason = Database.delete_user(test_username_1)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user deleted and other user unaffected
-        assert Database.get_user_password_hash(test_username_1) is None
-        assert Database.get_user_password_hash(test_username_2) == test_password_hash_2
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_2
 
     def test_delete_user_cascades_to_sessions(self):
         """Test that deleting a user also removes their sessions"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user was added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Session
         session_token_1 = "session_01"
         session_expiry_time_1 = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token_1, session_expiry_time_1) is True
+        success, failure_reason = Database.create_session(test_username, session_token_1, session_expiry_time_1)
+        assert success is True
+        assert failure_reason is None
 
         # Create additional Session
         session_token_2 = "session_02"
         session_expiry_time_2 = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token_2, session_expiry_time_2) is True
+        success, failure_reason = Database.create_session(test_username, session_token_2, session_expiry_time_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm additional sessions added
-        assert Database.check_session_token(session_token_1) == test_username
-        assert Database.check_session_token(session_token_2) == test_username
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
 
         # Delete user
-        assert Database.delete_user(test_username) is True
+        success, failure_reason = Database.delete_user(test_username)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user and sessions deleted
-        assert Database.get_user_password_hash(test_username) is None
-        assert Database.check_session_token(session_token_1) is None
-        assert Database.check_session_token(session_token_2) is None
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
 
     def test_delete_user_cascades_to_secure_data(self):
         """Test that deleting a user also removes their secure data"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user was added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name = "test_stored_password_title"
@@ -303,7 +388,9 @@ class TestDatabaseUtils:
         username = "test_encrypted_username"
         password = "test_encrypted_password"
         notes = "test_encrypted_notes"
-        assert Database.create_secure_data(test_username, entry_name, website, username, password, notes) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name, website, username, password, notes)
+        assert success is True
+        assert failure_reason is None
 
         # Create additional Secure Data
         entry_name_2 = "test_stored_password_title_2"
@@ -311,10 +398,14 @@ class TestDatabaseUtils:
         username_2 = "test_encrypted_username_2"
         password_2 = "test_encrypted_password_2"
         notes_2 = "test_encrypted_notes_2"
-        assert Database.create_secure_data(test_username, entry_name_2, website_2, username_2, password_2, notes_2) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_2, website_2, username_2, password_2, notes_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm Secure Data added
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 2
 
@@ -325,166 +416,289 @@ class TestDatabaseUtils:
         assert secure_data_2_public_id is not None
 
         # Delete user
-        assert Database.delete_user(test_username) is True
+        success, failure_reason = Database.delete_user(test_username)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user & Secure Data deleted
-        assert Database.get_user_password_hash(test_username) is None
-        assert Database.get_secure_entries_list(test_username) is None
-        assert Database.get_secure_entry_data(secure_data_1_public_id) is None
-        assert Database.get_secure_entry_data(secure_data_2_public_id) is None
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert entries_list is None
+        success, failure_reason, entry_data = Database.get_secure_entry_data(secure_data_1_public_id)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert entry_data is None
+        success, failure_reason, entry_data = Database.get_secure_entry_data(secure_data_2_public_id)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert entry_data is None
 
     def test_get_user_password_hash_nonexistent_user(self):
         """Test retrieving password hash for a user that doesn't exist"""
         # Confirm user does not exist
         test_username = "test_user"
-        assert Database.get_user_password_hash(test_username) is None
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
 
     def test_create_session_nonexistent_user(self):
         """Test creating a session for a user that doesn't exist"""
         # Confirm user does not exist
         test_username = "test_user"
-        assert Database.get_user_password_hash(test_username) is None
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
 
         # Attempt to create session
         session_token = "session_01"
         session_expiry_time = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token, session_expiry_time) is False
+        success, failure_reason = Database.create_session(test_username, session_token, session_expiry_time)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
 
         # Ensure session was not created
-        assert Database.check_session_token(session_token) is None
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
 
     def test_check_session_token_expired_token(self):
         """Test checking an expired session token (should delete and return None)"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Session with expired time
         session_token = "session_01"
         session_expiry_time = timedelta(hours=-1)
-        assert Database.create_session(test_username, session_token, session_expiry_time) is True
+        success, failure_reason = Database.create_session(test_username, session_token, session_expiry_time)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm checking session returns None
-        assert Database.check_session_token(session_token) is None
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
 
     def test_check_session_token_nonexistent_token(self):
         """Test checking a token that doesn't exist"""
         session_token = "session_01"
-        assert Database.check_session_token(session_token) is None
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
 
     def test_create_session_token_existing_token(self):
         """Test creating a session with the same token as an existing session"""
-                # Create users
+        # Create users
         test_username_1 = "test_user_1"
         test_password_hash_1 = "hashed_password_123"
-        assert Database.create_user(test_username_1, test_password_hash_1) is True
+        success, failure_reason = Database.create_user(test_username_1, test_password_hash_1)
+        assert success is True
+        assert failure_reason is None
         test_username_2 = "test_user_2"
         test_password_hash_2 = "hashed_password_123"
-        assert Database.create_user(test_username_2, test_password_hash_2) is True
+        success, failure_reason = Database.create_user(test_username_2, test_password_hash_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm users added
-        assert Database.get_user_password_hash(test_username_1) == test_password_hash_1
-        assert Database.get_user_password_hash(test_username_2) == test_password_hash_2
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_1
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_2
 
         # Create Session
         session_token = "session_01"
         session_expiry_time = timedelta(hours=1)
-        assert Database.create_session(test_username_1, session_token, session_expiry_time) is True
+        success, failure_reason = Database.create_session(test_username_1, session_token, session_expiry_time)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm session added
-        assert Database.check_session_token(session_token) == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
 
         # Create another identical session, and verify original still exists
-        assert Database.create_session(test_username_2, session_token, session_expiry_time) is False
-        assert Database.check_session_token(session_token) == test_username_1
+        success, failure_reason = Database.create_session(test_username_2, session_token, session_expiry_time)
+        assert success is False  # This should fail due to unique constraint
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
 
     def test__delete_session(self):
         """Test single session deletion"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user was added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Session
         session_token_1 = "session_01"
         session_expiry_time_1 = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token_1, session_expiry_time_1) is True
+        success, failure_reason = Database.create_session(test_username, session_token_1, session_expiry_time_1)
+        assert success is True
+        assert failure_reason is None
 
         # Create additional Session
         session_token_2 = "session_02"
         session_expiry_time_2 = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token_2, session_expiry_time_2) is True
+        success, failure_reason = Database.create_session(test_username, session_token_2, session_expiry_time_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm additional sessions added
-        assert Database.check_session_token(session_token_1) == test_username
-        assert Database.check_session_token(session_token_2) == test_username
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
 
         # Delete Session, confirm deleted, and confirm other session(s) unaffected
-        assert Database.delete_session(session_token_1) is True
-        assert Database.check_session_token(session_token_1) is None
-        assert Database.check_session_token(session_token_2) == test_username
+        success, failure_reason = Database.delete_session(session_token_1)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
 
     def test_delete_session_nonexistent_token(self):
         """Test deleting a session token that doesn't exist"""
         session_token = "session_01"
-        assert Database.check_session_token(session_token) is None
-        assert Database.delete_session(session_token) is False
+        success, failure_reason, username = Database.check_session_token(session_token)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason = Database.delete_session(session_token)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
 
     def test_delete_all_sessions(self):
         """Test deleting all of a user's sessions"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user was added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Session
         session_token_1 = "session_01"
         session_expiry_time_1 = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token_1, session_expiry_time_1) is True
+        success, failure_reason = Database.create_session(test_username, session_token_1, session_expiry_time_1)
+        assert success is True
+        assert failure_reason is None
 
         # Create additional Session
         session_token_2 = "session_02"
         session_expiry_time_2 = timedelta(hours=1)
-        assert Database.create_session(test_username, session_token_2, session_expiry_time_2) is True
+        success, failure_reason = Database.create_session(test_username, session_token_2, session_expiry_time_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm additional sessions added
-        assert Database.check_session_token(session_token_1) == test_username
-        assert Database.check_session_token(session_token_2) == test_username
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username
 
         # Delete all sessions for user, and confirm deletion
-        assert Database.delete_all_sessions(test_username) is True
-        assert Database.check_session_token(session_token_1) is None
-        assert Database.check_session_token(session_token_2) is None
+        success, failure_reason = Database.delete_all_sessions(test_username)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
 
     def test_delete_all_sessions_nonexistent_user(self):
         """Test deleting all sessions for a user that doesn't exist"""
         test_username = "test_user"
-        assert Database.get_user_password_hash(test_username) is None
-        assert Database.delete_all_sessions(test_username) is False
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
+        success, failure_reason = Database.delete_all_sessions(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
 
     def test_clean_sessions_with_expired_sessions(self):
         """Test cleaning sessions when there are expired sessions to remove"""
         # Create users
         test_username_1 = "test_user_1"
         test_password_hash_1 = "hashed_password_123"
-        assert Database.create_user(test_username_1, test_password_hash_1) is True
+        success, failure_reason = Database.create_user(test_username_1, test_password_hash_1)
+        assert success is True
+        assert failure_reason is None
         test_username_2 = "test_user_2"
         test_password_hash_2 = "hashed_password_123"
-        assert Database.create_user(test_username_2, test_password_hash_2) is True
+        success, failure_reason = Database.create_user(test_username_2, test_password_hash_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm users added
-        assert Database.get_user_password_hash(test_username_1) == test_password_hash_1
-        assert Database.get_user_password_hash(test_username_2) == test_password_hash_2
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_1
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_2
 
         # Create Sessions with expired time
         session_token_1 = "session_01"
@@ -495,32 +709,64 @@ class TestDatabaseUtils:
         session_expiry_time_3 = timedelta(hours=-3)
         session_token_4 = "session_04"
         session_expiry_time_4 = timedelta(hours=-4)
-        assert Database.create_session(test_username_1, session_token_1, session_expiry_time_1) is True
-        assert Database.create_session(test_username_1, session_token_2, session_expiry_time_2) is True
-        assert Database.create_session(test_username_2, session_token_3, session_expiry_time_3) is True
-        assert Database.create_session(test_username_2, session_token_4, session_expiry_time_4) is True
+        success, failure_reason = Database.create_session(test_username_1, session_token_1, session_expiry_time_1)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_1, session_token_2, session_expiry_time_2)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_2, session_token_3, session_expiry_time_3)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_2, session_token_4, session_expiry_time_4)
+        assert success is True
+        assert failure_reason is None
         # (Cannot confirm sessions are added by inspection, due to automatic deletion of expired sessions)
 
         # Clean sessions, and confirm all deleted
-        assert Database.clean_sessions() is True
-        assert Database.check_session_token(session_token_1) is None
-        assert Database.check_session_token(session_token_2) is None
-        assert Database.check_session_token(session_token_3) is None
-        assert Database.check_session_token(session_token_4) is None
+        success, failure_reason = Database.clean_sessions()
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_3)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_4)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
 
     def test_clean_sessions_with_no_expired_sessions(self):
         """Test cleaning sessions when there are no expired sessions"""
         # Create users
         test_username_1 = "test_user_1"
         test_password_hash_1 = "hashed_password_123"
-        assert Database.create_user(test_username_1, test_password_hash_1) is True
+        success, failure_reason = Database.create_user(test_username_1, test_password_hash_1)
+        assert success is True
+        assert failure_reason is None
         test_username_2 = "test_user_2"
         test_password_hash_2 = "hashed_password_123"
-        assert Database.create_user(test_username_2, test_password_hash_2) is True
+        success, failure_reason = Database.create_user(test_username_2, test_password_hash_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm users added
-        assert Database.get_user_password_hash(test_username_1) == test_password_hash_1
-        assert Database.get_user_password_hash(test_username_2) == test_password_hash_2
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_1
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_2
 
         # Create Sessions with future expiry
         session_token_1 = "session_01"
@@ -531,37 +777,81 @@ class TestDatabaseUtils:
         session_expiry_time_3 = timedelta(hours=3)
         session_token_4 = "session_04"
         session_expiry_time_4 = timedelta(hours=4)
-        assert Database.create_session(test_username_1, session_token_1, session_expiry_time_1) is True
-        assert Database.create_session(test_username_1, session_token_2, session_expiry_time_2) is True
-        assert Database.create_session(test_username_2, session_token_3, session_expiry_time_3) is True
-        assert Database.create_session(test_username_2, session_token_4, session_expiry_time_4) is True
+        success, failure_reason = Database.create_session(test_username_1, session_token_1, session_expiry_time_1)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_1, session_token_2, session_expiry_time_2)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_2, session_token_3, session_expiry_time_3)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_2, session_token_4, session_expiry_time_4)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm sessions added
-        assert Database.check_session_token(session_token_1) == test_username_1
-        assert Database.check_session_token(session_token_2) == test_username_1
-        assert Database.check_session_token(session_token_3) == test_username_2
-        assert Database.check_session_token(session_token_4) == test_username_2
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token_3)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_2
+        success, failure_reason, username = Database.check_session_token(session_token_4)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_2
 
         # Clean sessions, and confirm all exist
-        assert Database.clean_sessions() is True
-        assert Database.check_session_token(session_token_1) == test_username_1
-        assert Database.check_session_token(session_token_2) == test_username_1
-        assert Database.check_session_token(session_token_3) == test_username_2
-        assert Database.check_session_token(session_token_4) == test_username_2
+        success, failure_reason = Database.clean_sessions()
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token_3)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_2
+        success, failure_reason, username = Database.check_session_token(session_token_4)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_2
 
     def test_clean_sessions_with_mix_of_expiry(self):
         """Test cleaning sessions when there are a mix of expired sessions"""
         # Create users
         test_username_1 = "test_user_1"
         test_password_hash_1 = "hashed_password_123"
-        assert Database.create_user(test_username_1, test_password_hash_1) is True
+        success, failure_reason = Database.create_user(test_username_1, test_password_hash_1)
+        assert success is True
+        assert failure_reason is None
         test_username_2 = "test_user_2"
         test_password_hash_2 = "hashed_password_123"
-        assert Database.create_user(test_username_2, test_password_hash_2) is True
+        success, failure_reason = Database.create_user(test_username_2, test_password_hash_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm users added
-        assert Database.get_user_password_hash(test_username_1) == test_password_hash_1
-        assert Database.get_user_password_hash(test_username_2) == test_password_hash_2
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_1
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash_2
 
         # Create Sessions with past & future expiry
         session_token_1 = "session_01"
@@ -572,27 +862,58 @@ class TestDatabaseUtils:
         session_expiry_time_3 = timedelta(hours=-3)
         session_token_4 = "session_04"
         session_expiry_time_4 = timedelta(hours=4)
-        assert Database.create_session(test_username_1, session_token_1, session_expiry_time_1) is True
-        assert Database.create_session(test_username_1, session_token_2, session_expiry_time_2) is True
-        assert Database.create_session(test_username_2, session_token_3, session_expiry_time_3) is True
-        assert Database.create_session(test_username_2, session_token_4, session_expiry_time_4) is True
+        success, failure_reason = Database.create_session(test_username_1, session_token_1, session_expiry_time_1)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_1, session_token_2, session_expiry_time_2)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_2, session_token_3, session_expiry_time_3)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason = Database.create_session(test_username_2, session_token_4, session_expiry_time_4)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm (non expired) sessions added
-        assert Database.check_session_token(session_token_2) == test_username_1
-        assert Database.check_session_token(session_token_4) == test_username_2
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token_4)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_2
 
         # Clean sessions, and confirm correct sessions exist
-        assert Database.clean_sessions() is True
-        assert Database.check_session_token(session_token_1) is None
-        assert Database.check_session_token(session_token_2) == test_username_1
-        assert Database.check_session_token(session_token_3) is None
-        assert Database.check_session_token(session_token_4) == test_username_2
+        success, failure_reason = Database.clean_sessions()
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason, username = Database.check_session_token(session_token_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_2)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_1
+        success, failure_reason, username = Database.check_session_token(session_token_3)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert username is None
+        success, failure_reason, username = Database.check_session_token(session_token_4)
+        assert success is True
+        assert failure_reason is None
+        assert username == test_username_2
 
     def test_create_secure_data_nonexistent_user(self):
         """Test creating secure data for a user that doesn't exist"""
         # Confirm user does not exist
         test_username = "test_user"
-        assert Database.get_user_password_hash(test_username) is None
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert password_hash is None
 
         # Create Secure Data
         entry_name = "test_stored_password_title"
@@ -600,17 +921,24 @@ class TestDatabaseUtils:
         username = "test_encrypted_username"
         password = "test_encrypted_password"
         notes = "test_encrypted_notes"
-        assert Database.create_secure_data(test_username, entry_name, website, username, password, notes) is False
+        success, failure_reason = Database.create_secure_data(test_username, entry_name, website, username, password, notes)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
 
     def test_edit_secure_data(self):
         """Test secure data editing"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name_1 = "test_stored_password_title_1"
@@ -618,10 +946,14 @@ class TestDatabaseUtils:
         username_1 = "test_encrypted_username_1"
         password_1 = "test_encrypted_password_1"
         notes_1 = "test_encrypted_notes_1"
-        assert Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm secure data added and get public id
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 1
         _, entry_public_id = entries_list[0]
@@ -632,10 +964,14 @@ class TestDatabaseUtils:
         username_2 = "test_encrypted_username_2"
         password_2 = "test_encrypted_password_2"
         notes_2 = "test_encrypted_notes_2"
-        assert Database.edit_secure_data(entry_public_id, entry_name_2, website_2, username_2, password_2, notes_2) is True
+        success, failure_reason = Database.edit_secure_data(entry_public_id, entry_name_2, website_2, username_2, password_2, notes_2)
+        assert success is True
+        assert failure_reason is None
 
         # Verify edited secure data content
-        entry_data = Database.get_secure_entry_data(entry_public_id)
+        success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id)
+        assert success is True
+        assert failure_reason is None
         assert entry_data is not None
         assert entry_data["entry_name"] == entry_name_2
         assert entry_data["website"] == website_2
@@ -648,10 +984,15 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name_1 = "test_stored_password_title_1"
@@ -659,10 +1000,14 @@ class TestDatabaseUtils:
         username_1 = "test_encrypted_username_1"
         password_1 = "test_encrypted_password_1"
         notes_1 = "test_encrypted_notes_1"
-        assert Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm secure data added and get public id
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 1
         _, entry_public_id = entries_list[0]
@@ -671,10 +1016,14 @@ class TestDatabaseUtils:
         entry_name_2 = "test_stored_password_title_2"
         username_2 = "test_encrypted_username_2"
         notes_2 = "test_encrypted_notes_2"
-        assert Database.edit_secure_data(entry_public_id, entry_name_2, None, username_2, None, notes_2) is True
+        success, failure_reason = Database.edit_secure_data(entry_public_id, entry_name_2, None, username_2, None, notes_2)
+        assert success is True
+        assert failure_reason is None
 
         # Verify edited secure data content
-        entry_data = Database.get_secure_entry_data(entry_public_id)
+        success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id)
+        assert success is True
+        assert failure_reason is None
         assert entry_data is not None
         # Old details unchanged
         assert entry_data["website"] == website_1
@@ -689,10 +1038,15 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name = "test_stored_password_title_1"
@@ -700,19 +1054,27 @@ class TestDatabaseUtils:
         username = "test_encrypted_username_1"
         password = "test_encrypted_password_1"
         notes = "test_encrypted_notes_1"
-        assert Database.create_secure_data(test_username, entry_name, website, username, password, notes) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name, website, username, password, notes)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm secure data added and get public id
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 1
         _, entry_public_id = entries_list[0]
 
         # Edit secure data
-        assert Database.edit_secure_data(entry_public_id, None, None, None, None, None) is True
+        success, failure_reason = Database.edit_secure_data(entry_public_id, None, None, None, None, None)
+        assert success is True
+        assert failure_reason is None
 
         # Verify edited secure data content
-        entry_data = Database.get_secure_entry_data(entry_public_id)
+        success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id)
+        assert success is True
+        assert failure_reason is None
         assert entry_data is not None
         # Old details unchanged
         assert entry_data["entry_name"] == entry_name
@@ -724,17 +1086,24 @@ class TestDatabaseUtils:
     def test_edit_secure_data_nonexistent_entry(self):
         """Test editing a secure entry that doesn't exist"""
         fake_public_entry_id = "public_entry_id"
-        assert Database.edit_secure_data(fake_public_entry_id, None, None, None, None, None) is False
+        success, failure_reason = Database.edit_secure_data(fake_public_entry_id, None, None, None, None, None)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
 
     def test_delete_secure_data(self):
         """Test secure data deletion"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name_1 = "test_stored_password_title_1"
@@ -742,40 +1111,61 @@ class TestDatabaseUtils:
         username_1 = "test_encrypted_username_1"
         password_1 = "test_encrypted_password_1"
         notes_1 = "test_encrypted_notes_1"
-        assert Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1)
+        assert success is True
+        assert failure_reason is None
         entry_name_2 = "test_stored_password_title_2"
         website_2 = "test_encrypted_website_2"
         username_2 = "test_encrypted_username_2"
         password_2 = "test_encrypted_password_2"
         notes_2 = "test_encrypted_notes_2"
-        assert Database.create_secure_data(test_username, entry_name_2, website_2, username_2, password_2, notes_2) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_2, website_2, username_2, password_2, notes_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm Secure Data entries added & get public ID
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 2
         _, entry_public_id_1 = entries_list[0]
         _, entry_public_id_2 = entries_list[1]
 
         # Delete secure data & verify deletion
-        assert Database.delete_secure_data(entry_public_id_1) is True
-        assert Database.get_secure_entry_data(entry_public_id_1) is None
-        assert Database.get_secure_entry_data(entry_public_id_2) is not None
+        success, failure_reason = Database.delete_secure_data(entry_public_id_1)
+        assert success is True
+        assert failure_reason is None
+        success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id_1)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert entry_data is None
+        success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id_2)
+        assert success is True
+        assert failure_reason is None
+        assert entry_data is not None
 
     def test_delete_secure_data_non_existing_data(self):
         """Test deleting secure entry which does not exist"""
         fake_public_entry_id = "public_entry_id"
-        assert Database.delete_secure_data(fake_public_entry_id) is False
+        success, failure_reason = Database.delete_secure_data(fake_public_entry_id)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
 
     def test_get_secure_entries_list_existing_user(self):
         """Test getting secure entries list for a user with data"""
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
 
         # Create Secure Data
         entry_name_1 = "test_stored_password_title_1"
@@ -783,16 +1173,22 @@ class TestDatabaseUtils:
         username_1 = "test_encrypted_username_1"
         password_1 = "test_encrypted_password_1"
         notes_1 = "test_encrypted_notes_1"
-        assert Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_1, website_1, username_1, password_1, notes_1)
+        assert success is True
+        assert failure_reason is None
         entry_name_2 = "test_stored_password_title_2"
         website_2 = "test_encrypted_website_2"
         username_2 = "test_encrypted_username_2"
         password_2 = "test_encrypted_password_2"
         notes_2 = "test_encrypted_notes_2"
-        assert Database.create_secure_data(test_username, entry_name_2, website_2, username_2, password_2, notes_2) is True
+        success, failure_reason = Database.create_secure_data(test_username, entry_name_2, website_2, username_2, password_2, notes_2)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm Secure Data entries added
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list is not None
         assert len(entries_list) == 2
         entry_names = [name for name, _ in entries_list]
@@ -804,22 +1200,35 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_password_hash = "hashed_password_123"
-        assert Database.create_user(test_username, test_password_hash) is True
+        success, failure_reason = Database.create_user(test_username, test_password_hash)
+        assert success is True
+        assert failure_reason is None
 
         # Confirm user added
-        assert Database.get_user_password_hash(test_username) == test_password_hash
-        entries_list = Database.get_secure_entries_list(test_username)
+        success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert password_hash == test_password_hash
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is True
+        assert failure_reason is None
         assert entries_list == []
 
     def test_get_secure_entries_list_nonexistent_user(self):
         """Test getting secure entries list for a user that doesn't exist"""
         test_username = "test_user"
-        assert Database.get_secure_entries_list(test_username) is None
+        success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert entries_list is None
 
     def test_get_secure_entry_data_nonexistent_entry(self):
         """Test retrieving data for a secure entry that doesn't exist"""
         fake_public_id = "secure_data_01"
-        assert Database.get_secure_entry_data(fake_public_id) is None
+        success, failure_reason, entry_data = Database.get_secure_entry_data(fake_public_id)
+        assert success is False
+        assert failure_reason == FailureReason.NOT_FOUND
+        assert entry_data is None
 
 
 if __name__ == '__main__':
