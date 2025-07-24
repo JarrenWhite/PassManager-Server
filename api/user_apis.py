@@ -59,7 +59,7 @@ def hello_world():
         'message': 'Hello World!',
         'data': data,
         'status': 'success'
-    }), 201
+    }), 200
 
 @user_bp.route('/health', methods=['GET'])
 def health_check():
@@ -68,4 +68,4 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'user-api'
-    }), 201
+    }), 200

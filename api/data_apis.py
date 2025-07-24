@@ -79,4 +79,4 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'data-api'
-    }), 201
+    }), 200

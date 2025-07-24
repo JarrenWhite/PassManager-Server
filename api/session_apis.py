@@ -66,4 +66,4 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'session-api'
-    }), 201
+    }), 200
