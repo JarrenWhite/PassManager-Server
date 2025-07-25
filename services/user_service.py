@@ -54,13 +54,13 @@ def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     username = data["username"]
     ok, error = Sanitise.username(username)
     if not ok:
-        logger.warning("user_register: Rejected - Username issue.")
+        logger.warning("user_auth: Rejected - Username issue.")
         return error, 400
 
     password = data["password"]
     ok, error = Sanitise.password(password)
     if not ok:
-        logger.warning("user_register: Rejected - Password issue.")
+        logger.warning("user_auth: Rejected - Password issue.")
         return error, 400
 
     # Attempt to get User data
@@ -73,12 +73,12 @@ def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
     # Failure
     if failure_reason == FailureReason.NOT_FOUND:
-        logger.info("user_register: Rejected - Username not found")
-        return {"error": "Username not found"}, 401
+        logger.info("user_auth: Rejected - Username not found")
+        return {"error": "Incorrect username or password"}, 401
     elif failure_reason == FailureReason.SERVER_EXCEPTION:
-        logger.error("user_register: Rejected - server exception")
+        logger.error("user_auth: Rejected - server exception")
         return {"error": "Unknown error"}, 500
-    logger.error("user_register: Rejected - unknown server issue")
+    logger.error("user_auth: Rejected - unknown server issue")
     return {"error": "Unknown error"}, 500
 
 
@@ -94,13 +94,44 @@ def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     username = data["username"]
     ok, error = Sanitise.username(username)
     if not ok:
-        logger.warning("user_register: Rejected - Username issue.")
+        logger.warning("user_delete: Rejected - Username issue.")
         return error, 400
 
     password = data["password"]
     ok, error = Sanitise.password(password)
     if not ok:
-        logger.warning("user_register: Rejected - Password issue.")
+        logger.warning("user_delete: Rejected - Password issue.")
         return error, 400
 
-    return {}, 201
+    # Authenticate user
+    ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
+    if not ok or stored_password_hash is None:
+        if failure_reason == FailureReason.NOT_FOUND:
+            logger.info("user_delete: Rejected - Username not found")
+            return {"error": "Incorrect username or password"}, 401
+        elif failure_reason == FailureReason.SERVER_EXCEPTION:
+            logger.error("user_delete: Rejected - server exception during authentication")
+            return {"error": "Unknown error"}, 500
+        logger.error("user_delete: Rejected - unknown server issue during authentication")
+        return {"error": "Unknown error"}, 500
+
+    # Verify password
+    if password != stored_password_hash:
+        logger.info("user_delete: Rejected - Incorrect password")
+        return {"error": "Incorrect username or password"}, 401
+
+    # Delete User
+    ok, failure_reason = Database.delete_user(username)
+    if ok:
+        logger.info(f"user_delete: User '{username}' deleted successfully")
+        return {}, 200
+
+    # Deletion Failure
+    if failure_reason == FailureReason.NOT_FOUND:
+        logger.error("user_delete: Rejected - Username not found during deletion")
+        return {"error": "Unknown error"}, 500
+    elif failure_reason == FailureReason.SERVER_EXCEPTION:
+        logger.error("user_delete: Rejected - server exception during deletion")
+        return {"error": "Unknown error"}, 500
+    logger.error("user_delete: Rejected - unknown server issue during deletion")
+    return {"error": "Unknown error"}, 500
