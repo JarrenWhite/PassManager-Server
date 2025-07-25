@@ -31,7 +31,7 @@ def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     if ok:
         return {}, 201
 
-    # Data entry failure
+    # Failure
     if failure_reason == FailureReason.ALREADY_EXISTS:
         logger.info("user_register: Rejected - Username exists")
         return {"error": "Username already exists"}, 409
@@ -44,6 +44,7 @@ def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
 def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Authorize a user - business logic"""
+    # Sanitise inputs
     required_keys = {"username", "password"}
     ok, error = Sanitise.keys(data, required_keys)
     if not ok:
@@ -62,11 +63,28 @@ def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
         logger.warning("user_register: Rejected - Password issue.")
         return error, 400
 
-    return {}, 201
+    # Attempt to get User data
+    ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
+    if ok and stored_password_hash is not None:
+        if password == stored_password_hash:
+            return {}, 200
+        else:
+            return {"error": "Incorrect username or password"}, 401
+
+    # Failure
+    if failure_reason == FailureReason.NOT_FOUND:
+        logger.info("user_register: Rejected - Username not found")
+        return {"error": "Username not found"}, 401
+    elif failure_reason == FailureReason.SERVER_EXCEPTION:
+        logger.error("user_register: Rejected - server exception")
+        return {"error": "Unknown error"}, 500
+    logger.error("user_register: Rejected - unknown server issue")
+    return {"error": "Unknown error"}, 500
 
 
 def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Delete a user - business logic"""
+    # Sanitise inputs
     required_keys = {"username", "password"}
     ok, error = Sanitise.keys(data, required_keys)
     if not ok:
