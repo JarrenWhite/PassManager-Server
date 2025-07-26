@@ -2,14 +2,14 @@ from typing import Dict, Any, Tuple
 import logging
 logger = logging.getLogger("services")
 
-from utils import Sanitise, Database
+from utils import Service, Database
 
 
 def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Register a user - business logic"""
     # Sanitise inputs
     required_keys = {"username", "password"}
-    ok, error = Sanitise.keys(data, required_keys, "user_register")
+    ok, error = Service.sanitise_inputs(data, required_keys, "user_register")
     if not ok:
         return error, 400
 
@@ -21,7 +21,7 @@ def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     # Failure
     if not ok:
         assert failure_reason is not None
-        return Sanitise.handle_failure(failure_reason, "user_register")
+        return Service.handle_failure(failure_reason, "user_register")
 
     # User created
     return {}, 201
@@ -31,7 +31,7 @@ def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Authorize a user - business logic"""
     # Sanitise inputs
     required_keys = {"username", "password"}
-    ok, error = Sanitise.keys(data, required_keys, "user_auth")
+    ok, error = Service.sanitise_inputs(data, required_keys, "user_auth")
     if not ok:
         return error, 400
 
@@ -43,7 +43,7 @@ def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     # Failure
     if not ok:
         assert failure_reason is not None
-        return Sanitise.handle_failure(failure_reason, "user_auth")
+        return Service.handle_failure(failure_reason, "user_auth")
 
     # Success
     if password == stored_password_hash:
@@ -56,7 +56,7 @@ def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Delete a user - business logic"""
     # Sanitise inputs
     required_keys = {"username", "password"}
-    ok, error = Sanitise.keys(data, required_keys, "user_delete")
+    ok, error = Service.sanitise_inputs(data, required_keys, "user_delete")
     if not ok:
         return error, 400
 
@@ -68,7 +68,7 @@ def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     # Failure on Auth
     if not ok:
         assert failure_reason is not None
-        return Sanitise.handle_failure(failure_reason, "user_delete (auth)")
+        return Service.handle_failure(failure_reason, "user_delete (auth)")
 
     # Verify password
     if password != stored_password_hash:
@@ -81,7 +81,7 @@ def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     # Failure on delete
     if not ok:
         assert failure_reason is not None
-        return Sanitise.handle_failure(failure_reason, "user_delete (deletion)")
+        return Service.handle_failure(failure_reason, "user_delete (deletion)")
 
     # Success
     logger.info(f"user_delete: User '{username}' deleted successfully")

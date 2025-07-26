@@ -5,10 +5,10 @@ logger = logging.getLogger("services")
 from .utils_enums import FailureReason
 
 
-class Sanitise:
+class Service:
 
     @staticmethod
-    def keys(data: Dict[str, Any], required_keys: set[str], calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
+    def sanitise_inputs(data: Dict[str, Any], required_keys: set[str], calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Verify that the keys received are correct"""
         if set(data) != required_keys:
             allowed_list = "', '".join(sorted(required_keys))
@@ -18,7 +18,7 @@ class Sanitise:
             }
 
         for key, value in data.items():
-            ok, error = Sanitise.select_sanitising_function(key, value, calling_function)
+            ok, error = Service.select_sanitising_function(key, value, calling_function)
             if not ok:
                 return False, error
 
@@ -27,10 +27,10 @@ class Sanitise:
     @staticmethod
     def select_sanitising_function(key_name, key_value, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         switch = {
-            "username": lambda x: Sanitise.username(x, calling_function),
-            "password": lambda x: Sanitise.password(x, calling_function)
+            "username": lambda x: Service.username(x, calling_function),
+            "password": lambda x: Service.password(x, calling_function)
         }
-        result = switch.get(key_name, lambda x: Sanitise.default(x, calling_function))(key_value)
+        result = switch.get(key_name, lambda x: Service.default(x, calling_function))(key_value)
         return result
 
     @staticmethod
