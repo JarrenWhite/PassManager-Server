@@ -15,16 +15,7 @@ def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
         return error, 400
 
     username = data["username"]
-    ok, error = Sanitise.username(username)
-    if not ok:
-        logger.warning("user_register: Rejected - Username insanitary.")
-        return error, 400
-
     password = data["password"]
-    ok, error = Sanitise.password(password)
-    if not ok:
-        logger.warning("user_register: Rejected - Password insanitary.")
-        return error, 400
 
     # Attempt data entry
     ok, failure_reason = Database.create_user(username, password)
@@ -52,16 +43,7 @@ def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
         return error, 400
 
     username = data["username"]
-    ok, error = Sanitise.username(username)
-    if not ok:
-        logger.warning("user_auth: Rejected - Username issue.")
-        return error, 400
-
     password = data["password"]
-    ok, error = Sanitise.password(password)
-    if not ok:
-        logger.warning("user_auth: Rejected - Password issue.")
-        return error, 400
 
     # Attempt to get User data
     ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
@@ -92,16 +74,7 @@ def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
         return error, 400
 
     username = data["username"]
-    ok, error = Sanitise.username(username)
-    if not ok:
-        logger.warning("user_delete: Rejected - Username issue.")
-        return error, 400
-
     password = data["password"]
-    ok, error = Sanitise.password(password)
-    if not ok:
-        logger.warning("user_delete: Rejected - Password issue.")
-        return error, 400
 
     # Authenticate user
     ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
