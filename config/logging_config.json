@@ -17,7 +17,7 @@
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
-        "file": {
+        "database_files": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "detailed",
@@ -25,11 +25,43 @@
             "maxBytes": 1000000,
             "backupCount": 3
         },
-        "concernfile": {
+        "database_concernfile": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "WARNING",
             "formatter": "detailed",
             "filename": "logs/database_concerns.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
+        "api_files": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "detailed",
+            "filename": "logs/api.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
+        "api_concernfile": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "WARNING",
+            "formatter": "detailed",
+            "filename": "logs/api_concerns.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
+        "services_files": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "detailed",
+            "filename": "logs/services.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
+        "services_concernfile": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "WARNING",
+            "formatter": "detailed",
+            "filename": "logs/services_concerns.log",
             "maxBytes": 1000000,
             "backupCount": 3
         }
@@ -39,8 +71,24 @@
             "level": "DEBUG",
             "handlers": [
                 "stdout",
-                "file",
-                "concernfile"
+                "database_files",
+                "database_concernfile"
+            ]
+        },
+        "api": {
+            "level": "DEBUG",
+            "handlers": [
+                "stdout",
+                "api_files",
+                "api_concernfile"
+            ]
+        },
+        "services": {
+            "level": "DEBUG",
+            "handlers": [
+                "stdout",
+                "services_files",
+                "services_concernfile"
             ]
         }
     }
