@@ -1,18 +1,13 @@
 from datetime import timedelta, datetime
 from typing import Optional, List, Tuple, Dict
 from contextlib import contextmanager
-from enum import Enum, auto
 import logging
 logger = logging.getLogger("database")
 
 from database import init_db, get_session_local, User, LoginSession, SecureData
 from sqlalchemy import select
 
-
-class FailureReason(Enum):
-    SERVER_EXCEPTION = auto()
-    ALREADY_EXISTS = auto()
-    NOT_FOUND = auto()
+from .utils_enums import FailureReason
 
 
 class Database:
@@ -72,7 +67,7 @@ class Database:
                 if user:
                     return True, None, user.password_hash
                 else:
-                    return False, FailureReason.NOT_FOUND, None
+                    return False, FailureReason.USERNAME_NOT_FOUND, None
 
         except Exception as e:
             logger.error(f"get_user_password_hash: Error - {e}")
@@ -87,7 +82,7 @@ class Database:
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
                     logger.warning(f"delete_user: User '{username}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.USERNAME_NOT_FOUND
                 session.delete(user)
 
                 logger.info(f"delete_user: User '{username}' deleted successfully.")
@@ -106,7 +101,7 @@ class Database:
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
                     logger.warning(f"create_session: User '{username}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.USERNAME_NOT_FOUND
 
                 # Create login session
                 expiry = datetime.now() + duration_till_expiry
@@ -129,12 +124,12 @@ class Database:
                 login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
                 if not login_session:
                     logger.warning(f"check_session_token: Token '{token[:-4]}' could not be found.")
-                    return False, FailureReason.NOT_FOUND, None
+                    return False, FailureReason.SESSION_NOT_FOUND, None
 
                 if login_session.expiry < datetime.now():
                     logger.warning(f"check_session_token: Token '{token[:-4]}' could not be found.")
                     session.delete(login_session)
-                    return False, FailureReason.NOT_FOUND, None
+                    return False, FailureReason.SESSION_NOT_FOUND, None
 
                 user = login_session.user
                 if user:
@@ -156,7 +151,7 @@ class Database:
                 login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
                 if not login_session:
                     logger.warning(f"delete_session: Token '{token[:-4]}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.SESSION_NOT_FOUND
 
                 session.delete(login_session)
                 logger.info(f"delete_session: Token '{token[:-4]}' deleted successfully.")
@@ -175,7 +170,7 @@ class Database:
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
                     logger.warning(f"delete_all_sessions: User '{username}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.USERNAME_NOT_FOUND
 
                 all_login_sessions = user.login_sessions
                 for login_session in all_login_sessions:
@@ -221,7 +216,7 @@ class Database:
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
                     logger.warning(f"create_secure_data: User '{username}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.USERNAME_NOT_FOUND
 
                 # Create secure data
                 new_secure_data = SecureData(user=user,
@@ -253,7 +248,7 @@ class Database:
                 secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
                 if not secure_data:
                     logger.warning(f"edit_secure_data: User '{entry_public_id}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.ENTRY_NOT_FOUND
 
                 # Edit secure data
                 if entry_name:
@@ -283,7 +278,7 @@ class Database:
                 secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
                 if not secure_data:
                     logger.warning(f"delete_secure_data: Secure Data '{entry_public_id}' could not be found.")
-                    return False, FailureReason.NOT_FOUND
+                    return False, FailureReason.ENTRY_NOT_FOUND
 
                 session.delete(secure_data)
                 logger.info(f"delete_secure_data: Secure Data '{entry_public_id}' deleted successfully.")
@@ -302,7 +297,7 @@ class Database:
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
                     logger.warning(f"get_secure_entries_list: User '{username}' could not be found.")
-                    return False, FailureReason.NOT_FOUND, None
+                    return False, FailureReason.USERNAME_NOT_FOUND, None
 
                 # Collate secure data
                 return True, None, [(data_entry.entry_name, data_entry.public_id) for data_entry in user.secure_data]
@@ -320,7 +315,7 @@ class Database:
                 secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
                 if not secure_data:
                     logger.warning(f"get_secure_entry_data: Secure Data '{entry_public_id}' could not be found.")
-                    return False, FailureReason.NOT_FOUND, None
+                    return False, FailureReason.ENTRY_NOT_FOUND, None
 
                 return True, None, {
                     "public_id" : secure_data.public_id,

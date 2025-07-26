@@ -1,6 +1,8 @@
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple
 import logging
 logger = logging.getLogger("services")
+
+from .utils_enums import FailureReason
 
 
 class Sanitise:
@@ -14,7 +16,7 @@ class Sanitise:
             return False, {
                 "error": f"Allowed and required parameters are: '{allowed_list}'"
             }
-        
+
         for key, value in data.items():
             ok, error = Sanitise.select_sanitising_function(key, value, calling_function)
             if not ok:
@@ -32,6 +34,34 @@ class Sanitise:
         return result
 
     @staticmethod
+    def handle_failure(failure_reason: FailureReason, calling_function: str = "unknown") -> Tuple[Dict[str, Any], int]:
+        """Handle common failure scenarios and return appropriate HTTP responses"""
+
+        if failure_reason == FailureReason.SERVER_EXCEPTION:
+            logger.error(f"{calling_function}: Rejected - Server exception")
+            return {"error": "Unknown error"}, 500
+
+        elif failure_reason == FailureReason.ALREADY_EXISTS:
+            logger.info(f"{calling_function}: Rejected - Username exists")
+            return {"error": "Username already exists"}, 409
+
+        elif failure_reason == FailureReason.USERNAME_NOT_FOUND:
+            logger.warning(f"{calling_function}: Rejected - Username not found")
+            return {"error": "Incorrect username or password"}, 401
+
+        elif failure_reason == FailureReason.SESSION_NOT_FOUND:
+            logger.warning(f"{calling_function}: Rejected - Session not found")
+            return {"error": "Session not found or expired"}, 401
+
+        elif failure_reason == FailureReason.ENTRY_NOT_FOUND:
+            logger.warning(f"{calling_function}: Rejected - Entry not found")
+            return {"error": "Entry not found"}, 404
+
+        # Default case
+        logger.error(f"{calling_function}: Rejected - Failure reason unknown")
+        return {"error": "Unknown error"}, 500
+
+    @staticmethod
     def username(username: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Sanitise the received username"""
         return True, {}
@@ -40,7 +70,7 @@ class Sanitise:
     def password(password_hash: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Sanitise the received password hash"""
         return True, {}
-    
+
     @staticmethod
     def default(key_value: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Default sanitising function. Should not be called"""
