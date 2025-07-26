@@ -32,7 +32,7 @@ class TestDatabaseUtils:
         # Reset engine and initialize database
         reset_engine()
         self._safe_remove_database()
-        Database.database_initialised = False
+        Database._database_initialised = False
         Database.init_database()
 
         yield
@@ -76,7 +76,7 @@ class TestDatabaseUtils:
 
     def test_db_session_creation(self):
         """Test that get_db_session opens a session (cannot verify close)"""
-        with Database.get_db_session() as session:
+        with Database._get_db_session() as session:
             # Check that session exists
             assert session.execute(text("SELECT 1")).scalar() == 1
 
@@ -91,17 +91,17 @@ class TestDatabaseUtils:
         # Clean up existing database and reset everything
         reset_engine()
         self._safe_remove_database()
-        Database.database_initialised = False
-        assert Database.database_initialised is False
+        Database._database_initialised = False
+        assert Database._database_initialised is False
         assert not os.path.exists(self.test_db_path)
 
         # Test that initialization returns True on first run
         assert Database.init_database() is True
-        assert Database.database_initialised is True
+        assert Database._database_initialised is True
 
         # Verify that the database file & tables were created
         assert os.path.exists(self.test_db_path)
-        with Database.get_db_session() as session:
+        with Database._get_db_session() as session:
             tables = session.execute(text("SELECT name FROM sqlite_master WHERE type='table'")).fetchall()
             table_names = [table[0] for table in tables]
             assert 'user' in table_names
@@ -111,7 +111,7 @@ class TestDatabaseUtils:
     def test_failed_database_initialisation(self):
         """Test that databse initialisation fails if it's already been run"""
         # Ensure database is already initialized
-        assert Database.database_initialised is True
+        assert Database._database_initialised is True
         assert os.path.exists(self.test_db_path)
 
         # Create some test data to verify it's the same database after failed init
@@ -119,7 +119,7 @@ class TestDatabaseUtils:
         test_password_hash = "test_hash_123"
 
         # Insert test data into the existing database
-        with Database.get_db_session() as session:
+        with Database._get_db_session() as session:
             from database.database_models import User
             test_user = User(username=test_username, password_hash=test_password_hash)
             session.add(test_user)
@@ -132,11 +132,11 @@ class TestDatabaseUtils:
 
         # Test that initialization returns False when already initialized
         assert Database.init_database() is False
-        assert Database.database_initialised is True
+        assert Database._database_initialised is True
 
         # Verify database file still exists and is functional
         assert os.path.exists(self.test_db_path)
-        with Database.get_db_session() as session:
+        with Database._get_db_session() as session:
             assert session.execute(text("SELECT 1")).scalar() == 1
 
             # Verify our test data is still there (proving it's the same database)

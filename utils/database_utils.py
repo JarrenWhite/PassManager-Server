@@ -11,11 +11,11 @@ from .utils_enums import FailureReason
 
 
 class Database:
-    database_initialised = False
+    _database_initialised = False
 
     @staticmethod
     @contextmanager
-    def get_db_session():
+    def _get_db_session():
         """Context manager for database sessions to ensure proper cleanup"""
         session = get_session_local()()
         try:
@@ -29,9 +29,9 @@ class Database:
 
     @staticmethod
     def init_database() -> bool:
-        if not Database.database_initialised:
+        if not Database._database_initialised:
             init_db()
-            Database.database_initialised = True
+            Database._database_initialised = True
             return True
         else:
             return False
@@ -40,7 +40,7 @@ class Database:
     def create_user(username: str, password_hash: str) -> Tuple[bool, Optional[FailureReason]]:
         """Create a new user with the given username and password hash"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Check if user already exists
                 existing_user = session.scalar(select(User).where(User.username == username))
                 if existing_user:
@@ -62,7 +62,7 @@ class Database:
     def get_user_password_hash(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
         """Find and return the user's password hash. Returns None if not found"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 user = session.scalar(select(User).where(User.username == username))
                 if user:
                     return True, None, user.password_hash
@@ -77,7 +77,7 @@ class Database:
     def delete_user(username: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete the requested user. Returns False if not found"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
@@ -96,7 +96,7 @@ class Database:
     def create_session(username: str, token: str, duration_till_expiry: timedelta) -> Tuple[bool, Optional[FailureReason]]:
         """Create a session for the given user"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
@@ -119,7 +119,7 @@ class Database:
     def check_session_token(token: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
         """Check if a session token is valid, and if so returning the Username."""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find token in question
                 login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
                 if not login_session:
@@ -146,7 +146,7 @@ class Database:
     def delete_session(token: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete the given session"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find token in question
                 login_session = session.scalar(select(LoginSession).where(LoginSession.token == token))
                 if not login_session:
@@ -165,7 +165,7 @@ class Database:
     def delete_all_sessions(username: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete all sessions for the given user"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
@@ -186,7 +186,7 @@ class Database:
     def clean_sessions() -> Tuple[bool, Optional[FailureReason]]:
         """Remove all sessions with past expiry dates"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 current_time = datetime.now()
                 expired_sessions = session.scalars(
                     select(LoginSession).where(LoginSession.expiry < current_time)
@@ -211,7 +211,7 @@ class Database:
                            notes_enc: str) -> Tuple[bool, Optional[FailureReason]]:
         """Create an instance of secure data"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
@@ -243,7 +243,7 @@ class Database:
                          notes_enc: Optional[str]) -> Tuple[bool, Optional[FailureReason]]:
         """Edit an existing instance of secure data"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find secure data in question
                 secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
                 if not secure_data:
@@ -273,7 +273,7 @@ class Database:
     def delete_secure_data(entry_public_id: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete the given secure data entry"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find secure data in question
                 secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
                 if not secure_data:
@@ -292,7 +292,7 @@ class Database:
     def get_secure_entries_list(username: str) -> Tuple[bool, Optional[FailureReason], Optional[List[Tuple[Optional[str], str]]]]:
         """Get names and public ids for all secure entries for a given user, returns (name, public_id)"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find user in question
                 user = session.scalar(select(User).where(User.username == username))
                 if not user:
@@ -310,7 +310,7 @@ class Database:
     def get_secure_entry_data(entry_public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[Dict[str, Optional[str]]]]:
         """Get the content of a given secure data entry, if it exists"""
         try:
-            with Database.get_db_session() as session:
+            with Database._get_db_session() as session:
                 # Find secure data in question
                 secure_data = session.scalar(select(SecureData).where(SecureData.public_id == entry_public_id))
                 if not secure_data:
