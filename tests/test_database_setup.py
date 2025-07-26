@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database.database_setup import init_db, get_db_filename, get_db_url, get_engine, get_session_local, reset_engine
+from database.database_setup import init_db, _get_db_filename, _get_db_url, _get_engine, get_session_local, reset_engine
 
 
 class TestDatabaseSetup:
@@ -84,7 +84,7 @@ class TestDatabaseSetup:
     def test_get_db_filename_with_env_var(self):
         """Test get_db_filename when VAULT_PATH is set"""
 
-        result = get_db_filename()
+        result = _get_db_filename()
         assert result == self.test_db_path
 
     def test_get_db_filename_without_env_var(self):
@@ -93,13 +93,13 @@ class TestDatabaseSetup:
         if "VAULT_PATH" in os.environ:
             del os.environ["VAULT_PATH"]
 
-        result = get_db_filename()
+        result = _get_db_filename()
         assert result == "data/vault.db"
 
     def test_get_db_url(self):
         """Test get_db_url returns correct SQLite URL"""
 
-        result = get_db_url()
+        result = _get_db_url()
         expected_url = f"sqlite:///{self.test_db_path}"
         assert result == expected_url
 
@@ -107,7 +107,7 @@ class TestDatabaseSetup:
         """Test get_engine creates a valid engine"""
         from sqlalchemy import Engine
 
-        engine = get_engine()
+        engine = _get_engine()
 
         assert isinstance(engine, Engine)
         assert engine.url.database == self.test_db_path
@@ -176,7 +176,7 @@ class TestDatabaseSetup:
         """Test that init_db creates all expected tables"""
         init_db()
 
-        engine = get_engine()
+        engine = _get_engine()
         self.engines_to_dispose.append(engine)
 
         # Check that all tables exist

@@ -12,22 +12,22 @@ from .database_models import Base
 _engine: Optional[Engine] = None
 _session_local: Optional[sessionmaker[Session]] = None
 
-def get_db_filename() -> str:
+def _get_db_filename() -> str:
     return os.getenv("VAULT_PATH", "data/vault.db")
 
-def get_db_url() -> str:
-    return f"sqlite:///{get_db_filename()}"
+def _get_db_url() -> str:
+    return f"sqlite:///{_get_db_filename()}"
 
-def get_engine() -> Engine:
+def _get_engine() -> Engine:
     global _engine
     if _engine is None:
-        _engine = create_engine(get_db_url(), pool_pre_ping=True)
+        _engine = create_engine(_get_db_url(), pool_pre_ping=True)
     return _engine
 
 def get_session_local() -> sessionmaker[Session]:
     global _session_local
     if _session_local is None:
-        _session_local = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
+        _session_local = sessionmaker(autocommit=False, autoflush=False, bind=_get_engine())
     return _session_local
 
 def reset_engine() -> None:
@@ -39,11 +39,11 @@ def reset_engine() -> None:
     _session_local = None
 
 def init_db() -> None:
-    db_filename = get_db_filename()
+    db_filename = _get_db_filename()
     if not os.path.exists(db_filename):
         logger.info("init_db: Database not found. Creating new database.")
         os.makedirs(os.path.dirname(db_filename), exist_ok=True)
-        engine = get_engine()
+        engine = _get_engine()
         Base.metadata.create_all(engine)
         logger.info("init_db: Database created.")
     else:

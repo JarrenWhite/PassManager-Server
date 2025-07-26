@@ -27,10 +27,10 @@ class Service:
     @staticmethod
     def select_sanitising_function(key_name, key_value, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         switch = {
-            "username": lambda x: Service.username(x, calling_function),
-            "password": lambda x: Service.password(x, calling_function)
+            "username": lambda x: Service._username(x, calling_function),
+            "password": lambda x: Service._password(x, calling_function)
         }
-        result = switch.get(key_name, lambda x: Service.default(x, calling_function))(key_value)
+        result = switch.get(key_name, lambda x: Service._default(x, calling_function))(key_value)
         return result
 
     @staticmethod
@@ -62,17 +62,17 @@ class Service:
         return {"error": "Unknown error"}, 500
 
     @staticmethod
-    def username(username: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
+    def _username(username: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Sanitise the received username"""
         return True, {}
 
     @staticmethod
-    def password(password_hash: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
+    def _password(password_hash: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Sanitise the received password hash"""
         return True, {}
 
     @staticmethod
-    def default(key_value: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
+    def _default(key_value: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Default sanitising function. Should not be called"""
         logger.error(f"Sanitise.default called from {calling_function}: Unknown key encountered")
         return False, {"error": "Unknown key encountered."}
