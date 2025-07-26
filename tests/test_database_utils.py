@@ -302,7 +302,7 @@ class TestDatabaseUtils:
         # Confirm user deleted and other user unaffected
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username_2)
         assert success is True
@@ -356,15 +356,15 @@ class TestDatabaseUtils:
         # Confirm user and sessions deleted
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
         success, failure_reason, username = Database.check_session_token(session_token_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_2)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
 
     def test_delete_user_cascades_to_secure_data(self):
@@ -423,19 +423,19 @@ class TestDatabaseUtils:
         # Confirm user & Secure Data deleted
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
         success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert entries_list is None
         success, failure_reason, entry_data = Database.get_secure_entry_data(secure_data_1_public_id)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.ENTRY_NOT_FOUND
         assert entry_data is None
         success, failure_reason, entry_data = Database.get_secure_entry_data(secure_data_2_public_id)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.ENTRY_NOT_FOUND
         assert entry_data is None
 
     def test_get_user_password_hash_nonexistent_user(self):
@@ -444,7 +444,7 @@ class TestDatabaseUtils:
         test_username = "test_user"
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
 
     def test_create_session_nonexistent_user(self):
@@ -453,7 +453,7 @@ class TestDatabaseUtils:
         test_username = "test_user"
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
 
         # Attempt to create session
@@ -461,12 +461,12 @@ class TestDatabaseUtils:
         session_expiry_time = timedelta(hours=1)
         success, failure_reason = Database.create_session(test_username, session_token, session_expiry_time)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
 
         # Ensure session was not created
         success, failure_reason, username = Database.check_session_token(session_token)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
 
     def test_check_session_token_expired_token(self):
@@ -494,7 +494,7 @@ class TestDatabaseUtils:
         # Confirm checking session returns None
         success, failure_reason, username = Database.check_session_token(session_token)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
 
     def test_check_session_token_nonexistent_token(self):
@@ -502,7 +502,7 @@ class TestDatabaseUtils:
         session_token = "session_01"
         success, failure_reason, username = Database.check_session_token(session_token)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
 
     def test_create_session_token_existing_token(self):
@@ -595,7 +595,7 @@ class TestDatabaseUtils:
         assert failure_reason is None
         success, failure_reason, username = Database.check_session_token(session_token_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_2)
         assert success is True
@@ -607,11 +607,11 @@ class TestDatabaseUtils:
         session_token = "session_01"
         success, failure_reason, username = Database.check_session_token(session_token)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason = Database.delete_session(session_token)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
 
     def test_delete_all_sessions(self):
         """Test deleting all of a user's sessions"""
@@ -658,11 +658,11 @@ class TestDatabaseUtils:
         assert failure_reason is None
         success, failure_reason, username = Database.check_session_token(session_token_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_2)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
 
     def test_delete_all_sessions_nonexistent_user(self):
@@ -670,11 +670,11 @@ class TestDatabaseUtils:
         test_username = "test_user"
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
         success, failure_reason = Database.delete_all_sessions(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
 
     def test_clean_sessions_with_expired_sessions(self):
         """Test cleaning sessions when there are expired sessions to remove"""
@@ -729,19 +729,19 @@ class TestDatabaseUtils:
         assert failure_reason is None
         success, failure_reason, username = Database.check_session_token(session_token_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_2)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_3)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_4)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
 
     def test_clean_sessions_with_no_expired_sessions(self):
@@ -891,7 +891,7 @@ class TestDatabaseUtils:
         assert failure_reason is None
         success, failure_reason, username = Database.check_session_token(session_token_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_2)
         assert success is True
@@ -899,7 +899,7 @@ class TestDatabaseUtils:
         assert username == test_username_1
         success, failure_reason, username = Database.check_session_token(session_token_3)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.SESSION_NOT_FOUND
         assert username is None
         success, failure_reason, username = Database.check_session_token(session_token_4)
         assert success is True
@@ -912,7 +912,7 @@ class TestDatabaseUtils:
         test_username = "test_user"
         success, failure_reason, password_hash = Database.get_user_password_hash(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert password_hash is None
 
         # Create Secure Data
@@ -923,7 +923,7 @@ class TestDatabaseUtils:
         notes = "test_encrypted_notes"
         success, failure_reason = Database.create_secure_data(test_username, entry_name, website, username, password, notes)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
 
     def test_edit_secure_data(self):
         """Test secure data editing"""
@@ -1088,7 +1088,7 @@ class TestDatabaseUtils:
         fake_public_entry_id = "public_entry_id"
         success, failure_reason = Database.edit_secure_data(fake_public_entry_id, None, None, None, None, None)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.ENTRY_NOT_FOUND
 
     def test_delete_secure_data(self):
         """Test secure data deletion"""
@@ -1138,7 +1138,7 @@ class TestDatabaseUtils:
         assert failure_reason is None
         success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id_1)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.ENTRY_NOT_FOUND
         assert entry_data is None
         success, failure_reason, entry_data = Database.get_secure_entry_data(entry_public_id_2)
         assert success is True
@@ -1150,7 +1150,7 @@ class TestDatabaseUtils:
         fake_public_entry_id = "public_entry_id"
         success, failure_reason = Database.delete_secure_data(fake_public_entry_id)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.ENTRY_NOT_FOUND
 
     def test_get_secure_entries_list_existing_user(self):
         """Test getting secure entries list for a user with data"""
@@ -1219,7 +1219,7 @@ class TestDatabaseUtils:
         test_username = "test_user"
         success, failure_reason, entries_list = Database.get_secure_entries_list(test_username)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
         assert entries_list is None
 
     def test_get_secure_entry_data_nonexistent_entry(self):
@@ -1227,7 +1227,7 @@ class TestDatabaseUtils:
         fake_public_id = "secure_data_01"
         success, failure_reason, entry_data = Database.get_secure_entry_data(fake_public_id)
         assert success is False
-        assert failure_reason == FailureReason.NOT_FOUND
+        assert failure_reason == FailureReason.ENTRY_NOT_FOUND
         assert entry_data is None
 
 
