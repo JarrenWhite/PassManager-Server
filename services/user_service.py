@@ -1,4 +1,7 @@
 from typing import Dict, Any, Tuple
+import secrets
+import hashlib
+from datetime import timedelta
 import logging
 logger = logging.getLogger("services")
 
@@ -7,7 +10,20 @@ from utils import Service, Database
 
 def begin_user_registration() -> Tuple[Dict[str, Any], int]:
     """Get secret key to create user - business logic"""
-    return {}, 201
+    # Create secret key
+    secret_key = secrets.token_bytes(32)
+    hashed_secret_key = hashlib.sha256(secret_key).hexdigest()
+    expiry_time = timedelta(minutes=5)
+    ok, failure_reason, public_id = Database.create_registeration(hashed_secret_key, expiry_time)
+
+    # Failure
+    if not ok:
+        assert failure_reason
+        return Service.handle_failure(failure_reason, "begin_user_registration")
+
+    # Secret key prepared
+    assert public_id is not None
+    return {"registration_id": public_id, "secret_key": secret_key}, 201
 
 def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Register a user - business logic"""
