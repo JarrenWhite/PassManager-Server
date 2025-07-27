@@ -5,15 +5,15 @@ logger = logging.getLogger("services")
 from utils import Service, Database
 
 
-def request_secret_key(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
+def begin_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Get secret key to create user - business logic"""
     return {}, 201
 
-def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
+def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Register a user - business logic"""
     # Sanitise inputs
     required_keys = {"username", "password"}
-    ok, error = Service.sanitise_inputs(data, required_keys, "user_register")
+    ok, error = Service.sanitise_inputs(data, required_keys, "complete_user_registration")
     if not ok:
         return error, 400
 
@@ -25,7 +25,7 @@ def user_register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     # Failure
     if not ok:
         assert failure_reason is not None
-        return Service.handle_failure(failure_reason, "user_register")
+        return Service.handle_failure(failure_reason, "complete_user_registration")
 
     # User created
     return {}, 201
