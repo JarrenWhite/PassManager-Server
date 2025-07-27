@@ -6,7 +6,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from typing import List, Optional
 
+
 Base = declarative_base()
+
+class Registering(Base):
+    __tablename__ = "registering"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    secret_key: Mapped[str] = mapped_column(String, nullable=False)
+    expiry: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
 class User(Base):
     __tablename__ = "user"
