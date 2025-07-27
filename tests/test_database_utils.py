@@ -121,7 +121,7 @@ class TestDatabaseUtils:
         # Insert test data into the existing database
         with Database._get_db_session() as session:
             from database.database_models import User
-            test_user = User(username=test_username, secret_key_hash=test_secret_key_hash)
+            test_user = User(username=test_username, secret_key_hash=test_secret_key_hash, secret_key_enc=test_secret_key_hash)
             session.add(test_user)
             session.commit()
 
@@ -155,7 +155,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -170,7 +171,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -198,7 +200,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -248,7 +251,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -260,7 +264,8 @@ class TestDatabaseUtils:
 
         # Create another user with the same username
         second_test_secret_key_hash = "new_hashed_secret_key_456"
-        success, failure_reason = Database.create_user(test_username, second_test_secret_key_hash)
+        second_test_secret_key_enc = "new_encrypted_secret_key_456"
+        success, failure_reason = Database.create_user(test_username, second_test_secret_key_hash, second_test_secret_key_enc)
         assert success is False
         assert failure_reason == FailureReason.ALREADY_EXISTS
 
@@ -275,12 +280,14 @@ class TestDatabaseUtils:
         # Create users
         test_username_1 = "test_user_1"
         test_secret_key_hash_1 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1)
+        test_secret_key_enc_1 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1, test_secret_key_enc_1)
         assert success is True
         assert failure_reason is None
         test_username_2 = "test_user_2"
         test_secret_key_hash_2 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2)
+        test_secret_key_enc_2 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2, test_secret_key_enc_2)
         assert success is True
         assert failure_reason is None
 
@@ -314,7 +321,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -372,7 +380,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -474,7 +483,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -510,12 +520,14 @@ class TestDatabaseUtils:
         # Create users
         test_username_1 = "test_user_1"
         test_secret_key_hash_1 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1)
+        test_secret_key_enc_1 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1, test_secret_key_enc_1)
         assert success is True
         assert failure_reason is None
         test_username_2 = "test_user_2"
         test_secret_key_hash_2 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2)
+        test_secret_key_enc_2 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2, test_secret_key_enc_2)
         assert success is True
         assert failure_reason is None
 
@@ -555,7 +567,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -618,7 +631,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -681,12 +695,14 @@ class TestDatabaseUtils:
         # Create users
         test_username_1 = "test_user_1"
         test_secret_key_hash_1 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1)
+        test_secret_key_enc_1 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1, test_secret_key_enc_1)
         assert success is True
         assert failure_reason is None
         test_username_2 = "test_user_2"
         test_secret_key_hash_2 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2)
+        test_secret_key_enc_2 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2, test_secret_key_enc_2)
         assert success is True
         assert failure_reason is None
 
@@ -749,12 +765,14 @@ class TestDatabaseUtils:
         # Create users
         test_username_1 = "test_user_1"
         test_secret_key_hash_1 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1)
+        test_secret_key_enc_1 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1, test_secret_key_enc_1)
         assert success is True
         assert failure_reason is None
         test_username_2 = "test_user_2"
         test_secret_key_hash_2 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2)
+        test_secret_key_enc_2 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2, test_secret_key_enc_2)
         assert success is True
         assert failure_reason is None
 
@@ -834,12 +852,14 @@ class TestDatabaseUtils:
         # Create users
         test_username_1 = "test_user_1"
         test_secret_key_hash_1 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1)
+        test_secret_key_enc_1 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_1, test_secret_key_hash_1, test_secret_key_enc_1)
         assert success is True
         assert failure_reason is None
         test_username_2 = "test_user_2"
         test_secret_key_hash_2 = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2)
+        test_secret_key_enc_2 = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username_2, test_secret_key_hash_2, test_secret_key_enc_2)
         assert success is True
         assert failure_reason is None
 
@@ -930,7 +950,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -984,7 +1005,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -1038,7 +1060,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -1095,7 +1118,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -1157,7 +1181,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
@@ -1200,7 +1225,8 @@ class TestDatabaseUtils:
         # Create user
         test_username = "test_user"
         test_secret_key_hash = "hashed_secret_key_123"
-        success, failure_reason = Database.create_user(test_username, test_secret_key_hash)
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
         assert success is True
         assert failure_reason is None
 
