@@ -447,6 +447,31 @@ class TestDatabaseUtils:
         assert failure_reason == FailureReason.ENTRY_NOT_FOUND
         assert entry_data is None
 
+    def test_get_user_secret_key_enc_nonexistent_user(self):
+        """Test retrieving encrypted secret key for a user that doesn't exist"""
+        # Confirm user does not exist
+        test_username = "test_user"
+        success, failure_reason, secret_key_enc = Database.get_user_secret_key_enc(test_username)
+        assert success is False
+        assert failure_reason == FailureReason.USERNAME_NOT_FOUND
+        assert secret_key_enc is None
+
+    def test_get_user_secret_key_enc_existing_user(self):
+        """Test retrieving encrypted secret key for an existing user"""
+        # Create user
+        test_username = "test_user"
+        test_secret_key_hash = "hashed_secret_key_123"
+        test_secret_key_enc = "encrypted_secret_key_123"
+        success, failure_reason = Database.create_user(test_username, test_secret_key_hash, test_secret_key_enc)
+        assert success is True
+        assert failure_reason is None
+
+        # Retrieve encrypted secret key
+        success, failure_reason, secret_key_enc = Database.get_user_secret_key_enc(test_username)
+        assert success is True
+        assert failure_reason is None
+        assert secret_key_enc == test_secret_key_enc
+
     def test_get_user_secret_key_hash_nonexistent_user(self):
         """Test retrieving password hash for a user that doesn't exist"""
         # Confirm user does not exist
