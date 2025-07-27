@@ -5,7 +5,7 @@ logger = logging.getLogger("services")
 from utils import Service, Database
 
 
-def begin_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
+def begin_user_registration() -> Tuple[Dict[str, Any], int]:
     """Get secret key to create user - business logic"""
     return {}, 201
 

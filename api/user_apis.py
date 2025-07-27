@@ -10,13 +10,9 @@ user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 @user_bp.route('/begin', methods=['POST'])
 def begin_user_registration_endpoint():
     """Request a secret key to begin user registration"""
-    if request.is_json:
-        data = request.get_json() or {}
-    else:
-        data = dict(request.form) or {}
 
     logger.info("begin_user_registration_endpoint: Called")
-    result, status_code = begin_user_registration(data)
+    result, status_code = begin_user_registration()
     logger.info(f"begin_user_registration_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
