@@ -331,13 +331,13 @@ class Database:
             return False, FailureReason.SERVER_EXCEPTION, None
 
     @staticmethod
-    def create_registering(secret_key: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+    def create_registeration(secret_key: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
         return True, None, None
 
     @staticmethod
-    def fetch_registering(public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+    def fetch_registeration(public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
         return True, None, None
 
     @staticmethod
-    def delete_registering(public_id: str) -> Tuple[bool, Optional[FailureReason]]:
+    def delete_registeration(public_id: str) -> Tuple[bool, Optional[FailureReason]]:
         return True, None

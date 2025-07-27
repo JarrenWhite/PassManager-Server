@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database.database_models import Base, User, LoginSession, SecureData, Registering
+from database.database_models import Base, User, LoginSession, SecureData, Registration
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -922,43 +922,43 @@ class TestDatabaseModels():
         assert retrieved_3.notes == notes_long
         assert retrieved_4.notes == notes_mixed
 
-    def test_registering_creation(self):
-        """Test creating a Registering instance."""
-        # Create a test registering entry
+    def test_registration_creation(self):
+        """Test creating a Registration instance."""
+        # Create a test registration entry
         expiry = datetime.now() + timedelta(hours=24)
-        test_registering = Registering(
+        test_registration = Registration(
             secret_key="test_secret_key_123",
             expiry=expiry
         )
 
         # Add to session and commit
-        self.session.add(test_registering)
+        self.session.add(test_registration)
         self.session.commit()
 
-        # Verify the registering entry was created with an ID
-        assert test_registering.id is not None
-        assert isinstance(test_registering.id, int)
+        # Verify the registration entry was created with an ID
+        assert test_registration.id is not None
+        assert isinstance(test_registration.id, int)
 
-        # Verify the registering data is correct
-        assert test_registering.secret_key == "test_secret_key_123"
-        assert test_registering.expiry == expiry
+        # Verify the registration data is correct
+        assert test_registration.secret_key == "test_secret_key_123"
+        assert test_registration.expiry == expiry
 
-        # Query the registering entry from database to ensure it was saved
-        retrieved_registering = self.session.query(Registering).filter_by(id=test_registering.id).first()
-        assert retrieved_registering is not None
-        assert retrieved_registering.id == test_registering.id
-        assert retrieved_registering.public_id == test_registering.public_id
-        assert retrieved_registering.secret_key == test_registering.secret_key
-        assert retrieved_registering.expiry == test_registering.expiry
+        # Query the registration entry from database to ensure it was saved
+        retrieved_registration = self.session.query(Registration).filter_by(id=test_registration.id).first()
+        assert retrieved_registration is not None
+        assert retrieved_registration.id == test_registration.id
+        assert retrieved_registration.public_id == test_registration.public_id
+        assert retrieved_registration.secret_key == test_registration.secret_key
+        assert retrieved_registration.expiry == test_registration.expiry
 
-    def test_registering_required_fields(self):
+    def test_registration_required_fields(self):
         """Test that required fields cannot be null."""
-        # Create registering entry without secret_key
-        test_registering_no_secret = Registering(
+        # Create registration entry without secret_key
+        test_registration_no_secret = Registration(
             secret_key=None,
             expiry=datetime.now() + timedelta(hours=24)
         )
-        self.session.add(test_registering_no_secret)
+        self.session.add(test_registration_no_secret)
 
         # Attempt to commit
         try:
@@ -971,12 +971,12 @@ class TestDatabaseModels():
                      "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
 
-        # Create registering entry without expiry
-        test_registering_no_expiry = Registering(
+        # Create registration entry without expiry
+        test_registration_no_expiry = Registration(
             secret_key="test_secret_key_123",
             expiry=None
         )
-        self.session.add(test_registering_no_expiry)
+        self.session.add(test_registration_no_expiry)
 
         # Attempt to commit
         try:
@@ -989,175 +989,175 @@ class TestDatabaseModels():
                      "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
 
-        # Verify no registering entries were saved to the database
-        all_registering = self.session.query(Registering).all()
-        assert len(all_registering) == 0
+        # Verify no registration entries were saved to the database
+        all_registration = self.session.query(Registration).all()
+        assert len(all_registration) == 0
 
-    def test_registering_multiple_entries(self):
-        """Test creating multiple Registering instances."""
-        # Create multiple test registering entries
+    def test_registration_multiple_entries(self):
+        """Test creating multiple Registration instances."""
+        # Create multiple test registration entries
         expiry1 = datetime.now() + timedelta(hours=1)
         expiry2 = datetime.now() + timedelta(hours=2)
         expiry3 = datetime.now() + timedelta(hours=3)
 
-        test_registering_1 = Registering(
+        test_registration_1 = Registration(
             secret_key="secret_key_1",
             expiry=expiry1
         )
-        test_registering_2 = Registering(
+        test_registration_2 = Registration(
             secret_key="secret_key_2",
             expiry=expiry2
         )
-        test_registering_3 = Registering(
+        test_registration_3 = Registration(
             secret_key="secret_key_3",
             expiry=expiry3
         )
 
-        self.session.add(test_registering_1)
-        self.session.add(test_registering_2)
-        self.session.add(test_registering_3)
+        self.session.add(test_registration_1)
+        self.session.add(test_registration_2)
+        self.session.add(test_registration_3)
         self.session.commit()
 
         # Verify all entries were created with unique IDs
-        assert test_registering_1.id is not None
-        assert test_registering_2.id is not None
-        assert test_registering_3.id is not None
-        assert test_registering_1.id != test_registering_2.id
-        assert test_registering_1.id != test_registering_3.id
-        assert test_registering_2.id != test_registering_3.id
+        assert test_registration_1.id is not None
+        assert test_registration_2.id is not None
+        assert test_registration_3.id is not None
+        assert test_registration_1.id != test_registration_2.id
+        assert test_registration_1.id != test_registration_3.id
+        assert test_registration_2.id != test_registration_3.id
 
         # Verify all entries have correct data
-        assert test_registering_1.secret_key == "secret_key_1"
-        assert test_registering_2.secret_key == "secret_key_2"
-        assert test_registering_3.secret_key == "secret_key_3"
-        assert test_registering_1.expiry == expiry1
-        assert test_registering_2.expiry == expiry2
-        assert test_registering_3.expiry == expiry3
+        assert test_registration_1.secret_key == "secret_key_1"
+        assert test_registration_2.secret_key == "secret_key_2"
+        assert test_registration_3.secret_key == "secret_key_3"
+        assert test_registration_1.expiry == expiry1
+        assert test_registration_2.expiry == expiry2
+        assert test_registration_3.expiry == expiry3
 
         # Query all entries from database
-        all_registering = self.session.query(Registering).all()
-        assert len(all_registering) == 3
+        all_registration = self.session.query(Registration).all()
+        assert len(all_registration) == 3
 
         # Verify we can find each entry by secret_key
-        found_1 = self.session.query(Registering).filter_by(secret_key="secret_key_1").first()
-        found_2 = self.session.query(Registering).filter_by(secret_key="secret_key_2").first()
-        found_3 = self.session.query(Registering).filter_by(secret_key="secret_key_3").first()
+        found_1 = self.session.query(Registration).filter_by(secret_key="secret_key_1").first()
+        found_2 = self.session.query(Registration).filter_by(secret_key="secret_key_2").first()
+        found_3 = self.session.query(Registration).filter_by(secret_key="secret_key_3").first()
 
         assert found_1 is not None
         assert found_2 is not None
         assert found_3 is not None
-        assert found_1.id == test_registering_1.id
-        assert found_2.id == test_registering_2.id
-        assert found_3.id == test_registering_3.id
+        assert found_1.id == test_registration_1.id
+        assert found_2.id == test_registration_2.id
+        assert found_3.id == test_registration_3.id
 
-    def test_registering_deletion(self):
-        """Test deleting a Registering instance."""
-        # Create a test registering entry
+    def test_registration_deletion(self):
+        """Test deleting a Registration instance."""
+        # Create a test registration entry
         expiry = datetime.now() + timedelta(hours=24)
-        test_registering = Registering(
+        test_registration = Registration(
             secret_key="test_secret_key_for_deletion",
             expiry=expiry
         )
-        self.session.add(test_registering)
+        self.session.add(test_registration)
         self.session.commit()
 
         # Verify the entry exists
-        assert test_registering.id is not None
-        retrieved = self.session.query(Registering).filter_by(id=test_registering.id).first()
+        assert test_registration.id is not None
+        retrieved = self.session.query(Registration).filter_by(id=test_registration.id).first()
         assert retrieved is not None
 
         # Delete the entry
-        self.session.delete(test_registering)
+        self.session.delete(test_registration)
         self.session.commit()
 
         # Verify the entry was deleted
-        deleted_entry = self.session.query(Registering).filter_by(id=test_registering.id).first()
+        deleted_entry = self.session.query(Registration).filter_by(id=test_registration.id).first()
         assert deleted_entry is None
 
         # Verify no entries exist in the database
-        all_registering = self.session.query(Registering).all()
-        assert len(all_registering) == 0
+        all_registration = self.session.query(Registration).all()
+        assert len(all_registration) == 0
 
-    def test_registering_update(self):
-        """Test updating a Registering instance."""
-        # Create a test registering entry
+    def test_registration_update(self):
+        """Test updating a Registration instance."""
+        # Create a test registration entry
         original_expiry = datetime.now() + timedelta(hours=24)
-        test_registering = Registering(
+        test_registration = Registration(
             secret_key="original_secret_key",
             expiry=original_expiry
         )
-        self.session.add(test_registering)
+        self.session.add(test_registration)
         self.session.commit()
 
         # Update the entry
         new_expiry = datetime.now() + timedelta(hours=48)
-        test_registering.secret_key = "updated_secret_key"
-        test_registering.expiry = new_expiry
+        test_registration.secret_key = "updated_secret_key"
+        test_registration.expiry = new_expiry
         self.session.commit()
 
         # Verify the updates were saved
-        retrieved = self.session.query(Registering).filter_by(id=test_registering.id).first()
+        retrieved = self.session.query(Registration).filter_by(id=test_registration.id).first()
         assert retrieved is not None
         assert retrieved.secret_key == "updated_secret_key"
         assert retrieved.expiry == new_expiry
 
         # Verify the original values are no longer present
-        old_entry = self.session.query(Registering).filter_by(secret_key="original_secret_key").first()
+        old_entry = self.session.query(Registration).filter_by(secret_key="original_secret_key").first()
         assert old_entry is None
 
-    def test_registering_string_handling(self):
-        """Test that Registering can handle various string lengths and content."""
+    def test_registration_string_handling(self):
+        """Test that Registration can handle various string lengths and content."""
         # Test with very long secret key
         long_secret_key = "x" * 1000
         expiry_long = datetime.now() + timedelta(hours=1)
-        test_registering_long = Registering(
+        test_registration_long = Registration(
             secret_key=long_secret_key,
             expiry=expiry_long
         )
-        self.session.add(test_registering_long)
+        self.session.add(test_registration_long)
         self.session.commit()
 
         # Test with special characters in secret key
         special_chars_secret = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
         expiry_special = datetime.now() + timedelta(hours=2)
-        test_registering_special = Registering(
+        test_registration_special = Registration(
             secret_key=special_chars_secret,
             expiry=expiry_special
         )
-        self.session.add(test_registering_special)
+        self.session.add(test_registration_special)
         self.session.commit()
 
         # Test with unicode characters in secret key
         unicode_secret = "测试密钥 🚀 ñáéíóú"
         expiry_unicode = datetime.now() + timedelta(hours=3)
-        test_registering_unicode = Registering(
+        test_registration_unicode = Registration(
             secret_key=unicode_secret,
             expiry=expiry_unicode
         )
-        self.session.add(test_registering_unicode)
+        self.session.add(test_registration_unicode)
         self.session.commit()
 
         # Test with spaces and mixed case in secret key
         mixed_secret = "Test Secret Key 123 with Spaces"
         expiry_mixed = datetime.now() + timedelta(hours=4)
-        test_registering_mixed = Registering(
+        test_registration_mixed = Registration(
             secret_key=mixed_secret,
             expiry=expiry_mixed
         )
-        self.session.add(test_registering_mixed)
+        self.session.add(test_registration_mixed)
         self.session.commit()
 
         # Verify all entries were created successfully
-        assert test_registering_long.id is not None
-        assert test_registering_special.id is not None
-        assert test_registering_unicode.id is not None
-        assert test_registering_mixed.id is not None
+        assert test_registration_long.id is not None
+        assert test_registration_special.id is not None
+        assert test_registration_unicode.id is not None
+        assert test_registration_mixed.id is not None
 
         # Verify data integrity
-        retrieved_long = self.session.query(Registering).filter_by(id=test_registering_long.id).first()
-        retrieved_special = self.session.query(Registering).filter_by(id=test_registering_special.id).first()
-        retrieved_unicode = self.session.query(Registering).filter_by(id=test_registering_unicode.id).first()
-        retrieved_mixed = self.session.query(Registering).filter_by(id=test_registering_mixed.id).first()
+        retrieved_long = self.session.query(Registration).filter_by(id=test_registration_long.id).first()
+        retrieved_special = self.session.query(Registration).filter_by(id=test_registration_special.id).first()
+        retrieved_unicode = self.session.query(Registration).filter_by(id=test_registration_unicode.id).first()
+        retrieved_mixed = self.session.query(Registration).filter_by(id=test_registration_mixed.id).first()
 
         assert retrieved_long is not None, "Long secret key entry not found in DB"
         assert retrieved_special is not None, "Special character secret key entry not found in DB"
@@ -1174,55 +1174,55 @@ class TestDatabaseModels():
         assert retrieved_unicode.expiry == expiry_unicode
         assert retrieved_mixed.expiry == expiry_mixed
 
-    def test_registering_expiry_datetime_handling(self):
-        """Test that Registering expiry field handles various datetime values correctly."""
+    def test_registration_expiry_datetime_handling(self):
+        """Test that Registration expiry field handles various datetime values correctly."""
         # Test with past datetime
         past_expiry = datetime.now() - timedelta(hours=1)
-        test_registering_past = Registering(
+        test_registration_past = Registration(
             secret_key="past_expiry_secret",
             expiry=past_expiry
         )
-        self.session.add(test_registering_past)
+        self.session.add(test_registration_past)
         self.session.commit()
 
         # Test with future datetime
         future_expiry = datetime.now() + timedelta(days=365)
-        test_registering_future = Registering(
+        test_registration_future = Registration(
             secret_key="future_expiry_secret",
             expiry=future_expiry
         )
-        self.session.add(test_registering_future)
+        self.session.add(test_registration_future)
         self.session.commit()
 
         # Test with current datetime
         current_expiry = datetime.now()
-        test_registering_current = Registering(
+        test_registration_current = Registration(
             secret_key="current_expiry_secret",
             expiry=current_expiry
         )
-        self.session.add(test_registering_current)
+        self.session.add(test_registration_current)
         self.session.commit()
 
         # Test with very far future datetime
         far_future_expiry = datetime.now() + timedelta(days=10000)
-        test_registering_far_future = Registering(
+        test_registration_far_future = Registration(
             secret_key="far_future_expiry_secret",
             expiry=far_future_expiry
         )
-        self.session.add(test_registering_far_future)
+        self.session.add(test_registration_far_future)
         self.session.commit()
 
         # Verify all entries were created successfully
-        assert test_registering_past.id is not None
-        assert test_registering_future.id is not None
-        assert test_registering_current.id is not None
-        assert test_registering_far_future.id is not None
+        assert test_registration_past.id is not None
+        assert test_registration_future.id is not None
+        assert test_registration_current.id is not None
+        assert test_registration_far_future.id is not None
 
         # Verify data integrity
-        retrieved_past = self.session.query(Registering).filter_by(id=test_registering_past.id).first()
-        retrieved_future = self.session.query(Registering).filter_by(id=test_registering_future.id).first()
-        retrieved_current = self.session.query(Registering).filter_by(id=test_registering_current.id).first()
-        retrieved_far_future = self.session.query(Registering).filter_by(id=test_registering_far_future.id).first()
+        retrieved_past = self.session.query(Registration).filter_by(id=test_registration_past.id).first()
+        retrieved_future = self.session.query(Registration).filter_by(id=test_registration_future.id).first()
+        retrieved_current = self.session.query(Registration).filter_by(id=test_registration_current.id).first()
+        retrieved_far_future = self.session.query(Registration).filter_by(id=test_registration_far_future.id).first()
 
         assert retrieved_past is not None
         assert retrieved_future is not None
@@ -1235,8 +1235,8 @@ class TestDatabaseModels():
         assert abs((retrieved_current.expiry - current_expiry).total_seconds()) < 1
         assert abs((retrieved_far_future.expiry - far_future_expiry).total_seconds()) < 1
 
-    def test_registering_query_by_expiry(self):
-        """Test querying Registering entries by expiry datetime."""
+    def test_registration_query_by_expiry(self):
+        """Test querying Registration entries by expiry datetime."""
         # Create test entries with different expiry times
         now = datetime.now()
         past_expiry = now - timedelta(hours=1)
@@ -1244,41 +1244,41 @@ class TestDatabaseModels():
         future_expiry = now + timedelta(hours=1)
         far_future_expiry = now + timedelta(days=1)
 
-        test_registering_past = Registering(
+        test_registration_past = Registration(
             secret_key="past_secret",
             expiry=past_expiry
         )
-        test_registering_current = Registering(
+        test_registration_current = Registration(
             secret_key="current_secret",
             expiry=current_expiry
         )
-        test_registering_future = Registering(
+        test_registration_future = Registration(
             secret_key="future_secret",
             expiry=future_expiry
         )
-        test_registering_far_future = Registering(
+        test_registration_far_future = Registration(
             secret_key="far_future_secret",
             expiry=far_future_expiry
         )
 
         self.session.add_all([
-            test_registering_past,
-            test_registering_current,
-            test_registering_future,
-            test_registering_far_future
+            test_registration_past,
+            test_registration_current,
+            test_registration_future,
+            test_registration_far_future
         ])
         self.session.commit()
 
         # Query entries that have expired (past expiry)
-        expired_entries = self.session.query(Registering).filter(
-            Registering.expiry < now
+        expired_entries = self.session.query(Registration).filter(
+            Registration.expiry < now
         ).all()
         assert len(expired_entries) == 1
         assert expired_entries[0].secret_key == "past_secret"
 
         # Query entries that are still valid (future expiry)
-        valid_entries = self.session.query(Registering).filter(
-            Registering.expiry > now
+        valid_entries = self.session.query(Registration).filter(
+            Registration.expiry > now
         ).all()
         assert len(valid_entries) == 2
         secret_keys = [entry.secret_key for entry in valid_entries]
@@ -1286,8 +1286,8 @@ class TestDatabaseModels():
         assert "far_future_secret" in secret_keys
 
         # Query entries expiring within the next hour
-        expiring_soon = self.session.query(Registering).filter(
-            Registering.expiry <= now + timedelta(hours=1)
+        expiring_soon = self.session.query(Registration).filter(
+            Registration.expiry <= now + timedelta(hours=1)
         ).all()
         assert len(expiring_soon) == 3  # past, current, and future (within 1 hour)
         secret_keys_soon = [entry.secret_key for entry in expiring_soon]
@@ -1295,41 +1295,41 @@ class TestDatabaseModels():
         assert "current_secret" in secret_keys_soon
         assert "future_secret" in secret_keys_soon
 
-    def test_registering_duplicate_secret_keys(self):
-        """Test that multiple Registering entries can have the same secret_key."""
+    def test_registration_duplicate_secret_keys(self):
+        """Test that multiple Registration entries can have the same secret_key."""
         # Create multiple entries with the same secret key
         expiry1 = datetime.now() + timedelta(hours=1)
         expiry2 = datetime.now() + timedelta(hours=2)
         expiry3 = datetime.now() + timedelta(hours=3)
 
-        test_registering_1 = Registering(
+        test_registration_1 = Registration(
             secret_key="duplicate_secret_key",
             expiry=expiry1
         )
-        test_registering_2 = Registering(
+        test_registration_2 = Registration(
             secret_key="duplicate_secret_key",
             expiry=expiry2
         )
-        test_registering_3 = Registering(
+        test_registration_3 = Registration(
             secret_key="duplicate_secret_key",
             expiry=expiry3
         )
 
-        self.session.add(test_registering_1)
-        self.session.add(test_registering_2)
-        self.session.add(test_registering_3)
+        self.session.add(test_registration_1)
+        self.session.add(test_registration_2)
+        self.session.add(test_registration_3)
         self.session.commit()
 
         # Verify all entries were created successfully
-        assert test_registering_1.id is not None
-        assert test_registering_2.id is not None
-        assert test_registering_3.id is not None
-        assert test_registering_1.id != test_registering_2.id
-        assert test_registering_1.id != test_registering_3.id
-        assert test_registering_2.id != test_registering_3.id
+        assert test_registration_1.id is not None
+        assert test_registration_2.id is not None
+        assert test_registration_3.id is not None
+        assert test_registration_1.id != test_registration_2.id
+        assert test_registration_1.id != test_registration_3.id
+        assert test_registration_2.id != test_registration_3.id
 
         # Query all entries with the same secret key
-        duplicate_entries = self.session.query(Registering).filter_by(
+        duplicate_entries = self.session.query(Registration).filter_by(
             secret_key="duplicate_secret_key"
         ).all()
         assert len(duplicate_entries) == 3

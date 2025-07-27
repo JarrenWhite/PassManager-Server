@@ -9,8 +9,8 @@ from typing import List, Optional
 
 Base = declarative_base()
 
-class Registering(Base):
-    __tablename__ = "registering"
+class Registration(Base):
+    __tablename__ = "registration"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     secret_key: Mapped[str] = mapped_column(String, nullable=False)
