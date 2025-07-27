@@ -339,6 +339,7 @@ class Database:
                 expiry = datetime.now() + duration_till_expiry
                 new_registration = Registration(secret_key=secret_key, expiry=expiry)
                 session.add(new_registration)
+                session.flush()
 
                 logger.info(f"create_registeration: Secret key registration '{secret_key}' created successfully.")
                 return True, None, new_registration.public_id
