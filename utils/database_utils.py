@@ -37,8 +37,8 @@ class Database:
             return False
 
     @staticmethod
-    def create_user(username: str, password_hash: str) -> Tuple[bool, Optional[FailureReason]]:
-        """Create a new user with the given username and password hash"""
+    def create_user(username: str, secret_key_hash: str) -> Tuple[bool, Optional[FailureReason]]:
+        """Create a new user with the given username and secret key hash"""
         try:
             with Database._get_db_session() as session:
                 # Check if user already exists
@@ -48,7 +48,7 @@ class Database:
                     return False, FailureReason.ALREADY_EXISTS
 
                 # Create new user
-                new_user = User(username=username, password_hash=password_hash)
+                new_user = User(username=username, secret_key_hash=secret_key_hash)
                 session.add(new_user)
 
                 logger.info(f"create_user: User '{username}' created successfully.")
@@ -59,18 +59,18 @@ class Database:
             return False, FailureReason.SERVER_EXCEPTION
 
     @staticmethod
-    def get_user_password_hash(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
-        """Find and return the user's password hash. Returns None if not found"""
+    def get_user_secret_key_hash(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """Find and return the user's secret key hash. Returns None if not found"""
         try:
             with Database._get_db_session() as session:
                 user = session.scalar(select(User).where(User.username == username))
                 if user:
-                    return True, None, user.password_hash
+                    return True, None, user.secret_key_hash
                 else:
                     return False, FailureReason.USERNAME_NOT_FOUND, None
 
         except Exception as e:
-            logger.error(f"get_user_password_hash: Error - {e}")
+            logger.error(f"get_user_secret_key_hash: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION, None
 
     @staticmethod
