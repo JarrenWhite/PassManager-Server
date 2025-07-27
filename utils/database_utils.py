@@ -329,3 +329,15 @@ class Database:
         except Exception as e:
             logger.error(f"get_secure_entry_data: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
+    def create_registering(secret_key: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        return True, None, None
+
+    @staticmethod
+    def fetch_registering(public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        return True, None, None
+
+    @staticmethod
+    def delete_registering(public_id: str) -> Tuple[bool, Optional[FailureReason]]:
+        return True, None
