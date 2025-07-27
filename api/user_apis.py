@@ -2,10 +2,23 @@ from flask import Blueprint, jsonify, request
 import logging
 logger = logging.getLogger("api")
 
-from services.user_service import user_register, user_auth, user_delete
+from services.user_service import request_secret_key, user_register, user_auth, user_delete
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
+
+@user_bp.route('/new', methods=['POST'])
+def request_secret_key_endpoint():
+    """Request a secret key to begin user registration"""
+    if request.is_json:
+        data = request.get_json() or {}
+    else:
+        data = dict(request.form) or {}
+
+    logger.info("request_secret_ke: Called")
+    result, status_code = request_secret_key(data)
+    logger.info(f"request_secret_key_endpoint: Complete with status code: {status_code}")
+    return jsonify(result), status_code
 
 @user_bp.route('/register', methods=['POST'])
 def user_register_endpoint():
