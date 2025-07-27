@@ -25,18 +25,19 @@ def begin_user_registration() -> Tuple[Dict[str, Any], int]:
     assert public_id is not None
     return {"registration_id": public_id, "secret_key": secret_key}, 201
 
+
 def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Register a user - business logic"""
     # Sanitise inputs
-    required_keys = {"username", "password"}
+    required_keys = {"username", "secret_key"}
     ok, error = Service.sanitise_inputs(data, required_keys, "complete_user_registration")
     if not ok:
         return error, 400
 
     # Attempt data entry
     username = data["username"]
-    password = data["password"]
-    ok, failure_reason = Database.create_user(username, password)
+    secret_key = data["secret_key"]
+    ok, failure_reason = Database.create_user(username, secret_key)
 
     # Failure
     if not ok:
@@ -49,60 +50,64 @@ def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], in
 
 def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Authorize a user - business logic"""
-    # Sanitise inputs
-    required_keys = {"username", "password"}
-    ok, error = Service.sanitise_inputs(data, required_keys, "user_auth")
-    if not ok:
-        return error, 400
+    # TODO - Rebuild logic for authentication
+    return {}, 200
+    # # Sanitise inputs
+    # required_keys = {"username", "password"}
+    # ok, error = Service.sanitise_inputs(data, required_keys, "user_auth")
+    # if not ok:
+    #     return error, 400
 
-    # Attempt to get User data
-    username = data["username"]
-    password = data["password"]
-    ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
+    # # Attempt to get User data
+    # username = data["username"]
+    # password = data["password"]
+    # ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
 
-    # Failure
-    if not ok:
-        assert failure_reason is not None
-        return Service.handle_failure(failure_reason, "user_auth")
+    # # Failure
+    # if not ok:
+    #     assert failure_reason is not None
+    #     return Service.handle_failure(failure_reason, "user_auth")
 
-    # Success
-    if password == stored_password_hash:
-        return {}, 200
-    else:
-        return {"error": "Incorrect username or password"}, 401
+    # # Success
+    # if password == stored_password_hash:
+    #     return {}, 200
+    # else:
+    #     return {"error": "Incorrect username or password"}, 401
 
 
 def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Delete a user - business logic"""
-    # Sanitise inputs
-    required_keys = {"username", "password"}
-    ok, error = Service.sanitise_inputs(data, required_keys, "user_delete")
-    if not ok:
-        return error, 400
-
-    # Authenticate user
-    username = data["username"]
-    password = data["password"]
-    ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
-
-    # Failure on Auth
-    if not ok:
-        assert failure_reason is not None
-        return Service.handle_failure(failure_reason, "user_delete (auth)")
-
-    # Verify password
-    if password != stored_password_hash:
-        logger.info("user_delete: Rejected - Incorrect password")
-        return {"error": "Incorrect username or password"}, 401
-
-    # Delete User
-    ok, failure_reason = Database.delete_user(username)
-
-    # Failure on delete
-    if not ok:
-        assert failure_reason is not None
-        return Service.handle_failure(failure_reason, "user_delete (deletion)")
-
-    # Success
-    logger.info(f"user_delete: User '{username}' deleted successfully")
+    # TODO - Rebuild logic for authentication before deletion
     return {}, 200
+    # Sanitise inputs
+    # required_keys = {"username", "password"}
+    # ok, error = Service.sanitise_inputs(data, required_keys, "user_delete")
+    # if not ok:
+    #     return error, 400
+
+    # # Authenticate user
+    # username = data["username"]
+    # password = data["password"]
+    # ok, failure_reason, stored_password_hash = Database.get_user_secret_key_hash(username)
+
+    # # Failure on Auth
+    # if not ok:
+    #     assert failure_reason is not None
+    #     return Service.handle_failure(failure_reason, "user_delete (auth)")
+
+    # # Verify password
+    # if password != stored_password_hash:
+    #     logger.info("user_delete: Rejected - Incorrect password")
+    #     return {"error": "Incorrect username or password"}, 401
+
+    # # Delete User
+    # ok, failure_reason = Database.delete_user(username)
+
+    # # Failure on delete
+    # if not ok:
+    #     assert failure_reason is not None
+    #     return Service.handle_failure(failure_reason, "user_delete (deletion)")
+
+    # # Success
+    # logger.info(f"user_delete: User '{username}' deleted successfully")
+    # return {}, 200
