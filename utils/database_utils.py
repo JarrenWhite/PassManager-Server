@@ -37,7 +37,7 @@ class Database:
             return False
 
     @staticmethod
-    def create_user(username: str, secret_key_hash: str) -> Tuple[bool, Optional[FailureReason]]:
+    def create_user(username: str, secret_key_hash: str, secret_key_enc: str) -> Tuple[bool, Optional[FailureReason]]:
         """Create a new user with the given username and secret key hash"""
         try:
             with Database._get_db_session() as session:
@@ -48,7 +48,7 @@ class Database:
                     return False, FailureReason.ALREADY_EXISTS
 
                 # Create new user
-                new_user = User(username=username, secret_key_hash=secret_key_hash)
+                new_user = User(username=username, secret_key_hash=secret_key_hash, secret_key_enc=secret_key_enc)
                 session.add(new_user)
 
                 logger.info(f"create_user: User '{username}' created successfully.")
@@ -59,8 +59,23 @@ class Database:
             return False, FailureReason.SERVER_EXCEPTION
 
     @staticmethod
+    def get_user_secret_key_enc(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """Find and return the user's secret key enc"""
+        try:
+            with Database._get_db_session() as session:
+                user = session.scalar(select(User).where(User.username == username))
+                if user:
+                    return True, None, user.secret_key_enc
+                else:
+                    return False, FailureReason.USERNAME_NOT_FOUND, None
+
+        except Exception as e:
+            logger.error(f"get_user_secret_key_enc: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
     def get_user_secret_key_hash(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
-        """Find and return the user's secret key hash. Returns None if not found"""
+        """Find and return the user's secret key hash"""
         try:
             with Database._get_db_session() as session:
                 user = session.scalar(select(User).where(User.username == username))
@@ -75,7 +90,7 @@ class Database:
 
     @staticmethod
     def delete_user(username: str) -> Tuple[bool, Optional[FailureReason]]:
-        """Delete the requested user. Returns False if not found"""
+        """Delete the requested user"""
         try:
             with Database._get_db_session() as session:
                 # Find user in question
@@ -290,7 +305,7 @@ class Database:
 
     @staticmethod
     def get_secure_entries_list(username: str) -> Tuple[bool, Optional[FailureReason], Optional[List[Tuple[Optional[str], str]]]]:
-        """Get names and public ids for all secure entries for a given user, returns (name, public_id)"""
+        """Get names and public ids for all secure entries for a given user, returns [(name, public_id)]"""
         try:
             with Database._get_db_session() as session:
                 # Find user in question

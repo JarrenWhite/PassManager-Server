@@ -34,7 +34,8 @@ class TestDatabaseModels():
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
 
         # Add to session and commit
@@ -48,6 +49,7 @@ class TestDatabaseModels():
         # Verify the user data is correct
         assert test_user.username == "testuser"
         assert test_user.secret_key_hash == "hashed_secret_key_123"
+        assert test_user.secret_key_enc == "enc_secret_key_123"
 
         # Query the user from database to ensure it was saved
         retrieved_user = self.session.query(User).filter_by(id=test_user.id).first()
@@ -55,13 +57,15 @@ class TestDatabaseModels():
         assert retrieved_user.id == test_user.id
         assert retrieved_user.username == test_user.username
         assert retrieved_user.secret_key_hash == test_user.secret_key_hash
+        assert retrieved_user.secret_key_enc == test_user.secret_key_enc
 
     def test_user_username_uniqueness(self):
         """Test that usernames must be unique."""
         # Create & commit test user
         test_user_1 = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_1)
         self.session.commit()
@@ -69,7 +73,8 @@ class TestDatabaseModels():
         # Create second test user with same username
         test_user_2 = User(
             username="testuser",
-            secret_key_hash="different_secret_key_123"
+            secret_key_hash="different_secret_key_123",
+            secret_key_enc="different_enc_secret_key_123"
         )
         self.session.add(test_user_2)
 
@@ -93,7 +98,8 @@ class TestDatabaseModels():
         # Create user without username
         test_user_no_username = User(
             username=None,
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_no_username)
 
@@ -108,10 +114,11 @@ class TestDatabaseModels():
                      "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
             self.session.rollback()
 
-        # Create user without secret key
+        # Create user without secret key hash
         test_user_no_secret_key = User(
             username="testuser",
-            secret_key_hash=None
+            secret_key_hash=None,
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_no_secret_key)
 
@@ -119,6 +126,25 @@ class TestDatabaseModels():
         try:
             self.session.commit()
             raise AssertionError("Expected NOT NULL constraint violation for secret_key_hash but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null" in error_message or
+                     "null constraint" in error_message or
+                       "integrity" in error_message), f"Expected NOT NULL constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        # Create user without secret key enc
+        test_user_no_secret_key = User(
+            username="testuser",
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc=None
+        )
+        self.session.add(test_user_no_secret_key)
+
+        # Attempt to commit
+        try:
+            self.session.commit()
+            raise AssertionError("Expected NOT NULL constraint violation for secret_key_enc but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
             assert ("not null" in error_message or
@@ -135,7 +161,8 @@ class TestDatabaseModels():
         # Create a test user for the login session
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -172,7 +199,8 @@ class TestDatabaseModels():
         # Create a test user for the login session
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -244,7 +272,8 @@ class TestDatabaseModels():
         # Create a test user for the secure data
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -317,7 +346,8 @@ class TestDatabaseModels():
         # Create a test user for the secure data
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -381,7 +411,8 @@ class TestDatabaseModels():
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -431,13 +462,15 @@ class TestDatabaseModels():
         # Test that we can access user properties through the relationship
         assert login_session_1.user.username == "testuser"
         assert login_session_2.user.secret_key_hash == "hashed_secret_key_123"
+        assert login_session_2.user.secret_key_enc == "enc_secret_key_123"
 
     def test_user_secure_data_relationship(self):
         """Test the relationship between User and SecureData."""
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -491,6 +524,7 @@ class TestDatabaseModels():
         # Test that we can access user properties through the relationship
         assert secure_data_1.user.username == "testuser"
         assert secure_data_2.user.secret_key_hash == "hashed_secret_key_123"
+        assert secure_data_2.user.secret_key_enc == "enc_secret_key_123"
 
         # Test filtering secure data through relationships
         website_entries = [
@@ -512,7 +546,8 @@ class TestDatabaseModels():
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -597,7 +632,8 @@ class TestDatabaseModels():
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -641,7 +677,8 @@ class TestDatabaseModels():
         # Create a test user with no related data
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -671,7 +708,8 @@ class TestDatabaseModels():
         long_username = "x" * 1000
         test_user_long = User(
             username=long_username,
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_long)
         self.session.commit()
@@ -680,7 +718,8 @@ class TestDatabaseModels():
         special_chars_username = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
         test_user_special = User(
             username=special_chars_username,
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_special)
         self.session.commit()
@@ -689,7 +728,8 @@ class TestDatabaseModels():
         unicode_username = "测试用户 🚀 ñáéíóú"
         test_user_unicode = User(
             username=unicode_username,
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_unicode)
         self.session.commit()
@@ -698,7 +738,8 @@ class TestDatabaseModels():
         mixed_username = "Test User 123 with Spaces"
         test_user_mixed = User(
             username=mixed_username,
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user_mixed)
         self.session.commit()
@@ -730,7 +771,8 @@ class TestDatabaseModels():
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
@@ -797,7 +839,8 @@ class TestDatabaseModels():
         # Create a test user
         test_user = User(
             username="testuser",
-            secret_key_hash="hashed_secret_key_123"
+            secret_key_hash="hashed_secret_key_123",
+            secret_key_enc="enc_secret_key_123"
         )
         self.session.add(test_user)
         self.session.commit()
