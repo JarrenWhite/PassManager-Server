@@ -180,7 +180,7 @@ class TestDatabaseSetup:
         self.engines_to_dispose.append(engine)
 
         # Check that all tables exist
-        expected_tables = ['user', 'session', 'encrypted']
+        expected_tables = ['user', 'session', 'encrypted', 'registration']
         with engine.connect() as connection:
             actual_tables = engine.dialect.get_table_names(connection)
 

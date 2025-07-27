@@ -9,13 +9,6 @@ from typing import List, Optional
 
 Base = declarative_base()
 
-class Registration(Base):
-    __tablename__ = "registration"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
-    secret_key: Mapped[str] = mapped_column(String, nullable=False)
-    expiry: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-
 class User(Base):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -46,3 +39,10 @@ class SecureData(Base):
     notes: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="secure_data")
+
+class Registration(Base):
+    __tablename__ = "registration"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
+    secret_key: Mapped[str] = mapped_column(String, nullable=False)
+    expiry: Mapped[datetime] = mapped_column(DateTime, nullable=False)
