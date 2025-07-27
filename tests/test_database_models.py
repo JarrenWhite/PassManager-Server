@@ -947,6 +947,7 @@ class TestDatabaseModels():
         retrieved_registering = self.session.query(Registering).filter_by(id=test_registering.id).first()
         assert retrieved_registering is not None
         assert retrieved_registering.id == test_registering.id
+        assert retrieved_registering.public_id == test_registering.public_id
         assert retrieved_registering.secret_key == test_registering.secret_key
         assert retrieved_registering.expiry == test_registering.expiry
 
