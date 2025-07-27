@@ -29,7 +29,8 @@ class Service:
         switch = {
             "username": lambda x: Service._username(x, calling_function),
             "registration_id": lambda x: Service._registration_id(x, calling_function),
-            "secret_key_enc": lambda x: Service._secret_key_enc(x, calling_function)
+            "secret_key_enc": lambda x: Service._secret_key_enc(x, calling_function),
+            "secret_key_plain": lambda x: Service._secret_key_plain(x, calling_function)
         }
         result = switch.get(key_name, lambda x: Service._default(x, calling_function))(key_value)
         return result
@@ -74,6 +75,11 @@ class Service:
     @staticmethod
     def _registration_id(registration_id: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
         """Sanitise the received registration id"""
+        return True, {}
+
+    @staticmethod
+    def _secret_key_plain(secret_key_plain: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
+        """Sanitise the received plain text secret key"""
         return True, {}
 
     @staticmethod
