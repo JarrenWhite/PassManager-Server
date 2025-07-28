@@ -66,31 +66,25 @@ def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], in
     return {}, 201
 
 
-def user_auth(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
+def get_user_key(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Authorize a user - business logic"""
-    # TODO - Rebuild logic for authentication
-    return {}, 200
-    # # Sanitise inputs
-    # required_keys = {"username", "password"}
-    # ok, error = Service.sanitise_inputs(data, required_keys, "user_auth")
-    # if not ok:
-    #     return error, 400
+    # Sanitise inputs
+    required_keys = {"username"}
+    ok, error = Service.sanitise_inputs(data, required_keys, "get_user_key")
+    if not ok:
+        return error, 400
 
-    # # Attempt to get User data
-    # username = data["username"]
-    # password = data["password"]
-    # ok, failure_reason, stored_password_hash = Database.get_user_password_hash(username)
+    # Attempt to get User data
+    username = data["username"]
+    ok, failure_reason, secret_key_enc = Database.get_user_secret_key_enc(username)
 
-    # # Failure
-    # if not ok:
-    #     assert failure_reason is not None
-    #     return Service.handle_failure(failure_reason, "user_auth")
+    # Failure
+    if not ok:
+        assert failure_reason is not None
+        return Service.handle_failure(failure_reason, "get_user_key")
 
-    # # Success
-    # if password == stored_password_hash:
-    #     return {}, 200
-    # else:
-    #     return {"error": "Incorrect username or password"}, 401
+    # Success
+    return {"secret_key": secret_key_enc}, 200
 
 
 def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:

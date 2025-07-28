@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 import logging
 logger = logging.getLogger("api")
 
-from services.user_service import begin_user_registration, complete_user_registration, user_auth, user_delete
+from services.user_service import begin_user_registration, complete_user_registration, get_user_key, user_delete
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
@@ -16,7 +16,7 @@ def begin_user_registration_endpoint():
     logger.info(f"begin_user_registration_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
-@user_bp.route('/new', methods=['POST'])
+@user_bp.route('/create', methods=['POST'])
 def complete_user_registration_endpoint():
     """Register a user"""
     if request.is_json:
@@ -29,7 +29,7 @@ def complete_user_registration_endpoint():
     logger.info(f"complete_user_registration_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
-@user_bp.route('/auth', methods=['POST'])
+@user_bp.route('/fetchkey', methods=['POST'])
 def user_auth_endpoint():
     """Authorise a user"""
     if request.is_json:
@@ -38,7 +38,7 @@ def user_auth_endpoint():
         data = dict(request.form) or {}
 
     logger.info("user_auth_endpoint: Called")
-    result, status_code = user_auth(data)
+    result, status_code = get_user_key(data)
     logger.info(f"user_auth_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
