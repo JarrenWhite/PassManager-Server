@@ -25,17 +25,6 @@ class Service:
         return True, {}
 
     @staticmethod
-    def select_sanitising_function(key_name, key_value, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        switch = {
-            "username": lambda x: Service._username(x, calling_function),
-            "registration_id": lambda x: Service._registration_id(x, calling_function),
-            "secret_key_enc": lambda x: Service._secret_key_enc(x, calling_function),
-            "secret_key_plain": lambda x: Service._secret_key_plain(x, calling_function)
-        }
-        result = switch.get(key_name, lambda x: Service._default(x, calling_function))(key_value)
-        return result
-
-    @staticmethod
     def handle_failure(failure_reason: FailureReason, calling_function: str = "unknown") -> Tuple[Dict[str, Any], int]:
         """Handle common failure scenarios and return appropriate HTTP responses"""
 
@@ -66,6 +55,17 @@ class Service:
         # Default case
         logger.error(f"{calling_function}: Rejected - Failure reason unknown")
         return {"error": "Unknown error"}, 500
+
+    @staticmethod
+    def select_sanitising_function(key_name, key_value, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
+        switch = {
+            "username": lambda x: Service._username(x, calling_function),
+            "registration_id": lambda x: Service._registration_id(x, calling_function),
+            "secret_key_enc": lambda x: Service._secret_key_enc(x, calling_function),
+            "secret_key_plain": lambda x: Service._secret_key_plain(x, calling_function)
+        }
+        result = switch.get(key_name, lambda x: Service._default(x, calling_function))(key_value)
+        return result
 
     @staticmethod
     def _username(username: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
