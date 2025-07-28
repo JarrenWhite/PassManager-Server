@@ -67,7 +67,7 @@ def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], in
 
 
 def get_user_key(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
-    """Authorize a user - business logic"""
+    """Return the encrypted secret key for a user - business logic"""
     # Sanitise inputs
     required_keys = {"username"}
     ok, error = Service.sanitise_inputs(data, required_keys, "get_user_key")
