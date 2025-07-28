@@ -7,7 +7,7 @@ from services.user_service import begin_user_registration, complete_user_registr
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
-@user_bp.route('/begin', methods=['POST'])
+@user_bp.route('/newkey', methods=['POST'])
 def begin_user_registration_endpoint():
     """Request a secret key to begin user registration"""
 
@@ -16,7 +16,7 @@ def begin_user_registration_endpoint():
     logger.info(f"begin_user_registration_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
-@user_bp.route('/complete', methods=['POST'])
+@user_bp.route('/new', methods=['POST'])
 def complete_user_registration_endpoint():
     """Register a user"""
     if request.is_json:
