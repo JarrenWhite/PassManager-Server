@@ -77,8 +77,6 @@ def get_user_key(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     # Attempt to get User data
     username = data["username"]
     ok, failure_reason, secret_key_enc = Database.get_user_secret_key_enc(username)
-
-    # Failure
     if not ok:
         assert failure_reason is not None
         return Service.handle_failure(failure_reason, "get_user_key")
@@ -89,37 +87,32 @@ def get_user_key(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
 def user_delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Delete a user - business logic"""
-    # TODO - Rebuild logic for authentication before deletion
-    return {}, 200
     # Sanitise inputs
-    # required_keys = {"username", "password"}
-    # ok, error = Service.sanitise_inputs(data, required_keys, "user_delete")
-    # if not ok:
-    #     return error, 400
+    required_keys = {"username", "secret_key_plain"}
+    ok, error = Service.sanitise_inputs(data, required_keys, "user_delete")
+    if not ok:
+        return error, 400
 
-    # # Authenticate user
-    # username = data["username"]
-    # password = data["password"]
-    # ok, failure_reason, stored_password_hash = Database.get_user_secret_key_hash(username)
+    secret_key_plain = data["secret_key_plain"]
+    username = data["username"]
 
-    # # Failure on Auth
-    # if not ok:
-    #     assert failure_reason is not None
-    #     return Service.handle_failure(failure_reason, "user_delete (auth)")
+    # Authenticate user
+    ok, failure_reason, secret_key_hash = Database.get_user_secret_key_hash(username)
+    if not ok:
+        assert failure_reason is not None
+        return Service.handle_failure(failure_reason, "user_delete (auth)")
 
-    # # Verify password
-    # if password != stored_password_hash:
-    #     logger.info("user_delete: Rejected - Incorrect password")
-    #     return {"error": "Incorrect username or password"}, 401
+    # Check that received plain key links to stored hash
+    if hashlib.sha256(secret_key_plain).hexdigest() != secret_key_hash:
+        logger.warning("complete_user_registration: Rejected - Secret key hashes do not align.")
+        return {"error": "The received key does not match the stored one for this ID"}, 400
 
-    # # Delete User
-    # ok, failure_reason = Database.delete_user(username)
+    # Delete user
+    ok, failure_reason = Database.delete_user(username)
+    if not ok:
+        assert failure_reason is not None
+        return Service.handle_failure(failure_reason, "user_delete (delete)")
 
-    # # Failure on delete
-    # if not ok:
-    #     assert failure_reason is not None
-    #     return Service.handle_failure(failure_reason, "user_delete (deletion)")
-
-    # # Success
-    # logger.info(f"user_delete: User '{username}' deleted successfully")
-    # return {}, 200
+    # Success
+    logger.info(f"user_delete: User '{username}' deleted successfully")
+    return {}, 200
