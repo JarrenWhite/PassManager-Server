@@ -4,7 +4,7 @@ from contextlib import contextmanager
 import logging
 logger = logging.getLogger("database")
 
-from database import init_db, get_session_local, User, LoginSession, SecureData
+from database import init_db, get_session_local, User, LoginSession, SecureData, Registration
 from sqlalchemy import select
 
 from .utils_enums import FailureReason
@@ -37,8 +37,8 @@ class Database:
             return False
 
     @staticmethod
-    def create_user(username: str, password_hash: str) -> Tuple[bool, Optional[FailureReason]]:
-        """Create a new user with the given username and password hash"""
+    def create_user(username: str, secret_key_hash: str, secret_key_enc: str) -> Tuple[bool, Optional[FailureReason]]:
+        """Create a new user with the given username and secret key hash"""
         try:
             with Database._get_db_session() as session:
                 # Check if user already exists
@@ -48,7 +48,7 @@ class Database:
                     return False, FailureReason.ALREADY_EXISTS
 
                 # Create new user
-                new_user = User(username=username, password_hash=password_hash)
+                new_user = User(username=username, secret_key_hash=secret_key_hash, secret_key_enc=secret_key_enc)
                 session.add(new_user)
 
                 logger.info(f"create_user: User '{username}' created successfully.")
@@ -59,23 +59,38 @@ class Database:
             return False, FailureReason.SERVER_EXCEPTION
 
     @staticmethod
-    def get_user_password_hash(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
-        """Find and return the user's password hash. Returns None if not found"""
+    def get_user_secret_key_enc(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """Find and return the user's secret key enc"""
         try:
             with Database._get_db_session() as session:
                 user = session.scalar(select(User).where(User.username == username))
                 if user:
-                    return True, None, user.password_hash
+                    return True, None, user.secret_key_enc
                 else:
                     return False, FailureReason.USERNAME_NOT_FOUND, None
 
         except Exception as e:
-            logger.error(f"get_user_password_hash: Error - {e}")
+            logger.error(f"get_user_secret_key_enc: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
+    def get_user_secret_key_hash(username: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """Find and return the user's secret key hash"""
+        try:
+            with Database._get_db_session() as session:
+                user = session.scalar(select(User).where(User.username == username))
+                if user:
+                    return True, None, user.secret_key_hash
+                else:
+                    return False, FailureReason.USERNAME_NOT_FOUND, None
+
+        except Exception as e:
+            logger.error(f"get_user_secret_key_hash: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION, None
 
     @staticmethod
     def delete_user(username: str) -> Tuple[bool, Optional[FailureReason]]:
-        """Delete the requested user. Returns False if not found"""
+        """Delete the requested user"""
         try:
             with Database._get_db_session() as session:
                 # Find user in question
@@ -127,7 +142,7 @@ class Database:
                     return False, FailureReason.SESSION_NOT_FOUND, None
 
                 if login_session.expiry < datetime.now():
-                    logger.warning(f"check_session_token: Token '{token[:-4]}' could not be found.")
+                    logger.warning(f"check_session_token: Token '{token[:-4]}' has expired.")
                     session.delete(login_session)
                     return False, FailureReason.SESSION_NOT_FOUND, None
 
@@ -290,7 +305,7 @@ class Database:
 
     @staticmethod
     def get_secure_entries_list(username: str) -> Tuple[bool, Optional[FailureReason], Optional[List[Tuple[Optional[str], str]]]]:
-        """Get names and public ids for all secure entries for a given user, returns (name, public_id)"""
+        """Get names and public ids for all secure entries for a given user, returns [(name, public_id)]"""
         try:
             with Database._get_db_session() as session:
                 # Find user in question
@@ -329,3 +344,82 @@ class Database:
         except Exception as e:
             logger.error(f"get_secure_entry_data: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
+    def create_registeration(secret_key: str, duration_till_expiry: timedelta) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """Create a registration with the given secret_key hash and expiry"""
+        try:
+            with Database._get_db_session() as session:
+                # Create new registration
+                expiry = datetime.now() + duration_till_expiry
+                new_registration = Registration(secret_key=secret_key, expiry=expiry)
+                session.add(new_registration)
+                session.flush()
+
+                logger.info(f"create_registeration: Secret key registration '{secret_key}' created successfully.")
+                return True, None, new_registration.public_id
+
+        except Exception as e:
+            logger.error(f"create_registeration: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
+    def fetch_registeration(registration_public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """Get secret key hash for given public ID"""
+        try:
+            with Database._get_db_session() as session:
+                # Find registration in question
+                registration = session.scalar(select(Registration).where(Registration.public_id == registration_public_id))
+                if not registration:
+                    logger.warning(f"fetch_registeration: Registration '{registration_public_id}' could not be found.")
+                    return False, FailureReason.REGISTRATION_NOT_FOUND, None
+
+                if registration.expiry < datetime.now():
+                    logger.warning(f"fetch_registeration: Registration '{registration_public_id}' has expired.")
+                    session.delete(registration)
+                    return False, FailureReason.REGISTRATION_NOT_FOUND, None
+
+                return True, None, registration.secret_key
+
+        except Exception as e:
+            logger.error(f"fetch_registeration: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
+    def delete_registeration(registration_public_id: str) -> Tuple[bool, Optional[FailureReason]]:
+        """Delete registration for given public ID"""
+        try:
+            with Database._get_db_session() as session:
+                # Find registration in question
+                registration = session.scalar(select(Registration).where(Registration.public_id == registration_public_id))
+                if not registration:
+                    logger.warning(f"delete_registeration: Registration '{registration_public_id}' could not be found.")
+                    return False, FailureReason.REGISTRATION_NOT_FOUND
+                session.delete(registration)
+
+                logger.info(f"delete_registeration: Registration {registration_public_id} deleted.")
+                return True, None
+
+        except Exception as e:
+            logger.error(f"delete_registeration: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION
+
+    @staticmethod
+    def clean_registrations():
+        """Remove all registrations with past expiry dates"""
+        try:
+            with Database._get_db_session() as session:
+                current_time = datetime.now()
+                expired_registrations = session.scalars(
+                    select(Registration).where(Registration.expiry < current_time)
+                ).all()
+
+                for session_obj in expired_registrations:
+                    session.delete(session_obj)
+
+                logger.info(f"clean_registrations: Deleted {len(expired_registrations)} registrations.")
+                return True, None
+
+        except Exception as e:
+            logger.error(f"clean_registrations: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION

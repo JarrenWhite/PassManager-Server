@@ -7,3 +7,4 @@ class FailureReason(Enum):
     USERNAME_NOT_FOUND = auto()
     SESSION_NOT_FOUND = auto()
     ENTRY_NOT_FOUND = auto()
+    REGISTRATION_NOT_FOUND = auto()
