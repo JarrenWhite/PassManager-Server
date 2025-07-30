@@ -1,7 +1,7 @@
 import os
 import sys
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from flask import Flask
 import json
 
