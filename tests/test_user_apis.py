@@ -29,11 +29,11 @@ class TestUserAPIs:
         self.mock_get_user_key = patch('api.user_apis.get_user_key')
         self.mock_user_delete = patch('api.user_apis.user_delete')
 
-        # Start all mocks
-        self.mock_begin_registration.start()
-        self.mock_complete_registration.start()
-        self.mock_get_user_key.start()
-        self.mock_user_delete.start()
+        # Start & store all mocks
+        self.begin_registration_mock = self.mock_begin_registration.start()
+        self.complete_registration_mock = self.mock_complete_registration.start()
+        self.get_user_key_mock = self.mock_get_user_key.start()
+        self.user_delete_mock = self.mock_user_delete.start()
 
         yield
 
@@ -42,10 +42,6 @@ class TestUserAPIs:
         self.mock_complete_registration.stop()
         self.mock_get_user_key.stop()
         self.mock_user_delete.stop()
-
-    def _mock_service_response(self, mock_func, return_data, status_code):
-        """Helper to set up mock service function responses."""
-        mock_func.return_value = (return_data, status_code)
 
     def _make_json_request(self, endpoint, data=None):
         """Helper to make JSON POST requests."""
@@ -63,11 +59,40 @@ class TestUserAPIs:
 
     def test_begin_user_registration_success(self):
         """Test successful user registration key generation"""
-        pass
+        # Mock successful service response
+        mock_response = {
+            "registration_id": "test_registration_id_123",
+            "secret_key": "test_secret_key_string"
+        }
+        # Set the return value
+        self.begin_registration_mock.return_value = (mock_response, 201)
+
+        # Make request
+        response = self.client.post('/api/user/newkey')
+
+        # Verify response
+        assert response.status_code == 201
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.begin_registration_mock.assert_called_once()
 
     def test_begin_user_registration_service_failure(self):
         """Test user registration key generation when service fails"""
-        pass
+        # Mock failed service response
+        mock_response = {
+            "error": "Service error"
+        }
+        # Set the return value
+        self.begin_registration_mock.return_value = (mock_response, 500)
+
+        # Make request
+        response = self.client.post('/api/user/newkey')
+
+        # Verify response
+        assert response.status_code == 500
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.begin_registration_mock.assert_called_once()
 
     def test_begin_user_registration_invalid_method(self):
         """Test that the endpoint only accepts POST requests"""
@@ -152,3 +177,7 @@ class TestUserAPIs:
     def test_api_response_format_consistency(self):
         """Test that all API responses follow consistent JSON format"""
         pass
+
+
+if __name__ == '__main__':
+    pytest.main(['-v', __file__])
