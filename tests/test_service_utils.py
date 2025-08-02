@@ -1,7 +1,7 @@
 import os
 import sys
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -48,3 +48,7 @@ class TestServiceUtils:
     def _mock_sanitize_failure(self, mock_func, error_message):
         """Helper to mock failed sanitizing operations."""
         mock_func.return_value = (False, {"error": error_message})
+
+
+if __name__ == '__main__':
+    pytest.main(['-v', __file__])
