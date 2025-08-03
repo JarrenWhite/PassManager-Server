@@ -59,12 +59,12 @@ class TestUserAPIs:
 
     def test_begin_user_registration_success(self):
         """Test successful user registration key generation"""
-        # Mock successful service response
+        # Mock service response
         mock_response = {
             "registration_id": "test_registration_id_123",
             "secret_key": "test_secret_key_string"
         }
-        # Set the return value
+        # Set return value
         self.begin_registration_mock.return_value = (mock_response, 201)
 
         # Make request
@@ -78,11 +78,11 @@ class TestUserAPIs:
 
     def test_begin_user_registration_service_failure(self):
         """Test user registration key generation when service fails"""
-        # Mock failed service response
+        # Mock service response
         mock_response = {
             "error": "Service error"
         }
-        # Set the return value
+        # Set return value
         self.begin_registration_mock.return_value = (mock_response, 500)
 
         # Make request
@@ -96,11 +96,40 @@ class TestUserAPIs:
 
     def test_begin_user_registration_invalid_method(self):
         """Test that the endpoint only accepts POST requests"""
-        pass
+        # Test GET, PUT and DELETE requests
+        response = self.client.get('/api/user/newkey')
+        assert response.status_code == 405
+        response = self.client.put('/api/user/newkey')
+        assert response.status_code == 405
+        response = self.client.delete('/api/user/newkey')
+        assert response.status_code == 405
+
+        # Verify response
+        self.begin_registration_mock.assert_not_called()
 
     def test_complete_user_registration_success_with_json(self):
         """Test successful user registration completion with JSON data"""
-        pass
+        # Mock service response
+        mock_response = {}
+        # Set return value
+        self.complete_registration_mock.return_value = (mock_response, 201)
+
+        # Test data - all required fields for user registration
+        test_data = {
+            "registration_id": "test_registration_id_123",
+            "secret_key_plain": "test_secret_key_bytes",
+            "secret_key_enc": "encrypted_secret_key_string",
+            "username": "test_user"
+        }
+
+        # Make request using JSON helper
+        response = self._make_json_request('/api/user/create', test_data)
+
+        # Verify response
+        assert response.status_code == 201
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.complete_registration_mock.assert_called_once_with(test_data)
 
     def test_complete_user_registration_success_with_form_data(self):
         """Test successful user registration completion with form data"""
