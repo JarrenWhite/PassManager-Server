@@ -107,7 +107,7 @@ class TestUserAPIs:
         # Verify response
         self.begin_registration_mock.assert_not_called()
 
-    def test_complete_user_registration_success_with_json(self):
+    def test_complete_user_registration_with_json(self):
         """Test successful user registration completion with JSON data"""
         # Mock service response
         mock_response = {}
@@ -131,7 +131,7 @@ class TestUserAPIs:
         assert response_data == mock_response
         self.complete_registration_mock.assert_called_once_with(test_data)
 
-    def test_complete_user_registration_success_with_form_data(self):
+    def test_complete_user_registration_with_form_data(self):
         """Test successful user registration completion with form data"""
         # Mock service response
         mock_response = {}
@@ -159,11 +159,11 @@ class TestUserAPIs:
         """Test that the endpoint only accepts POST requests"""
         pass
 
-    def test_user_auth_success_with_json(self):
+    def test_user_auth_with_json(self):
         """Test successful user authentication with JSON data"""
         pass
 
-    def test_user_auth_success_with_form_data(self):
+    def test_user_auth_with_form_data(self):
         """Test successful user authentication with form data"""
         pass
 
@@ -175,11 +175,11 @@ class TestUserAPIs:
         """Test that the endpoint only accepts POST requests"""
         pass
 
-    def test_user_delete_success_with_json(self):
+    def test_user_delete_with_json(self):
         """Test successful user deletion with JSON data"""
         pass
 
-    def test_user_delete_success_with_form_data(self):
+    def test_user_delete_with_form_data(self):
         """Test successful user deletion with form data"""
         pass
 
