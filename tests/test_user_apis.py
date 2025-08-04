@@ -133,7 +133,27 @@ class TestUserAPIs:
 
     def test_complete_user_registration_success_with_form_data(self):
         """Test successful user registration completion with form data"""
-        pass
+        # Mock service response
+        mock_response = {}
+        # Set return value
+        self.complete_registration_mock.return_value = (mock_response, 201)
+
+        # Test data - all required fields for user registration
+        test_data = {
+            "registration_id": "test_registration_id_123",
+            "secret_key_plain": "test_secret_key_bytes",
+            "secret_key_enc": "encrypted_secret_key_string",
+            "username": "test_user"
+        }
+
+        # Make request using form helper
+        response = self._make_form_request('/api/user/create', test_data)
+
+        # Verify response
+        assert response.status_code == 201
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.complete_registration_mock.assert_called_once_with(test_data)
 
     def test_complete_user_registration_missing_data(self):
         """Test user registration completion with missing required data"""
