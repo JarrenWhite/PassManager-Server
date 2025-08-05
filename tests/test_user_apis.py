@@ -157,11 +157,37 @@ class TestUserAPIs:
 
     def test_complete_user_registration_invalid_method(self):
         """Test that the endpoint only accepts POST requests"""
-        pass
+        # Test GET, PUT and DELETE requests
+        response = self.client.get('/api/user/create')
+        assert response.status_code == 405
+        response = self.client.put('/api/user/create')
+        assert response.status_code == 405
+        response = self.client.delete('/api/user/create')
+        assert response.status_code == 405
+
+        # Verify response
+        self.complete_registration_mock.assert_not_called()
 
     def test_user_auth_with_json(self):
         """Test successful user authentication with JSON data"""
-        pass
+        # Mock service response
+        mock_response = {"secret_key": "test_secret_key_string"}
+        # Set return value
+        self.get_user_key_mock.return_value = (mock_response, 201)
+
+        # Test data - all required fields for user registration
+        test_data = {
+            "username": "test_user"
+        }
+
+        # Make request using JSON helper
+        response = self._make_json_request('/api/user/fetchkey', test_data)
+
+        # Verify response
+        assert response.status_code == 201
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.get_user_key_mock.assert_called_once_with(test_data)
 
     def test_user_auth_with_form_data(self):
         """Test successful user authentication with form data"""
