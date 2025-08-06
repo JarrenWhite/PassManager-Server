@@ -318,11 +318,27 @@ class TestUserAPIs:
 
     def test_health_check_success(self):
         """Test health check endpoint returns healthy status"""
-        pass
+        # Make GET request to health endpoint
+        response = self.client.get('/api/user/health')
+
+        # Verify response
+        assert response.status_code == 200
+        response_data = json.loads(response.data)
+        expected_response = {
+            'status': 'healthy',
+            'service': 'user-api'
+        }
+        assert response_data == expected_response
 
     def test_health_check_invalid_method(self):
         """Test that the endpoint only accepts GET requests"""
-        pass
+        # Test POST, PUT and DELETE requests
+        response = self.client.post('/api/user/health')
+        assert response.status_code == 405
+        response = self.client.put('/api/user/health')
+        assert response.status_code == 405
+        response = self.client.delete('/api/user/health')
+        assert response.status_code == 405
 
 
 if __name__ == '__main__':
