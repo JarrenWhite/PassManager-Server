@@ -243,19 +243,78 @@ class TestUserAPIs:
 
     def test_user_delete_with_json(self):
         """Test successful user deletion with JSON data"""
-        pass
+        # Mock service response
+        mock_response = {}
+        # Set return value
+        self.user_delete_mock.return_value = (mock_response, 200)
+
+        # Test data - all required fields for user deletion
+        test_data = {
+            "username": "test_user",
+            "secret_key_plain": "test_secret_key_bytes"
+        }
+
+        # Make request using JSON helper
+        response = self._make_json_request('/api/user/delete', test_data)
+
+        # Verify response
+        assert response.status_code == 200
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.user_delete_mock.assert_called_once_with(test_data)
 
     def test_user_delete_with_form_data(self):
         """Test successful user deletion with form data"""
-        pass
+        # Mock service response
+        mock_response = {}
+        # Set return value
+        self.user_delete_mock.return_value = (mock_response, 200)
+
+        # Test data - all required fields for user deletion
+        test_data = {
+            "username": "test_user",
+            "secret_key_plain": "test_secret_key_bytes"
+        }
+
+        # Make request using form helper
+        response = self._make_form_request('/api/user/delete', test_data)
+
+        # Verify response
+        assert response.status_code == 200
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.user_delete_mock.assert_called_once_with(test_data)
 
     def test_user_delete_service_failure(self):
         """Test user deletion when service fails"""
-        pass
+        # Mock service response
+        mock_response = {
+            "error": "Service error"
+        }
+        # Set return value
+        self.user_delete_mock.return_value = (mock_response, 500)
+
+        # Make request
+        response = self.client.post('/api/user/delete')
+
+        # Verify response
+        assert response.status_code == 500
+        response_data = json.loads(response.data)
+        assert response_data == mock_response
+        self.user_delete_mock.assert_called_once()
 
     def test_user_delete_invalid_method(self):
         """Test that the endpoint only accepts POST requests"""
-        pass
+        # Test GET, PUT and DELETE requests
+        response = self.client.get('/api/user/delete')
+        assert response.status_code == 405
+        response = self.client.put('/api/user/delete')
+        assert response.status_code == 405
+        response = self.client.delete('/api/user/delete')
+        assert response.status_code == 405
+
+        # Verify response
+        self.user_delete_mock.assert_not_called()
 
     def test_health_check_success(self):
         """Test health check endpoint returns healthy status"""
