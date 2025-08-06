@@ -55,21 +55,6 @@ def user_delete_endpoint():
     logger.info(f"user_delete_endpoint: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
-@user_bp.route('/hello', methods=['POST'])
-def hello_world():
-    """Simple test endpoint that accepts data in request body and returns it in a JSON response"""
-    if request.is_json:
-        data = request.get_json() or {}
-    else:
-        data = dict(request.form) or {}
-
-    logger.info(f"hello_world: {data}")
-    return jsonify({
-        'message': 'Hello World!',
-        'data': data,
-        'status': 'success'
-    }), 200
-
 @user_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for the user API"""

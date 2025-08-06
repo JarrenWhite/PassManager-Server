@@ -1,10 +1,10 @@
 import uuid
-
 from datetime import datetime
+from typing import List, Optional
+
 from sqlalchemy import Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from typing import List, Optional
 
 
 Base = declarative_base()
