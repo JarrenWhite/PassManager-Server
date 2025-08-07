@@ -346,7 +346,7 @@ class Database:
             return False, FailureReason.SERVER_EXCEPTION, None
 
     @staticmethod
-    def create_registeration(secret_key: str, duration_till_expiry: timedelta) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+    def create_registration(secret_key: str, duration_till_expiry: timedelta) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
         """Create a registration with the given secret_key hash and expiry"""
         try:
             with Database._get_db_session() as session:
@@ -356,52 +356,52 @@ class Database:
                 session.add(new_registration)
                 session.flush()
 
-                logger.info(f"create_registeration: Secret key registration '{secret_key}' created successfully.")
+                logger.info(f"create_registration: Secret key registration '{secret_key}' created successfully.")
                 return True, None, new_registration.public_id
 
         except Exception as e:
-            logger.error(f"create_registeration: Error - {e}")
+            logger.error(f"create_registration: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION, None
 
     @staticmethod
-    def fetch_registeration(registration_public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+    def fetch_registration(registration_public_id: str) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
         """Get secret key hash for given public ID"""
         try:
             with Database._get_db_session() as session:
                 # Find registration in question
                 registration = session.scalar(select(Registration).where(Registration.public_id == registration_public_id))
                 if not registration:
-                    logger.warning(f"fetch_registeration: Registration '{registration_public_id}' could not be found.")
+                    logger.warning(f"fetch_registration: Registration '{registration_public_id}' could not be found.")
                     return False, FailureReason.REGISTRATION_NOT_FOUND, None
 
                 if registration.expiry < datetime.now():
-                    logger.warning(f"fetch_registeration: Registration '{registration_public_id}' has expired.")
+                    logger.warning(f"fetch_registration: Registration '{registration_public_id}' has expired.")
                     session.delete(registration)
                     return False, FailureReason.REGISTRATION_NOT_FOUND, None
 
                 return True, None, registration.secret_key
 
         except Exception as e:
-            logger.error(f"fetch_registeration: Error - {e}")
+            logger.error(f"fetch_registration: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION, None
 
     @staticmethod
-    def delete_registeration(registration_public_id: str) -> Tuple[bool, Optional[FailureReason]]:
+    def delete_registration(registration_public_id: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete registration for given public ID"""
         try:
             with Database._get_db_session() as session:
                 # Find registration in question
                 registration = session.scalar(select(Registration).where(Registration.public_id == registration_public_id))
                 if not registration:
-                    logger.warning(f"delete_registeration: Registration '{registration_public_id}' could not be found.")
+                    logger.warning(f"delete_registration: Registration '{registration_public_id}' could not be found.")
                     return False, FailureReason.REGISTRATION_NOT_FOUND
                 session.delete(registration)
 
-                logger.info(f"delete_registeration: Registration {registration_public_id} deleted.")
+                logger.info(f"delete_registration: Registration {registration_public_id} deleted.")
                 return True, None
 
         except Exception as e:
-            logger.error(f"delete_registeration: Error - {e}")
+            logger.error(f"delete_registration: Error - {e}")
             return False, FailureReason.SERVER_EXCEPTION
 
     @staticmethod

@@ -1281,12 +1281,12 @@ class TestDatabaseUtils:
         assert failure_reason == FailureReason.ENTRY_NOT_FOUND
         assert entry_data is None
 
-    def test_create_registeration(self):
+    def test_create_registration(self):
         """Test creating a registration successfully"""
         secret_key = "test_secret_key_hash"
         duration = timedelta(hours=1)
 
-        success, failure_reason, public_id = Database.create_registeration(secret_key, duration)
+        success, failure_reason, public_id = Database.create_registration(secret_key, duration)
 
         assert success is True
         assert failure_reason is None
@@ -1294,86 +1294,86 @@ class TestDatabaseUtils:
         assert isinstance(public_id, str)
         assert len(public_id) > 0
 
-    def test_fetch_registeration(self):
+    def test_fetch_registration(self):
         """Test fetching a registration successfully"""
         secret_key = "test_secret_key_hash"
         duration = timedelta(hours=1)
 
         # Create registration
-        success, failure_reason, public_id = Database.create_registeration(secret_key, duration)
+        success, failure_reason, public_id = Database.create_registration(secret_key, duration)
         assert success is True
         assert failure_reason is None
         assert public_id is not None
 
         # Fetch registration
-        success, failure_reason, fetched_secret_key = Database.fetch_registeration(public_id)
+        success, failure_reason, fetched_secret_key = Database.fetch_registration(public_id)
 
         assert success is True
         assert failure_reason is None
         assert fetched_secret_key == secret_key
 
-    def test_fetch_registeration_nonexistent(self):
+    def test_fetch_registration_nonexistent(self):
         """Test fetching a registration that doesn't exist"""
         fake_public_id = "nonexistent_registration_id"
 
-        success, failure_reason, secret_key = Database.fetch_registeration(fake_public_id)
+        success, failure_reason, secret_key = Database.fetch_registration(fake_public_id)
 
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
         assert secret_key is None
 
-    def test_fetch_registeration_expired(self):
+    def test_fetch_registration_expired(self):
         """Test fetching an expired registration"""
         secret_key = "test_secret_key_hash"
         duration = timedelta(hours=-1)
 
         # Create registration
-        success, failure_reason, public_id = Database.create_registeration(secret_key, duration)
+        success, failure_reason, public_id = Database.create_registration(secret_key, duration)
         assert success is True
         assert failure_reason is None
         assert public_id is not None
 
         # Try to fetch expired registration
-        success, failure_reason, fetched_secret_key = Database.fetch_registeration(public_id)
+        success, failure_reason, fetched_secret_key = Database.fetch_registration(public_id)
 
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
         assert fetched_secret_key is None
 
-    def test_delete_registeration(self):
+    def test_delete_registration(self):
         """Test deleting a registration successfully"""
         secret_key = "test_secret_key_hash"
         duration = timedelta(hours=1)
 
         # Create registration
-        success, failure_reason, public_id = Database.create_registeration(secret_key, duration)
+        success, failure_reason, public_id = Database.create_registration(secret_key, duration)
         assert success is True
         assert failure_reason is None
         assert public_id is not None
 
         # Verify registration exists
-        success, failure_reason, fetched_secret_key = Database.fetch_registeration(public_id)
+        success, failure_reason, fetched_secret_key = Database.fetch_registration(public_id)
         assert success is True
         assert failure_reason is None
         assert fetched_secret_key == secret_key
 
         # Delete registration
-        success, failure_reason = Database.delete_registeration(public_id)
+        success, failure_reason = Database.delete_registration(public_id)
 
         assert success is True
         assert failure_reason is None
 
         # Verify registration is deleted
-        success, failure_reason, fetched_secret_key = Database.fetch_registeration(public_id)
+        success, failure_reason, fetched_secret_key = Database.fetch_registration(public_id)
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
         assert fetched_secret_key is None
 
-    def test_delete_registeration_nonexistent(self):
+    def test_delete_registration_nonexistent(self):
         """Test deleting a registration that doesn't exist"""
         fake_public_id = "nonexistent_registration_id"
 
-        success, failure_reason = Database.delete_registeration(fake_public_id)
+        success, failure_reason = Database.delete_registration(fake_public_id)
 
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
@@ -1386,33 +1386,33 @@ class TestDatabaseUtils:
         secret_key_3 = "test_secret_key_3"
 
         # Create one that expires immediately
-        success, failure_reason, public_id_1 = Database.create_registeration(secret_key_1, timedelta(hours=-1))
+        success, failure_reason, public_id_1 = Database.create_registration(secret_key_1, timedelta(hours=-1))
         assert success is True
         assert failure_reason is None
         assert public_id_1 is not None
 
         # Create one that expires in 1 hour
-        success, failure_reason, public_id_2 = Database.create_registeration(secret_key_2, timedelta(hours=1))
+        success, failure_reason, public_id_2 = Database.create_registration(secret_key_2, timedelta(hours=1))
         assert success is True
         assert failure_reason is None
         assert public_id_2 is not None
 
         # Create one that expires in 2 hours
-        success, failure_reason, public_id_3 = Database.create_registeration(secret_key_3, timedelta(hours=2))
+        success, failure_reason, public_id_3 = Database.create_registration(secret_key_3, timedelta(hours=2))
         assert success is True
         assert failure_reason is None
         assert public_id_3 is not None
 
         # Verify all registrations exist initially
-        success, failure_reason, _ = Database.fetch_registeration(public_id_1)
+        success, failure_reason, _ = Database.fetch_registration(public_id_1)
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_2)
+        success, failure_reason, _ = Database.fetch_registration(public_id_2)
         assert success is True
         assert failure_reason is None
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_3)
+        success, failure_reason, _ = Database.fetch_registration(public_id_3)
         assert success is True
         assert failure_reason is None
 
@@ -1423,11 +1423,11 @@ class TestDatabaseUtils:
         assert failure_reason is None
 
         # Verify expired registration is cleaned and others remain
-        success, failure_reason, _ = Database.fetch_registeration(public_id_2)
+        success, failure_reason, _ = Database.fetch_registration(public_id_2)
         assert success is True
         assert failure_reason is None
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_3)
+        success, failure_reason, _ = Database.fetch_registration(public_id_3)
         assert success is True
         assert failure_reason is None
 
@@ -1437,22 +1437,22 @@ class TestDatabaseUtils:
         secret_key_1 = "test_secret_key_1"
         secret_key_2 = "test_secret_key_2"
 
-        success, failure_reason, public_id_1 = Database.create_registeration(secret_key_1, timedelta(hours=1))
+        success, failure_reason, public_id_1 = Database.create_registration(secret_key_1, timedelta(hours=1))
         assert success is True
         assert failure_reason is None
         assert public_id_1 is not None
 
-        success, failure_reason, public_id_2 = Database.create_registeration(secret_key_2, timedelta(hours=2))
+        success, failure_reason, public_id_2 = Database.create_registration(secret_key_2, timedelta(hours=2))
         assert success is True
         assert failure_reason is None
         assert public_id_2 is not None
 
         # Verify registrations exist
-        success, failure_reason, _ = Database.fetch_registeration(public_id_1)
+        success, failure_reason, _ = Database.fetch_registration(public_id_1)
         assert success is True
         assert failure_reason is None
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_2)
+        success, failure_reason, _ = Database.fetch_registration(public_id_2)
         assert success is True
         assert failure_reason is None
 
@@ -1463,11 +1463,11 @@ class TestDatabaseUtils:
         assert failure_reason is None
 
         # Verify all registrations still exist
-        success, failure_reason, _ = Database.fetch_registeration(public_id_1)
+        success, failure_reason, _ = Database.fetch_registration(public_id_1)
         assert success is True
         assert failure_reason is None
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_2)
+        success, failure_reason, _ = Database.fetch_registration(public_id_2)
         assert success is True
         assert failure_reason is None
 
@@ -1480,23 +1480,23 @@ class TestDatabaseUtils:
         secret_key_valid_2 = "test_secret_key_valid_2"
 
         # Create expired registrations
-        success, failure_reason, public_id_expired_1 = Database.create_registeration(secret_key_expired_1, timedelta(hours=-1))
+        success, failure_reason, public_id_expired_1 = Database.create_registration(secret_key_expired_1, timedelta(hours=-1))
         assert success is True
         assert failure_reason is None
         assert public_id_expired_1 is not None
 
-        success, failure_reason, public_id_expired_2 = Database.create_registeration(secret_key_expired_2, timedelta(hours=-1))
+        success, failure_reason, public_id_expired_2 = Database.create_registration(secret_key_expired_2, timedelta(hours=-1))
         assert success is True
         assert failure_reason is None
         assert public_id_expired_2 is not None
 
         # Create valid registrations
-        success, failure_reason, public_id_valid_1 = Database.create_registeration(secret_key_valid_1, timedelta(hours=1))
+        success, failure_reason, public_id_valid_1 = Database.create_registration(secret_key_valid_1, timedelta(hours=1))
         assert success is True
         assert failure_reason is None
         assert public_id_valid_1 is not None
 
-        success, failure_reason, public_id_valid_2 = Database.create_registeration(secret_key_valid_2, timedelta(hours=2))
+        success, failure_reason, public_id_valid_2 = Database.create_registration(secret_key_valid_2, timedelta(hours=2))
         assert success is True
         assert failure_reason is None
         assert public_id_valid_2 is not None
@@ -1508,20 +1508,20 @@ class TestDatabaseUtils:
         assert failure_reason is None
 
         # Verify expired registrations are cleaned
-        success, failure_reason, _ = Database.fetch_registeration(public_id_expired_1)
+        success, failure_reason, _ = Database.fetch_registration(public_id_expired_1)
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_expired_2)
+        success, failure_reason, _ = Database.fetch_registration(public_id_expired_2)
         assert success is False
         assert failure_reason == FailureReason.REGISTRATION_NOT_FOUND
 
         # Verify valid registrations remain
-        success, failure_reason, _ = Database.fetch_registeration(public_id_valid_1)
+        success, failure_reason, _ = Database.fetch_registration(public_id_valid_1)
         assert success is True
         assert failure_reason is None
 
-        success, failure_reason, _ = Database.fetch_registeration(public_id_valid_2)
+        success, failure_reason, _ = Database.fetch_registration(public_id_valid_2)
         assert success is True
         assert failure_reason is None
 

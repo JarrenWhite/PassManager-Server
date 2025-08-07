@@ -21,9 +21,9 @@ class TestUserService:
     def setup_teardown(self):
         """Set up and tear down between each test method."""
         # Set up mock patches for Database functions
-        self.mock_create_registration = patch('services.user_service.Database.create_registeration')
-        self.mock_fetch_registration = patch('services.user_service.Database.fetch_registeration')
-        self.mock_delete_registration = patch('services.user_service.Database.delete_registeration')
+        self.mock_create_registration = patch('services.user_service.Database.create_registration')
+        self.mock_fetch_registration = patch('services.user_service.Database.fetch_registration')
+        self.mock_delete_registration = patch('services.user_service.Database.delete_registration')
         self.mock_create_user = patch('services.user_service.Database.create_user')
         self.mock_get_user_secret_key_enc = patch('services.user_service.Database.get_user_secret_key_enc')
         self.mock_get_user_secret_key_hash = patch('services.user_service.Database.get_user_secret_key_hash')
@@ -92,7 +92,7 @@ class TestUserService:
         pass
 
     def test_begin_user_registration_database_failure(self):
-        """Test begin_user_registration when database create_registeration fails."""
+        """Test begin_user_registration when database create_registration fails."""
         pass
 
     def test_complete_user_registration_success(self):
