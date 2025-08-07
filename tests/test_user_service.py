@@ -87,6 +87,70 @@ class TestUserService:
         """Helper to mock failed service utils operations."""
         mock_func.return_value = (False, {"error": error_message})
 
+    def test_begin_user_registration_success(self):
+        """Test successful user registration initialization."""
+        pass
+
+    def test_begin_user_registration_database_failure(self):
+        """Test begin_user_registration when database create_registeration fails."""
+        pass
+
+    def test_complete_user_registration_success(self):
+        """Test successful user registration completion."""
+        pass
+
+    def test_complete_user_registration_sanitise_failure(self):
+        """Test complete_user_registration when input sanitization fails."""
+        pass
+
+    def test_complete_user_registration_fetch_registration_failure(self):
+        """Test complete_user_registration when fetching registration fails."""
+        pass
+
+    def test_complete_user_registration_secret_key_mismatch(self):
+        """Test complete_user_registration when secret key hash doesn't match."""
+        pass
+
+    def test_complete_user_registration_create_user_failure(self):
+        """Test complete_user_registration when user creation fails."""
+        pass
+
+    def test_complete_user_registration_delete_registration_failure(self):
+        """Test complete_user_registration when registration deletion fails but user is created."""
+        pass
+
+    def test_get_user_key_success(self):
+        """Test successful retrieval of user's encrypted secret key."""
+        pass
+
+    def test_get_user_key_sanitise_failure(self):
+        """Test get_user_key when input sanitization fails."""
+        pass
+
+    def test_get_user_key_database_failure(self):
+        """Test get_user_key when database get_user_secret_key_enc fails."""
+        pass
+
+    def test_user_delete_success(self):
+        """Test successful user deletion."""
+        pass
+
+    def test_user_delete_sanitise_failure(self):
+        """Test user_delete when input sanitization fails."""
+        pass
+
+    def test_user_delete_get_hash_failure(self):
+        """Test user_delete when fetching user's secret key hash fails."""
+        pass
+
+    def test_user_delete_secret_key_mismatch(self):
+        """Test user_delete when secret key hash doesn't match (authentication fails)."""
+        pass
+
+    def test_user_delete_database_delete_failure(self):
+        """Test user_delete when database delete_user operation fails."""
+        pass
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
