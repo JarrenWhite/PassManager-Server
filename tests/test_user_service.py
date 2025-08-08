@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import hashlib
 from unittest.mock import patch
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,6 +13,7 @@ from services.user_service import (
     get_user_key,
     user_delete
 )
+from utils.utils_enums import FailureReason
 
 
 class TestUserService:
@@ -76,24 +78,52 @@ class TestUserService:
         """Helper to mock failed database utils operations."""
         mock_func.return_value = (False, failure_reason, None)
 
-    def _mock_service_success(self, mock_func, return_value=None):
-        """Helper to mock successful service utils operations."""
-        if return_value is not None:
-            mock_func.return_value = (True, return_value)
-        else:
-            mock_func.return_value = (True, None)
-
-    def _mock_service_failure(self, mock_func, error_message):
-        """Helper to mock failed service utils operations."""
-        mock_func.return_value = (False, {"error": error_message})
-
     def test_begin_user_registration_success(self):
         """Test successful user registration initialization."""
-        pass
+        # Mock key
+        mock_key = b"test_secret_key_bytes"
+        self.secrets_mock.token_bytes.return_value = mock_key
+
+        # Mock database function
+        mock_public_id = "test_public_id"
+        self._mock_database_success(self.create_registration_mock, mock_public_id)
+
+        # Mock response & attempt function
+        mock_response = {"registration_id": mock_public_id, "secret_key": mock_key}
+        response, response_code = begin_user_registration()
+
+        # Verify response
+        assert response == mock_response
+        assert response_code == 201
+        self.secrets_mock.token_bytes.assert_called_once_with(32)
+        self.handle_failure_mock.assert_not_called()
+        expected_hash = hashlib.sha256(mock_key).hexdigest()
+        self.create_registration_mock.assert_called_once_with(expected_hash, self.timedelta_mock.return_value)
 
     def test_begin_user_registration_database_failure(self):
         """Test begin_user_registration when database create_registration fails."""
-        pass
+        # Mock key
+        mock_key = b"test_secret_key_bytes"
+        self.secrets_mock.token_bytes.return_value = mock_key
+
+        # Mock database function
+        failure_reason = FailureReason.SERVER_EXCEPTION
+        self._mock_database_failure(self.create_registration_mock, failure_reason)
+
+        # Mock failure handling
+        mock_error_response = "Unknown error"
+        self.handle_failure_mock.return_value = (mock_error_response, 500)
+
+        # Call function
+        response, response_code = begin_user_registration()
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 500
+        self.secrets_mock.token_bytes.assert_called_once_with(32)
+        self.handle_failure_mock.assert_called_once_with(failure_reason, "begin_user_registration")
+        expected_hash = hashlib.sha256(mock_key).hexdigest()
+        self.create_registration_mock.assert_called_once_with(expected_hash, self.timedelta_mock.return_value)
 
     def test_complete_user_registration_success(self):
         """Test successful user registration completion."""
