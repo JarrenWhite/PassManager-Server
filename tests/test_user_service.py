@@ -37,18 +37,18 @@ class TestUserService:
         self.mock_secrets = patch('services.user_service.secrets')
         self.mock_timedelta = patch('services.user_service.timedelta')
 
-        # Start all mocks
-        self.mock_create_registration.start()
-        self.mock_fetch_registration.start()
-        self.mock_delete_registration.start()
-        self.mock_create_user.start()
-        self.mock_get_user_secret_key_enc.start()
-        self.mock_get_user_secret_key_hash.start()
-        self.mock_delete_user.start()
-        self.mock_sanitise_inputs.start()
-        self.mock_handle_failure.start()
-        self.mock_secrets.start()
-        self.mock_timedelta.start()
+        # Start & store all mocks
+        self.create_registration_mock = self.mock_create_registration.start()
+        self.fetch_registration_mock = self.mock_fetch_registration.start()
+        self.delete_registration_mock = self.mock_delete_registration.start()
+        self.create_user_mock = self.mock_create_user.start()
+        self.get_user_secret_key_enc_mock = self.mock_get_user_secret_key_enc.start()
+        self.get_user_secret_key_hash_mock = self.mock_get_user_secret_key_hash.start()
+        self.delete_user_mock = self.mock_delete_user.start()
+        self.sanitise_inputs_mock = self.mock_sanitise_inputs.start()
+        self.handle_failure_mock = self.mock_handle_failure.start()
+        self.secrets_mock = self.mock_secrets.start()
+        self.timedelta_mock = self.mock_timedelta.start()
 
         yield
 
