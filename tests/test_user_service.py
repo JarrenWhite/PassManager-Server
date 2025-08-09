@@ -78,6 +78,10 @@ class TestUserService:
         """Helper to mock failed database utils operations."""
         mock_func.return_value = (False, failure_reason, None)
 
+    def _mock_database_failure_2(self, mock_func, failure_reason):
+        """Helper to mock failed database utils operations that return 2 values."""
+        mock_func.return_value = (False, failure_reason)
+
     def test_begin_user_registration_success(self):
         """Test successful user registration initialization."""
         # Mock key
@@ -127,27 +131,229 @@ class TestUserService:
 
     def test_complete_user_registration_success(self):
         """Test successful user registration completion."""
-        pass
+        # Mock sanitise
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock fetch registration
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.fetch_registration_mock, mock_key_hash)
+
+        # Mock create user
+        self._mock_database_success(self.create_user_mock)
+
+        # Mock delete registration
+        self._mock_database_success(self.delete_registration_mock)
+
+        # Test data
+        test_data = {
+            "registration_id": "test_registration_id",
+            "secret_key_plain": mock_key,
+            "secret_key_enc": "test_key_enc",
+            "username": "test_username"
+        }
+
+        # Call function
+        response, response_code = complete_user_registration(test_data)
+
+        # Verify response
+        assert response == {}
+        assert response_code == 201
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"registration_id", "secret_key_plain", "secret_key_enc", "username"},
+            "complete_user_registration"
+        )
+        self.fetch_registration_mock.assert_called_once_with("test_registration_id")
+        self.create_user_mock.assert_called_once_with("test_username", mock_key_hash, "test_key_enc")
+        self.delete_registration_mock.assert_called_once_with("test_registration_id")
+        self.handle_failure_mock.assert_not_called()
 
     def test_complete_user_registration_sanitise_failure(self):
         """Test complete_user_registration when input sanitization fails."""
-        pass
+        # Mock sanitise failure
+        mock_error_response = {"error": "Invalid input"}
+        self.sanitise_inputs_mock.return_value = False, mock_error_response
+
+        # Test data
+        test_data = {
+            "registration_id": "test_registration_id",
+            "secret_key_plain": b"test_secret_key_bytes",
+            "secret_key_enc": "test_key_enc",
+            "username": "test_username"
+        }
+
+        # Call function
+        response, response_code = complete_user_registration(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 400
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"registration_id", "secret_key_plain", "secret_key_enc", "username"},
+            "complete_user_registration"
+        )
+        self.fetch_registration_mock.assert_not_called()
+        self.create_user_mock.assert_not_called()
+        self.delete_registration_mock.assert_not_called()
+        self.handle_failure_mock.assert_not_called()
 
     def test_complete_user_registration_fetch_registration_failure(self):
         """Test complete_user_registration when fetching registration fails."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock fetch registration failure
+        failure_reason = FailureReason.USERNAME_NOT_FOUND
+        self._mock_database_failure(self.fetch_registration_mock, failure_reason)
+
+        # Mock failure handling
+        mock_error_response = "Registration not found"
+        self.handle_failure_mock.return_value = (mock_error_response, 404)
+
+        # Test data
+        test_data = {
+            "registration_id": "test_registration_id",
+            "secret_key_plain": b"test_secret_key_bytes",
+            "secret_key_enc": "test_key_enc",
+            "username": "test_username"
+        }
+
+        # Call function
+        response, response_code = complete_user_registration(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 404
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"registration_id", "secret_key_plain", "secret_key_enc", "username"},
+            "complete_user_registration"
+        )
+        self.fetch_registration_mock.assert_called_once_with("test_registration_id")
+        self.handle_failure_mock.assert_called_once_with(failure_reason, "complete_user_registration")
+        self.create_user_mock.assert_not_called()
+        self.delete_registration_mock.assert_not_called()
 
     def test_complete_user_registration_secret_key_mismatch(self):
         """Test complete_user_registration when secret key hash doesn't match."""
-        pass
+        # Mock sanitise
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock fetch registration success with different key hash
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.fetch_registration_mock, mock_key_hash)
+
+        # Test data with different secret key
+        different_key = b"different_secret_key_bytes"
+        test_data = {
+            "registration_id": "test_registration_id",
+            "secret_key_plain": different_key,
+            "secret_key_enc": "test_key_enc",
+            "username": "test_username"
+        }
+
+        # Call function
+        response, response_code = complete_user_registration(test_data)
+
+        # Verify response
+        expected_error = {"error": "The received key does not match the stored one for this ID"}
+        assert response == expected_error
+        assert response_code == 400
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"registration_id", "secret_key_plain", "secret_key_enc", "username"},
+            "complete_user_registration"
+        )
+        self.fetch_registration_mock.assert_called_once_with("test_registration_id")
+        self.create_user_mock.assert_not_called()
+        self.delete_registration_mock.assert_not_called()
+        self.handle_failure_mock.assert_not_called()
 
     def test_complete_user_registration_create_user_failure(self):
         """Test complete_user_registration when user creation fails."""
-        pass
+        # Mock sanitise
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock fetch registration
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.fetch_registration_mock, mock_key_hash)
+
+        # Mock create user failure
+        failure_reason = FailureReason.ALREADY_EXISTS
+        self._mock_database_failure_2(self.create_user_mock, failure_reason)
+
+        # Mock failure handling
+        mock_error_response = "User already exists"
+        self.handle_failure_mock.return_value = (mock_error_response, 409)
+
+        # Test data
+        test_data = {
+            "registration_id": "test_registration_id",
+            "secret_key_plain": mock_key,
+            "secret_key_enc": "test_key_enc",
+            "username": "test_username"
+        }
+
+        # Call function
+        response, response_code = complete_user_registration(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 409
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"registration_id", "secret_key_plain", "secret_key_enc", "username"},
+            "complete_user_registration"
+        )
+        self.fetch_registration_mock.assert_called_once_with("test_registration_id")
+        self.create_user_mock.assert_called_once_with("test_username", mock_key_hash, "test_key_enc")
+        self.handle_failure_mock.assert_called_once_with(failure_reason, "complete_user_registration")
+        self.delete_registration_mock.assert_not_called()
 
     def test_complete_user_registration_delete_registration_failure(self):
         """Test complete_user_registration when registration deletion fails but user is created."""
-        pass
+        # Mock sanitise
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock fetch registration
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.fetch_registration_mock, mock_key_hash)
+
+        # Mock create user
+        self._mock_database_success(self.create_user_mock)
+
+        # Mock delete registration failure
+        failure_reason = FailureReason.SERVER_EXCEPTION
+        self._mock_database_failure_2(self.delete_registration_mock, failure_reason)
+
+        # Test data
+        test_data = {
+            "registration_id": "test_registration_id",
+            "secret_key_plain": mock_key,
+            "secret_key_enc": "test_key_enc",
+            "username": "test_username"
+        }
+
+        # Call function
+        response, response_code = complete_user_registration(test_data)
+
+        # Verify response
+        assert response == {}
+        assert response_code == 201
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"registration_id", "secret_key_plain", "secret_key_enc", "username"},
+            "complete_user_registration"
+        )
+        self.fetch_registration_mock.assert_called_once_with("test_registration_id")
+        self.create_user_mock.assert_called_once_with("test_username", mock_key_hash, "test_key_enc")
+        self.delete_registration_mock.assert_called_once_with("test_registration_id")
+        self.handle_failure_mock.assert_not_called()
 
     def test_get_user_key_success(self):
         """Test successful retrieval of user's encrypted secret key."""
