@@ -357,15 +357,83 @@ class TestUserService:
 
     def test_get_user_key_success(self):
         """Test successful retrieval of user's encrypted secret key."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock database function success
+        mock_secret_key_enc = "test_encrypted_secret_key"
+        self._mock_database_success(self.get_user_secret_key_enc_mock, mock_secret_key_enc)
+
+        # Test data
+        test_data = {"username": "test_username"}
+
+        # Call function
+        response, response_code = get_user_key(test_data)
+
+        # Verify response
+        expected_response = {"secret_key": mock_secret_key_enc}
+        assert response == expected_response
+        assert response_code == 200
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username"},
+            "get_user_key"
+        )
+        self.get_user_secret_key_enc_mock.assert_called_once_with("test_username")
+        self.handle_failure_mock.assert_not_called()
 
     def test_get_user_key_sanitise_failure(self):
         """Test get_user_key when input sanitization fails."""
-        pass
+        # Mock sanitise failure
+        mock_error_response = {"error": "Invalid input"}
+        self.sanitise_inputs_mock.return_value = False, mock_error_response
+
+        # Test data
+        test_data = {"username": "test_username"}
+
+        # Call function
+        response, response_code = get_user_key(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 400
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username"},
+            "get_user_key"
+        )
+        self.get_user_secret_key_enc_mock.assert_not_called()
+        self.handle_failure_mock.assert_not_called()
 
     def test_get_user_key_database_failure(self):
         """Test get_user_key when database get_user_secret_key_enc fails."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock database function failure
+        failure_reason = FailureReason.USERNAME_NOT_FOUND
+        self._mock_database_failure(self.get_user_secret_key_enc_mock, failure_reason)
+
+        # Mock failure handling
+        mock_error_response = "User not found"
+        self.handle_failure_mock.return_value = (mock_error_response, 404)
+
+        # Test data
+        test_data = {"username": "test_username"}
+
+        # Call function
+        response, response_code = get_user_key(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 404
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username"},
+            "get_user_key"
+        )
+        self.get_user_secret_key_enc_mock.assert_called_once_with("test_username")
+        self.handle_failure_mock.assert_called_once_with(failure_reason, "get_user_key")
 
     def test_user_delete_success(self):
         """Test successful user deletion."""
