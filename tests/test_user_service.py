@@ -446,7 +446,7 @@ class TestUserService:
         self._mock_database_success(self.get_user_secret_key_hash_mock, mock_key_hash)
 
         # Mock delete user success
-        self._mock_database_success_2(self.delete_user_mock)
+        self._mock_database_success(self.delete_user_mock)
 
         # Test data
         test_data = {
