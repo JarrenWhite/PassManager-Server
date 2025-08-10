@@ -437,23 +437,170 @@ class TestUserService:
 
     def test_user_delete_success(self):
         """Test successful user deletion."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock authentication success
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.get_user_secret_key_hash_mock, mock_key_hash)
+
+        # Mock delete user success
+        self._mock_database_success_2(self.delete_user_mock)
+
+        # Test data
+        test_data = {
+            "username": "test_username",
+            "secret_key_plain": mock_key
+        }
+
+        # Call function
+        response, response_code = user_delete(test_data)
+
+        # Verify response
+        assert response == {}
+        assert response_code == 200
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username", "secret_key_plain"},
+            "user_delete"
+        )
+        self.get_user_secret_key_hash_mock.assert_called_once_with("test_username")
+        self.delete_user_mock.assert_called_once_with("test_username")
+        self.handle_failure_mock.assert_not_called()
 
     def test_user_delete_sanitise_failure(self):
         """Test user_delete when input sanitization fails."""
-        pass
+        # Mock sanitise failure
+        mock_error_response = {"error": "Invalid input"}
+        self.sanitise_inputs_mock.return_value = False, mock_error_response
+
+        # Test data
+        test_data = {
+            "username": "test_username",
+            "secret_key_plain": b"test_secret_key_bytes"
+        }
+
+        # Call function
+        response, response_code = user_delete(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 400
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username", "secret_key_plain"},
+            "user_delete"
+        )
+        self.get_user_secret_key_hash_mock.assert_not_called()
+        self.delete_user_mock.assert_not_called()
+        self.handle_failure_mock.assert_not_called()
 
     def test_user_delete_get_hash_failure(self):
         """Test user_delete when fetching user's secret key hash fails."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock authentication failure
+        failure_reason = FailureReason.USERNAME_NOT_FOUND
+        self._mock_database_failure(self.get_user_secret_key_hash_mock, failure_reason)
+
+        # Mock failure handling
+        mock_error_response = "User not found"
+        self.handle_failure_mock.return_value = (mock_error_response, 404)
+
+        # Test data
+        test_data = {
+            "username": "test_username",
+            "secret_key_plain": b"test_secret_key_bytes"
+        }
+
+        # Call function
+        response, response_code = user_delete(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 404
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username", "secret_key_plain"},
+            "user_delete"
+        )
+        self.get_user_secret_key_hash_mock.assert_called_once_with("test_username")
+        self.handle_failure_mock.assert_called_once_with(failure_reason, "user_delete (auth)")
+        self.delete_user_mock.assert_not_called()
 
     def test_user_delete_secret_key_mismatch(self):
         """Test user_delete when secret key hash doesn't match (authentication fails)."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock authentication success with different key hash
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.get_user_secret_key_hash_mock, mock_key_hash)
+
+        # Test data with different secret key
+        different_key = b"different_secret_key_bytes"
+        test_data = {
+            "username": "test_username",
+            "secret_key_plain": different_key
+        }
+
+        # Call function
+        response, response_code = user_delete(test_data)
+
+        # Verify response
+        expected_error = {"error": "The received key does not match the stored one for this ID"}
+        assert response == expected_error
+        assert response_code == 400
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username", "secret_key_plain"},
+            "user_delete"
+        )
+        self.get_user_secret_key_hash_mock.assert_called_once_with("test_username")
+        self.delete_user_mock.assert_not_called()
+        self.handle_failure_mock.assert_not_called()
 
     def test_user_delete_database_delete_failure(self):
         """Test user_delete when database delete_user operation fails."""
-        pass
+        # Mock sanitise success
+        self.sanitise_inputs_mock.return_value = True, {}
+
+        # Mock authentication success
+        mock_key = b"test_secret_key_bytes"
+        mock_key_hash = hashlib.sha256(mock_key).hexdigest()
+        self._mock_database_success(self.get_user_secret_key_hash_mock, mock_key_hash)
+
+        # Mock delete user failure
+        failure_reason = FailureReason.SERVER_EXCEPTION
+        self._mock_database_failure_2(self.delete_user_mock, failure_reason)
+
+        # Mock failure handling
+        mock_error_response = "Server error during deletion"
+        self.handle_failure_mock.return_value = (mock_error_response, 500)
+
+        # Test data
+        test_data = {
+            "username": "test_username",
+            "secret_key_plain": mock_key
+        }
+
+        # Call function
+        response, response_code = user_delete(test_data)
+
+        # Verify response
+        assert response == mock_error_response
+        assert response_code == 500
+        self.sanitise_inputs_mock.assert_called_once_with(
+            test_data,
+            {"username", "secret_key_plain"},
+            "user_delete"
+        )
+        self.get_user_secret_key_hash_mock.assert_called_once_with("test_username")
+        self.delete_user_mock.assert_called_once_with("test_username")
+        self.handle_failure_mock.assert_called_once_with(failure_reason, "user_delete (delete)")
 
 
 if __name__ == '__main__':
