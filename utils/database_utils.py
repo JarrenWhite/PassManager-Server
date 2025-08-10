@@ -28,6 +28,18 @@ class Database:
             session.close()
 
     @staticmethod
+    def _get_user_by_username(session, username: str) -> Tuple[bool, Optional[FailureReason], Optional[User]]:
+        """Helper method to get a user by username from a session"""
+        try:
+            user = session.scalar(select(User).where(User.username == username))
+            if not user:
+                return False, FailureReason.USERNAME_NOT_FOUND, None
+            return True, None, user
+        except Exception as e:
+            logger.error(f"_get_user_by_username: Error - {e}")
+            return False, FailureReason.SERVER_EXCEPTION, None
+
+    @staticmethod
     def init_database() -> bool:
         if not Database._database_initialised:
             init_db()
@@ -42,8 +54,8 @@ class Database:
         try:
             with Database._get_db_session() as session:
                 # Check if user already exists
-                existing_user = session.scalar(select(User).where(User.username == username))
-                if existing_user:
+                success, failure_reason, existing_user = Database._get_user_by_username(session, username)
+                if success:
                     logger.debug(f"create_user: User '{username}' already exists.")
                     return False, FailureReason.ALREADY_EXISTS
 
@@ -63,11 +75,10 @@ class Database:
         """Find and return the user's secret key enc"""
         try:
             with Database._get_db_session() as session:
-                user = session.scalar(select(User).where(User.username == username))
-                if user:
-                    return True, None, user.secret_key_enc
-                else:
-                    return False, FailureReason.USERNAME_NOT_FOUND, None
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason, None
+                return True, None, user.secret_key_enc
 
         except Exception as e:
             logger.error(f"get_user_secret_key_enc: Error - {e}")
@@ -78,11 +89,10 @@ class Database:
         """Find and return the user's secret key hash"""
         try:
             with Database._get_db_session() as session:
-                user = session.scalar(select(User).where(User.username == username))
-                if user:
-                    return True, None, user.secret_key_hash
-                else:
-                    return False, FailureReason.USERNAME_NOT_FOUND, None
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason, None
+                return True, None, user.secret_key_hash
 
         except Exception as e:
             logger.error(f"get_user_secret_key_hash: Error - {e}")
@@ -94,10 +104,9 @@ class Database:
         try:
             with Database._get_db_session() as session:
                 # Find user in question
-                user = session.scalar(select(User).where(User.username == username))
-                if not user:
-                    logger.warning(f"delete_user: User '{username}' could not be found.")
-                    return False, FailureReason.USERNAME_NOT_FOUND
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason
                 session.delete(user)
 
                 logger.info(f"delete_user: User '{username}' deleted successfully.")
@@ -113,10 +122,9 @@ class Database:
         try:
             with Database._get_db_session() as session:
                 # Find user in question
-                user = session.scalar(select(User).where(User.username == username))
-                if not user:
-                    logger.warning(f"create_session: User '{username}' could not be found.")
-                    return False, FailureReason.USERNAME_NOT_FOUND
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason
 
                 # Create login session
                 expiry = datetime.now() + duration_till_expiry
@@ -182,10 +190,9 @@ class Database:
         try:
             with Database._get_db_session() as session:
                 # Find user in question
-                user = session.scalar(select(User).where(User.username == username))
-                if not user:
-                    logger.warning(f"delete_all_sessions: User '{username}' could not be found.")
-                    return False, FailureReason.USERNAME_NOT_FOUND
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason
 
                 all_login_sessions = user.login_sessions
                 for login_session in all_login_sessions:
@@ -228,10 +235,9 @@ class Database:
         try:
             with Database._get_db_session() as session:
                 # Find user in question
-                user = session.scalar(select(User).where(User.username == username))
-                if not user:
-                    logger.warning(f"create_secure_data: User '{username}' could not be found.")
-                    return False, FailureReason.USERNAME_NOT_FOUND
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason
 
                 # Create secure data
                 new_secure_data = SecureData(user=user,
@@ -309,10 +315,9 @@ class Database:
         try:
             with Database._get_db_session() as session:
                 # Find user in question
-                user = session.scalar(select(User).where(User.username == username))
-                if not user:
-                    logger.warning(f"get_secure_entries_list: User '{username}' could not be found.")
-                    return False, FailureReason.USERNAME_NOT_FOUND, None
+                success, failure_reason, user = Database._get_user_by_username(session, username)
+                if not success:
+                    return False, failure_reason, None
 
                 # Collate secure data
                 return True, None, [(data_entry.entry_name, data_entry.public_id) for data_entry in user.secure_data]
