@@ -14,7 +14,7 @@ def begin_user_registration() -> Tuple[Dict[str, Any], int]:
     secret_key = secrets.token_bytes(32)
     hashed_secret_key = hashlib.sha256(secret_key).hexdigest()
     expiry_time = timedelta(minutes=5)
-    ok, failure_reason, public_id = Database.create_registeration(hashed_secret_key, expiry_time)
+    ok, failure_reason, public_id = Database.create_registration(hashed_secret_key, expiry_time)
 
     # Failure
     if not ok:
@@ -40,7 +40,7 @@ def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], in
     username = data["username"]
 
     # Fetch hashed secret key
-    ok, failure_reason, secret_key_hash = Database.fetch_registeration(registration_id)
+    ok, failure_reason, secret_key_hash = Database.fetch_registration(registration_id)
     if not ok:
         assert failure_reason is not None
         return Service.handle_failure(failure_reason, "complete_user_registration")
@@ -58,7 +58,7 @@ def complete_user_registration(data: Dict[str, Any]) -> Tuple[Dict[str, Any], in
         return Service.handle_failure(failure_reason, "complete_user_registration")
 
     # Delete registration entry
-    ok, failure_reason = Database.delete_registeration(registration_id)
+    ok, failure_reason = Database.delete_registration(registration_id)
     if not ok:
         logger.error(f"complete_user_registration: Failed to delete registration {registration_id} after user creation.")
 
