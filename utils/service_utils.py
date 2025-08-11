@@ -90,7 +90,23 @@ class Service:
 
     @staticmethod
     def _registration_id(registration_id: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received registration id"""
+        """Sanitise the received registration id (UUID v4 hex string)"""
+        if not isinstance(registration_id, str):
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID is not a string")
+            return False, {"error": "Registration ID must be a string"}
+
+        if not registration_id.strip():
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID is empty")
+            return False, {"error": "Registration ID cannot be empty"}
+
+        if len(registration_id) != 32:
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID length is {len(registration_id)}, expected 32.")
+            return False, {"error": "Registration ID must be exactly 32 characters (UUID v4 hex)"}
+
+        if not all(c in '0123456789abcdefABCDEF' for c in registration_id):
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID contains invalid characters")
+            return False, {"error": "Registration ID contains invalid characters"}
+
         return True, {}
 
     @staticmethod
