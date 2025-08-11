@@ -69,7 +69,23 @@ class Service:
 
     @staticmethod
     def _username(username: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received username"""
+        """Sanitise the received username (SHA-256 hash from the frontend)"""
+        if not isinstance(username, str):
+            logger.warning(f"Sanitise.username ({calling_function}): Username is not a string.")
+            return False, {"error": "Username must be a string"}
+
+        if not username.strip():
+            logger.warning(f"Sanitise.username ({calling_function}): Username is empty.")
+            return False, {"error": "Username cannot be empty"}
+
+        if len(username) != 64:
+            logger.warning(f"Sanitise.username ({calling_function}): Username length is {len(username)}, expected 64.")
+            return False, {"error": "Username must be exactly 64 characters (SHA-256 hash)"}
+
+        if not all(c in '0123456789abcdefABCDEF' for c in username):
+            logger.warning(f"Sanitise.username ({calling_function}): Username contains invalid characters.")
+            return False, {"error": "Username contains invalid characters (SHA-256 hash)"}
+
         return True, {}
 
     @staticmethod
