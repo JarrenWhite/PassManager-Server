@@ -1,4 +1,5 @@
 from typing import Dict, Any, Tuple
+import re
 import logging
 logger = logging.getLogger("services")
 
@@ -111,7 +112,32 @@ class Service:
 
     @staticmethod
     def _secret_key_plain(secret_key_plain: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received plain text secret key"""
+        """Sanitise the received plain text secret key (string representation of 32 bytes from secrets.token_bytes)"""
+        if not isinstance(secret_key_plain, str):
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key is not a string.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        if not secret_key_plain.strip():
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key is empty.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        if not secret_key_plain.startswith("b'") or not secret_key_plain.endswith("'"):
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key is not in valid bytes format.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Extract the actual bytes content (remove b'' wrapper)
+        bytes_content = secret_key_plain[2:-1]
+
+        if len(bytes_content) != 128:
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key length is {len(bytes_content)}, expected 128.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Check if the content contains valid hex escape sequences
+        # Valid format: \x00 through \xff
+        if not re.match(r'^(\\x[0-9a-fA-F]{2})*$', bytes_content):
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key contains invalid hex sequences.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
         return True, {}
 
     @staticmethod
