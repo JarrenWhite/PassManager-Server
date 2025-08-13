@@ -142,7 +142,31 @@ class Service:
 
     @staticmethod
     def _secret_key_enc(secret_key_enc: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received encrypted secret key"""
+        """Sanitise the received AES-256-GCM encrypted secret key encoded with base64url"""
+        if not isinstance(secret_key_enc, str):
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Encrypted secret key is not a string.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        if not secret_key_enc.strip():
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Encrypted secret key is empty.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # 32 bytes ÷ 3 × 4 = 44 characters when base64url encoded with padding
+        if len(secret_key_enc) != 44:
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): AES-256-GCM ciphertext length is {len(secret_key_enc)}, expected exactly 44 characters.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Validate base64url format (AES-256-GCM ciphertext should be base64url encoded)
+        # Base64URL characters: A-Z, a-z, 0-9, -, _, = (padding)
+        if not re.match(r'^[A-Za-z0-9\-_]+={0,2}$', secret_key_enc):
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Invalid base64url format for AES-256-GCM ciphertext.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Validate base64 length (should be multiple of 4, with padding)
+        if len(secret_key_enc) % 4 != 0:
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Base64 length not valid ({len(secret_key_enc)} chars).")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
         return True, {}
 
     @staticmethod
