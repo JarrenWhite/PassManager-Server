@@ -1,4 +1,5 @@
 from typing import Dict, Any, Tuple
+import re
 import logging
 logger = logging.getLogger("services")
 
@@ -69,22 +70,103 @@ class Service:
 
     @staticmethod
     def _username(username: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received username"""
+        """Sanitise the received username (SHA-256 hash from the frontend)"""
+        if not isinstance(username, str):
+            logger.warning(f"Sanitise.username ({calling_function}): Username is not a string.")
+            return False, {"error": "Username must be a string"}
+
+        if not username.strip():
+            logger.warning(f"Sanitise.username ({calling_function}): Username is empty.")
+            return False, {"error": "Username cannot be empty"}
+
+        if len(username) != 64:
+            logger.warning(f"Sanitise.username ({calling_function}): Username length is {len(username)}, expected 64.")
+            return False, {"error": "Username must be exactly 64 characters (SHA-256 hash)"}
+
+        if not all(c in '0123456789abcdefABCDEF' for c in username):
+            logger.warning(f"Sanitise.username ({calling_function}): Username contains invalid characters.")
+            return False, {"error": "Username contains invalid characters (SHA-256 hash)"}
+
         return True, {}
 
     @staticmethod
     def _registration_id(registration_id: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received registration id"""
+        """Sanitise the received registration id (UUID v4 hex string)"""
+        if not isinstance(registration_id, str):
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID is not a string")
+            return False, {"error": "Registration ID must be a string"}
+
+        if not registration_id.strip():
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID is empty")
+            return False, {"error": "Registration ID cannot be empty"}
+
+        if len(registration_id) != 32:
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID length is {len(registration_id)}, expected 32.")
+            return False, {"error": "Registration ID must be exactly 32 characters (UUID v4 hex)"}
+
+        if not all(c in '0123456789abcdefABCDEF' for c in registration_id):
+            logger.warning(f"Sanitise.registration_id ({calling_function}): Registration ID contains invalid characters")
+            return False, {"error": "Registration ID contains invalid characters"}
+
         return True, {}
 
     @staticmethod
     def _secret_key_plain(secret_key_plain: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received plain text secret key"""
+        """Sanitise the received plain text secret key (string representation of 32 bytes from secrets.token_bytes)"""
+        if not isinstance(secret_key_plain, str):
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key is not a string.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        if not secret_key_plain.strip():
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key is empty.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        if not secret_key_plain.startswith("b'") or not secret_key_plain.endswith("'"):
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key is not in valid bytes format.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Extract the actual bytes content (remove b'' wrapper)
+        bytes_content = secret_key_plain[2:-1]
+
+        if len(bytes_content) != 128:
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key length is {len(bytes_content)}, expected 128.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Check if the content contains valid hex escape sequences
+        # Valid format: \x00 through \xff
+        if not re.match(r'^(\\x[0-9a-fA-F]{2})*$', bytes_content):
+            logger.warning(f"Sanitise.secret_key_plain ({calling_function}): Secret key contains invalid hex sequences.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
         return True, {}
 
     @staticmethod
     def _secret_key_enc(secret_key_enc: str, calling_function: str = "unknown") -> Tuple[bool, Dict[str, Any]]:
-        """Sanitise the received encrypted secret key"""
+        """Sanitise the received AES-256-GCM encrypted secret key encoded with base64url"""
+        if not isinstance(secret_key_enc, str):
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Encrypted secret key is not a string.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        if not secret_key_enc.strip():
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Encrypted secret key is empty.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # 32 bytes ÷ 3 × 4 = 44 characters when base64url encoded with padding
+        if len(secret_key_enc) != 44:
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): AES-256-GCM ciphertext length is {len(secret_key_enc)}, expected exactly 44 characters.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Validate base64url format (AES-256-GCM ciphertext should be base64url encoded)
+        # Base64URL characters: A-Z, a-z, 0-9, -, _, = (padding)
+        if not re.match(r'^[A-Za-z0-9\-_]+={0,2}$', secret_key_enc):
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Invalid base64url format for AES-256-GCM ciphertext.")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
+        # Validate base64 length (should be multiple of 4, with padding)
+        if len(secret_key_enc) % 4 != 0:
+            logger.warning(f"Sanitise.secret_key_enc ({calling_function}): Base64 length not valid ({len(secret_key_enc)} chars).")
+            return False, {"error": "The received key does not match the stored one for this ID"}
+
         return True, {}
 
     @staticmethod
