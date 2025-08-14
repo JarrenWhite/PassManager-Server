@@ -1,58 +1,98 @@
-Hashing
-Algorithms
-- SHA-256
-Reasons
-- Username
-    The client side should hash the username before sending to the server side
-- User Specific Secret Key
-    The server side will only store a hash of any secret keys
+HASHING REQUIREMENTS
 
-Encrypting
-Algorithms
-- AES-256-GCM
-Reasons
-- User Specific Secret Key
-    The client side should encrypt their secret key before sending to the server
-- User password entry data
-    The client side should encrypt their password entry before sending to the server
+Algorithm: SHA-256
+
+What gets hashed:
+- Username: Client must hash username before sending to server (never plaintext)
+- User Secret Keys: Server stores only hashed versions of secret keys (never plaintext)
 
 
-Encryption Instructions
-Takes: Key, Nonce, plaintext
-Returns: ciphertext + auth tag
-- User Specific Secret Key
-    Use the settings: abc
-    Send to the server: xyz
-- Password Blob
-    Use the settings: abc
-    Send to the server: xyz
-- Password names
-    Separately, encrypt the password names
-    Use the settings: abc
-    Send to the server: xyz
+ENCRYPTION REQUIREMENTS
+
+Algorithm: AES-256-GCM
+
+What gets encrypted:
+- User Secret Keys: Client encrypts secret key before transmission
+- Password Entry Names: Client encrypts password names separately from password entry data
+- Password Entry Data: Client encrypts complete password entries before transmission
 
 
-Encryption Key
-    256-bit symmetric key (32 bytes)
-    Derived from a password using a KDF (Argon2, PBKDF2, scrypt) with a salt
-    The salt should be sent to the server side to be stored safely
-Nonce / IV
-    96 Bits (12 bytes)
-    Randomly generated per encryption
-    (Should never be repeated with the same key)
-AAD
-    Currently will not be used (May be implemented in future)
-Authentication tag
-    16 bytes (128 bits)
-    Some APIs include in ciphertext output, other return it individually
-Encoding
-    Encode the plain text password Blob
-    Will need to determine exact standards for encoding, so that different
-    client side implementations can gather the same information
+ENCRYPTION PROCESS
 
-Database stores:
-Nonce, ciphertext, auth tag
+Input Parameters:
+- Encryption Key: 256-bit symmetric key (32 bytes)
+- Nonce: 96 bits (12 bytes), randomly generated for each encryption
+- Plaintext: Data to be encrypted
 
-Decryption Instructions
-Takes: Key, Nonce, cyphertext, auth tag
-Returns: plaintext
+Output:
+- Ciphertext: Encrypted data
+- Authentication Tag: 16 bytes (128 bits) for integrity verification
+
+CRITICAL: Never reuse the same nonce with the same key
+
+
+ENCRYPTION KEY DERIVATION
+
+The encryption key must be derived from user password using a Key Derivation Function (KDF):
+- KDFs: # TODO - determine algorithm & check parameters (Argon2, PBKDF2, or scrypt)
+- Salt: Random value used in key derivation
+- Salt Storage: Send salt to server for secure storage
+
+
+
+SPECIFIC ENCRYPTION SETTINGS
+
+User Secret Key Encryption:
+- Settings: # TODO
+- Server Payload: # TODO
+
+Password Blob Encryption:
+- Settings: # TODO
+- Server Payload: # TODO
+
+Password Names Encryption:
+- Process: Encrypt password names separately from password data
+- Settings: # TODO
+- Server Payload: # TODO
+
+# TODO - Determine how the client side should send the Ciphertext, Authentication Tag and Nonce
+        Should it be all in one line, or separate parameters?
+        Separate is probably more maintainable? But maybe that's more work for the client side?
+        What's industry standard for this?
+
+
+DATA ENCODING
+
+Password Entry Data Encoding:
+- Requirement: Standardised encoding format for plaintext password data
+- Encoding: # TODO - decide on encoding for the password entry data
+
+
+SERVER STORAGE
+
+Database stores for each encrypted Password Entry Data:
+- Nonce (12 bytes)
+- Ciphertext (variable length)
+- Authentication Tag (16 bytes)
+
+Note: Some cryptographic libraries combine ciphertext and auth tag, others return separately
+
+
+DECRYPTION PROCESS
+
+Input Parameters:
+- Encryption Key: Same 256-bit key used for encryption
+- Nonce: 12 bytes stored with encrypted data
+- Ciphertext: Encrypted data from storage
+- Authentication Tag: 16 bytes for integrity verification
+
+Output:
+- Plaintext: Original unencrypted data
+
+Process: Authentication tag is verified before decryption to ensure data integrity
+
+
+ADDITIONAL AUTHENTICATED DATA (AAD)
+
+Status: Not currently implemented
+Future: May be added for additional security context
