@@ -1,0 +1,58 @@
+Hashing
+Algorithms
+- SHA-256
+Reasons
+- Username
+    The client side should hash the username before sending to the server side
+- User Specific Secret Key
+    The server side will only store a hash of any secret keys
+
+Encrypting
+Algorithms
+- AES-256-GCM
+Reasons
+- User Specific Secret Key
+    The client side should encrypt their secret key before sending to the server
+- User password entry data
+    The client side should encrypt their password entry before sending to the server
+
+
+Encryption Instructions
+Takes: Key, Nonce, plaintext
+Returns: ciphertext + auth tag
+- User Specific Secret Key
+    Use the settings: abc
+    Send to the server: xyz
+- Password Blob
+    Use the settings: abc
+    Send to the server: xyz
+- Password names
+    Separately, encrypt the password names
+    Use the settings: abc
+    Send to the server: xyz
+
+
+Encryption Key
+    256-bit symmetric key (32 bytes)
+    Derived from a password using a KDF (Argon2, PBKDF2, scrypt) with a salt
+    The salt should be sent to the server side to be stored safely
+Nonce / IV
+    96 Bits (12 bytes)
+    Randomly generated per encryption
+    (Should never be repeated with the same key)
+AAD
+    Currently will not be used (May be implemented in future)
+Authentication tag
+    16 bytes (128 bits)
+    Some APIs include in ciphertext output, other return it individually
+Encoding
+    Encode the plain text password Blob
+    Will need to determine exact standards for encoding, so that different
+    client side implementations can gather the same information
+
+Database stores:
+Nonce, ciphertext, auth tag
+
+Decryption Instructions
+Takes: Key, Nonce, cyphertext, auth tag
+Returns: plaintext
