@@ -6,6 +6,8 @@ What gets hashed:
 - Username: Client must hash username before sending to server (never plaintext)
 - User Secret Keys: Server stores only hashed versions of secret keys (never plaintext)
 
+CRITICAL: Do not use a salt for the username's hash. This is used to identify the vault, so a salt cannot be stored
+
 
 ENCRYPTION REQUIREMENTS
 
@@ -34,8 +36,9 @@ CRITICAL: Never reuse the same nonce with the same key
 ENCRYPTION KEY DERIVATION
 
 The encryption key must be derived from user password using a Key Derivation Function (KDF):
-- KDFs: # TODO - determine algorithm & check parameters (Argon2, PBKDF2, or scrypt)
-- Salt: Random value used in key derivation
+- KDFs: Argon2id with memory_cost=65536, time_cost=3, parallelism=1
+- Salt: Random value used in key derivation (32 bytes)
+- Key Length: 32 bytes (256 bits)
 - Salt Storage: Send salt to server for secure storage
 
 
@@ -43,22 +46,20 @@ The encryption key must be derived from user password using a Key Derivation Fun
 SPECIFIC ENCRYPTION SETTINGS
 
 User Secret Key Encryption:
-- Settings: # TODO
-- Server Payload: # TODO
+- Settings: AES-256-GCM with 12-byte nonce, 16-byte auth tag
+- Server Payload: nonce (12 bytes), ciphertext (variable), auth_tag (16 bytes)
 
 Password Blob Encryption:
-- Settings: # TODO
-- Server Payload: # TODO
+- Settings: AES-256-GCM with 12-byte nonce, 16-byte auth tag
+- Server Payload: nonce (12 bytes), ciphertext (variable), auth_tag (16 bytes)
 
 Password Names Encryption:
 - Process: Encrypt password names separately from password data
-- Settings: # TODO
-- Server Payload: # TODO
+- Settings: AES-256-GCM with 12-byte nonce, 16-byte auth tag
+- Server Payload: nonce (12 bytes), ciphertext (variable), auth_tag (16 bytes)
 
-# TODO - Determine how the client side should send the Ciphertext, Authentication Tag and Nonce
-        Should it be all in one line, or separate parameters?
-        Separate is probably more maintainable? But maybe that's more work for the client side?
-        What's industry standard for this?
+Note: Some cryptographic libraries combine ciphertext and auth tag, others return separately.
+      These must be separated before being sent to the server.
 
 
 DATA ENCODING
@@ -74,8 +75,6 @@ Database stores for each encrypted Password Entry Data:
 - Nonce (12 bytes)
 - Ciphertext (variable length)
 - Authentication Tag (16 bytes)
-
-Note: Some cryptographic libraries combine ciphertext and auth tag, others return separately
 
 
 DECRYPTION PROCESS
