@@ -64,9 +64,22 @@ Note: Some cryptographic libraries combine ciphertext and auth tag, others retur
 
 DATA ENCODING
 
-Password Entry Data Encoding:
-- Requirement: Standardised encoding format for plaintext password data
-- Encoding: # TODO - decide on encoding for the password entry data
+Encoding Requirements:
+- Byte Order: Big-endian (network byte order) for all length fields
+- Length Field: 4-byte unsigned integer (0 to 4,294,967,295)
+- Empty Fields: Length 0, no data bytes
+- UTF-8 Validation: All text fields must be valid UTF-8 sequences
+
+The data must be encoded in this way prior to encryption
+- Secret Key:
+        Use raw 32-byte binary data directly (no encoding needed)
+- Password Entry Name:
+        [4 bytes: entry_name length][entry_name bytes]
+- Password Entry Data:
+        [4 bytes: website length][website bytes]
+        [4 bytes: username length][username bytes]
+        [4 bytes: password length][password bytes]
+        [4 bytes: notes length][notes bytes]
 
 
 SERVER STORAGE
