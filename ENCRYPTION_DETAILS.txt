@@ -6,7 +6,14 @@ What gets hashed:
 - Username: Client must hash username before sending to server (never plaintext)
 - User Secret Keys: Server stores only hashed versions of secret keys (never plaintext)
 
-CRITICAL: Do not use a salt for the username's hash. This is used to identify the vault, so a salt cannot be stored
+Username Hashing Process:
+1. Convert username to UTF-8 bytes
+2. Compute SHA-256 hash of UTF-8 bytes
+3. Encode result as hex string for transmission
+
+CRITICAL: Do not use a salt for the username's hash. This is used to identify the vault
+          This does mean that the username is less secure, and is more susceptible to
+          rainbow attacks. This is seen as unavoidable without enforcing random login IDs.
 
 
 ENCRYPTION REQUIREMENTS
@@ -22,8 +29,8 @@ What gets encrypted:
 ENCRYPTION PROCESS
 
 Input Parameters:
-- Encryption Key: 256-bit symmetric key (32 bytes)
-- Nonce: 96 bits (12 bytes), randomly generated for each encryption
+- Encryption Key: 32 bytes (256 bits) symmetric key
+- Nonce: 12 bytes (96 bits), randomly generate for each encryption
 - Plaintext: Data to be encrypted
 
 Output:
@@ -35,7 +42,7 @@ CRITICAL: Never reuse the same nonce with the same key
 
 ENCRYPTION KEY DERIVATION
 
-The encryption key must be derived from user password using a Key Derivation Function (KDF):
+The encryption key is derived from user password using a Key Derivation Function (KDF):
 - KDFs: Argon2id with memory_cost=65536, time_cost=3, parallelism=1
 - Salt: Random value used in key derivation (32 bytes)
 - Key Length: 32 bytes (256 bits)
@@ -93,7 +100,7 @@ Database stores for each encrypted Password Entry Data:
 DECRYPTION PROCESS
 
 Input Parameters:
-- Encryption Key: Same 256-bit key used for encryption
+- Encryption Key: Same 32 bytes (256 bits) key used for encryption
 - Nonce: 12 bytes stored with encrypted data
 - Ciphertext: Encrypted data from storage
 - Authentication Tag: 16 bytes for integrity verification
