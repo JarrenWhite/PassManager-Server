@@ -73,9 +73,9 @@ This document defines the cryptographic standards and implementation requirement
 
 
 
-## Encryption Key Derivation
+## Master Key Derivation
 
-The encryption key is derived from user password using a Key Derivation Function (KDF):
+The master key is derived from the user password using a Key Derivation Function (KDF):
 
 - **Algorithm:** Argon2id
 - **Parameters:**
@@ -91,15 +91,20 @@ The encryption key is derived from user password using a Key Derivation Function
 ## Specific Encryption Settings
 
 ### Request Data Encryption
-- **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
-- **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
-
-### Password Blob Encryption
+- **Content:** The API request data.
+- **Key:** Shared Session Key.
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
 - **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
 
 ### Password Names Encryption
-- **Process:** Encrypt password names separately from password data
+- **Content:** The name for the password entry.
+- **Key:** User Master Key.
+- **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
+- **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
+
+### Password Blob Encryption
+- **Content:** The data for the password entry.
+- **Key:** User Master Key.
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
 - **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
 
@@ -108,4 +113,33 @@ The encryption key is derived from user password using a Key Derivation Function
 
 
 ## Data Encoding
+
+### Encoding Requirements
+- **Byte Order:** Big-endian (network byte order) for all length fields
+- **Length Field:** 4-byte unsigned integer (0 to 4,294,967,295)
+- **Empty Fields:** Length 0, no data bytes
+- **UTF-8 Validation:** All text fields must be valid UTF-8 sequences
+
+### Pre-Encryption Encoding
+
+The data must be encoded in this way prior to encryption:
+
+#### API Request Data
+```
+The encoding for each API request is specified in the API documentation.
+```
+
+#### Password Entry Name
+```
+[4 bytes: entry_name length][entry_name bytes]
+```
+
+#### Password Entry Data
+```
+[4 bytes: website length][website bytes]
+[4 bytes: username length][username bytes]
+[4 bytes: password length][password bytes]
+[4 bytes: notes length][notes bytes]
+```
+
 
