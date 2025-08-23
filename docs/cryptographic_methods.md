@@ -40,6 +40,7 @@ This document defines the cryptographic standards and implementation requirement
 **API Request Data:** Client encrypts API request data using the shared session key.
 **Password Entry Names:** Client encrypts password entry names using password-derived key.
 **Password Entry Data:** Client encrypts password entry data using password-derived key.
+// TODO - AAD implementation details
 
 ---
 
@@ -50,6 +51,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Encryption Key:** 32 bytes (256 bits) symmetric key
 - **Nonce:** 12 bytes (96 bits), randomly generate for each encryption
 - **Plaintext:** Data to be encrypted
+// TODO - AAD implementation details
 
 ### Output
 - **Ciphertext:** Encrypted data
@@ -75,6 +77,9 @@ This document defines the cryptographic standards and implementation requirement
 
 
 ## Session Key Derivation
+// TODO - Outline session key derivation for server side & for client side
+### Server Side
+### Client Side
 
 ---
 
@@ -102,6 +107,41 @@ The master key is derived from the user password using a Key Derivation Function
 > **⚠️ CRITICAL:** The password input **must never** be logged, cached, or transmitted.
 > **⚠️ CRITICAL:** The master key **must never** be logged, cached, or transmitted.
 > **⚠️ CRITICAL:** A new salt **must** be generated with each user creation. They **must** never be re-used.
+
+### Reference Implementations
+#### Python
+```
+from argon2.low_level import hash_secret_raw, Type
+import os
+
+def derive_master_key(password: str, salt: bytes) -> bytes:
+    return hash_secret_raw(
+        secret=password.encode("utf-8"),
+        salt=salt,
+        time_cost=3,
+        memory_cost=65536,
+        parallelism=1,
+        hash_len=32,
+        type=Type.ID
+    )
+```
+
+#### JavaScript
+```
+import { argon2id } from "argon2";
+
+const deriveMasterKey = async (password, salt) => {
+  return await argon2id({
+    password: new TextEncoder().encode(password),
+    salt: salt,
+    timeCost: 3,
+    memoryCost: 65536,
+    parallelism: 1,
+    hashLength: 32,
+    raw: true // ensures a raw key instead of encoded string
+  });
+};
+```
 
 ---
 
