@@ -12,6 +12,7 @@ This document defines the cryptographic standards and implementation requirement
 7. **Specific Encryption Settings**
 8. **Data Encoding**
 
+---
 
 
 ## Hashing
@@ -28,6 +29,7 @@ This document defines the cryptographic standards and implementation requirement
 
 > **⚠️ CRITICAL:** Do not use a salt for the username's hash. This is used to identify the vault. This does mean that the username is less secure, and is more susceptible to rainbow attacks. This is seen as unavoidable without enforcing random login IDs.
 
+---
 
 
 ## Encryption Requirements
@@ -39,6 +41,7 @@ This document defines the cryptographic standards and implementation requirement
 **Password Entry Names:** Client encrypts password entry names using password-derived key.
 **Password Entry Data:** Client encrypts password entry data using password-derived key.
 
+---
 
 
 ## Encryption Process
@@ -52,8 +55,9 @@ This document defines the cryptographic standards and implementation requirement
 - **Ciphertext:** Encrypted data
 - **Authentication Tag:** 16 bytes (128 bits) for integrity verification
 
-> **⚠️ CRITICAL:** Never reuse the same nonce with the same key
+> **⚠️ CRITICAL:** Never reuse the same nonce with the same key.
 
+---
 
 
 ## Decryption Process
@@ -67,25 +71,39 @@ This document defines the cryptographic standards and implementation requirement
 ### Output
 - **Plaintext:** Original unencrypted data
 
+---
 
 
 ## Session Key Derivation
 
+---
 
 
 ## Master Key Derivation
 
-The master key is derived from the user password using a Key Derivation Function (KDF):
+The master key is derived from the user password using a Key Derivation Function (KDF). It is used to encrypt and decrypt the user's password data. Therefore, it needs to be consistently determined across possible platforms and implementations. The key (and the password) **must never be sent to the server**.
 
-- **Algorithm:** Argon2id
-- **Parameters:**
-  - `memory_cost=65536`
-  - `time_cost=3`
-  - `parallelism=1`
-- **Salt:** Random value used in key derivation (32 bytes)
+### Algorithm & Parameters
+- **KDF Algorithm:** Argon2id (`type=Argon2id`)
+- **Time Cost:** 3 iterations
+- **Memory Cost:** 65,536 KiB (64 MB)
+- **Parallelism:** 1 thread
 - **Key Length:** 32 bytes (256 bits)
-- **Salt Storage:** Send salt to server for secure storage
+- **Salt Size:** 32 bytes (generated randomly per user, per account)
 
+### Input & Encoding
+- Passwords must be UTF-8 encoded before being passed to Argon2id.
+
+### Salt Handling
+- Salts must be generated on the **client** using a **cryptographically secure random number generator**.
+- Salts must be **unique per user** and **never reused**.
+- Salts must be encoded safely (e.g., Base64) when stored or transmitted to the server.
+
+> **⚠️ CRITICAL:** The password input **must never** be logged, cached, or transmitted.
+> **⚠️ CRITICAL:** The master key **must never** be logged, cached, or transmitted.
+> **⚠️ CRITICAL:** A new salt **must** be generated with each user creation. They **must** never be re-used.
+
+---
 
 
 ## Specific Encryption Settings
@@ -110,6 +128,7 @@ The master key is derived from the user password using a Key Derivation Function
 
 > **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be separated before being sent to the server.
 
+---
 
 
 ## Data Encoding
@@ -141,5 +160,3 @@ The encoding for each API request is specified in the API documentation.
 [4 bytes: password length][password bytes]
 [4 bytes: notes length][notes bytes]
 ```
-
-
