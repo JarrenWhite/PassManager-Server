@@ -51,7 +51,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Encryption Key:** 32 bytes (256 bits) symmetric key
 - **Nonce:** 12 bytes (96 bits), randomly generate for each encryption
 - **Plaintext:** Data to be encrypted
-// TODO - AAD implementation details
+- **AAD (Optional):** The AAD (Additional Authenticated Data) adds integrity protection. It is currently only used for API requests (specified in the Data Encoding).
 
 ### Output
 - **Ciphertext:** Encrypted data
@@ -69,6 +69,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Nonce:** 12 bytes (96 bits), stored with encrypted data
 - **Ciphertext:** Encrypted data from storage
 - **Authentication Tag:** 16 bytes (128 bits), for integrity verification
+- **AAD (Optional):** This is only required where it was used in the encryption. Currently, that only includes API requests.
 
 ### Output
 - **Plaintext:** Original unencrypted data
@@ -180,12 +181,14 @@ const deriveMasterKey = async (password, salt) => {
 - **UTF-8 Validation:** All text fields must be valid UTF-8 sequences
 
 ### Pre-Encryption Encoding
-
 The data must be encoded in this way prior to encryption:
 
 #### API Request Data
+The encoding for the content data of each API request is specified in the API documentation.
+The AAD data is to be encoded as follows:
 ```
-The encoding for each API request is specified in the API documentation.
+[4 bytes: request_count_length][request_count bytes]
+[4 bytes: session_id_length][session_id]
 ```
 
 #### Password Entry Name
