@@ -6,8 +6,11 @@ This document defines the cryptographic standards and implementation requirement
 1. **Hashing**
 2. **Encryption Requirements**
 3. **Encryption Process**
-4. **Session Key Derivation**
-5. **Encryption Key Derivation**
+4. **Decryption Process**
+5. **Session Key Derivation**
+6. **Encryption Key Derivation**
+7. **Specific Encryption Settings**
+8. **Data Encoding**
 
 
 
@@ -40,8 +43,29 @@ This document defines the cryptographic standards and implementation requirement
 
 
 
+## Decryption Process
+
+
+
 ## Session Key Derivation
 
 
 
 ## Encryption Key Derivation
+
+
+
+## Session Key Derivation
+
+
+
+## Encryption Key Derivation
+
+
+
+## Specific Encryption Settings
+
+
+
+## Data Encoding
+
