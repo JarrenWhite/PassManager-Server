@@ -40,7 +40,6 @@ This document defines the cryptographic standards and implementation requirement
 **API Request Data:** Client encrypts API request data using the shared session key.
 **Password Entry Names:** Client encrypts password entry names using password-derived key.
 **Password Entry Data:** Client encrypts password entry data using password-derived key.
-// TODO - AAD implementation details
 
 ---
 
@@ -58,6 +57,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Authentication Tag:** 16 bytes (128 bits) for integrity verification
 
 > **⚠️ CRITICAL:** Never reuse the same nonce with the same key.
+> **Note:** The AAD information is not encrypted. It is used for integrity protection, and can be viewed by anyone with access to the packet.
 
 ---
 
