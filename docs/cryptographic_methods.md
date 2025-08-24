@@ -7,8 +7,8 @@ This document defines the cryptographic standards and implementation requirement
 2. **Encryption Requirements**
 3. **Encryption Process**
 4. **Decryption Process**
-5. **Session Key Derivation**
-6. **Encryption Key Derivation**
+5. **Master Key Derivation**
+6. **Session Key Derivation**
 7. **Specific Encryption Settings**
 8. **Data Encoding**
 
@@ -77,14 +77,6 @@ This document defines the cryptographic standards and implementation requirement
 ---
 
 
-## Session Key Derivation
-// TODO - Outline session key derivation for server side & for client side
-### Server Side
-### Client Side
-
----
-
-
 ## Master Key Derivation
 
 The master key is derived from the user password using a Key Derivation Function (KDF). It is used to encrypt and decrypt the user's password data. Therefore, it needs to be consistently determined across possible platforms and implementations. The key (and the password) **must never be sent to the server**.
@@ -94,8 +86,8 @@ The master key is derived from the user password using a Key Derivation Function
 - **Time Cost:** 3 iterations
 - **Memory Cost:** 65,536 KiB (64 MB)
 - **Parallelism:** 1 thread
+- **Salt Size:** 32 bytes (generated randomly per user, per password)
 - **Key Length:** 32 bytes (256 bits)
-- **Salt Size:** 32 bytes (generated randomly per user, per account)
 
 ### Input & Encoding
 - Passwords must be UTF-8 encoded before being passed to Argon2id.
@@ -143,6 +135,35 @@ const deriveMasterKey = async (password, salt) => {
   });
 };
 ```
+
+---
+
+
+## Session Key Derivation
+
+### Algorithm & Parameters
+- **SRP Algorithm:** SRP-6a
+- **Hash Function:** SHA-256
+- **Safe Prime (N):** 4096
+- **Generator (g):** 5
+- **Salt Size:** 32 bytes (generated randomly per user, per password)
+- **Key Length:** 32 bytes (256 bits)
+
+### Input & Encoding
+- Username and Password must be UTF-8 encoded before being used in SRP-6a.
+- Username and Password encoding must be normalised using NFKC before being used in SRP-6a.
+
+### Client Side Steps (Registration)
+- SRP-6a definition (x) = hash( salt || hash( username ":" password ) )
+-   Where "||" is byte concatenation, and ":" is the ASCII colon
+- Interpret the final hash output as big-endian integer
+- verifier = g^x mod N
+- Store the salt & verifier to the server
+
+// TODO - Outline session key derivation for server side & for client side
+### Client Side (Session)
+### Server Side (Session)
+
 
 ---
 
