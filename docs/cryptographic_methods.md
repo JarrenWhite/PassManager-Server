@@ -218,21 +218,27 @@ During user registration, the client must generate an SRP verifier:
 - **Content:** The API request data.
 - **Key:** Shared Session Key.
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
-- **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
+- **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
+- **Server Payload Form:**
+```[12 bytes: nonce][16 bytes: auth_tag][cyphertext...]```
 
 ### Password Names Encryption
 - **Content:** The name for the password entry.
 - **Key:** User Master Key.
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
-- **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
+- **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
+- **Server Payload Form:**
+```[12 bytes: nonce][16 bytes: auth_tag][cyphertext...]```
 
 ### Password Blob Encryption
 - **Content:** The data for the password entry.
 - **Key:** User Master Key.
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
-- **Server Payload:** `nonce` (12 bytes), `ciphertext` (variable), `auth_tag` (16 bytes)
+- **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
+- **Server Payload Form:**
+```[12 bytes: nonce][16 bytes: auth_tag][cyphertext...]```
 
-> **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be separated before being sent to the server.
+> **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be correctly arranged before being sent to the server.
 
 ---
 
