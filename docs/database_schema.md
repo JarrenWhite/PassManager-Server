@@ -2,6 +2,11 @@
 
 
 ## User
+
+### Purpose
+Store main user information, including SRP authentication data, salts for encryption, and references to user sessions and data.
+
+### Parameters
 **id:** Database ID for the entry
 **username:** Hash of the user's username
 **srp_salt:** The salt used to create the verifier in SRP
@@ -10,8 +15,15 @@
 **login_session:** List of all linked LoginSession entries
 **secure_data:** List of all linked SecureData entries
 
+---
+
 
 ## LoginSession
+
+### Purpose
+Tracks user authentication sessions, storing session keys and related data.
+
+### Parameters
 **id:** Database ID for the entry
 **public_id:** Public ID for the entry (generated UUID)
 **user:** The user that the LoginSession is associated with
@@ -21,8 +33,15 @@
 **expiry_time:** Time past which the session will expire
 **last_used:** Time at which the session was last used
 
+---
+
 
 ## SecureData
+
+### Purpose
+Stores encrypted password entries, and related nonce and auth_tag for decryption.
+
+### Parameters
 **id:** Database ID for the entry
 **public_id:** Public ID for the entry (generated UUID)
 **user:** The user that the SecureData is associated with
