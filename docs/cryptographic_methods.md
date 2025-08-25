@@ -160,10 +160,53 @@ const deriveMasterKey = async (password, salt) => {
 - verifier = g^x mod N
 - Store the salt & verifier to the server
 
-// TODO - Outline session key derivation for server side & for client side
-### Client Side (Session)
-### Server Side (Session)
+### Client Side Steps (Session Creation)
+1. **Receive server ephemeral (B) and salt from server**
+2. **Generate client ephemeral (A):**
+   - Generate random private value `a` (320 bits)
+   - Compute `A = g^a mod N`
+3. **Compute scrambling parameter (u):**
+   - `u = hash(A || B)` where `||` is byte concatenation
+   - Interpret hash output as big-endian integer
+4. **Compute session key (S):**
+   - Compute `x = hash(salt || hash(username ":" password))`
+   - Compute `S = (B - k*g^x)^(a + u*x) mod N`
+   - Where `k = hash(N || g)` (SRP-6a multiplier)
+5. **Derive shared session key:**
+   - `K = hash(S)` - This becomes the 32-byte session key for API encryption
 
+### Server Side Steps (Session Creation)
+1. **Lookup user verifier (v) and salt from database**
+2. **Generate server ephemeral (B):**
+   - Generate random private value `b` (320 bits)
+   - Compute `k = hash(N || g)` (SRP-6a multiplier)
+   - Compute `B = k*v + g^b mod N`
+3. **Send B and salt to client, receive A from client**
+4. **Compute scrambling parameter (u):**
+   - `u = hash(A || B)` where `||` is byte concatenation
+   - Interpret hash output as big-endian integer
+5. **Compute session key (S):**
+   - Compute `S = (A * v^u)^b mod N`
+6. **Derive shared session key:**
+   - `K = hash(S)` - This becomes the 32-byte session key for API encryption
+
+### Proof Generation & Verification
+**Client generates proof (M1):**
+- `M1 = hash(A || B || K)`
+
+**Server verifies M1 and generates proof (M2):**
+- Verify received M1 matches computed `hash(A || B || K)`
+- Generate `M2 = hash(A || M1 || K)`
+- Send M2 to client
+
+**Client verifies M2:**
+- Verify received M2 matches computed `hash(A || M1 || K)`
+
+### Critical Security Requirements
+> **⚠️ CRITICAL:** Private values `a` and `b` must be generated using cryptographically secure random number generators.
+> **⚠️ CRITICAL:** Private values `a` and `b` must never be logged, cached, or transmitted.
+> **⚠️ CRITICAL:** Session key `K` must never be logged or transmitted in plaintext.
+> **⚠️ CRITICAL:** All computations must use constant-time operations where possible to prevent timing attacks.
 
 ---
 
