@@ -153,12 +153,13 @@ const deriveMasterKey = async (password, salt) => {
 - Username and Password must be UTF-8 encoded before being used in SRP-6a.
 - Username and Password encoding must be normalised using NFKC before being used in SRP-6a.
 
-### Client Side Steps (Registration)
-- SRP-6a definition (x) = hash( salt || hash( username ":" password ) )
--   Where "||" is byte concatenation, and ":" is the ASCII colon
-- Interpret the final hash output as big-endian integer
-- verifier = g^x mod N
-- Store the salt & verifier to the server
+### SRP Verifier Generation (User Registration)
+During user registration, the client must generate an SRP verifier:
+- Compute `x = hash(salt || hash(username ":" password))`
+  - Where `||` is byte concatenation, and `":"` is the ASCII colon
+- Interpret the hash output as big-endian integer
+- Compute `verifier = g^x mod N`
+- Send the salt and verifier to the server for storage
 
 ### Client Side Steps (Session Creation)
 1. **Receive server ephemeral (B) and salt from server**
