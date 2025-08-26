@@ -6,7 +6,17 @@
 ### Purpose
 Store main user information, including SRP authentication data, salts for encryption, and references to user sessions and data.
 
-### Columns
+### **Columns**
+
+| Column             | Type      | Constraints |
+|---------------------|-----------|----------------------|
+| **id**             | BIGINT    | **Primary Key**, auto-increment |
+| **username_hash**   | BLOB      | **Unique**, **Indexed** |
+| **srp_salt**        | BLOB      |  |
+| **srp_verifier**    | BLOB      |  |
+| **master_key_salt** | BLOB      |  |
+
+### Column Descriptions
 **id:** Database ID for the entry
 **username:** Hash of the user's username
 **srp_salt:** The salt used to create the verifier in SRP
@@ -23,7 +33,20 @@ Store main user information, including SRP authentication data, salts for encryp
 ### Purpose
 Tracks user authentication sessions, storing session keys and related data.
 
-### Columns
+### **Columns**
+
+| Column             | Type      | Constraints / Notes |
+|---------------------|-----------|----------------------|
+| **id**             | BIGINT    | **Primary Key**, auto-increment |
+| **public_id**       | CHAR(36) | **Unique** |
+| **user_id**         | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
+| **session_key**     | BLOB      |  |
+| **request_count**   | INT       |  |
+| **maximum_requests**| INT       |  |
+| **expiry_time**     | TIMESTAMP |  |
+| **last_used**       | TIMESTAMP |  |
+
+### Column Descriptions
 **id:** Database ID for the entry
 **public_id:** Public ID for the entry (generated UUID)
 **user_id:** The user that the LoginSession is associated with
@@ -41,7 +64,15 @@ Tracks user authentication sessions, storing session keys and related data.
 ### Purpose
 Stores encrypted password entries, and related nonce and auth_tag for decryption.
 
-### Columns
+| Column                | Type      | Constraints / Notes |
+|------------------------|-----------|----------------------|
+| **id**                | BIGINT    | **Primary Key**, auto-increment |
+| **public_id**          | CHAR(36) | **Unique** |
+| **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
+| **entry_name**         | BLOB      |  |
+| **entry_data**         | BLOB      |  |
+
+### Column Descriptions
 **id:** Database ID for the entry
 **public_id:** Public ID for the entry (generated UUID)
 **user_id:** The user that the SecureData is associated with
