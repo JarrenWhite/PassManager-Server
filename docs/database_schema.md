@@ -38,7 +38,7 @@ Tracks user authentication sessions, storing session keys and related data.
 | Column             | Type      | Constraints / Notes |
 |---------------------|-----------|----------------------|
 | **id**             | BIGINT    | **Primary Key**, auto-increment |
-| **public_id**       | CHAR(36) | **Unique** |
+| **public_id**       | CHAR(36) | **Unique**, **Indexed** |
 | **user_id**         | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
 | **session_key**     | BLOB      |  |
 | **request_count**   | INT       |  |
@@ -67,7 +67,7 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 | Column                | Type      | Constraints / Notes |
 |------------------------|-----------|----------------------|
 | **id**                | BIGINT    | **Primary Key**, auto-increment |
-| **public_id**          | CHAR(36) | **Unique** |
+| **public_id**          | CHAR(36) | **Unique**, **Indexed** |
 | **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
 | **entry_name**         | BLOB      |  |
 | **entry_data**         | BLOB      |  |
