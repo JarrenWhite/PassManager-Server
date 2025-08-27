@@ -1,5 +1,6 @@
-# Api
+# API
 
+A brief introduction to the API, its purpose, and how to make API calls.
 
 ## Base URL
 ```https://[To be determined]```

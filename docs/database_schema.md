@@ -1,5 +1,6 @@
 # Database Schema
 
+This document defines the database schema used within the password manager, as well as giving details about the various stored items.
 
 ## User
 
