@@ -2,8 +2,11 @@
 
 A brief introduction to the API, its purpose, and how to make API calls.
 
+> **API Base URL:** `https://[API_BASE_URL]`  
+> **TODO:** *Replace `[API_BASE_URL]` with the actual domain when determined*
+
 ## Base URL
-```https://[To be determined]```
+```https://[API_BASE_URL]```
 
 ## API Structure
 API endpoints follow the pattern: `/api/{type}/{callName}`
@@ -33,7 +36,7 @@ Creates a new user account using a username hash, and the required security info
 
 **Example Request**
 ```bash
-curl -X POST https://[To be determined]/api/user/register \
+curl -X POST https://[API_BASE_URL]/api/user/register \
     -H "Content-Type: application/json" \
     -d '{
         "username": "",
