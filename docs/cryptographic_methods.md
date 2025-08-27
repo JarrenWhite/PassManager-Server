@@ -3,14 +3,14 @@
 This document defines the cryptographic standards and implementation requirements for the password manager system.
 
 ## Overview
-1. **Hashing**
-2. **Encryption Requirements**
-3. **Encryption Process**
-4. **Decryption Process**
-5. **Master Key Derivation**
-6. **Session Key Derivation**
-7. **Specific Encryption Settings**
-8. **Data Encoding**
+1. [**Hashing**](#hashing)
+2. [**Encryption Requirements**](#encryption-requirements)
+3. [**Encryption Process**](#encryption-process)
+4. [**Decryption Process**](#decryption-process)
+5. [**Master Key Derivation**](#master-key-derivation)
+6. [**Session Key Derivation**](#session-key-derivation)
+7. [**Specific Encryption Settings**](#specific-encryption-settings)
+8. [**Data Encoding**](#data-encoding)
 
 ---
 

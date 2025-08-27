@@ -5,8 +5,37 @@ A brief introduction to the API, its purpose, and how to make API calls.
 > **API Base URL:** `https://[API_BASE_URL]`
 > **TODO:** *Replace `[API_BASE_URL]` with the actual domain when determined*
 
+## Overview
+1. [**Base URL**](#base-url)
+2. [**API Structure**](#api-structure)
+3. [**User**](#user)
+    1. [Register User](#register-user-post)
+    2. [Change Username](#change-username)
+    3. [Change Password](#change-password-future)
+    4. [Delete User](#delete-user)
+    5. [Health Check](#health-check)
+4. [**Session**](#session)
+    1. [Start Auth](#start-auth)
+    2. [Complete Auth](#complete-auth)
+    3. [Delete Session](#delete-session)
+    4. [Clean Sessions](#clean-sessions)
+    5. [Health Check](#health-check-1)
+5. [**Data**](#data)
+    1. [Create Entry](#create-entry)
+    2. [Edit Entry](#edit-entry)
+    3. [Delete Entry](#delete-entry)
+    4. [Retrieve Entry](#retrieve-entry)
+    5. [Retrieve List](#retrieve-list)
+    6. [Health Check](#health-check-2)
+
+---
+
+
 ## Base URL
 ```https://[API_BASE_URL]```
+
+---
+
 
 ## API Structure
 API endpoints follow the pattern: `/api/{type}/{callName}`
@@ -14,6 +43,9 @@ API endpoints follow the pattern: `/api/{type}/{callName}`
 Where:
 - `{type}` can be: `user`, `session`, `data`
 - `{callName}` is the specific endpoint name
+
+---
+
 
 ## User
 

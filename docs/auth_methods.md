@@ -5,11 +5,12 @@ This document outlines the complete authentication flow for the PassManager syst
 ## Overview
 
 The authentication system consists of three main processes:
-1. **User Creation** - Initial user registration with secure credential storage
-2. **Session Creation** - Secure authentication and session key establishment
-3. **Request Authentication** - Per-request validation using established session keys
+1. [**User Creation Process**](#user-creation-process)
+2. [**Session Creation Process**](#session-creation-process)
+3. [**Request Authentication Process**](#request-authentication-process)
 
 ---
+
 
 ## User Creation Process
 
@@ -22,6 +23,9 @@ The authentication system consists of three main processes:
 5. Server stores username, verifier, and salt
 6. Server → Client: Acknowledge successful user creation
 ```
+
+---
+
 
 ## Session Creation Process
 
@@ -43,6 +47,9 @@ The authentication system consists of three main processes:
 
 12. Client verifies server proof M2
 ```
+
+---
+
 
 ## Request Authentication Process
 
