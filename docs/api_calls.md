@@ -2,7 +2,7 @@
 
 A brief introduction to the API, its purpose, and how to make API calls.
 
-> **API Base URL:** `https://[API_BASE_URL]`  
+> **API Base URL:** `https://[API_BASE_URL]`
 > **TODO:** *Replace `[API_BASE_URL]` with the actual domain when determined*
 
 ## Base URL
@@ -46,31 +46,57 @@ curl -X POST https://[API_BASE_URL]/api/user/register \
     }'
 ```
 
+### Change Username
+TODO
 
-change username - TODO
-change password (future) - TODO
-delete user - TODO
-health check - TODO
+### Change Password (FUTURE)
+TODO
+
+### Delete User
+TODO
+
+### Health Check
+TODO
 
 ---
 
 
 ## Session
 
-start auth - TODO
-complete auth - TODO
-delete session - TODO
-clean sessions - TODO
-health check - TODO
+### Start Auth
+TODO
+
+### Complete Auth
+TODO
+
+### Delete Session
+TODO
+
+### Clean Sessions
+TODO
+
+### Health Check
+TODO
 
 ---
 
 
 ## Data
 
-create entry - TODO
-edit entry - TODO
-delete entry - TODO
-retrieve list - TODO
-retrieve entry - TODO
-health check - TODO
+### Create Entry
+TODO
+
+### Edit Entry
+TODO
+
+### Delete Entry
+TODO
+
+### Retrieve Entry
+TODO
+
+### Retrieve List
+TODO
+
+### Health Check
+TODO
