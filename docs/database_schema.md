@@ -16,6 +16,10 @@ Store main user information, including SRP authentication data, salts for encryp
 | **srp_verifier**    | BLOB      |  |
 | **master_key_salt** | BLOB      |  |
 
+### **Relationships**
+- **LoginSessions** → `LoginSessions.user_id` (one-to-many) cascading delete
+- **SecureData** → `SecureData.user_id` (one-to-many) cascading delete
+
 ### Column Descriptions
 **id:** Database ID for the entry
 **username:** Hash of the user's username
@@ -46,6 +50,9 @@ Tracks user authentication sessions, storing session keys and related data.
 | **expiry_time**     | TIMESTAMP |  |
 | **last_used**       | TIMESTAMP |  |
 
+### **Relationships**
+- Belongs to **Users** → `user_id`
+
 ### Column Descriptions
 **id:** Database ID for the entry
 **public_id:** Public ID for the entry (generated UUID)
@@ -71,6 +78,9 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 | **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
 | **entry_name**         | BLOB      |  |
 | **entry_data**         | BLOB      |  |
+
+### **Relationships**
+- Belongs to **Users** → `user_id`
 
 ### Column Descriptions
 **id:** Database ID for the entry
