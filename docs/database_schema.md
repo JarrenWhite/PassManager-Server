@@ -9,13 +9,13 @@ Store main user information, including SRP authentication data, salts for encryp
 
 ### **Columns**
 
-| Column             | Type      | Constraints |
-|---------------------|-----------|----------------------|
-| **id**             | BIGINT    | **Primary Key**, auto-increment |
-| **username_hash**   | BLOB      | **Unique**, **Indexed** |
-| **srp_salt**        | BLOB      |  |
-| **srp_verifier**    | BLOB      |  |
-| **master_key_salt** | BLOB      |  |
+| Column              | Type      | Constraints                     |
+|---------------------|-----------|---------------------------------|
+| **id**              | BIGINT    | **Primary Key**, auto-increment |
+| **username_hash**   | BLOB      | **Unique**, **Indexed**         |
+| **srp_salt**        | BLOB      |                                 |
+| **srp_verifier**    | BLOB      |                                 |
+| **master_key_salt** | BLOB      |                                 |
 
 ### **Relationships**
 - **LoginSessions** → `LoginSessions.user_id` (one-to-many) cascading delete
@@ -40,16 +40,16 @@ Tracks user authentication sessions, storing session keys and related data.
 
 ### **Columns**
 
-| Column             | Type      | Constraints / Notes |
-|---------------------|-----------|----------------------|
-| **id**             | BIGINT    | **Primary Key**, auto-increment |
-| **public_id**       | CHAR(36) | **Unique**, **Indexed** |
+| Column              | Type      | Constraints / Notes                       |
+|---------------------|-----------|-------------------------------------------|
+| **id**              | BIGINT    | **Primary Key**, auto-increment           |
+| **public_id**       | CHAR(36)  | **Unique**, **Indexed**                   |
 | **user_id**         | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
-| **session_key**     | BLOB      |  |
-| **request_count**   | INT       |  |
-| **maximum_requests**| INT       | **nullable** |
-| **expiry_time**     | TIMESTAMP | **nullable** |
-| **last_used**       | TIMESTAMP |  |
+| **session_key**     | BLOB      |                                           |
+| **request_count**   | INT       |                                           |
+| **maximum_requests**| INT       | **nullable**                              |
+| **expiry_time**     | TIMESTAMP | **nullable**                              |
+| **last_used**       | TIMESTAMP |                                           |
 
 ### **Relationships**
 - Belongs to **Users** → `user_id`
@@ -72,13 +72,13 @@ Tracks user authentication sessions, storing session keys and related data.
 ### Purpose
 Stores encrypted password entries, and related nonce and auth_tag for decryption.
 
-| Column                | Type      | Constraints / Notes |
-|------------------------|-----------|----------------------|
-| **id**                | BIGINT    | **Primary Key**, auto-increment |
-| **public_id**          | CHAR(36) | **Unique**, **Indexed** |
+| Column                 | Type      | Constraints / Notes                       |
+|------------------------|-----------|-------------------------------------------|
+| **id**                 | BIGINT    | **Primary Key**, auto-increment           |
+| **public_id**          | CHAR(36)  | **Unique**, **Indexed**                   |
 | **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
-| **entry_name**         | BLOB      | **nullable** |
-| **entry_data**         | BLOB      | **nullable** |
+| **entry_name**         | BLOB      | **nullable**                              |
+| **entry_data**         | BLOB      | **nullable**                              |
 
 ### **Relationships**
 - Belongs to **Users** → `user_id`
