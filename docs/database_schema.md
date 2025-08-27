@@ -46,8 +46,8 @@ Tracks user authentication sessions, storing session keys and related data.
 | **user_id**         | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
 | **session_key**     | BLOB      |  |
 | **request_count**   | INT       |  |
-| **maximum_requests**| INT       |  |
-| **expiry_time**     | TIMESTAMP |  |
+| **maximum_requests**| INT       | **nullable** |
+| **expiry_time**     | TIMESTAMP | **nullable** |
 | **last_used**       | TIMESTAMP |  |
 
 ### **Relationships**
@@ -76,8 +76,8 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 | **id**                | BIGINT    | **Primary Key**, auto-increment |
 | **public_id**          | CHAR(36) | **Unique**, **Indexed** |
 | **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
-| **entry_name**         | BLOB      |  |
-| **entry_data**         | BLOB      |  |
+| **entry_name**         | BLOB      | **nullable** |
+| **entry_data**         | BLOB      | **nullable** |
 
 ### **Relationships**
 - Belongs to **Users** → `user_id`
