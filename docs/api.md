@@ -14,8 +14,31 @@ Where:
 
 ## User
 
+register user
+change username
+change password (future)
+delete user
+health check
+
+---
+
 
 ## Session
 
+start auth
+complete auth
+delete session
+clean sessions
+health check
+
+---
+
 
 ## Data
+
+create entry
+edit entry
+delete entry
+retrieve list
+retrieve entry
+health check
