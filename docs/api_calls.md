@@ -48,13 +48,15 @@ A brief introduction to the API, its purpose, and how to make API calls.
 API endpoints follow the pattern: `/api/{type}/{callName}`
 
 Where:
-- `{type}` can be: `user`, `session`, `data`
+- `{type}` can be: `user`, `password`, `session`, `data`
 - `{callName}` is the specific endpoint name
 
 ---
 
 
 ## User
+
+Manages user account operations including registration, username changes, and account deletion.
 
 ### Register User [POST]
 **Endpoint**
@@ -99,6 +101,8 @@ TODO
 
 ## Password
 
+Handles the complex multi-step password change process with special security sessions.
+
 ### Start Password Change
 TODO
 
@@ -122,6 +126,8 @@ TODO
 
 ## Session
 
+Manages authentication sessions using SRP protocol for secure login and logout.
+
 ### Start Auth
 TODO
 
@@ -141,6 +147,8 @@ TODO
 
 
 ## Data
+
+Handles encrypted password entry operations including create, read, update, and delete.
 
 ### Create Entry
 TODO
