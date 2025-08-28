@@ -9,13 +9,16 @@ Store main user information, including SRP authentication data, salts for encryp
 
 ### **Columns**
 
-| Column              | Type      | Constraints                     |
-|---------------------|-----------|---------------------------------|
-| **id**              | BIGINT    | **Primary Key**, auto-increment |
-| **username_hash**   | BLOB      | **Unique**, **Indexed**         |
-| **srp_salt**        | BLOB      |                                 |
-| **srp_verifier**    | BLOB      |                                 |
-| **master_key_salt** | BLOB      |                                 |
+| Column                  | Type      | Constraints                     |
+|-------------------------|-----------|---------------------------------|
+| **id**                  | BIGINT    | **Primary Key**, auto-increment |
+| **username_hash**       | BLOB      | **Unique**, **Indexed**         |
+| **srp_salt**            | BLOB      |                                 |
+| **srp_verifier**        | BLOB      |                                 |
+| **master_key_salt**     | BLOB      |                                 |
+| **new_srp_salt**        | BLOB      | **nullable**                    |
+| **new_srp_verifier**    | BLOB      | **nullable**                    |
+| **new_master_key_salt** | BLOB      | **nullable**                    |
 
 ### **Relationships**
 - **LoginSessions** → `LoginSessions.user_id` (one-to-many) cascading delete
@@ -29,6 +32,9 @@ Store main user information, including SRP authentication data, salts for encryp
 **master_key_salt:** The salt used to create the master key
 **login_session:** List of all linked LoginSession entries
 **secure_data:** List of all linked SecureData entries
+**new_srp_salt:** Temporary store for new srp salt, while changing password
+**new_srp_verifier:** Temporary store for new srp verifier name, while changing password
+**new_master_key_salt:** Temporary store for new master key salt, while changing password
 
 ---
 
@@ -40,16 +46,17 @@ Tracks user authentication sessions, storing session keys and related data.
 
 ### **Columns**
 
-| Column              | Type      | Constraints / Notes                       |
-|---------------------|-----------|-------------------------------------------|
-| **id**              | BIGINT    | **Primary Key**, auto-increment           |
-| **public_id**       | CHAR(36)  | **Unique**, **Indexed**                   |
-| **user_id**         | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
-| **session_key**     | BLOB      |                                           |
-| **request_count**   | INT       |                                           |
-| **maximum_requests**| INT       | **nullable**                              |
-| **expiry_time**     | TIMESTAMP | **nullable**                              |
-| **last_used**       | TIMESTAMP |                                           |
+| Column               | Type      | Constraints / Notes                       |
+|----------------------|-----------|-------------------------------------------|
+| **id**               | BIGINT    | **Primary Key**, auto-increment           |
+| **public_id**        | CHAR(36)  | **Unique**, **Indexed**                   |
+| **user_id**          | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
+| **session_key**      | BLOB      |                                           |
+| **request_count**    | INT       |                                           |
+| **maximum_requests** | INT       | **nullable**                              |
+| **expiry_time**      | TIMESTAMP | **nullable**                              |
+| **last_used**        | TIMESTAMP |                                           |
+| **password_change**  | BOOL      | **nullable**                              |
 
 ### **Relationships**
 - Belongs to **Users** → `user_id`
@@ -63,6 +70,7 @@ Tracks user authentication sessions, storing session keys and related data.
 **maximum_requests:** Number of requests after which the session will expire
 **expiry_time:** Time past which the session will expire
 **last_used:** Time at which the session was last used
+**password_change:** Flag indicating whether the session is for use with a password change action
 
 ---
 
@@ -77,8 +85,10 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 | **id**                 | BIGINT    | **Primary Key**, auto-increment           |
 | **public_id**          | CHAR(36)  | **Unique**, **Indexed**                   |
 | **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
-| **entry_name**         | BLOB      | **nullable**                              |
-| **entry_data**         | BLOB      | **nullable**                              |
+| **entry_name**         | BLOB      |                                           |
+| **entry_data**         | BLOB      |                                           |
+| **new_entry_name**     | BLOB      | **nullable**                              |
+| **new_entry_data**     | BLOB      | **nullable**                              |
 
 ### **Relationships**
 - Belongs to **Users** → `user_id`
@@ -89,3 +99,5 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 **user_id:** The user that the SecureData is associated with
 **entry_name:** Name for the password entry. Encrypted with master_key, and stored with nonce and auth_tag
 **entry_data:** Data for the password entry. Encrypted with master_key, and stored with nonce and auth_tag
+**new_entry_name:** Temporary store for new encrypted password name, while changing password
+**new_entry_data:** Temporary store for new encrypted password data, while changing password
