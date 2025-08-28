@@ -221,7 +221,7 @@ Begins the process of a password change, returning the user's validation details
 
 **Example Request**
 ```bash
-curl -X POST https://[API_BASE_URL]/api/password/username \
+curl -X POST https://[API_BASE_URL]/api/password/start \
     -H "Content-Type: application/json" \
     -d '{
         "session_id": "abc123sessionid",
@@ -229,7 +229,6 @@ curl -X POST https://[API_BASE_URL]/api/password/username \
         "encrypted_data": "base64EncryptedPayload"
     }'
 ```
-
 
 
 ### Continue Password Change
@@ -271,7 +270,26 @@ curl -X GET https://[API_BASE_URL]/api/password/health \
 Manages authentication sessions using SRP protocol for secure login and logout.
 
 ### Start Auth
-TODO
+**Endpoint**
+`POST /api/session/start`
+
+**Description**
+Request the details to create a new login session, including SRP details and master key salt.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the username.                            |
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/session/start \
+    -H "Content-Type: application/json" \
+    -d '{
+        "username": "abc123sessionid",
+    }'
+```
+
 
 ### Complete Auth
 TODO
