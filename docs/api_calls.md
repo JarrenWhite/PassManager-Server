@@ -14,13 +14,20 @@ A brief introduction to the API, its purpose, and how to make API calls.
     3. [Change Password](#change-password-future)
     4. [Delete User](#delete-user)
     5. [Health Check](#health-check)
-4. [**Session**](#session)
+4. [**Password**](#password)
+    1. [Start Password Change](#start-password-change)
+    2. [Continue Password Change](#continue-password-change)
+    3. [Complete Password Change](#complete-password-change)
+    4. [Abort Password Change](#abort-password-change)
+    5. [Request Entry](#request-entry)
+    6. [Add New Encryption for Entry](#add-new-encryption-for-entry)
+5. [**Session**](#session)
     1. [Start Auth](#start-auth)
     2. [Complete Auth](#complete-auth)
     3. [Delete Session](#delete-session)
     4. [Clean Sessions](#clean-sessions)
     5. [Health Check](#health-check-1)
-5. [**Data**](#data)
+6. [**Data**](#data)
     1. [Create Entry](#create-entry)
     2. [Edit Entry](#edit-entry)
     3. [Delete Entry](#delete-entry)
@@ -81,13 +88,33 @@ curl -X POST https://[API_BASE_URL]/api/user/register \
 ### Change Username
 TODO
 
-### Change Password (FUTURE)
-TODO
-
 ### Delete User
 TODO
 
 ### Health Check
+TODO
+
+---
+
+
+## Password
+
+### Start Password Change
+TODO
+
+### Continue Password Change
+TODO
+
+### Complete Password Change
+TODO
+
+### Abort Password Change
+TODO
+
+### Request Entry
+TODO
+
+### Add New Encryption for Entry
 TODO
 
 ---
