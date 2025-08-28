@@ -80,7 +80,7 @@ Creates a new user account using a username hash, and the required security info
 curl -X POST https://[API_BASE_URL]/api/user/register \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "",
+        "username": "123hashedusername",
         "srp_salt": "base64Salt",
         "srp_verifier": "base64Verifier",
         "master_key_salt": "base64MasterSalt"
@@ -286,13 +286,44 @@ Request the details to create a new login session, including SRP details and mas
 curl -X POST https://[API_BASE_URL]/api/session/start \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "abc123sessionid",
+        "username": "123hashedusername",
     }'
 ```
 
 
 ### Complete Auth
-TODO
+**Endpoint**
+`POST /api/session/auth`
+
+**Description**
+Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification.
+
+**Parameters**
+| Field            | Type   | Required | Description                                        |
+|------------------|--------|----------|----------------------------------------------------|
+| username         | string | Yes      | Hash of the username.                              |
+| eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)     |
+| proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)              |
+| maximum_requests | int    | No       | Number of requests before the session will expire. |
+| expiry_time      | int    | No       | Session expiry time in seconds from now.           |
+
+> **Note:** If left blank, maximum requests will default to 100, and expiry time will default to 3600.
+> **Note:** Maximum requests can be set to unlimited using a value of -1.
+> **Note:** Expiry time can be set to unlimited using a value of -1.
+> **⚠️ CRITICAL:** Sessions with unlimited requests and time will never naturally expire, and must be manually purged using the [Delete Session](#delete-session) or [Clean Sessions](#clean-sessions) APIs.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/session/auth \
+    -H "Content-Type: application/json" \
+    -d '{
+        "username": "123hashedusername",
+        "eph_val_a": "base64ClientEphemeral",
+        "proof_val_m1": "base64ClientProof",
+        "maximum_requests": 50,
+        "expiry_time": 1800
+    }'
+```
 
 ### Delete Session
 TODO
