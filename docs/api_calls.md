@@ -66,12 +66,12 @@ Manages user account operations including registration, username changes, and ac
 Creates a new user account using a username hash, and the required security information.
 
 **Parameters**
-| Field           | Type   | Required | Description                                    |
-|-----------------|--------|----------|------------------------------------------------|
-| username        | string | Yes      | Hash of the username.                          |
-| srp_salt        | string | Yes      | **Base64-encoded** salt (stored as binary)     |
-| srp_verifier    | string | Yes      | **Base64-encoded** verifier (stored as binary) |
-| master_key_salt | string | Yes      | **Base64-encoded** salt (stored as binary)     |
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the username.                            |
+| srp_salt        | string | Yes      | **Base64-encoded** salt generated for SRP        |
+| srp_verifier    | string | Yes      | **Base64-encoded** verifier dervied for SRP      |
+| master_key_salt | string | Yes      | **Base64-encoded** salt generated for master key |
 
 > **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
 
@@ -190,7 +190,47 @@ curl -X GET https://[API_BASE_URL]/api/user/health \
 Handles the complex multi-step password change process with special security sessions.
 
 ### Start Password Change
-TODO
+**Endpoint**
+`POST /api/password/start`
+
+**Description**
+Begins the process of a password change, returning the user's validation details to create a password session.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the login session.              |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                          |
+|-----------------|--------|----------|------------------------------------------------------|
+| username        | string | Yes      | Hash of the original username.                       |
+| srp_salt        | string | Yes      | **Base64-encoded** salt generated for new SRP        |
+| srp_verifier    | string | Yes      | **Base64-encoded** verifier dervied for new SRP      |
+| master_key_salt | string | Yes      | **Base64-encoded** salt generated for new master key |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: srp_salt length][srp_salt bytes]
+[4 bytes: srp_verifier length][srp_verifier bytes]
+[4 bytes: master_key_salt length][master_key_salt bytes]
+```
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/password/username \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionid",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
+
 
 ### Continue Password Change
 TODO
