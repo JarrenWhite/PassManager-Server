@@ -58,7 +58,7 @@ Where:
 
 Manages user account operations including registration, username changes, and account deletion.
 
-### Register User [POST]
+### Register User
 **Endpoint**
 `POST /api/user/register`
 
@@ -87,8 +87,46 @@ curl -X POST https://[API_BASE_URL]/api/user/register \
     }'
 ```
 
+
 ### Change Username
-TODO
+**Endpoint**
+`POST /api/user/username`
+
+**Description**
+Changes a user's username, from one username hash, to another username hash.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the login session.              |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the original username.                   |
+| new_username    | string | Yes      | Hash of the new username.                        |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: new_username length][new_username bytes]
+```
+
+> **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/user/username \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionid",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Delete User
 TODO

@@ -258,19 +258,19 @@ The data must be encoded in this way prior to encryption:
 The encoding for the content data of each API request is specified in the API documentation.
 The AAD data is to be encoded as follows:
 ```
-[4 bytes: request_number][request_number bytes]     → Monotonic counter for this session (prevents replay attacks)
-[4 bytes: session_id_length][session_id]            → Unique identifier for the active session
+[4 bytes: request_number length][request_number bytes]      → Monotonic counter for this session (prevents replay attacks)
+[4 bytes: session_id length][session_id]                    → Unique identifier for the active session
 ```
 
 #### Password Entry Name
 ```
-[4 bytes: entry_name length][entry_name bytes]      → Name of the password entry
+[4 bytes: entry_name length][entry_name bytes]              → Name of the password entry
 ```
 
 #### Password Entry Data
 ```
-[4 bytes: website length][website bytes]            → Website the entry related to
-[4 bytes: username length][username bytes]          → Username of the given entry
-[4 bytes: password length][password bytes]          → Password of the given entry
-[4 bytes: notes length][notes bytes]                → Any notes for the entry
+[4 bytes: website length][website bytes]                    → Website the entry related to
+[4 bytes: username length][username bytes]                  → Username of the given entry
+[4 bytes: password length][password bytes]                  → Password of the given entry
+[4 bytes: notes length][notes bytes]                        → Any notes for the entry
 ```
