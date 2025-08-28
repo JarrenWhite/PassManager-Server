@@ -39,6 +39,32 @@ Store main user information, including SRP authentication data, salts for encryp
 ---
 
 
+## AuthChallenge
+
+### Purpose
+Prevents replay attacks and MITM attacks by issuing server-generated challenges for each authentication attempt.
+
+### **Columns**
+
+| Column             | Type      | Constraints / Notes                              |
+|--------------------|-----------|--------------------------------------------------|
+| **id**             | BIGINT    | **Primary Key**, auto-increment                  |
+| **challenge_salt** | BLOB      | **Indexed**, **Unique**                          |
+| **user_id**        | BIGINT    | **Foreign Key** → `Users.id`                     |
+| **expires_at**     | TIMESTAMP | When the challenge expires                       |
+
+### **Relationships**
+- No foreign key relationships
+
+### Column Descriptions
+**id:** Database ID for the entry
+**challenge_salt:** Unique server-generated challenge for this auth attempt
+**user_id:** The user that the AuthChallenge is associated with
+**expires_at:** Timestamp when the challenge expires (5 minutes from creation)
+
+---
+
+
 ## LoginSession
 
 ### Purpose

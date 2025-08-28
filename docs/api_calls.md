@@ -274,7 +274,7 @@ Manages authentication sessions using SRP protocol for secure login and logout.
 `POST /api/session/start`
 
 **Description**
-Request the details to create a new login session, including SRP details and master key salt.
+Request the details to create a new login session, including SRP details, master key salt, and a server-generated challenge for authentication.
 
 **Parameters**
 | Field           | Type   | Required | Description                                      |
@@ -286,7 +286,7 @@ Request the details to create a new login session, including SRP details and mas
 curl -X POST https://[API_BASE_URL]/api/session/start \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "123hashedusername",
+        "username": "123hashedusername"
     }'
 ```
 
@@ -299,18 +299,20 @@ curl -X POST https://[API_BASE_URL]/api/session/start \
 Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification.
 
 **Parameters**
-| Field            | Type   | Required | Description                                        |
-|------------------|--------|----------|----------------------------------------------------|
-| username         | string | Yes      | Hash of the username.                              |
-| eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)     |
-| proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)              |
-| maximum_requests | int    | No       | Number of requests before the session will expire. |
-| expiry_time      | int    | No       | Session expiry time in seconds from now.           |
+| Field            | Type   | Required | Description                                          |
+|------------------|--------|----------|------------------------------------------------------|
+| username         | string | Yes      | Hash of the username.                                |
+| challenge_salt   | string | Yes      | **Base64-encoded** Server challenge from Start Auth. |
+| eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)       |
+| proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)                |
+| maximum_requests | int    | No       | Number of requests before the session will expire.   |
+| expiry_time      | int    | No       | Session expiry time in seconds from now.             |
 
 > **Note:** If left blank, maximum requests will default to 100, and expiry time will default to 3600.
 > **Note:** Maximum requests can be set to unlimited using a value of -1.
 > **Note:** Expiry time can be set to unlimited using a value of -1.
 > **⚠️ CRITICAL:** Sessions with unlimited requests and time will never naturally expire, and must be manually purged using the [Delete Session](#delete-session) or [Clean Sessions](#clean-sessions) APIs.
+> **⚠️ SECURITY:** The challenge_salt must match the one issued by Start Auth to prevent replay attacks and MITM attacks.
 
 **Example Request**
 ```bash
@@ -318,6 +320,7 @@ curl -X POST https://[API_BASE_URL]/api/session/auth \
     -H "Content-Type: application/json" \
     -d '{
         "username": "123hashedusername",
+        "challenge_salt": "base64ServerChallenge",
         "eph_val_a": "base64ClientEphemeral",
         "proof_val_m1": "base64ClientProof",
         "maximum_requests": 50,
