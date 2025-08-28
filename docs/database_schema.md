@@ -66,7 +66,7 @@ Tracks user authentication sessions, storing session keys and related data.
 **public_id:** Public ID for the entry (generated UUID)
 **user_id:** The user that the LoginSession is associated with
 **session_key:** Key used for session encryption and safety. Encrypted with database_key, and stored with nonce and auth_tag
-**request_count:** Number of successful requests made on this session so far
+**request_count:** Number of successful requests made on this session so far (Counting from 0)
 **maximum_requests:** Number of requests after which the session will expire
 **expiry_time:** Time past which the session will expire
 **last_used:** Time at which the session was last used

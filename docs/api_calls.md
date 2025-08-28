@@ -129,7 +129,42 @@ curl -X POST https://[API_BASE_URL]/api/user/username \
 
 
 ### Delete User
-TODO
+**Endpoint**
+`POST /api/user/delete`
+
+**Description**
+Delete a given user, and all data associated with their account.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the login session.              |
+| request_number  | int    | Yes      | The number of this request on the login session. Must be 0 for this request type. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the username to be deleted.              |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+```
+
+> **Note:** The request number for this request type must be 0. This means a new session must be created for user deletion.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/user/delete \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionid",
+        "request_number": 0,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Health Check
 TODO
