@@ -167,7 +167,20 @@ curl -X POST https://[API_BASE_URL]/api/user/delete \
 
 
 ### Health Check
-TODO
+**Endpoint**
+`GET /api/user/health`
+
+**Description**
+Check the health and availability of the User API endpoints. Returns system status information.
+
+**Parameters**
+None required.
+
+**Example Request**
+```bash
+curl -X GET https://[API_BASE_URL]/api/user/health \
+    -H "Content-Type: application/json"
+```
 
 ---
 
@@ -194,6 +207,22 @@ TODO
 ### Add New Encryption for Entry
 TODO
 
+### Health Check
+**Endpoint**
+`GET /api/password/health`
+
+**Description**
+Check the health and availability of the Password API endpoints. Returns system status information.
+
+**Parameters**
+None required.
+
+**Example Request**
+```bash
+curl -X GET https://[API_BASE_URL]/api/password/health \
+    -H "Content-Type: application/json"
+```
+
 ---
 
 
@@ -214,7 +243,20 @@ TODO
 TODO
 
 ### Health Check
-TODO
+**Endpoint**
+`GET /api/session/health`
+
+**Description**
+Check the health and availability of the Session API endpoints. Returns system status information.
+
+**Parameters**
+None required.
+
+**Example Request**
+```bash
+curl -X GET https://[API_BASE_URL]/api/session/health \
+    -H "Content-Type: application/json"
+```
 
 ---
 
@@ -239,4 +281,17 @@ TODO
 TODO
 
 ### Health Check
-TODO
+**Endpoint**
+`GET /api/data/health`
+
+**Description**
+Check the health and availability of the Data API endpoints. Returns system status information.
+
+**Parameters**
+None required.
+
+**Example Request**
+```bash
+curl -X GET https://[API_BASE_URL]/api/data/health \
+    -H "Content-Type: application/json"
+```
