@@ -39,28 +39,29 @@ Store main user information, including SRP authentication data, salts for encryp
 ---
 
 
-## AuthChallenge
+## AuthEphemeral
 
 ### Purpose
-Prevents replay attacks and MITM attacks by issuing server-generated challenges for each authentication attempt.
+Tracks server ephemeral values (B) for each SRP authentication attempt to prevent replay attacks.
 
 ### **Columns**
 
 | Column             | Type      | Constraints / Notes                              |
 |--------------------|-----------|--------------------------------------------------|
 | **id**             | BIGINT    | **Primary Key**, auto-increment                  |
-| **challenge_salt** | BLOB      | **Indexed**, **Unique**                          |
+| **public_id**      | CHAR(36)  | **Indexed**                                      |
+| **ephemeral_b**    | BLOB      |                                                  |
 | **user_id**        | BIGINT    | **Foreign Key** → `Users.id`                     |
-| **expires_at**     | TIMESTAMP | When the challenge expires                       |
+| **expires_at**     | TIMESTAMP | When the ephemeral value expires                 |
 
 ### **Relationships**
-- No foreign key relationships
+- Belongs to **Users** → `user_id`
 
 ### Column Descriptions
 **id:** Database ID for the entry
-**challenge_salt:** Unique server-generated challenge for this auth attempt
-**user_id:** The user that the AuthChallenge is associated with
-**expires_at:** Timestamp when the challenge expires (5 minutes from creation)
+**ephemeral_b:** Unique server ephemeral value (B) for this SRP auth attempt
+**user_id:** The user that the AuthEphemeral is associated with
+**expires_at:** Timestamp when the ephemeral value expires (2 minutes from creation)
 
 ---
 
