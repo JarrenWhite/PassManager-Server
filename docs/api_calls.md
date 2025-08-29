@@ -328,7 +328,45 @@ curl -X POST https://[API_BASE_URL]/api/session/auth \
 
 
 ### Delete Session
-TODO
+**Endpoint**
+`POST /api/session/delete`
+
+**Description**
+Delete the given auth session from the database, preventing further use.
+
+**Parameters**
+| Field           | Type   | Required | Description                                                         |
+|-----------------|--------|----------|---------------------------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the login session being used to auth this request. |
+| request_number  | int    | Yes      | The number of this request on the login session.                    |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below)                    |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the username related to the session.     |
+| session_id      | string | Yes      | Public ID of the session to be deleted.          |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: session_id length][session_id bytes]
+```
+
+> **Note:** The session being deleted does not need to be the one in use.
+> **Note:** Deleting a password change session this way will terminate the password change.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/session/delete \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Clean Sessions
 TODO
