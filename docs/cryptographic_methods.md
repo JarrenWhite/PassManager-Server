@@ -251,10 +251,7 @@ During user registration, the client must generate an SRP verifier:
 - **Empty Fields:** Length 0, no data bytes
 - **UTF-8 Validation:** All text fields must be valid UTF-8 sequences
 
-### Pre-Encryption Encoding
-The data must be encoded in this way prior to encryption:
-
-#### API Request Data
+### API Requests
 The encoding for the content data of each API request is specified in the API documentation.
 The AAD data is to be encoded as follows:
 ```
@@ -262,15 +259,9 @@ The AAD data is to be encoded as follows:
 [4 bytes: session_id length][session_id]                    → Unique identifier for the active session
 ```
 
-#### Password Entry Name
+### API Responses
+The encoding for the content data of each API response is specified in the API documentation.
+The AAD data is to be encoded as follows:
 ```
-[4 bytes: entry_name length][entry_name bytes]              → Name of the password entry
-```
-
-#### Password Entry Data
-```
-[4 bytes: website length][website bytes]                    → Website the entry related to
-[4 bytes: username length][username bytes]                  → Username of the given entry
-[4 bytes: password length][password bytes]                  → Password of the given entry
-[4 bytes: notes length][notes bytes]                        → Any notes for the entry
+[4 bytes: session_id length][session_id]                    → Unique identifier for the active session
 ```
