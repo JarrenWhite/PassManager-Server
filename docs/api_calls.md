@@ -244,10 +244,25 @@ Completes the SRP authentication process by providing client ephemeral value and
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
 | username         | string | Yes      | Hash of the username.                                |
-| auth_id          | string | Yes      | Public ID of the AuthEphemeral being used.           |
-| eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)       |
-| proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)                |
+| session_id       | string | Yes      | The public ID of the login session.                  |
+| request_number   | int    | Yes      | The number of this request on the login session.     |
+| encrypted_data   | string | Yes      | **Base64-encoded** encrypted payload (see below)     |
 
+**Encryption Payload**
+| Field           | Type   | Required | Description                                           |
+|-----------------|--------|----------|-------------------------------------------------------|
+| username        | string | Yes      | Hash of the original username.                        |
+| auth_id         | string | Yes      | Public ID of the AuthEphemeral being used.            |
+| eph_val_a       | string | Yes      | **Base64-encoded** client ephemeral value. (A)        |
+| proof_val_m1    | string | Yes      | **Base64-encoded** client proof. (M1)                 |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: auth_id length][auth_id bytes]
+[4 bytes: eph_val_a length][eph_val_a bytes]
+[4 bytes: proof_val_m1 length][proof_val_m1 bytes]
+```
 
 > **Note:** Password changing sessions expire after 5 minutes.
 > **Note:** Password changing sessions have a limited number of requests based on the user's number of password entries. (Enough requests to read and write to each password once, with an additional request to complete the password change.)
