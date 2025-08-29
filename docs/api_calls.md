@@ -204,12 +204,12 @@ Begins the process of a password change, returning the user's validation details
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
 **Encryption Payload**
-| Field           | Type   | Required | Description                                          |
-|-----------------|--------|----------|------------------------------------------------------|
-| username        | string | Yes      | Hash of the original username.                       |
-| srp_salt        | string | Yes      | **Base64-encoded** salt generated for new SRP        |
-| srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for new SRP      |
-| master_key_salt | string | Yes      | **Base64-encoded** salt generated for new master key |
+| Field           | Type   | Required | Description                                           |
+|-----------------|--------|----------|-------------------------------------------------------|
+| username        | string | Yes      | Hash of the original username.                        |
+| srp_salt        | string | Yes      | **Base64-encoded** salt generated for new SRP.        |
+| srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for new SRP.      |
+| master_key_salt | string | Yes      | **Base64-encoded** salt generated for new master key. |
 
 **Encryption Encoding**
 ```
@@ -218,6 +218,8 @@ Begins the process of a password change, returning the user's validation details
 [4 bytes: srp_verifier length][srp_verifier bytes]
 [4 bytes: master_key_salt length][master_key_salt bytes]
 ```
+
+> **Note:** An existing auth session is required in order to start a password change auth session.
 
 **Example Request**
 ```bash
@@ -232,7 +234,36 @@ curl -X POST https://[API_BASE_URL]/api/password/start \
 
 
 ### Continue Password Change
-TODO
+**Endpoint**
+`POST /api/password/auth`
+
+**Description**
+Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification.
+
+**Parameters**
+| Field            | Type   | Required | Description                                          |
+|------------------|--------|----------|------------------------------------------------------|
+| username         | string | Yes      | Hash of the username.                                |
+| auth_id          | string | Yes      | Public ID of the AuthEphemeral being used.           |
+| eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)       |
+| proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)                |
+
+
+> **Note:** Password changing sessions expire after 5 minutes.
+> **Note:** Password changing sessions have a limited number of requests based on the user's number of password entries. (Enough requests to read and write to each password once, with an additional request to complete the password change.)
+> **Note:** A user can only have one active password changing session.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/password/auth \
+    -H "Content-Type: application/json" \
+    -d '{
+        "username": "123hashedUsername",
+        "eph_val_a": "base64ClientEphemeral",
+        "proof_val_m1": "base64ClientProof"
+    }'
+```
+
 
 ### Complete Password Change
 TODO
