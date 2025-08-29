@@ -281,7 +281,40 @@ curl -X POST https://[API_BASE_URL]/api/password/auth \
 
 
 ### Complete Password Change
-TODO
+**Endpoint**
+`POST /api/password/complete`
+
+**Description**
+Delete a given user, and all data associated with their account.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the password change session.    |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the username to be completed.            |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+```
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/password/complete \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 0,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Abort Password Change
 TODO
