@@ -70,7 +70,7 @@ Creates a new user account using a username hash, and the required security info
 |-----------------|--------|----------|--------------------------------------------------|
 | username        | string | Yes      | Hash of the username.                            |
 | srp_salt        | string | Yes      | **Base64-encoded** salt generated for SRP        |
-| srp_verifier    | string | Yes      | **Base64-encoded** verifier dervied for SRP      |
+| srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for SRP      |
 | master_key_salt | string | Yes      | **Base64-encoded** salt generated for master key |
 
 > **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
@@ -80,7 +80,7 @@ Creates a new user account using a username hash, and the required security info
 curl -X POST https://[API_BASE_URL]/api/user/register \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "123hashedusername",
+        "username": "123hashedUsername",
         "srp_salt": "base64Salt",
         "srp_verifier": "base64Verifier",
         "master_key_salt": "base64MasterSalt"
@@ -121,7 +121,7 @@ Changes a user's username, from one username hash, to another username hash.
 curl -X POST https://[API_BASE_URL]/api/user/username \
     -H "Content-Type: application/json" \
     -d '{
-        "session_id": "abc123sessionid",
+        "session_id": "abc123sessionId",
         "request_number": 5,
         "encrypted_data": "base64EncryptedPayload"
     }'
@@ -159,7 +159,7 @@ Delete a given user, and all data associated with their account.
 curl -X POST https://[API_BASE_URL]/api/user/delete \
     -H "Content-Type: application/json" \
     -d '{
-        "session_id": "abc123sessionid",
+        "session_id": "abc123sessionId",
         "request_number": 0,
         "encrypted_data": "base64EncryptedPayload"
     }'
@@ -208,7 +208,7 @@ Begins the process of a password change, returning the user's validation details
 |-----------------|--------|----------|------------------------------------------------------|
 | username        | string | Yes      | Hash of the original username.                       |
 | srp_salt        | string | Yes      | **Base64-encoded** salt generated for new SRP        |
-| srp_verifier    | string | Yes      | **Base64-encoded** verifier dervied for new SRP      |
+| srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for new SRP      |
 | master_key_salt | string | Yes      | **Base64-encoded** salt generated for new master key |
 
 **Encryption Encoding**
@@ -224,7 +224,7 @@ Begins the process of a password change, returning the user's validation details
 curl -X POST https://[API_BASE_URL]/api/password/start \
     -H "Content-Type: application/json" \
     -d '{
-        "session_id": "abc123sessionid",
+        "session_id": "abc123sessionId",
         "request_number": 5,
         "encrypted_data": "base64EncryptedPayload"
     }'
@@ -286,7 +286,7 @@ Request the details to create a new login session, including SRP details, master
 curl -X POST https://[API_BASE_URL]/api/session/start \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "123hashedusername"
+        "username": "123hashedUsername"
     }'
 ```
 
@@ -318,7 +318,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 curl -X POST https://[API_BASE_URL]/api/session/auth \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "123hashedusername",
+        "username": "123hashedUsername",
         "eph_val_a": "base64ClientEphemeral",
         "proof_val_m1": "base64ClientProof",
         "maximum_requests": 50,
