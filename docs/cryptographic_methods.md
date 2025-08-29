@@ -256,12 +256,12 @@ The encoding for the content data of each API request is specified in the API do
 The AAD data is to be encoded as follows:
 ```
 [4 bytes: request_number length][request_number bytes]      → Monotonic counter for this session (prevents replay attacks)
-[4 bytes: session_id length][session_id]                    → Unique identifier for the active session
+[4 bytes: session_id length][session_id]                    → Unique public identifier for the active session
 ```
 
 ### API Responses
 The encoding for the content data of each API response is specified in the API documentation.
 The AAD data is to be encoded as follows:
 ```
-[4 bytes: session_id length][session_id]                    → Unique identifier for the active session
+[4 bytes: session_id length][session_id]                    → Unique public identifier for the active session
 ```
