@@ -68,7 +68,7 @@ Creates a new user account using a username hash, and the required security info
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the username.                            |
+| username        | string | Yes      | Hash of the user's username.                     |
 | srp_salt        | string | Yes      | **Base64-encoded** salt generated for SRP        |
 | srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for SRP      |
 | master_key_salt | string | Yes      | **Base64-encoded** salt generated for master key |
@@ -145,7 +145,7 @@ Delete a given user, and all data associated with their account.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the username to be deleted.              |
+| username        | string | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -238,12 +238,12 @@ curl -X POST https://[API_BASE_URL]/api/password/start \
 `POST /api/password/auth`
 
 **Description**
-Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification.
+Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification. Also returns list of all data entry public IDs.
 
 **Parameters**
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
-| username         | string | Yes      | Hash of the username.                                |
+| username         | string | Yes      | Hash of the user's username.                         |
 | session_id       | string | Yes      | The public ID of the login session.                  |
 | request_number   | int    | Yes      | The number of this request on the login session.     |
 | encrypted_data   | string | Yes      | **Base64-encoded** encrypted payload (see below)     |
@@ -285,7 +285,7 @@ curl -X POST https://[API_BASE_URL]/api/password/auth \
 `POST /api/password/complete`
 
 **Description**
-Delete a given user, and all data associated with their account.
+Complete a password change. If all entries have been completed, the change is confirmed, and the old password details are erased.
 
 **Parameters**
 | Field           | Type   | Required | Description                                      |
@@ -297,7 +297,7 @@ Delete a given user, and all data associated with their account.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the username to be completed.            |
+| username        | string | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -317,7 +317,40 @@ curl -X POST https://[API_BASE_URL]/api/password/complete \
 
 
 ### Abort Password Change
-TODO
+**Endpoint**
+`POST /api/password/abort`
+
+**Description**
+Abort a password change that is in progress. Deletes all details about the new password.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the login session.              |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+```
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/password/abort \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 0,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Request Entry
 TODO
@@ -358,7 +391,7 @@ Request the details to create a new login session, including SRP details, master
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the username.                            |
+| username        | string | Yes      | Hash of the user's username.                     |
 
 **Example Request**
 ```bash
@@ -380,7 +413,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 **Parameters**
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
-| username         | string | Yes      | Hash of the username.                                |
+| username         | string | Yes      | Hash of the user's username.                         |
 | auth_id          | string | Yes      | Public ID of the AuthEphemeral being used.           |
 | eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)       |
 | proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)                |
@@ -423,7 +456,7 @@ Delete the given auth session from the database, preventing further use.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the username related to the session.     |
+| username        | string | Yes      | Hash of the user's username.                     |
 | session_id      | string | Yes      | Public ID of the session to be deleted.          |
 
 **Encryption Encoding**
@@ -464,7 +497,7 @@ Delete all existing auth sessions from the database, preventing further use.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the username to delete the sessions for. |
+| username        | string | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
