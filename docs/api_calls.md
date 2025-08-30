@@ -11,9 +11,8 @@ A brief introduction to the API, its purpose, and how to make API calls.
 3. [**User**](#user)
     1. [Register User](#register-user-post)
     2. [Change Username](#change-username)
-    3. [Change Password](#change-password-future)
-    4. [Delete User](#delete-user)
-    5. [Health Check](#health-check)
+    3. [Delete User](#delete-user)
+    4. [Health Check](#health-check)
 4. [**Password**](#password)
     1. [Start Password Change](#start-password-change)
     2. [Continue Password Change](#continue-password-change)
@@ -57,6 +56,8 @@ Where:
 ## User
 
 Manages user account operations including registration, username changes, and account deletion.
+
+> **Note:** User operations use regular "Login Sessions" for authentication, except for user registration which requires no authentication.
 
 ### Register User
 **Endpoint**
@@ -189,12 +190,14 @@ curl -X GET https://[API_BASE_URL]/api/user/health \
 
 Handles the complex multi-step password change process with special security sessions.
 
+> **Note:** Password change operations use special "Password Change Sessions" that are distinct from regular login sessions. These sessions have limited lifetime (5 minutes) and limited request counts based on the number of password entries.
+
 ### Start Password Change
 **Endpoint**
 `POST /api/password/start`
 
 **Description**
-Begins the process of a password change, returning the user's validation details to create a password session.
+Begins the process of a password change, returning the user's validation details to create a password change session.
 
 **Parameters**
 | Field           | Type   | Required | Description                                      |
@@ -238,7 +241,7 @@ curl -X POST https://[API_BASE_URL]/api/password/start \
 `POST /api/password/auth`
 
 **Description**
-Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification. Also returns list of all data entry public IDs.
+Completes the SRP authentication process by providing client ephemeral value and proof. Returns password change session details and server proof for verification. Also returns list of all data entry public IDs.
 
 **Parameters**
 | Field            | Type   | Required | Description                                          |
@@ -290,7 +293,7 @@ Complete a password change. If all entries have been completed, the change is co
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the password change session.    |
-| request_number  | int    | Yes      | The number of this request on the login session. |
+| request_number  | int    | Yes      | The number of this request on the password change session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
 **Encryption Payload**
@@ -339,6 +342,8 @@ Abort a password change that is in progress. Deletes all details about the new p
 [4 bytes: username length][username bytes]
 ```
 
+> **Note:** This can be done on the password change session, but does not necessarily need to be.
+
 **Example Request**
 ```bash
 curl -X POST https://[API_BASE_URL]/api/password/abort \
@@ -362,7 +367,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the password change session.    |
-| request_number  | int    | Yes      | The number of this request on the login session. |
+| request_number  | int    | Yes      | The number of this request on the password change session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
 **Encryption Payload**
@@ -400,7 +405,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the password change session.    |
-| request_number  | int    | Yes      | The number of this request on the login session. |
+| request_number  | int    | Yes      | The number of this request on the password change session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
 **Encryption Payload**
@@ -424,7 +429,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 
 **Example Request**
 ```bash
-curl -X POST https://[API_BASE_URL]/api/password/request \
+curl -X POST https://[API_BASE_URL]/api/password/update \
     -H "Content-Type: application/json" \
     -d '{
         "session_id": "abc123sessionId",
@@ -456,6 +461,8 @@ curl -X GET https://[API_BASE_URL]/api/password/health \
 ## Session
 
 Manages authentication sessions using SRP protocol for secure login and logout.
+
+> **Note:** Session endpoints create and manage regular "Login Sessions" that are used for most API operations.
 
 ### Start Auth
 **Endpoint**
@@ -623,13 +630,12 @@ Handles encrypted password entry operations including create, read, update, and 
 `POST /api/data/create`
 
 **Description**
-Create a new password entry with
-Edit the encrypted name and data for a given data entry, and provide the new unique encryption data.
+Create a new password entry with encrypted name and data, and provide the unique encryption data.
 
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
+| session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
@@ -669,7 +675,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
+| session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
@@ -713,7 +719,7 @@ Delete all stored data for a given data entry.
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
+| session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
@@ -753,7 +759,7 @@ Retrieve all data for a given password entry.
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
+| session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
@@ -791,7 +797,7 @@ Retrieve a list of the public IDs of all password entries, along with their name
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
+| session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
