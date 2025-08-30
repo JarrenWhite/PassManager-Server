@@ -1,4 +1,7 @@
+# API Responses
 
+A brief introduction to the possible responses for all defined APIs.
+([See API Requests](api_calls.md#api-calls))
 
 ## Overview
 1. [**User**](#user)
@@ -37,7 +40,7 @@
 
 ### Register User
 
-**📋 [Request Format](api_calls.md#register-user)**
+**[Request Format](api_calls.md#register-user)**
 
 **Response Fields**
 | Field           | When     | Type     | Description                                |
