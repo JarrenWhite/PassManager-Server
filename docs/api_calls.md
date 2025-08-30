@@ -369,7 +369,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry being requested.          |
+| entry_public_id | string | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
 ```
@@ -407,7 +407,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry being updated.            |
+| entry_public_id | string | Yes      | Public ID of the entry.                          |
 | entry_name      | string | Yes      | The new encrypted entry name payload.            |
 | entry_data      | string | Yes      | The new encrypted entry data payload.            |
 
@@ -677,7 +677,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry being updated.            |
+| entry_public_id | string | Yes      | Public ID of the entry.                          |
 | entry_name      | string | No       | The new encrypted entry name payload.            |
 | entry_data      | string | No       | The new encrypted entry data payload.            |
 
@@ -704,13 +704,118 @@ curl -X POST https://[API_BASE_URL]/api/data/edit \
 
 
 ### Delete Entry
-TODO
+**Endpoint**
+`POST /api/data/delete`
+
+**Description**
+Delete all stored data for a given data entry.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the password change session.    |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+| entry_public_id | string | Yes      | Public ID of the entry.                          |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: entry_public_id length][entry_public_id bytes]
+```
+
+> **Note:** A deleted entry is deleted fully. It cannot be recovered.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/data/delete \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Retrieve Entry
-TODO
+**Endpoint**
+`POST /api/data/get`
+
+**Description**
+Retrieve all data for a given password entry.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the password change session.    |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+| entry_public_id | string | Yes      | Public ID of the entry.                          |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: entry_public_id length][entry_public_id bytes]
+```
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/data/get \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Retrieve List
-TODO
+**Endpoint**
+`POST /api/data/list`
+
+**Description**
+Retrieve a list of the public IDs of all password entries, along with their names.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the password change session.    |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+```
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/data/list \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Health Check
 **Endpoint**
