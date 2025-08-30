@@ -619,10 +619,89 @@ curl -X GET https://[API_BASE_URL]/api/session/health \
 Handles encrypted password entry operations including create, read, update, and delete.
 
 ### Create Entry
-TODO
+**Endpoint**
+`POST /api/data/create`
+
+**Description**
+Create a new password entry with
+Edit the encrypted name and data for a given data entry, and provide the new unique encryption data.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the password change session.    |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+| entry_name      | string | Yes      | The new encrypted entry name payload.            |
+| entry_data      | string | Yes      | The new encrypted entry data payload.            |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: entry_name length][entry_name bytes]
+[4 bytes: entry_data length][entry_data bytes]
+```
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/data/create \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Edit Entry
-TODO
+**Endpoint**
+`POST /api/data/edit`
+
+**Description**
+Edit the encrypted name and data for a given data entry, and provide the new unique encryption data.
+
+**Parameters**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| session_id      | string | Yes      | The public ID of the password change session.    |
+| request_number  | int    | Yes      | The number of this request on the login session. |
+| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+| entry_public_id | string | Yes      | Public ID of the entry being updated.            |
+| entry_name      | string | No       | The new encrypted entry name payload.            |
+| entry_data      | string | No       | The new encrypted entry data payload.            |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: entry_public_id length][entry_public_id bytes]
+[4 bytes: entry_name length][entry_name bytes]
+[4 bytes: entry_data length][entry_data bytes]
+```
+
+> **⚠️ CRITICAL:** A new nonce must be generated for each new encryption. The old nonce must not be reused.
+
+**Example Request**
+```bash
+curl -X POST https://[API_BASE_URL]/api/data/edit \
+    -H "Content-Type: application/json" \
+    -d '{
+        "session_id": "abc123sessionId",
+        "request_number": 5,
+        "encrypted_data": "base64EncryptedPayload"
+    }'
+```
+
 
 ### Delete Entry
 TODO
