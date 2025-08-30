@@ -419,6 +419,9 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 [4 bytes: entry_data length][entry_data bytes]
 ```
 
+> **⚠️ CRITICAL:** The newly encrypted entry name and data must be encrypted using the new master key.
+> **⚠️ CRITICAL:** A new nonce must be generated for each encryption. The old nonce must not be reused.
+
 **Example Request**
 ```bash
 curl -X POST https://[API_BASE_URL]/api/password/request \
