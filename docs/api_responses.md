@@ -1,7 +1,7 @@
 # API Responses
 
 A brief introduction to the possible responses for all defined APIs.
-([See API Requests](api_calls.md#api-calls))
+([See API Requests](api_calls.md))
 
 ## Overview
 1. [**User**](#user)

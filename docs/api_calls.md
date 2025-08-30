@@ -1,7 +1,7 @@
 # API Calls
 
 A brief introduction to the API, its purpose, and how to make API calls.
-([See API Responses](api_responses.md#api-responses))
+([See API Responses](api_responses.md))
 
 > **API Base URL:** `https://[API_BASE_URL]`
 > **TODO:** *Replace `[API_BASE_URL]` with the actual domain when determined*
