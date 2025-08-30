@@ -43,66 +43,51 @@ A brief introduction to the possible responses for all defined APIs.
 **[Request Format](api_calls.md#register-user)**
 
 **Response Fields**
-| Field           | When     | Type     | Description                                |
+| Field           | Type     | When     | Description                                |
 |-----------------|----------|----------|--------------------------------------------|
-| success         | always   | boolean  | Indicates if the operation was successful. |
-| username_hash   | always   | string   | Hash of the username that was registered.  |
-| username_id     | success  | string   | Public ID for the new user account         |
-| errors          | failure  | [string] | json list of each error.                   |
+| success         | boolean  | always   | Indicates if the operation was successful. |
+| username_hash   | string   | always   | Hash of the username that was registered.  |
+| username_id     | string   | success  | Public ID for the new user account         |
+| errors          | [error]  | failure  | json list of each error.                   |
 
-**Success Response (201 Created)**
-```json
-{
-    "success": true,
-    "username_hash": "123hashedUsername",
-    "username_id": "idForUsername123"
-}
+**Common Error Codes**
+| Error Code       | HTTP Status | Description                                      |
+|------------------|-------------|--------------------------------------------------|
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing        |
+| USER_EXISTS      | 409         | Username hash already exists in the system       |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error           |
+
+
+### Change Username
+
+**[Request Format](api_calls.md#register-user)**
+
+**Response Fields**
+| Field           | Type     | When     | Description                                      |
+|-----------------|----------|----------|--------------------------------------------------|
+| success         | boolean  | always   | Indicates if the operation was successful.       |
+| session_id      | string   | always   | The public ID of the login session.              |
+| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| errors          | [error]  | failure  | json list of each error.                         |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| new_username    | string | Yes      | Hash of the new username.                        |
+
+**Encryption Encoding**
 ```
-
-**Error Response (400 Bad Request)**
-```json
-{
-    "success": false,
-    "username_hash": "123hashedUsername",
-    "errors": [
-        {"field": "session_id", "message": "Field is not known"},
-        {"field": "srp_verifier", "message": "srp_verifier is too short"}
-    ]
-}
-```
-
-**Error Response (409 Conflict)**
-```json
-{
-    "success": false,
-    "username_hash": "123hashedUsername",
-    "errors": [
-        {"field": "username", "message": "Username already exists"},
-    ]
-}
-```
-
-**Error Response (500 Internal Server Error)**
-```json
-{
-    "success": false,
-    "username_hash": "123hashedUsername",
-    "errors": [
-        {"field": "other", "message": "Unknown server error"},
-    ]
-}
+[4 bytes: new_username length][new_username bytes]
 ```
 
 **Common Error Codes**
 | Error Code       | HTTP Status | Description                                      |
 |------------------|-------------|--------------------------------------------------|
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing        |
-| USER_EXISTS      | 409         | Username hash already exists in the system      |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error          |
+| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data |
+| USER_EXISTS      | 409         | Username hash already exists in the system       |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error           |
 
-
-### Change Username
-TODO
 
 ### Delete User
 TODO
