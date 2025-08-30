@@ -26,6 +26,9 @@
     4. [Retrieve Entry](#retrieve-entry)
     5. [Retrieve List](#retrieve-list)
     6. [Health Check](#health-check-2)
+5. [**Other Responses**](#other-responses)
+    1. [Error Messages](#error-messages)
+    2. [HTTP Status Codes](#http-status-codes)
 
 ---
 
@@ -111,4 +114,14 @@ TODO
 TODO
 
 ### Health Check
+TODO
+
+---
+
+## Other Responses
+
+### Error Messages
+TODO
+
+### HTTP Status Codes
 TODO
