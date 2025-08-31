@@ -50,12 +50,13 @@ A brief introduction to the possible responses for all defined APIs.
 | username_id     | string   | success  | Public ID for the new user account         |
 | errors          | [error]  | failure  | json list of each error.                   |
 
-**Common Error Codes**
-| Error Code       | HTTP Status | Description                                      |
+**Common Response Codes**
+| Response Code    | HTTP Status | Description                                      |
 |------------------|-------------|--------------------------------------------------|
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing        |
-| USER_EXISTS      | 409         | Username hash already exists in the system       |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error           |
+| SUCCESS          | 201         | Resource created.                                |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.       |
+| USER_EXISTS      | 409         | Username hash already exists in the system.      |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.          |
 
 
 ### Change Username
@@ -80,13 +81,14 @@ A brief introduction to the possible responses for all defined APIs.
 [4 bytes: new_username length][new_username bytes]
 ```
 
-**Common Error Codes**
-| Error Code       | HTTP Status | Description                                      |
+**Common Response Codes**
+| Response Code    | HTTP Status | Description                                      |
 |------------------|-------------|--------------------------------------------------|
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing        |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data |
-| USER_EXISTS      | 409         | Username hash already exists in the system       |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error           |
+| SUCCESS          | 200         | OK.                                              |
+| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.       |
+| USER_EXISTS      | 409         | Username hash already exists in the system.      |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.          |
 
 
 ### Delete User
