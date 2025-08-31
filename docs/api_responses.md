@@ -82,17 +82,46 @@ A brief introduction to the possible responses for all defined APIs.
 ```
 
 **Common Response Codes**
-| Response Code    | HTTP Status | Description                                      |
-|------------------|-------------|--------------------------------------------------|
-| SUCCESS          | 200         | OK.                                              |
+| Response Code    | HTTP Status | Description                                                    |
+|------------------|-------------|----------------------------------------------------------------|
+| SUCCESS          | 200         | OK.                                                            |
 | DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.       |
-| USER_EXISTS      | 409         | Username hash already exists in the system.      |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.          |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| FORBIDDEN        | 403         | User is undergoing a password change.                          |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
 
 ### Delete User
-TODO
+
+**[Request Format](api_calls.md#delete-user)**
+
+**Response Fields**
+| Field           | Type     | When     | Description                                      |
+|-----------------|----------|----------|--------------------------------------------------|
+| success         | boolean  | always   | Indicates if the operation was successful.       |
+| session_id      | string   | always   | The public ID of the login session.              |
+| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| errors          | [error]  | failure  | json list of each error.                         |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| new_username    | string | Yes      | Hash of the username.                            |
+
+**Encryption Encoding**
+```
+[4 bytes: new_username length][new_username bytes]
+```
+
+**Common Response Codes**
+| Response Code    | HTTP Status | Description                                                    |
+|------------------|-------------|----------------------------------------------------------------|
+| SUCCESS          | 200         | OK.                                                            |
+| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| FORBIDDEN        | 403         | User is undergoing a password change.                          |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+
 
 ### Health Check
 TODO
