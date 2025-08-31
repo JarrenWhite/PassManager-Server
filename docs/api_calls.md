@@ -21,19 +21,20 @@ A brief introduction to the API, its purpose, and how to make API calls.
     4. [Abort Password Change](#abort-password-change)
     5. [Request Entry](#request-entry)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry)
+    7. [Health Check](#health-check-1)
 5. [**Session**](#session)
     1. [Start Auth](#start-auth)
     2. [Complete Auth](#complete-auth)
     3. [Delete Session](#delete-session)
     4. [Clean Sessions](#clean-sessions)
-    5. [Health Check](#health-check-1)
+    5. [Health Check](#health-check-2)
 6. [**Data**](#data)
     1. [Create Entry](#create-entry)
     2. [Edit Entry](#edit-entry)
     3. [Delete Entry](#delete-entry)
     4. [Retrieve Entry](#retrieve-entry)
     5. [Retrieve List](#retrieve-list)
-    6. [Health Check](#health-check-2)
+    6. [Health Check](#health-check-3)
 
 ---
 
@@ -183,8 +184,6 @@ Check the health and availability of the User API endpoints. Returns system stat
 
 **Parameters**
 None required.
-
-**[Response Format](api_responses.md#health-check)**
 
 **Example Request**
 ```bash
@@ -470,8 +469,6 @@ Check the health and availability of the Password API endpoints. Returns system 
 **Parameters**
 None required.
 
-**[Response Format](api_responses.md#health-check-1)**
-
 **Example Request**
 ```bash
 curl -X GET https://[API_BASE_URL]/api/password/health \
@@ -642,8 +639,6 @@ Check the health and availability of the Session API endpoints. Returns system s
 
 **Parameters**
 None required.
-
-**[Response Format](api_responses.md#health-check-1)**
 
 **Example Request**
 ```bash
@@ -875,8 +870,6 @@ Check the health and availability of the Data API endpoints. Returns system stat
 
 **Parameters**
 None required.
-
-**[Response Format](api_responses.md#health-check-2)**
 
 **Example Request**
 ```bash

@@ -122,10 +122,6 @@ A brief introduction to the possible responses for all defined APIs.
 | FORBIDDEN        | 403         | User is undergoing a password change.                          |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
-
-### Health Check
-TODO
-
 ---
 
 
@@ -149,9 +145,6 @@ TODO
 ### Add New Encryption for Entry
 TODO
 
-### Health Check
-TODO
-
 ---
 
 
@@ -167,9 +160,6 @@ TODO
 TODO
 
 ### Clean Sessions
-TODO
-
-### Health Check
 TODO
 
 ---
@@ -190,9 +180,6 @@ TODO
 TODO
 
 ### Retrieve List
-TODO
-
-### Health Check
 TODO
 
 ---
