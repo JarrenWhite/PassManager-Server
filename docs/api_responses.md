@@ -85,9 +85,10 @@ A brief introduction to the possible responses for all defined APIs.
 | Response Code    | HTTP Status | Description                                                    |
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | FORBIDDEN        | 403         | User is undergoing a password change.                          |
+| NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
 
@@ -117,9 +118,10 @@ A brief introduction to the possible responses for all defined APIs.
 | Response Code    | HTTP Status | Description                                                    |
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | FORBIDDEN        | 403         | User is undergoing a password change.                          |
+| NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
 ---
@@ -151,7 +153,27 @@ TODO
 ## Session
 
 ### Start Auth
-TODO
+
+**[Request Format](api_calls.md#start-auth)**
+
+**Response Fields**
+| Field           | Type     | When     | Description                                                  |
+|-----------------|----------|----------|--------------------------------------------------------------|
+| success         | boolean  | always   | Indicates if the operation was successful.                   |
+| auth_id         | string   | success  | The public ID of the in progress auth request.               |
+| srp_salt        | string   | success  | The salt used to create the verifier in SRP.                 |
+| ephemeral_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
+| master_key_salt | string   | success  | The salt used to create the master key.                      |
+| errors          | [error]  | failure  | json list of each error.                                     |
+
+**Common Response Codes**
+| Response Code    | HTTP Status | Description                                                    |
+|------------------|-------------|----------------------------------------------------------------|
+| SUCCESS          | 200         | OK.                                                            |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| NOT_FOUND        | 404         | The requested item could not be found.                         |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+
 
 ### Complete Auth
 TODO
