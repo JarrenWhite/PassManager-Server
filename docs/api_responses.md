@@ -176,7 +176,24 @@ TODO
 
 
 ### Complete Auth
-TODO
+**[Request Format](api_calls.md#start-auth)**
+
+**Response Fields**
+| Field           | Type     | When     | Description                                                  |
+|-----------------|----------|----------|--------------------------------------------------------------|
+| success         | boolean  | always   | Indicates if the operation was successful.                   |
+| session_id      | string   | success  | The public ID of the created session.                        |
+| server_proof_m2 | string   | success  | The server's proof of authentication.                        |
+| errors          | [error]  | failure  | json list of each error.                                     |
+
+**Common Response Codes**
+| Response Code    | HTTP Status | Description                                                    |
+|------------------|-------------|----------------------------------------------------------------|
+| SUCCESS          | 200         | OK.                                                            |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| NOT_FOUND        | 404         | The requested item could not be found.                         |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+
 
 ### Delete Session
 TODO
