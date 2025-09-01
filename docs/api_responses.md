@@ -198,7 +198,7 @@ TODO
 
 ### Delete Session
 
-**[Request Format](api_calls.md#delete-delete)**
+**[Request Format](api_calls.md#delete-session)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -229,7 +229,35 @@ TODO
 
 
 ### Clean Sessions
-TODO
+
+**[Request Format](api_calls.md#clean-sessions)**
+
+**Response Fields**
+| Field           | Type     | When     | Description                                      |
+|-----------------|----------|----------|--------------------------------------------------|
+| success         | boolean  | always   | Indicates if the operation was successful.       |
+| session_id      | string   | always   | The public ID of the login session.              |
+| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| errors          | [error]  | failure  | json list of each error.                         |
+
+**Encryption Payload**
+| Field           | Type   | Required | Description                                      |
+|-----------------|--------|----------|--------------------------------------------------|
+| username        | string | Yes      | Hash of the user's username.                     |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+```
+
+**Common Response Codes**
+| Response Code    | HTTP Status | Description                                                    |
+|------------------|-------------|----------------------------------------------------------------|
+| SUCCESS          | 200         | OK.                                                            |
+| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
+| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| NOT_FOUND        | 404         | The requested item could not be found.                         |
+| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
 ---
 
