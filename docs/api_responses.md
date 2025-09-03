@@ -86,7 +86,7 @@ A brief introduction to the possible responses for all defined APIs.
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | FORBIDDEN        | 403         | User is undergoing a password change.                          |
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
@@ -119,7 +119,7 @@ A brief introduction to the possible responses for all defined APIs.
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | FORBIDDEN        | 403         | User is undergoing a password change.                          |
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
@@ -162,7 +162,7 @@ A brief introduction to the possible responses for all defined APIs.
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
@@ -198,7 +198,7 @@ A brief introduction to the possible responses for all defined APIs.
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
@@ -230,7 +230,7 @@ A brief introduction to the possible responses for all defined APIs.
 |---------------------|-------------|----------------------------------------------------------------|
 | SUCCESS             | 200         | OK.                                                            |
 | VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR    | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
@@ -263,7 +263,7 @@ A brief introduction to the possible responses for all defined APIs.
 |---------------------|-------------|----------------------------------------------------------------|
 | SUCCESS             | 200         | OK.                                                            |
 | VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR    | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
@@ -301,7 +301,7 @@ A brief introduction to the possible responses for all defined APIs.
 |---------------------|-------------|----------------------------------------------------------------|
 | SUCCESS             | 200         | OK.                                                            |
 | VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR    | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
@@ -335,7 +335,7 @@ A brief introduction to the possible responses for all defined APIs.
 |---------------------|-------------|----------------------------------------------------------------|
 | SUCCESS             | 200         | OK.                                                            |
 | VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR    | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
@@ -415,7 +415,7 @@ A brief introduction to the possible responses for all defined APIs.
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
@@ -447,7 +447,7 @@ A brief introduction to the possible responses for all defined APIs.
 |------------------|-------------|----------------------------------------------------------------|
 | SUCCESS          | 200         | OK.                                                            |
 | VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| DECRYPTION_ERROR | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
