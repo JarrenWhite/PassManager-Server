@@ -193,6 +193,8 @@ A brief introduction to the possible responses for all defined APIs.
 [4 bytes: username length][username bytes]
 [4 bytes: session_id length][session_id bytes]
 [4 bytes: server_proof_m2 length][server_proof_m2 bytes]
+[4 bytes: entry_ids length][entry_ids bytes]
+[4 bytes: entry_names length][entry_names bytes]
 ```
 
 **Common Response Codes**
@@ -619,15 +621,15 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username        | string   | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | string   | Yes      | The new encrypted entry name payload.                        |
-| entry_data      | string   | Yes      | The new encrypted entry data payload.                        |
+| entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
+| entry_names     | [string] | success  | The name payload for all stored data entries.                |
 
 **Encryption Encoding**
 ```
 [4 bytes: username length][username bytes]
 [4 bytes: entry_public_id length][entry_public_id bytes]
-[4 bytes: entry_name length][entry_name bytes]
-[4 bytes: entry_data length][entry_data bytes]
+[4 bytes: entry_ids length][entry_ids bytes]
+[4 bytes: entry_names length][entry_names bytes]
 ```
 
 **Common Response Codes**
@@ -639,8 +641,6 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | LOCKED              | 423         | Cannot execute at this time.                                   |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
-| entry_ids           | [string]    | success  | The public IDs of all stored data entries.          |
-| entry_names         | [string]    | success  | The name payload for all stored data entries.       |
 
 ---
 
