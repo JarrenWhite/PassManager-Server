@@ -269,7 +269,42 @@ A brief introduction to the possible responses for all defined APIs.
 
 
 ### Request Entry
-TODO
+
+**[Request Format](api_calls.md#request-entry)**
+
+**Response Fields**
+| Field           | Type     | When     | Description                                      |
+|-----------------|----------|----------|--------------------------------------------------|
+| success         | boolean  | always   | Indicates if the operation was successful.       |
+| session_id      | string   | always   | The public ID of the login session.              |
+| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| errors          | [error]  | failure  | json list of each error.                         |
+
+**Encryption Payload**
+| Field           | Type     | Required | Description                                                  |
+|-----------------|----------|----------|--------------------------------------------------------------|
+| username        | string   | Yes      | Hash of the user's username.                                 |
+| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
+| entry_name      | string   | Yes      | The new encrypted entry name payload.                        |
+| entry_data      | string   | Yes      | The new encrypted entry data payload.                        |
+
+**Encryption Encoding**
+```
+[4 bytes: username length][username bytes]
+[4 bytes: entry_public_id length][entry_public_id bytes]
+[4 bytes: entry_name length][entry_name bytes]
+[4 bytes: entry_data length][entry_data bytes]
+```
+
+**Common Response Codes**
+| Response Code       | HTTP Status | Description                                                    |
+|---------------------|-------------|----------------------------------------------------------------|
+| SUCCESS             | 200         | OK.                                                            |
+| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
+| DECRYPTION_ERROR    | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| NOT_FOUND           | 404         | The requested item could not be found.                         |
+| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+
 
 ### Add New Encryption for Entry
 TODO
