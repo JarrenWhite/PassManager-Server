@@ -58,7 +58,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Change Username
 
-**[Request Format](api_calls.md#register-user)**
+**[Request Format](api_calls.md#change-username)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -212,7 +212,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | always   | The public ID of the password change session.    |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -277,7 +277,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | always   | The public ID of the password change session.    |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -315,7 +315,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | always   | The public ID of the password change session.    |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -564,7 +564,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Get Entry
 
-**[Request Format](api_calls.md#get-entry)**
+**[Request Format](api_calls.md#get-entry-1)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |

@@ -402,7 +402,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 
 **Example Request**
 ```bash
-curl -X POST https://[API_BASE_URL]/api/password/request \
+curl -X POST https://[API_BASE_URL]/api/password/get \
     -H "Content-Type: application/json" \
     -d '{
         "session_id": "abc123sessionId",
