@@ -8,27 +8,24 @@ A brief introduction to the possible responses for all defined APIs.
     1. [Register User](#register-user-post)
     2. [Change Username](#change-username)
     3. [Delete User](#delete-user)
-    4. [Health Check](#health-check)
 2. [**Password**](#password)
     1. [Start Password Change](#start-password-change)
     2. [Continue Password Change](#continue-password-change)
     3. [Complete Password Change](#complete-password-change)
     4. [Abort Password Change](#abort-password-change)
-    5. [Request Entry](#request-entry)
+    5. [Get Entry](#get-entry)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry)
 3. [**Session**](#session)
     1. [Start Auth](#start-auth)
     2. [Complete Auth](#complete-auth)
     3. [Delete Session](#delete-session)
     4. [Clean Sessions](#clean-sessions)
-    5. [Health Check](#health-check-1)
 4. [**Data**](#data)
     1. [Create Entry](#create-entry)
     2. [Edit Entry](#edit-entry)
     3. [Delete Entry](#delete-entry)
-    4. [Retrieve Entry](#retrieve-entry)
-    5. [Retrieve List](#retrieve-list)
-    6. [Health Check](#health-check-2)
+    4. [Get Entry](#get-entry-1)
+    5. [Get List](#get-list)
 5. [**Other Responses**](#other-responses)
     1. [Error Messages](#error-messages)
     2. [HTTP Status Codes](#http-status-codes)
@@ -272,9 +269,9 @@ A brief introduction to the possible responses for all defined APIs.
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
 
-### Request Entry
+### Get Entry
 
-**[Request Format](api_calls.md#request-entry)**
+**[Request Format](api_calls.md#get-entry)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -565,9 +562,9 @@ A brief introduction to the possible responses for all defined APIs.
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
 
-### Retrieve Entry
+### Get Entry
 
-**[Request Format](api_calls.md#retrieve-entry)**
+**[Request Format](api_calls.md#get-entry)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -604,9 +601,9 @@ A brief introduction to the possible responses for all defined APIs.
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
 
-### Retrieve List
+### Get List
 
-**[Request Format](api_calls.md#retrieve-list)**
+**[Request Format](api_calls.md#get-list)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |

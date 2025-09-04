@@ -19,7 +19,7 @@ A brief introduction to the API, its purpose, and how to make API calls.
     2. [Continue Password Change](#continue-password-change)
     3. [Complete Password Change](#complete-password-change)
     4. [Abort Password Change](#abort-password-change)
-    5. [Request Entry](#request-entry)
+    5. [Get Entry](#get-entry)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry)
     7. [Health Check](#health-check-1)
 5. [**Session**](#session)
@@ -32,8 +32,8 @@ A brief introduction to the API, its purpose, and how to make API calls.
     1. [Create Entry](#create-entry)
     2. [Edit Entry](#edit-entry)
     3. [Delete Entry](#delete-entry)
-    4. [Retrieve Entry](#retrieve-entry)
-    5. [Retrieve List](#retrieve-list)
+    4. [Get Entry](#get-entry-1)
+    5. [Get List](#retrieve-list)
     6. [Health Check](#health-check-3)
 
 ---
@@ -372,9 +372,9 @@ curl -X POST https://[API_BASE_URL]/api/password/abort \
 ```
 
 
-### Request Entry
+### Get Entry
 **Endpoint**
-`POST /api/password/request`
+`POST /api/password/get`
 
 **Description**
 Request the encrypted name and data for a given data entry, as well as its unique encryption data.
@@ -398,7 +398,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**[Response Format](api_responses.md#request-entry)**
+**[Response Format](api_responses.md#get-entry)**
 
 **Example Request**
 ```bash
@@ -783,7 +783,7 @@ curl -X POST https://[API_BASE_URL]/api/data/delete \
 ```
 
 
-### Retrieve Entry
+### Get Entry
 **Endpoint**
 `POST /api/data/get`
 
@@ -809,7 +809,7 @@ Retrieve all data for a given password entry.
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**[Response Format](api_responses.md#retrieve-entry)**
+**[Response Format](api_responses.md#get-entry-1)**
 
 **Example Request**
 ```bash
@@ -823,7 +823,7 @@ curl -X POST https://[API_BASE_URL]/api/data/get \
 ```
 
 
-### Retrieve List
+### Get List
 **Endpoint**
 `POST /api/data/list`
 
@@ -847,7 +847,7 @@ Retrieve a list of the public IDs of all password entries, along with their name
 [4 bytes: username length][username bytes]
 ```
 
-**[Response Format](api_responses.md#retrieve-list)**
+**[Response Format](api_responses.md#get-list)**
 
 **Example Request**
 ```bash
