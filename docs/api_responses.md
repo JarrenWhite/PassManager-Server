@@ -35,7 +35,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ## User
 
-### Register User
+### Register User (User)
 
 **[Request Format](api_calls.md#register-user)**
 
@@ -55,8 +55,9 @@ A brief introduction to the possible responses for all defined APIs.
 | USER_EXISTS      | 409         | Username hash already exists in the system.      |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.          |
 
+---
 
-### Change Username
+### Change Username (User)
 
 **[Request Format](api_calls.md#change-username)**
 
@@ -88,8 +89,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Delete User
+### Delete User (User)
 
 **[Request Format](api_calls.md#delete-user)**
 
@@ -126,7 +128,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ## Password
 
-### Start Password Change
+### Start Password Change (Password)
 
 **[Request Format](api_calls.md#start-password-change)**
 
@@ -163,8 +165,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Continue Password Change
+### Continue Password Change (Password)
 
 **[Request Format](api_calls.md#continue-password-change)**
 
@@ -203,8 +206,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Complete Password Change
+### Complete Password Change (Password)
 
 **[Request Format](api_calls.md#complete-password-change)**
 
@@ -236,8 +240,9 @@ A brief introduction to the possible responses for all defined APIs.
 | PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Abort Password Change
+### Abort Password Change (Password)
 
 **[Request Format](api_calls.md#abort-password-change)**
 
@@ -268,8 +273,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Get Entry
+### Get Entry (Password)
 
 **[Request Format](api_calls.md#get-entry)**
 
@@ -306,8 +312,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Add New Encryption for Entry
+### Add New Encryption for Entry (Password)
 
 **[Request Format](api_calls.md#add-new-encryption-for-entry)**
 
@@ -345,7 +352,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ## Session
 
-### Start Auth
+### Start Auth (Session)
 
 **[Request Format](api_calls.md#start-auth)**
 
@@ -367,8 +374,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Complete Auth
+### Complete Auth (Session)
 
 **[Request Format](api_calls.md#complete-auth)**
 
@@ -388,8 +396,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Delete Session
+### Delete Session (Session)
 
 **[Request Format](api_calls.md#delete-session)**
 
@@ -420,8 +429,9 @@ A brief introduction to the possible responses for all defined APIs.
 | NOT_FOUND        | 404         | The requested item could not be found.                         |
 | INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Clean Sessions
+### Clean Sessions (Session)
 
 **[Request Format](api_calls.md#clean-sessions)**
 
@@ -457,7 +467,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ## Data
 
-### Create Entry
+### Create Entry (Data)
 
 **[Request Format](api_calls.md#create-entry)**
 
@@ -491,8 +501,9 @@ A brief introduction to the possible responses for all defined APIs.
 | LOCKED              | 423         | Cannot execute at this time.                                   |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Edit Entry
+### Edit Entry (Data)
 
 **[Request Format](api_calls.md#edit-entry)**
 
@@ -526,8 +537,9 @@ A brief introduction to the possible responses for all defined APIs.
 | LOCKED              | 423         | Cannot execute at this time.                                   |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Delete Entry
+### Delete Entry (Data)
 
 **[Request Format](api_calls.md#delete-entry)**
 
@@ -561,8 +573,9 @@ A brief introduction to the possible responses for all defined APIs.
 | LOCKED              | 423         | Cannot execute at this time.                                   |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Get Entry
+### Get Entry (Data)
 
 **[Request Format](api_calls.md#get-entry-1)**
 
@@ -600,8 +613,9 @@ A brief introduction to the possible responses for all defined APIs.
 | LOCKED              | 423         | Cannot execute at this time.                                   |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
 
+---
 
-### Get List
+### Get List (Data)
 
 **[Request Format](api_calls.md#get-list)**
 

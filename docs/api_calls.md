@@ -61,7 +61,7 @@ Manages user account operations including registration, username changes, and ac
 
 > **Note:** User operations use regular "Login Sessions" for authentication, except for user registration which requires no authentication.
 
-### Register User
+### Register User (User)
 **Endpoint**
 `POST /api/user/register`
 
@@ -92,8 +92,9 @@ curl -X POST https://[API_BASE_URL]/api/user/register \
     }'
 ```
 
+---
 
-### Change Username
+### Change Username (User)
 **Endpoint**
 `POST /api/user/username`
 
@@ -134,8 +135,9 @@ curl -X POST https://[API_BASE_URL]/api/user/username \
     }'
 ```
 
+---
 
-### Delete User
+### Delete User (User)
 **Endpoint**
 `POST /api/user/delete`
 
@@ -174,8 +176,9 @@ curl -X POST https://[API_BASE_URL]/api/user/delete \
     }'
 ```
 
+---
 
-### Health Check
+### Health Check (User)
 **Endpoint**
 `GET /api/user/health`
 
@@ -200,7 +203,7 @@ Handles the complex multi-step password change process with special security ses
 
 > **Note:** Password change operations use special "Password Change Sessions" that are distinct from regular login sessions. These sessions have limited lifetime (5 minutes) and limited request counts based on the number of password entries.
 
-### Start Password Change
+### Start Password Change (Password)
 **Endpoint**
 `POST /api/password/start`
 
@@ -245,8 +248,9 @@ curl -X POST https://[API_BASE_URL]/api/password/start \
     }'
 ```
 
+---
 
-### Continue Password Change
+### Continue Password Change (Password)
 **Endpoint**
 `POST /api/password/auth`
 
@@ -293,8 +297,9 @@ curl -X POST https://[API_BASE_URL]/api/password/auth \
     }'
 ```
 
+---
 
-### Complete Password Change
+### Complete Password Change (Password)
 **Endpoint**
 `POST /api/password/complete`
 
@@ -331,8 +336,9 @@ curl -X POST https://[API_BASE_URL]/api/password/complete \
     }'
 ```
 
+---
 
-### Abort Password Change
+### Abort Password Change (Password)
 **Endpoint**
 `POST /api/password/abort`
 
@@ -371,8 +377,9 @@ curl -X POST https://[API_BASE_URL]/api/password/abort \
     }'
 ```
 
+---
 
-### Get Entry
+### Get Entry (Password)
 **Endpoint**
 `POST /api/password/get`
 
@@ -411,8 +418,9 @@ curl -X POST https://[API_BASE_URL]/api/password/get \
     }'
 ```
 
+---
 
-### Add New Encryption for Entry
+### Add New Encryption for Entry (Password)
 **Endpoint**
 `POST /api/password/update`
 
@@ -458,8 +466,9 @@ curl -X POST https://[API_BASE_URL]/api/password/update \
     }'
 ```
 
+---
 
-### Health Check
+### Health Check (Password)
 **Endpoint**
 `GET /api/password/health`
 
@@ -484,7 +493,7 @@ Manages authentication sessions using SRP protocol for secure login and logout.
 
 > **Note:** Session endpoints create and manage regular "Login Sessions" that are used for most API operations.
 
-### Start Auth
+### Start Auth (Session)
 **Endpoint**
 `POST /api/session/start`
 
@@ -507,8 +516,9 @@ curl -X POST https://[API_BASE_URL]/api/session/start \
     }'
 ```
 
+---
 
-### Complete Auth
+### Complete Auth (Session)
 **Endpoint**
 `POST /api/session/auth`
 
@@ -545,8 +555,9 @@ curl -X POST https://[API_BASE_URL]/api/session/auth \
     }'
 ```
 
+---
 
-### Delete Session
+### Delete Session (Session)
 **Endpoint**
 `POST /api/session/delete`
 
@@ -588,8 +599,9 @@ curl -X POST https://[API_BASE_URL]/api/session/delete \
     }'
 ```
 
+---
 
-### Clean Sessions
+### Clean Sessions (Session)
 **Endpoint**
 `POST /api/session/clean`
 
@@ -629,8 +641,9 @@ curl -X POST https://[API_BASE_URL]/api/session/clean \
     }'
 ```
 
+---
 
-### Health Check
+### Health Check (Session)
 **Endpoint**
 `GET /api/session/health`
 
@@ -653,7 +666,7 @@ curl -X GET https://[API_BASE_URL]/api/session/health \
 
 Handles encrypted password entry operations including create, read, update, and delete.
 
-### Create Entry
+### Create Entry (Data)
 **Endpoint**
 `POST /api/data/create`
 
@@ -694,8 +707,9 @@ curl -X POST https://[API_BASE_URL]/api/data/create \
     }'
 ```
 
+---
 
-### Edit Entry
+### Edit Entry (Data)
 **Endpoint**
 `POST /api/data/edit`
 
@@ -740,8 +754,9 @@ curl -X POST https://[API_BASE_URL]/api/data/edit \
     }'
 ```
 
+---
 
-### Delete Entry
+### Delete Entry (Data)
 **Endpoint**
 `POST /api/data/delete`
 
@@ -782,8 +797,9 @@ curl -X POST https://[API_BASE_URL]/api/data/delete \
     }'
 ```
 
+---
 
-### Get Entry
+### Get Entry (Data)
 **Endpoint**
 `POST /api/data/get`
 
@@ -822,8 +838,9 @@ curl -X POST https://[API_BASE_URL]/api/data/get \
     }'
 ```
 
+---
 
-### Get List
+### Get List (Data)
 **Endpoint**
 `POST /api/data/list`
 
@@ -860,8 +877,9 @@ curl -X POST https://[API_BASE_URL]/api/data/list \
     }'
 ```
 
+---
 
-### Health Check
+### Health Check (Data)
 **Endpoint**
 `GET /api/data/health`
 
