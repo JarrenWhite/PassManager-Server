@@ -26,7 +26,7 @@ A brief introduction to the possible responses for all defined APIs.
     3. [Delete Entry](#delete-entry)
     4. [Get Entry](#get-entry-1)
     5. [Get List](#get-list)
-5. [**Other Responses**](#other-responses)
+5. [**Details**](#details)
     1. [Error Messages](#error-messages)
     2. [HTTP Status Codes](#http-status-codes)
 
@@ -656,7 +656,7 @@ A brief introduction to the possible responses for all defined APIs.
 ---
 
 
-## Other Responses
+## Details
 
 ### Error Messages
 TODO
