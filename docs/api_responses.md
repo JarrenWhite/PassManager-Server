@@ -662,4 +662,18 @@ A brief introduction to the possible responses for all defined APIs.
 TODO
 
 ### HTTP Status Codes
-TODO
+
+A HTTP response code is issued with every response. Where multiple possible response codes are true at once, the highest importance code will be returned.
+
+| Response Code       | HTTP Status | Description                                                    |
+|---------------------|-------------|----------------------------------------------------------------|
+| SUCCESS             | 200         | OK.                                                            |
+| SUCCESS             | 201         | Resource created.                                              |
+| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
+| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
+| FORBIDDEN           | 403         | User is undergoing a password change.                          |
+| NOT_FOUND           | 404         | The requested item could not be found.                         |
+| USER_EXISTS         | 409         | Username hash already exists in the system.                    |
+| PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
+| LOCKED              | 423         | Cannot execute at this time.                                   |
+| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
