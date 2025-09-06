@@ -43,7 +43,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                |
 |-----------------|----------|----------|--------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful. |
-| username_hash   | string   | always   | Hash of the username that was registered.  |
+| username_hash   | string   | success  | Hash of the username that was registered.  |
 | username_id     | string   | success  | Public ID for the new user account         |
 | errors          | [error]  | failure  | json list of each error.                   |
 
@@ -657,21 +657,48 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 Error messages are returned in the format:
 {"field": field_name, "error_code": error_code, "error": error_message}
 
+- The `error_code` is stable and intended for programmatic handling.
+- The `error` message is human-readable and is subject to change. It should be used for logging and debugging only.
+
+Example failure response:
+```json
+{
+  "success": false,
+  "errors": [
+    { "field": "request", "error_code": "rqs00", "error": "Incorrect parameters. Required: [username_hash, srp_salt, srp_verifier, master_key_salt]" }
+  ]
+}
+```
+
+
+### Request Errors
+
+These errors can be returned to any possible request.
+
 | Error Code | Field           | HTTP Code | Error Message                                                |
 |------------|-----------------|-----------|--------------------------------------------------------------|
 | rqs00      | request         | 400       | Incorrect parameters. Required: []                           |
 | rqs01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
 | rqs02      | request         | 403       | Password change in progress                                  |
 | svr00      | server          | 500       | Server encountered an unexpected error                       |
-| usr00      | username        | 400       | Username invalid                                             |
-| usr01      | username        | 404       | Username not found                                           |
-| nus00      | new_username    | 400       | New username invalid                                         |
-| nus01      | new_username    | 409       | New username already exists                                  |
-| rps00      | srp_salt        | 400       | SRP Salt invalid                                             |
-| rpv00      | srp_verifier    | 400       | SRP Verifier invalid                                         |
-| mks00      | master_key_salt | 400       | Master Key Salt invalid                                      |
-| rqn00      | request_number  | 400       | Request number invalid                                       |
-| sid00      | session_id      | 400       | Session ID invalid                                           |
+
+
+### Field Errors
+
+These can be returned in response to multiple possible fields.
+
+| Error Code | HTTP Code | Error message     |
+| gnr00      | 401       | {Field} invalid   |
+| gnr01      | 404       | {Field} not found |
+
+
+### Specific Errors
+
+These errors are specific to one field only. Any API which has a given field may return the errors associated with it.
+
+| Error Code | Field           | HTTP Code | Error Message                                                |
+|------------|-----------------|-----------|--------------------------------------------------------------|
+| usr00      | new_username    | 409       | New username already exists                                  |
 
 
 ### HTTP Status Codes
