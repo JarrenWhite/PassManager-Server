@@ -71,7 +71,7 @@ Creates a new user account using a username hash, and the required security info
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| new_username    | string | Yes      | Hash of the new username.                        |
 | srp_salt        | string | Yes      | **Base64-encoded** salt generated for SRP        |
 | srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for SRP      |
 | master_key_salt | string | Yes      | **Base64-encoded** salt generated for master key |
@@ -85,7 +85,7 @@ Creates a new user account using a username hash, and the required security info
 curl -X POST https://[API_BASE_URL]/api/user/register \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "123hashedUsername",
+        "new_username": "123hashedUsername",
         "srp_salt": "base64Salt",
         "srp_verifier": "base64Verifier",
         "master_key_salt": "base64MasterSalt"

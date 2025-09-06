@@ -51,7 +51,7 @@ A brief introduction to the possible responses for all defined APIs.
 201
 
 **Errors**
-rqs00, svr00, usr00, usr01, rps00, rpv00, mks00
+rqs00, svr00, nus00, nus01, rps00, rpv00, mks00
 
 ---
 
@@ -77,15 +77,11 @@ rqs00, svr00, usr00, usr01, rps00, rpv00, mks00
 [4 bytes: new_username length][new_username bytes]
 ```
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| FORBIDDEN        | 403         | User is undergoing a password change.                          |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
+
+**Errors**
+rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 
 ---
 
@@ -661,15 +657,21 @@ rqs00, svr00, usr00, usr01, rps00, rpv00, mks00
 Error messages are returned in the format:
 {"field": field_name, "error_code": error_code, "error": error_message}
 
-| Error Code | Field           | HTTP Code | Error Message                                          |
-|------------|-----------------|-----------|--------------------------------------------------------|
-| rqs00      | request         | 400       | Incorrect parameters. Required: []                     |
-| svr00      | server          | 500       | Server encountered an unexpected error                 |
-| usr00      | username        | 400       | Username invalid                                       |
-| usr01      | username        | 409       | Username already exists                                |
-| rps00      | srp_salt        | 400       | SRP Salt invalid                                       |
-| rpv00      | srp_verifier    | 400       | SRP Verifier invalid                                   |
-| mks00      | master_key_salt | 400       | Master Key Salt invalid                                |
+| Error Code | Field           | HTTP Code | Error Message                                                |
+|------------|-----------------|-----------|--------------------------------------------------------------|
+| rqs00      | request         | 400       | Incorrect parameters. Required: []                           |
+| rqs01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
+| rqs02      | request         | 403       | Password change in progress                                  |
+| svr00      | server          | 500       | Server encountered an unexpected error                       |
+| usr00      | username        | 400       | Username invalid                                             |
+| usr01      | username        | 404       | Username not found                                           |
+| nus00      | new_username    | 400       | New username invalid                                         |
+| nus01      | new_username    | 409       | New username already exists                                  |
+| rps00      | srp_salt        | 400       | SRP Salt invalid                                             |
+| rpv00      | srp_verifier    | 400       | SRP Verifier invalid                                         |
+| mks00      | master_key_salt | 400       | Master Key Salt invalid                                      |
+| rqn00      | request_number  | 400       | Request number invalid                                       |
+| sid00      | session_id      | 400       | Session ID invalid                                           |
 
 
 ### HTTP Status Codes
