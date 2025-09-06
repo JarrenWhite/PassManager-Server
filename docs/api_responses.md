@@ -28,7 +28,10 @@ A brief introduction to the possible responses for all defined APIs.
     5. [Get List](#get-list)
 5. [**Details**](#details)
     1. [Error Messages](#error-messages)
-    2. [HTTP Status Codes](#http-status-codes)
+    2. [Request Errors](#request-errors)
+    3. [General Field Errors](#general-field-errors)
+    4. [Specific Field Errors](#specific-field-errors)
+    5. [HTTP Status Codes](#http-status-codes)
 
 ---
 
@@ -683,7 +686,7 @@ These errors can be returned to any possible request.
 | svr00      | server          | 500       | Server encountered an unexpected error                       |
 
 
-### Field Errors
+### General Field Errors
 
 These can be returned in response to multiple possible fields.
 
@@ -692,7 +695,7 @@ These can be returned in response to multiple possible fields.
 | gnr01      | 404       | {Field} not found |
 
 
-### Specific Errors
+### Specific Field Errors
 
 These errors are specific to one field only. Any API which has a given field may return the errors associated with it.
 
