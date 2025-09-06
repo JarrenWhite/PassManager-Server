@@ -566,6 +566,13 @@ Example failure response:
 }
 ```
 
+Notes:
+- Multiple errors may be returned in a single response. Clients should iterate the `errors` array.
+- Error code naming scheme:
+  - `rqsXX`: request-level errors that apply to the entire request.
+  - `gnrXX`: general field errors that can apply to multiple APIs/fields.
+  - `ltdXX`: limited API errors that apply to specific endpoints only.
+
 
 ### Request Errors
 
@@ -573,7 +580,7 @@ These errors can be returned to any possible request.
 
 | Error Code | Field           | HTTP Code | Error Message                                                |
 |------------|-----------------|-----------|--------------------------------------------------------------|
-| rqs00      | request         | 400       | Incorrect parameters. Required: []                           |
+| rqs00      | request         | 400       | Incorrect parameters. Required: [<fields>]                   |
 | rqs01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
 | rqs02      | request         | 403       | Password change in progress                                  |
 | svr00      | server          | 500       | Server encountered an unexpected error                       |
@@ -584,7 +591,7 @@ These errors can be returned to any possible request.
 These can be returned in response to multiple possible fields.
 
 | Error Code | HTTP Code | Error message     |
-| gnr00      | 401       | {Field} invalid   |
+| gnr00      | 400       | {Field} invalid   |
 | gnr01      | 404       | {Field} not found |
 
 
@@ -595,7 +602,7 @@ These errors are specific to certain APIs. Only those APIs can return these erro
 | Error Code | Field           | HTTP Code | APIs | Error Message                                                |
 |------------|-----------------|-----------|-----|--------------------------------------------------------------|
 | ltd00      | new_username    | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
-| ltd01      | request_number  | 400       | [Change Username](#change-username-user) | Request number must be 0 for this request type                   |
+| ltd01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
 | ltd02      | request         | 412       | [Complete Password Change](#complete-password-change) | Password change is not complete                     |
 
 
