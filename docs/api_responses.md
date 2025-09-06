@@ -26,11 +26,11 @@ A brief introduction to the possible responses for all defined APIs.
     3. [Delete Entry](#delete-entry)
     4. [Get Entry](#get-entry-1)
     5. [Get List](#get-list)
-5. [**Details**](#details)
+5. [**Errors**](#errors)
     1. [Error Messages](#error-messages)
     2. [Request Errors](#request-errors)
     3. [General Field Errors](#general-field-errors)
-    4. [Specific Field Errors](#specific-field-errors)
+    4. [Limited API Errors](#limited-api-errors)
     5. [HTTP Status Codes](#http-status-codes)
 
 ---
@@ -52,9 +52,6 @@ A brief introduction to the possible responses for all defined APIs.
 
 **Success Response**
 201
-
-**Errors**
-rqs00, svr00, nus00, nus01, rps00, rpv00, mks00
 
 ---
 
@@ -83,9 +80,6 @@ rqs00, svr00, nus00, nus01, rps00, rpv00, mks00
 **Success Response**
 200
 
-**Errors**
-rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
-
 ---
 
 ### Delete User (User)
@@ -110,15 +104,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: username length][username bytes]
 ```
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| FORBIDDEN        | 403         | User is undergoing a password change.                          |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -153,14 +140,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: ephemeral_b length][ephemeral_b bytes]
 ```
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+201
 
 ---
 
@@ -194,14 +175,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_names length][entry_names bytes]
 ```
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+201
 
 ---
 
@@ -227,15 +202,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: username length][username bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -261,14 +229,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: username length][username bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -300,14 +262,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_data length][entry_data bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -335,14 +291,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -363,13 +313,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 | master_key_salt | string   | success  | The salt used to create the master key.                      |
 | errors          | [error]  | failure  | json list of each error.                                     |
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+201
 
 ---
 
@@ -385,13 +330,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 | server_proof_m2 | string   | success  | The server's proof of authentication.                        |
 | errors          | [error]  | failure  | json list of each error.                                     |
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+201
 
 ---
 
@@ -417,14 +357,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: username length][username bytes]
 ```
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -450,14 +384,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: username length][username bytes]
 ```
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                                    |
-|------------------|-------------|----------------------------------------------------------------|
-| SUCCESS          | 200         | OK.                                                            |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED     | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND        | 404         | The requested item could not be found.                         |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -488,15 +416,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| LOCKED              | 423         | Cannot execute at this time.                                   |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+201
 
 ---
 
@@ -524,15 +445,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| LOCKED              | 423         | Cannot execute at this time.                                   |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -560,15 +474,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| LOCKED              | 423         | Cannot execute at this time.                                   |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -600,15 +507,8 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_data length][entry_data bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| LOCKED              | 423         | Cannot execute at this time.                                   |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
@@ -640,20 +540,13 @@ rqs00, rqs01, rqs02, svr00, usr00, usr01, nus00, nus01, rqn00, sid00
 [4 bytes: entry_names length][entry_names bytes]
 ```
 
-**Common Response Codes**
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| LOCKED              | 423         | Cannot execute at this time.                                   |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+**Success Response**
+200
 
 ---
 
 
-## Details
+## Errors
 
 ### Error Messages
 
@@ -695,13 +588,15 @@ These can be returned in response to multiple possible fields.
 | gnr01      | 404       | {Field} not found |
 
 
-### Specific Field Errors
+### Limited API Errors
 
-These errors are specific to one field only. Any API which has a given field may return the errors associated with it.
+These errors are specific to certain APIs. Only those APIs can return these errors.
 
-| Error Code | Field           | HTTP Code | Error Message                                                |
-|------------|-----------------|-----------|--------------------------------------------------------------|
-| usr00      | new_username    | 409       | New username already exists                                  |
+| Error Code | Field           | HTTP Code | APIs | Error Message                                                |
+|------------|-----------------|-----------|-----|--------------------------------------------------------------|
+| ltd00      | new_username    | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
+| ltd01      | request_number  | 400       | [Change Username](#change-username-user) | Request number must be 0 for this request type                   |
+| ltd02      | request         | 412       | [Complete Password Change](#complete-password-change) | Password change is not complete                     |
 
 
 ### HTTP Status Codes
@@ -718,5 +613,4 @@ A HTTP response code is issued with every response. Where multiple possible resp
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | USER_EXISTS         | 409         | Username hash already exists in the system.                    |
 | PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
-| LOCKED              | 423         | Cannot execute at this time.                                   |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
