@@ -668,7 +668,7 @@ Example failure response:
 {
   "success": false,
   "errors": [
-    { "field": "request", "error_code": "rqs00", "error": "Incorrect parameters. Required: [username_hash, srp_salt, srp_verifier, master_key_salt]" }
+    { "field": "request", "error_code": "rqs00", "error": "Incorrect parameters. Required: [new_username, srp_salt, srp_verifier, master_key_salt]" }
   ]
 }
 ```
