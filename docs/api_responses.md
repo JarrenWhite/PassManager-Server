@@ -47,13 +47,11 @@ A brief introduction to the possible responses for all defined APIs.
 | username_id     | string   | success  | Public ID for the new user account         |
 | errors          | [error]  | failure  | json list of each error.                   |
 
-**Common Response Codes**
-| Response Code    | HTTP Status | Description                                      |
-|------------------|-------------|--------------------------------------------------|
-| SUCCESS          | 201         | Resource created.                                |
-| VALIDATION_ERROR | 400         | Request parameters are invalid or missing.       |
-| USER_EXISTS      | 409         | Username hash already exists in the system.      |
-| INTERNAL_ERROR   | 500         | Server encountered an unexpected error.          |
+**Success Response**
+201
+
+**Errors**
+rqs00, usr00, usr01, rps00, rpv00, mks00
 
 ---
 
@@ -659,7 +657,19 @@ A brief introduction to the possible responses for all defined APIs.
 ## Details
 
 ### Error Messages
-TODO
+
+Error messages are returned in the format:
+{"field": field_name, "error_code": error_code, "error": error_message}
+
+| Error Code | Field           | HTTP Code | Error Message                                          |
+|------------|-----------------|-----------|--------------------------------------------------------|
+| rqs00      | request         | 400       | Incorrect parameters. Required: []                     |
+| usr00      | username        | 400       | Username invalid                                       |
+| usr01      | username        | 409       | Username already exists                                |
+| rps00      | srp_salt        | 400       | SRP Salt invalid                                       |
+| rpv00      | srp_verifier    | 400       | SRP Verifier invalid                                   |
+| mks00      | master_key_salt | 400       | Master Key Salt invalid                                |
+
 
 ### HTTP Status Codes
 
