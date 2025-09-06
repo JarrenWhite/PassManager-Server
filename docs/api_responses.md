@@ -51,7 +51,7 @@ A brief introduction to the possible responses for all defined APIs.
 201
 
 **Errors**
-rqs00, usr00, usr01, rps00, rpv00, mks00
+rqs00, svr00, usr00, usr01, rps00, rpv00, mks00
 
 ---
 
@@ -664,6 +664,7 @@ Error messages are returned in the format:
 | Error Code | Field           | HTTP Code | Error Message                                          |
 |------------|-----------------|-----------|--------------------------------------------------------|
 | rqs00      | request         | 400       | Incorrect parameters. Required: []                     |
+| svr00      | server          | 500       | Server encountered an unexpected error                 |
 | usr00      | username        | 400       | Username invalid                                       |
 | usr01      | username        | 409       | Username already exists                                |
 | rps00      | srp_salt        | 400       | SRP Salt invalid                                       |
