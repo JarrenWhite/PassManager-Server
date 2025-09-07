@@ -21,12 +21,12 @@ Store main user information, including SRP authentication data, salts for encryp
 | **new_master_key_salt** | BLOB      | **nullable**                    |
 
 ### **Relationships**
-- **LoginSessions** → `LoginSessions.user_id` (one-to-many) cascading delete
+- **LoginSession** → `LoginSession.user_id` (one-to-many) cascading delete
 - **SecureData** → `SecureData.user_id` (one-to-many) cascading delete
 
 ### Column Descriptions
 **id:** Database ID for the entry
-**username:** Hash of the user's username
+**username_hash:** Hash of the user's username
 **srp_salt:** The salt used to create the verifier in SRP
 **srp_verifier:** The verifier used to create secure session keys using SRP
 **master_key_salt:** The salt used to create the master key
@@ -51,12 +51,12 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 | **id**              | BIGINT    | **Primary Key**, auto-increment                  |
 | **public_id**       | CHAR(36)  | **Indexed**                                      |
 | **ephemeral_b**     | BLOB      |                                                  |
-| **user_id**         | BIGINT    | **Foreign Key** → `Users.id`                     |
+| **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
 | **expires_at**      | TIMESTAMP | When the ephemeral value expires                 |
 | **password_change** | BOOL      | **nullable**                                     |
 
 ### **Relationships**
-- Belongs to **Users** → `user_id`
+- Belongs to **User** → `user_id`
 
 ### Column Descriptions
 **id:** Database ID for the entry
@@ -79,7 +79,7 @@ Tracks user authentication sessions, storing session keys and related data.
 |----------------------|-----------|-------------------------------------------|
 | **id**               | BIGINT    | **Primary Key**, auto-increment           |
 | **public_id**        | CHAR(36)  | **Unique**, **Indexed**                   |
-| **user_id**          | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
+| **user_id**          | BIGINT    | **Foreign Key** → `User.id`, **Indexed**  |
 | **session_key**      | BLOB      |                                           |
 | **request_count**    | INT       |                                           |
 | **maximum_requests** | INT       | **nullable**                              |
@@ -88,7 +88,7 @@ Tracks user authentication sessions, storing session keys and related data.
 | **password_change**  | BOOL      | **nullable**                              |
 
 ### **Relationships**
-- Belongs to **Users** → `user_id`
+- Belongs to **User** → `user_id`
 
 ### Column Descriptions
 **id:** Database ID for the entry
@@ -113,14 +113,14 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 |------------------------|-----------|-------------------------------------------|
 | **id**                 | BIGINT    | **Primary Key**, auto-increment           |
 | **public_id**          | CHAR(36)  | **Unique**, **Indexed**                   |
-| **user_id**            | BIGINT    | **Foreign Key** → `Users.id`, **Indexed** |
+| **user_id**            | BIGINT    | **Foreign Key** → `User.id`, **Indexed**  |
 | **entry_name**         | BLOB      |                                           |
 | **entry_data**         | BLOB      |                                           |
 | **new_entry_name**     | BLOB      | **nullable**                              |
 | **new_entry_data**     | BLOB      | **nullable**                              |
 
 ### **Relationships**
-- Belongs to **Users** → `user_id`
+- Belongs to **User** → `user_id`
 
 ### Column Descriptions
 **id:** Database ID for the entry

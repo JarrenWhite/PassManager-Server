@@ -23,9 +23,10 @@ This document defines the cryptographic standards and implementation requirement
 **Username:** Client must hash username before sending to server (never plaintext)
 
 ### Username Hashing Process
-1. Convert username to UTF-8 bytes
-2. Compute SHA-256 hash of UTF-8 bytes
-3. Encode result as hex string for transmission
+1. Normalise username using Unicode NFKC
+2. Convert normalised username to UTF-8 bytes
+3. Compute SHA-256 hash of UTF-8 bytes
+4. Encode result as hex string for transmission
 
 > **⚠️ CRITICAL:** Do not use a salt for the username's hash. This is used to identify the vault. This does mean that the username is less secure, and is more susceptible to rainbow attacks. This is seen as unavoidable without enforcing random login IDs.
 
@@ -144,7 +145,7 @@ const deriveMasterKey = async (password, salt) => {
 ### Algorithm & Parameters
 - **SRP Algorithm:** SRP-6a
 - **Hash Function:** SHA-256
-- **Safe Prime (N):** 4096
+- **Safe Prime (N):** RFC 5054 4096-bit group (Appendix A)
 - **Generator (g):** 5
 - **Salt Size:** 32 bytes (generated randomly per user, per password)
 - **Key Length:** 32 bytes (256 bits)
@@ -220,7 +221,7 @@ During user registration, the client must generate an SRP verifier:
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
-```[12 bytes: nonce][16 bytes: auth_tag][cyphertext...]```
+```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
 
 ### Password Names Encryption
 - **Content:** The name for the password entry.
@@ -228,7 +229,7 @@ During user registration, the client must generate an SRP verifier:
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
-```[12 bytes: nonce][16 bytes: auth_tag][cyphertext...]```
+```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
 
 ### Password Blob Encryption
 - **Content:** The data for the password entry.
@@ -236,7 +237,7 @@ During user registration, the client must generate an SRP verifier:
 - **Settings:** AES-256-GCM with 12-byte nonce, 16-byte auth tag
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
-```[12 bytes: nonce][16 bytes: auth_tag][cyphertext...]```
+```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
 
 > **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be correctly arranged before being sent to the server.
 
@@ -256,14 +257,14 @@ The encoding for the content data of each API request is specified in the API do
 The AAD data is to be encoded as follows:
 ```
 [4 bytes: request_number length][request_number bytes]      → Monotonic counter for this session (prevents replay attacks)
-[4 bytes: session_id length][session_id]                    → Unique public identifier for the active session
+[4 bytes: session_id length][session_id bytes]              → Unique public identifier for the active session
 ```
 
 ### API Responses
 The encoding for the content data of each API response is specified in the API documentation.
 The AAD data is to be encoded as follows:
 ```
-[4 bytes: session_id length][session_id]                    → Unique public identifier for the active session
+[4 bytes: session_id length][session_id bytes]              → Unique public identifier for the active session
 ```
 
 ### Password Entry Encoding

@@ -120,7 +120,7 @@ The system supports two distinct session types:
 - **Requirement:** Password change session
 - **Action:** Request and update each entry with new encryption
 - **Process:** 
-  - Request entry data: `POST /api/password/request`
+  - Request entry data: `POST /api/password/get`
   - Update entry encryption: `POST /api/password/update`
 - **Constraint:** Must process all entries before completion
 

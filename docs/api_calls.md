@@ -10,31 +10,31 @@ A brief introduction to the API, its purpose, and how to make API calls.
 1. [**Base URL**](#base-url)
 2. [**API Structure**](#api-structure)
 3. [**User**](#user)
-    1. [Register User](#register-user-post)
-    2. [Change Username](#change-username)
-    3. [Delete User](#delete-user)
-    4. [Health Check](#health-check)
+    1. [Register User](#register-user-user)
+    2. [Change Username](#change-username-user)
+    3. [Delete User](#delete-user-user)
+    4. [Health Check](#health-check-user)
 4. [**Password**](#password)
-    1. [Start Password Change](#start-password-change)
-    2. [Continue Password Change](#continue-password-change)
-    3. [Complete Password Change](#complete-password-change)
-    4. [Abort Password Change](#abort-password-change)
-    5. [Get Entry](#get-entry)
-    6. [Add New Encryption for Entry](#add-new-encryption-for-entry)
-    7. [Health Check](#health-check-1)
+    1. [Start Password Change](#start-password-change-password)
+    2. [Continue Password Change](#continue-password-change-password)
+    3. [Complete Password Change](#complete-password-change-password)
+    4. [Abort Password Change](#abort-password-change-password)
+    5. [Get Entry](#get-entry-password)
+    6. [Add New Encryption for Entry](#add-new-encryption-for-entry-password)
+    7. [Health Check](#health-check-password)
 5. [**Session**](#session)
-    1. [Start Auth](#start-auth)
-    2. [Complete Auth](#complete-auth)
-    3. [Delete Session](#delete-session)
-    4. [Clean Sessions](#clean-sessions)
-    5. [Health Check](#health-check-2)
+    1. [Start Auth](#start-auth-session)
+    2. [Complete Auth](#complete-auth-session)
+    3. [Delete Session](#delete-session-session)
+    4. [Clean Sessions](#clean-sessions-session)
+    5. [Health Check](#health-check-session)
 6. [**Data**](#data)
-    1. [Create Entry](#create-entry)
-    2. [Edit Entry](#edit-entry)
-    3. [Delete Entry](#delete-entry)
-    4. [Get Entry](#get-entry-1)
-    5. [Get List](#retrieve-list)
-    6. [Health Check](#health-check-3)
+    1. [Create Entry](#create-entry-data)
+    2. [Edit Entry](#edit-entry-data)
+    3. [Delete Entry](#delete-entry-data)
+    4. [Get Entry](#get-entry-data)
+    5. [Get List](#get-list-data)
+    6. [Health Check](#health-check-data)
 
 ---
 
@@ -78,7 +78,7 @@ Creates a new user account using a username hash, and the required security info
 
 > **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
 
-**[Response Format](api_responses.md#register-user)**
+**[Response Format](api_responses.md#register-user-user)**
 
 **Example Request**
 ```bash
@@ -122,7 +122,7 @@ Changes a user's username, from one username hash, to another username hash.
 
 > **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
 
-**[Response Format](api_responses.md#change-username)**
+**[Response Format](api_responses.md#change-username-user)**
 
 **Example Request**
 ```bash
@@ -163,7 +163,7 @@ Delete a given user, and all data associated with their account.
 
 > **Note:** The request number for this request type must be 0. This means a new session must be created for user deletion.
 
-**[Response Format](api_responses.md#delete-user)**
+**[Response Format](api_responses.md#delete-user-user)**
 
 **Example Request**
 ```bash
@@ -235,7 +235,7 @@ Begins the process of a password change, returning the user's validation details
 
 > **Note:** An existing auth session is required in order to start a password change auth session.
 
-**[Response Format](api_responses.md#start-password-change)**
+**[Response Format](api_responses.md#start-password-change-password)**
 
 **Example Request**
 ```bash
@@ -284,7 +284,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 > **Note:** Password changing sessions have a limited number of requests based on the user's number of password entries. (Enough requests to read and write to each password once, with an additional request to complete the password change.)
 > **Note:** A user can only have one active password changing session.
 
-**[Response Format](api_responses.md#continue-password-change)**
+**[Response Format](api_responses.md#continue-password-change-password)**
 
 **Example Request**
 ```bash
@@ -323,7 +323,7 @@ Complete a password change. If all entries have been completed, the change is co
 [4 bytes: username length][username bytes]
 ```
 
-**[Response Format](api_responses.md#complete-password-change)**
+**[Response Format](api_responses.md#complete-password-change-password)**
 
 **Example Request**
 ```bash
@@ -364,7 +364,7 @@ Abort a password change that is in progress. Deletes all details about the new p
 
 > **Note:** This can be done on the password change session, but does not necessarily need to be.
 
-**[Response Format](api_responses.md#abort-password-change)**
+**[Response Format](api_responses.md#abort-password-change-password)**
 
 **Example Request**
 ```bash
@@ -405,7 +405,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**[Response Format](api_responses.md#get-entry)**
+**[Response Format](api_responses.md#get-entry-password)**
 
 **Example Request**
 ```bash
@@ -453,7 +453,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 > **⚠️ CRITICAL:** The newly encrypted entry name and data must be encrypted using the new master key.
 > **⚠️ CRITICAL:** A new nonce must be generated for each encryption. The old nonce must not be reused.
 
-**[Response Format](api_responses.md#add-new-encryption-for-entry)**
+**[Response Format](api_responses.md#add-new-encryption-for-entry-password)**
 
 **Example Request**
 ```bash
@@ -505,7 +505,7 @@ Request the details to create a new login session, including SRP details, master
 |-----------------|--------|----------|--------------------------------------------------|
 | username        | string | Yes      | Hash of the user's username.                     |
 
-**[Response Format](api_responses.md#start-auth)**
+**[Response Format](api_responses.md#start-auth-session)**
 
 **Example Request**
 ```bash
@@ -538,9 +538,9 @@ Completes the SRP authentication process by providing client ephemeral value and
 > **Note:** If left blank, maximum requests will default to 100, and expiry time will default to 3600.
 > **Note:** Maximum requests can be set to unlimited using a value of -1.
 > **Note:** Expiry time can be set to unlimited using a value of -1.
-> **⚠️ CRITICAL:** Sessions with unlimited requests and time will never naturally expire, and must be manually purged using the [Delete Session](#delete-session) or [Clean Sessions](#clean-sessions) APIs.
+> **⚠️ CRITICAL:** Sessions with unlimited requests and time will never naturally expire, and must be manually purged using the [Delete Session](#delete-session-session) or [Clean Sessions](#clean-sessions-session) APIs.
 
-**[Response Format](api_responses.md#complete-auth)**
+**[Response Format](api_responses.md#complete-auth-session)**
 
 **Example Request**
 ```bash
@@ -548,6 +548,7 @@ curl -X POST https://[API_BASE_URL]/api/session/auth \
     -H "Content-Type: application/json" \
     -d '{
         "username": "123hashedUsername",
+        "auth_id": "abc123authId",
         "eph_val_a": "base64ClientEphemeral",
         "proof_val_m1": "base64ClientProof",
         "maximum_requests": 50,
@@ -586,7 +587,7 @@ Delete the given auth session from the database, preventing further use.
 > **Note:** The session being deleted does not need to be the one in use.
 > **Note:** Deleting a password change session this way will terminate the password change.
 
-**[Response Format](api_responses.md#delete-session)**
+**[Response Format](api_responses.md#delete-session-session)**
 
 **Example Request**
 ```bash
@@ -606,7 +607,7 @@ curl -X POST https://[API_BASE_URL]/api/session/delete \
 `POST /api/session/clean`
 
 **Description**
-Delete all existing auth sessions from the database, preventing further use.
+Delete all of the user's existing auth sessions from the database, preventing further use.
 
 **Parameters**
 | Field           | Type   | Required | Description                                                         |
@@ -628,7 +629,7 @@ Delete all existing auth sessions from the database, preventing further use.
 > **Note:** The session being used to auth this request will also be deleted.
 > **Note:** Deleting a password change session this way will terminate the password change.
 
-**[Response Format](api_responses.md#clean-sessions)**
+**[Response Format](api_responses.md#clean-sessions-session)**
 
 **Example Request**
 ```bash
@@ -694,7 +695,7 @@ Create a new password entry with encrypted name and data, and provide the unique
 [4 bytes: entry_data length][entry_data bytes]
 ```
 
-**[Response Format](api_responses.md#create-entry)**
+**[Response Format](api_responses.md#create-entry-data)**
 
 **Example Request**
 ```bash
@@ -740,8 +741,11 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 ```
 
 > **⚠️ CRITICAL:** A new nonce must be generated for each new encryption. The old nonce must not be reused.
+> **Note:** If `entry_name` is omitted from the payload, the entry name is left unchanged.
+> **Note:** If `entry_data` is omitted from the payload, the entry data is left unchanged.
+> **Note:** At least one of `entry_name` or `entry_data` must be provided; otherwise the request is invalid.
 
-**[Response Format](api_responses.md#edit-entry)**
+**[Response Format](api_responses.md#edit-entry-data)**
 
 **Example Request**
 ```bash
@@ -784,7 +788,7 @@ Delete all stored data for a given data entry.
 
 > **Note:** A deleted entry is deleted fully. It cannot be recovered.
 
-**[Response Format](api_responses.md#delete-entry)**
+**[Response Format](api_responses.md#delete-entry-data)**
 
 **Example Request**
 ```bash
@@ -825,7 +829,7 @@ Retrieve all data for a given password entry.
 [4 bytes: entry_public_id length][entry_public_id bytes]
 ```
 
-**[Response Format](api_responses.md#get-entry-1)**
+**[Response Format](api_responses.md#get-entry-data)**
 
 **Example Request**
 ```bash
@@ -864,7 +868,7 @@ Retrieve a list of the public IDs of all password entries, along with their name
 [4 bytes: username length][username bytes]
 ```
 
-**[Response Format](api_responses.md#get-list)**
+**[Response Format](api_responses.md#get-list-data)**
 
 **Example Request**
 ```bash

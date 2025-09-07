@@ -5,27 +5,27 @@ A brief introduction to the possible responses for all defined APIs.
 
 ## Overview
 1. [**User**](#user)
-    1. [Register User](#register-user-post)
-    2. [Change Username](#change-username)
-    3. [Delete User](#delete-user)
+    1. [Register User](#register-user-user)
+    2. [Change Username](#change-username-user)
+    3. [Delete User](#delete-user-user)
 2. [**Password**](#password)
-    1. [Start Password Change](#start-password-change)
-    2. [Continue Password Change](#continue-password-change)
-    3. [Complete Password Change](#complete-password-change)
-    4. [Abort Password Change](#abort-password-change)
-    5. [Get Entry](#get-entry)
-    6. [Add New Encryption for Entry](#add-new-encryption-for-entry)
+    1. [Start Password Change](#start-password-change-password)
+    2. [Continue Password Change](#continue-password-change-password)
+    3. [Complete Password Change](#complete-password-change-password)
+    4. [Abort Password Change](#abort-password-change-password)
+    5. [Get Entry](#get-entry-password)
+    6. [Add New Encryption for Entry](#add-new-encryption-for-entry-password)
 3. [**Session**](#session)
-    1. [Start Auth](#start-auth)
-    2. [Complete Auth](#complete-auth)
-    3. [Delete Session](#delete-session)
-    4. [Clean Sessions](#clean-sessions)
+    1. [Start Auth](#start-auth-session)
+    2. [Complete Auth](#complete-auth-session)
+    3. [Delete Session](#delete-session-session)
+    4. [Clean Sessions](#clean-sessions-session)
 4. [**Data**](#data)
-    1. [Create Entry](#create-entry)
-    2. [Edit Entry](#edit-entry)
-    3. [Delete Entry](#delete-entry)
-    4. [Get Entry](#get-entry-1)
-    5. [Get List](#get-list)
+    1. [Create Entry](#create-entry-data)
+    2. [Edit Entry](#edit-entry-data)
+    3. [Delete Entry](#delete-entry-data)
+    4. [Get Entry](#get-entry-data)
+    5. [Get List](#get-list-data)
 5. [**Errors**](#errors)
     1. [Error Messages](#error-messages)
     2. [Request Errors](#request-errors)
@@ -40,14 +40,13 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Register User (User)
 
-**[Request Format](api_calls.md#register-user)**
+**[Request Format](api_calls.md#register-user-user)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                |
 |-----------------|----------|----------|--------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful. |
 | username_hash   | string   | success  | Hash of the username that was registered.  |
-| username_id     | string   | success  | Public ID for the new user account         |
 | errors          | [error]  | failure  | json list of each error.                   |
 
 **Success Response**
@@ -57,7 +56,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Change Username (User)
 
-**[Request Format](api_calls.md#change-username)**
+**[Request Format](api_calls.md#change-username-user)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -84,7 +83,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Delete User (User)
 
-**[Request Format](api_calls.md#delete-user)**
+**[Request Format](api_calls.md#delete-user-user)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -114,7 +113,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Start Password Change (Password)
 
-**[Request Format](api_calls.md#start-password-change)**
+**[Request Format](api_calls.md#start-password-change-password)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -147,7 +146,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Continue Password Change (Password)
 
-**[Request Format](api_calls.md#continue-password-change)**
+**[Request Format](api_calls.md#continue-password-change-password)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -164,7 +163,6 @@ A brief introduction to the possible responses for all defined APIs.
 | session_id      | string   | success  | The public ID of the created password session.               |
 | server_proof_m2 | string   | success  | The server's proof of authentication.                        |
 | entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
-| entry_names     | [string] | success  | The name payload for all stored data entries.                |
 
 **Encryption Encoding**
 ```
@@ -172,7 +170,6 @@ A brief introduction to the possible responses for all defined APIs.
 [4 bytes: session_id length][session_id bytes]
 [4 bytes: server_proof_m2 length][server_proof_m2 bytes]
 [4 bytes: entry_ids length][entry_ids bytes]
-[4 bytes: entry_names length][entry_names bytes]
 ```
 
 **Success Response**
@@ -182,7 +179,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Complete Password Change (Password)
 
-**[Request Format](api_calls.md#complete-password-change)**
+**[Request Format](api_calls.md#complete-password-change-password)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -209,7 +206,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Abort Password Change (Password)
 
-**[Request Format](api_calls.md#abort-password-change)**
+**[Request Format](api_calls.md#abort-password-change-password)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -236,7 +233,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Get Entry (Password)
 
-**[Request Format](api_calls.md#get-entry)**
+**[Request Format](api_calls.md#get-entry-password)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -251,8 +248,8 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username        | string   | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | string   | Yes      | The new encrypted entry name payload.                        |
-| entry_data      | string   | Yes      | The new encrypted entry data payload.                        |
+| entry_name      | string   | Yes      | Encrypted entry name payload.                                |
+| entry_data      | string   | Yes      | Encrypted entry data payload.                                |
 
 **Encryption Encoding**
 ```
@@ -269,7 +266,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Add New Encryption for Entry (Password)
 
-**[Request Format](api_calls.md#add-new-encryption-for-entry)**
+**[Request Format](api_calls.md#add-new-encryption-for-entry-password)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -301,7 +298,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Start Auth (Session)
 
-**[Request Format](api_calls.md#start-auth)**
+**[Request Format](api_calls.md#start-auth-session)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                                  |
@@ -320,7 +317,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Complete Auth (Session)
 
-**[Request Format](api_calls.md#complete-auth)**
+**[Request Format](api_calls.md#complete-auth-session)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                                  |
@@ -337,7 +334,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Delete Session (Session)
 
-**[Request Format](api_calls.md#delete-session)**
+**[Request Format](api_calls.md#delete-session-session)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -364,7 +361,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Clean Sessions (Session)
 
-**[Request Format](api_calls.md#clean-sessions)**
+**[Request Format](api_calls.md#clean-sessions-session)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -394,7 +391,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Create Entry (Data)
 
-**[Request Format](api_calls.md#create-entry)**
+**[Request Format](api_calls.md#create-entry-data)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -423,7 +420,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Edit Entry (Data)
 
-**[Request Format](api_calls.md#edit-entry)**
+**[Request Format](api_calls.md#edit-entry-data)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -452,7 +449,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Delete Entry (Data)
 
-**[Request Format](api_calls.md#delete-entry)**
+**[Request Format](api_calls.md#delete-entry-data)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -481,7 +478,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Get Entry (Data)
 
-**[Request Format](api_calls.md#get-entry-1)**
+**[Request Format](api_calls.md#get-entry-data)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -496,8 +493,8 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username        | string   | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | string   | Yes      | The new encrypted entry name payload.                        |
-| entry_data      | string   | Yes      | The new encrypted entry data payload.                        |
+| entry_name      | string   | Yes      | Encrypted entry name payload.                                |
+| entry_data      | string   | Yes      | Encrypted entry data payload.                                |
 
 **Encryption Encoding**
 ```
@@ -514,7 +511,7 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Get List (Data)
 
-**[Request Format](api_calls.md#get-list)**
+**[Request Format](api_calls.md#get-list-data)**
 
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
@@ -528,7 +525,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username        | string   | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 | entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
 | entry_names     | [string] | success  | The name payload for all stored data entries.                |
 
@@ -583,7 +579,9 @@ These errors can be returned to any possible request.
 | rqs00      | request         | 400       | Incorrect parameters. Required: [<fields>]                   |
 | rqs01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
 | rqs02      | request         | 403       | Password change in progress                                  |
+| rqs03      | request         | 429       | Too many requests                                            |
 | svr00      | server          | 500       | Server encountered an unexpected error                       |
+| svr01      | server          | 503       | Temporary outage/maintenance                                 |
 
 
 ### General Field Errors
@@ -603,7 +601,7 @@ These errors are specific to certain APIs. Only those APIs can return these erro
 |------------|-----------------|-----------|-----|--------------------------------------------------------------|
 | ltd00      | new_username    | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
 | ltd01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
-| ltd02      | request         | 412       | [Complete Password Change](#complete-password-change) | Password change is not complete                     |
+| ltd02      | request         | 412       | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
 
 
 ### HTTP Status Codes
@@ -620,4 +618,6 @@ A HTTP response code is issued with every response. Where multiple possible resp
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
 | USER_EXISTS         | 409         | Username hash already exists in the system.                    |
 | PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
+| RATE_LIMIT_EXCEEDED | 429         | Too many requests.                                             |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
+| SERVICE_UNAVAILABLE | 503         | Temporary outage or maintenance.                               |
