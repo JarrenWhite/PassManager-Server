@@ -13,7 +13,7 @@ class TestDatabaseUserModels():
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
-        self.engine = create_engine("sqlite://:memory:")
+        self.engine = create_engine("sqlite:///:memory:")
         Base.metadata.create_all(self.engine)
 
         Session = sessionmaker(bind=self.engine)
@@ -38,7 +38,7 @@ class TestDatabaseUserModels():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == user.username_hash
+        assert db_user.username_hash == "fake_hash"
 
 
 if __name__ == '__main__':
