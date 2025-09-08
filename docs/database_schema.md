@@ -2,6 +2,12 @@
 
 This document defines the database schema used within the password manager, as well as giving details about the various stored items.
 
+## Overview
+1. [User](#user)
+2. [AuthEphemeral](#auth-ephemeral)
+3. [LoginSession](#login-session)
+4. [SecureData](#secure-data)
+
 ## User
 
 ### Purpose
