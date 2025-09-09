@@ -26,7 +26,7 @@ class TestDatabaseUserModels():
         Base.metadata.drop_all(self.engine)
 
     def test_can_create_user(self):
-        """Should be able to create new user"""
+        """Should be able to create new user with minimal fields"""
         user = User(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
@@ -39,6 +39,26 @@ class TestDatabaseUserModels():
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.username_hash == "fake_hash"
+    
+    def test_can_use_optional_fields(self):
+        """Should be able to create new user with optional fields"""
+
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            new_srp_salt="new_srp_salt",
+            new_srp_verifier="new_srp_verifier",
+            new_master_key_salt="new_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
 
 
 if __name__ == '__main__':
