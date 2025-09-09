@@ -2,7 +2,7 @@ import os
 import sys
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, clear_mappers
+from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -22,7 +22,6 @@ class TestDatabaseUserModels():
         yield
 
         self.session.close()
-        clear_mappers()
         Base.metadata.drop_all(self.engine)
 
     def test_can_create_user(self):
