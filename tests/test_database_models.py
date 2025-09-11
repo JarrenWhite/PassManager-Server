@@ -38,7 +38,7 @@ class TestDatabaseUserModels():
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.username_hash == "fake_hash"
-    
+
     def test_can_use_optional_fields(self):
         """Should be able to create new user with optional fields"""
 
@@ -57,7 +57,7 @@ class TestDatabaseUserModels():
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.username_hash == "fake_hash"
-    
+
     def test_username_uniqueness(self):
         """Should enforce unique usernames"""
         user = User(
@@ -84,7 +84,7 @@ class TestDatabaseUserModels():
             error_message = str(e).lower()
             assert ("unique constraint failed" in error_message or "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
             self.session.rollback()
-        
+
         users = self.session.query(User).filter_by(username_hash="fake_hash").all()
         assert len(users) == 1
         assert users[0].id == user.id

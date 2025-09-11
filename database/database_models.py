@@ -8,7 +8,7 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username_hash: Mapped[str] = mapped_column(String)
+    username_hash: Mapped[str] = mapped_column(String, unique=True)
 
     srp_salt: Mapped[str] = mapped_column(String)
     srp_verifier: Mapped[str] = mapped_column(String)
