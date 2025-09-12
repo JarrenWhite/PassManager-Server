@@ -2,6 +2,12 @@
 
 This document defines the database schema used within the password manager, as well as giving details about the various stored items.
 
+## Overview
+1. [User](#user)
+2. [AuthEphemeral](#auth-ephemeral)
+3. [LoginSession](#login-session)
+4. [SecureData](#secure-data)
+
 ## User
 
 ### Purpose
@@ -11,7 +17,7 @@ Store main user information, including SRP authentication data, salts for encryp
 
 | Column                  | Type      | Constraints                     |
 |-------------------------|-----------|---------------------------------|
-| **id**                  | BIGINT    | **Primary Key**, auto-increment |
+| **id**                  | BIGINT    | **Primary Key**                 |
 | **username_hash**       | BLOB      | **Unique**, **Indexed**         |
 | **srp_salt**            | BLOB      |                                 |
 | **srp_verifier**        | BLOB      |                                 |
