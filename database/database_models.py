@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped, mapped_column
@@ -14,6 +16,6 @@ class User(Base):
     srp_verifier: Mapped[str] = mapped_column(String)
     master_key_salt: Mapped[str] = mapped_column(String)
 
-    new_srp_salt: Mapped[str] = mapped_column(String, nullable=True)
-    new_srp_verifier: Mapped[str] = mapped_column(String, nullable=True)
-    new_master_key_salt: Mapped[str] = mapped_column(String, nullable=True)
+    new_srp_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    new_master_key_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)

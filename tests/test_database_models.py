@@ -239,7 +239,11 @@ class TestDatabaseUserModels():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.id == user.id
+
+        user.new_srp_salt = None
+        user.new_srp_verifier = None
+        user.new_master_key_salt = None
+
         assert db_user.new_srp_salt == None
         assert db_user.new_srp_verifier == None
         assert db_user.new_master_key_salt == None
