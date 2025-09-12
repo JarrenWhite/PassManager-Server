@@ -17,7 +17,7 @@ Store main user information, including SRP authentication data, salts for encryp
 
 | Column                  | Type      | Constraints                     |
 |-------------------------|-----------|---------------------------------|
-| **id**                  | BIGINT    | **Primary Key**, auto-increment |
+| **id**                  | BIGINT    | **Primary Key**                 |
 | **username_hash**       | BLOB      | **Unique**, **Indexed**         |
 | **srp_salt**            | BLOB      |                                 |
 | **srp_verifier**        | BLOB      |                                 |
