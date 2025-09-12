@@ -376,6 +376,21 @@ class TestDatabaseAuthEphemeralModels():
         assert db_ephemeral is not None
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
 
+    def test_can_use_optional_fields(self):
+        """Should be able to create new AuthEphemeral with optional fields"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            ephemeral_b="fake_ephemeral_bytes",
+            user_id="fake_user_id",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
 
 
 if __name__ == '__main__':
