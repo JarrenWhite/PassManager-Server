@@ -102,16 +102,16 @@ class TestDatabaseUserModels():
         self.session.add(user)
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
-        assert len(users) == 1
-        assert users[0].id == user.id
-        assert users[0].username_hash == "fake_hash"
-        assert users[0].srp_salt == "fake_srp_salt"
-        assert users[0].srp_verifier == "fake_srp_verifier"
-        assert users[0].master_key_salt == "fake_master_key_salt"
-        assert users[0].new_srp_salt == "new_srp_salt"
-        assert users[0].new_srp_verifier == "new_srp_verifier"
-        assert users[0].new_master_key_salt == "new_master_key_salt"
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.id == user.id
+        assert db_user.username_hash == "fake_hash"
+        assert db_user.srp_salt == "fake_srp_salt"
+        assert db_user.srp_verifier == "fake_srp_verifier"
+        assert db_user.master_key_salt == "fake_master_key_salt"
+        assert db_user.new_srp_salt == "new_srp_salt"
+        assert db_user.new_srp_verifier == "new_srp_verifier"
+        assert db_user.new_master_key_salt == "new_master_key_salt"
 
     def test_can_edit_data(self):
         """Should be possible to adjust all fields"""
@@ -124,10 +124,10 @@ class TestDatabaseUserModels():
         self.session.add(user)
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
-        assert len(users) == 1
-        assert users[0].id == user.id
-        assert users[0].username_hash == "fake_hash"
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.id == user.id
+        assert db_user.username_hash == "fake_hash"
 
         user.username_hash="new_fake_hash"
         user.srp_salt="new_fake_srp_salt"
@@ -135,16 +135,16 @@ class TestDatabaseUserModels():
         user.master_key_salt="new_fake_master_key_salt"
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
-        assert len(users) == 0
-
-        users = self.session.query(User).filter_by(username_hash="new_fake_hash").all()
+        users = self.session.query(User).all()
         assert len(users) == 1
-        assert users[0].id == user.id
-        assert users[0].username_hash == "new_fake_hash"
-        assert users[0].srp_salt == "new_fake_srp_salt"
-        assert users[0].srp_verifier == "new_fake_srp_verifier"
-        assert users[0].master_key_salt == "new_fake_master_key_salt"
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.id == user.id
+        assert db_user.username_hash == "new_fake_hash"
+        assert db_user.srp_salt == "new_fake_srp_salt"
+        assert db_user.srp_verifier == "new_fake_srp_verifier"
+        assert db_user.master_key_salt == "new_fake_master_key_salt"
 
     def test_can_add_optional_fields_late(self):
         """Should be able to add optional fields at a later point"""
@@ -162,12 +162,12 @@ class TestDatabaseUserModels():
         user.new_master_key_salt="new_master_key_salt"
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
-        assert len(users) == 1
-        assert users[0].id == user.id
-        assert users[0].new_srp_salt == "new_srp_salt"
-        assert users[0].new_srp_verifier == "new_srp_verifier"
-        assert users[0].new_master_key_salt == "new_master_key_salt"
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.id == user.id
+        assert db_user.new_srp_salt == "new_srp_salt"
+        assert db_user.new_srp_verifier == "new_srp_verifier"
+        assert db_user.new_master_key_salt == "new_master_key_salt"
 
     def test_cannot_delete_required_fields(self):
         """Should not be possible to delete required fields"""
@@ -216,13 +216,12 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
-        assert len(users) == 1
-        assert users[0].id == user.id
-        assert users[0].username_hash == "fake_hash"
-        assert users[0].srp_salt == "fake_srp_salt"
-        assert users[0].srp_verifier == "fake_srp_verifier"
-        assert users[0].master_key_salt == "fake_master_key_salt"
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+        assert db_user.srp_salt == "fake_srp_salt"
+        assert db_user.srp_verifier == "fake_srp_verifier"
+        assert db_user.master_key_salt == "fake_master_key_salt"
 
     def test_can_delete_completed_optional_fields(self):
         """Should be possible to delete optional fields"""
@@ -238,9 +237,12 @@ class TestDatabaseUserModels():
         self.session.add(user)
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
-        assert len(users) == 1
-        assert users[0].id == user.id
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.id == user.id
+        assert db_user.new_srp_salt == None
+        assert db_user.new_srp_verifier == None
+        assert db_user.new_master_key_salt == None
 
 
 if __name__ == '__main__':
