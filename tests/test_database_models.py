@@ -180,7 +180,7 @@ class TestDatabaseUserModels():
         self.session.add(user)
         self.session.commit()
 
-        user.username_hash=None
+        user.username_hash=None # type: ignore
         try:
             self.session.commit()
             raise AssertionError("Expected not null constraint violation but no exception was raised")
@@ -189,7 +189,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        user.srp_salt=None
+        user.srp_salt=None # type: ignore
         try:
             self.session.commit()
             raise AssertionError("Expected not null constraint violation but no exception was raised")
@@ -198,7 +198,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        user.srp_verifier=None
+        user.srp_verifier=None # type: ignore
         try:
             self.session.commit()
             raise AssertionError("Expected not null constraint violation but no exception was raised")
@@ -207,7 +207,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        user.master_key_salt=None
+        user.master_key_salt=None # type: ignore
         try:
             self.session.commit()
             raise AssertionError("Expected not null constraint violation but no exception was raised")
