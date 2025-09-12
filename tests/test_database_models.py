@@ -1,6 +1,8 @@
 import os
 import sys
 import pytest
+from datetime import datetime, timedelta
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -341,6 +343,39 @@ class TestDatabaseUserModels():
 
         users = self.session.query(User).filter_by(username_hash="fake_hash").all()
         assert len(users) == 0
+
+
+class TestDatabaseAuthEphemeralModels():
+    """Test cases for the Auth Ephemeral database model"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+
+    def test_can_create_ephemeral(self):
+        """Should be able to create AuthEphemeral with minimal fields"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            ephemeral_b="fake_ephemeral_bytes",
+            user_id="fake_user_id",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+
 
 
 if __name__ == '__main__':
