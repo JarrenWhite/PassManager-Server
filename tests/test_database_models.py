@@ -39,6 +39,80 @@ class TestDatabaseUserModels():
         assert db_user is not None
         assert db_user.username_hash == "fake_hash"
 
+    def test_all_required_fields_are_required(self):
+        """Should require all fields in order to create object"""
+        user = User(
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        assert len(users) == 0
+
+        user = User(
+            username_hash="fake_hash",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        assert len(users) == 0
+
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        assert len(users) == 0
+
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+        )
+        self.session.add(user)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        assert len(users) == 0
+
     def test_can_use_optional_fields(self):
         """Should be able to create new user with optional fields"""
         user = User(
@@ -135,8 +209,8 @@ class TestDatabaseUserModels():
         user.master_key_salt="new_fake_master_key_salt"
         self.session.commit()
 
-        users = self.session.query(User).all()
-        assert len(users) == 1
+        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        assert len(users) == 0
 
         db_user = self.session.query(User).first()
         assert db_user is not None
@@ -247,6 +321,26 @@ class TestDatabaseUserModels():
         assert db_user.new_srp_salt == None
         assert db_user.new_srp_verifier == None
         assert db_user.new_master_key_salt == None
+
+    def test_can_delete_entry(self):
+        """Should be possible to delete entry"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+
+        self.session.delete(user)
+        self.session.commit()
+
+        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        assert len(users) == 0
 
 
 if __name__ == '__main__':
