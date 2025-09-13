@@ -447,7 +447,7 @@ class TestDatabaseAuthEphemeralModels():
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
 
     def test_public_id_created(self):
-        """Should create a public ID"""
+        """Should create a public ID of length 32"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id="fake_user_id",
@@ -460,6 +460,7 @@ class TestDatabaseAuthEphemeralModels():
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
         assert db_ephemeral.public_id is not None
+        assert len(db_ephemeral.public_id) == 32
 
     def test_all_fields_correct(self):
         """Should store all fields correctly"""

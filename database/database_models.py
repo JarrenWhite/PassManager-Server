@@ -26,7 +26,7 @@ class AuthEphemeral(Base):
     __tablename__ = "auth"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    public_id: Mapped[int] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
+    public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(Integer)
 
     ephemeral_b: Mapped[str] = mapped_column(String)
