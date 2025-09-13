@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 from datetime import datetime
 
@@ -25,9 +26,10 @@ class AuthEphemeral(Base):
     __tablename__ = "auth"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[int] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(Integer)
 
     ephemeral_b: Mapped[str] = mapped_column(String)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
 
-    password_change: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
