@@ -1,12 +1,14 @@
 import os
 import sys
 import pytest
+from datetime import datetime, timedelta
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database.database_models import Base, User
+from database.database_models import Base, User, AuthEphemeral
 
 class TestDatabaseUserModels():
     """Test cases for the User database model"""
@@ -56,7 +58,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).all()
         assert len(users) == 0
 
         user = User(
@@ -74,7 +76,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).all()
         assert len(users) == 0
 
         user = User(
@@ -92,7 +94,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).all()
         assert len(users) == 0
 
         user = User(
@@ -110,7 +112,7 @@ class TestDatabaseUserModels():
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).all()
         assert len(users) == 0
 
     def test_can_use_optional_fields(self):
@@ -158,7 +160,7 @@ class TestDatabaseUserModels():
             assert ("unique constraint failed" in error_message or "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
             self.session.rollback()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).all()
         assert len(users) == 1
         assert users[0].id == user.id
 
@@ -339,7 +341,163 @@ class TestDatabaseUserModels():
         self.session.delete(user)
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).all()
+        assert len(users) == 0
+
+
+class TestDatabaseAuthEphemeralModels():
+    """Test cases for the Auth Ephemeral database model"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+
+    def test_can_create_ephemeral(self):
+        """Should be able to create AuthEphemeral with minimal fields"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+
+    def test_all_required_fields_are_required(self):
+        """Should require all fields in order to create object"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+        ephemeral = AuthEphemeral(
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+        ephemeral = AuthEphemeral(
+            ephemeral_b="fake_ephemeral_bytes",
+            user_id="fake_user_id",
+        )
+        self.session.add(ephemeral)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+    def test_can_use_optional_fields(self):
+        """Should be able to create new AuthEphemeral with optional fields"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+
+    def test_public_id_created(self):
+        """Should create a public ID of length 32"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.public_id is not None
+        assert len(db_ephemeral.public_id) == 32
+
+    def test_all_fields_correct(self):
+        """Should store all fields correctly"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+        assert db_ephemeral.user_id == "fake_user_id"
+        assert db_ephemeral.expires_at == expiry
+        assert db_ephemeral.public_id == ephemeral.public_id
+        assert db_ephemeral.password_change == True
+
+    def test_can_delete_entry(self):
+        """Should be possible to delete entry"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        self.session.delete(ephemeral)
+        self.session.commit()
+
+        users = self.session.query(AuthEphemeral).all()
         assert len(users) == 0
 
 
