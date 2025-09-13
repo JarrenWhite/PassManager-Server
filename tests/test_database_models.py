@@ -446,6 +446,21 @@ class TestDatabaseAuthEphemeralModels():
         assert db_ephemeral is not None
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
 
+    def test_public_id_created(self):
+        """Should create a public ID"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id="fake_user_id",
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.public_id is not None
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
