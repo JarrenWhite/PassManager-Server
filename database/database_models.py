@@ -33,3 +33,11 @@ class AuthEphemeral(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime)
 
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+
+class LoginSession(Base):
+    __tablename__ = "login"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer)
+
+    session_key: Mapped[str] = mapped_column(String)

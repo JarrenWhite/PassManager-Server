@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database.database_models import Base, User, AuthEphemeral
+from database.database_models import Base, User, AuthEphemeral, LoginSession
 
 class TestDatabaseUserModels():
     """Test cases for the User database model"""
@@ -529,6 +529,37 @@ class TestLoginSessionModels():
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
         assert db_login.session_key == "fake_session_key"
+
+    def test_all_required_fields_are_required(self):
+        """Should require all fields in order to create object"""
+        login = LoginSession(
+            session_key="fake_session_key"
+        )
+        self.session.add(login)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        login = LoginSession(
+            user_id=123456
+        )
+        self.session.add(login)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        ephemerals = self.session.query(LoginSession).all()
+        assert len(ephemerals) == 0
 
 
 if __name__ == '__main__':
