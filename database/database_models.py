@@ -41,4 +41,5 @@ class LoginSession(Base):
     user_id: Mapped[int] = mapped_column(Integer)
 
     session_key: Mapped[str] = mapped_column(String)
+    request_count: Mapped[int] = mapped_column(Integer)
     last_used: Mapped[datetime] = mapped_column(DateTime)

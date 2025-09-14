@@ -523,6 +523,7 @@ class TestLoginSessionModels():
         login = LoginSession(
             user_id=123456,
             session_key="fake_session_key",
+            request_count=0,
             last_used=last_used
         )
         self.session.add(login)
@@ -536,6 +537,37 @@ class TestLoginSessionModels():
         """Should require all fields in order to create object"""
         last_used = datetime.now()
         login = LoginSession(
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        login = LoginSession(
+            user_id=123456,
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        login = LoginSession(
+            user_id=123456,
             session_key="fake_session_key",
             last_used=last_used
         )
@@ -551,21 +583,8 @@ class TestLoginSessionModels():
 
         login = LoginSession(
             user_id=123456,
-            last_used=last_used
-        )
-        self.session.add(login)
-
-        try:
-            self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
-
-        login = LoginSession(
-            user_id=123456,
-            session_key="fake_session_key"
+            session_key="fake_session_key",
+            request_count=0
         )
         self.session.add(login)
 
