@@ -365,7 +365,7 @@ class TestDatabaseAuthEphemeralModels():
         """Should be able to create AuthEphemeral with minimal fields"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            user_id="fake_user_id",
+            user_id=123456,
             ephemeral_b="fake_ephemeral_bytes",
             expires_at=expiry
         )
@@ -380,7 +380,7 @@ class TestDatabaseAuthEphemeralModels():
         """Should require all fields in order to create object"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            user_id="fake_user_id",
+            user_id=123456,
             expires_at=expiry
         )
         self.session.add(ephemeral)
@@ -415,7 +415,7 @@ class TestDatabaseAuthEphemeralModels():
 
         ephemeral = AuthEphemeral(
             ephemeral_b="fake_ephemeral_bytes",
-            user_id="fake_user_id",
+            user_id=123456,
         )
         self.session.add(ephemeral)
 
@@ -434,7 +434,7 @@ class TestDatabaseAuthEphemeralModels():
         """Should be able to create new AuthEphemeral with optional fields"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            user_id="fake_user_id",
+            user_id=123456,
             ephemeral_b="fake_ephemeral_bytes",
             expires_at=expiry,
             password_change=True
@@ -450,7 +450,7 @@ class TestDatabaseAuthEphemeralModels():
         """Should create a public ID of length 32"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            user_id="fake_user_id",
+            user_id=123456,
             ephemeral_b="fake_ephemeral_bytes",
             expires_at=expiry
         )
@@ -466,7 +466,7 @@ class TestDatabaseAuthEphemeralModels():
         """Should store all fields correctly"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            user_id="fake_user_id",
+            user_id=123456,
             ephemeral_b="fake_ephemeral_bytes",
             expires_at=expiry,
             password_change=True
@@ -477,7 +477,7 @@ class TestDatabaseAuthEphemeralModels():
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
-        assert db_ephemeral.user_id == "fake_user_id"
+        assert db_ephemeral.user_id == 123456
         assert db_ephemeral.expires_at == expiry
         assert db_ephemeral.public_id == ephemeral.public_id
         assert db_ephemeral.password_change == True
@@ -486,7 +486,7 @@ class TestDatabaseAuthEphemeralModels():
         """Should be possible to delete entry"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            user_id="fake_user_id",
+            user_id=123456,
             ephemeral_b="fake_ephemeral_bytes",
             expires_at=expiry,
             password_change=True
@@ -520,7 +520,7 @@ class TestLoginSessionModels():
     def test_can_create_session(self):
         """Should be able to create LoginSession with minimal fields"""
         login = LoginSession(
-            user_id="fake_user_id",
+            user_id=123456,
             session_key="fake_session_key"
         )
         self.session.add(login)
