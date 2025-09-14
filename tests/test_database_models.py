@@ -599,6 +599,21 @@ class TestLoginSessionModels():
         ephemerals = self.session.query(LoginSession).all()
         assert len(ephemerals) == 0
 
+    def test_can_use_optional_fields(self):
+        """Should be able to create new AuthEphemeral with optional fields"""
+        last_used = datetime.now()
+        expiry = datetime.now() + timedelta(hours=1)
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
