@@ -501,5 +501,35 @@ class TestDatabaseAuthEphemeralModels():
         assert len(users) == 0
 
 
+class TestLoginSessionModels():
+    """Test cases for the Login Session database model"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+
+    def test_can_create_session(self):
+        """Should be able to create LoginSession with minimal fields"""
+        login = LoginSession(
+            user_id="fake_user_id",
+            session_key="fake_session_key"
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
