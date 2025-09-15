@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = "user"
 
@@ -22,6 +23,7 @@ class User(Base):
     new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_master_key_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
+
 class AuthEphemeral(Base):
     __tablename__ = "auth"
 
@@ -32,6 +34,7 @@ class AuthEphemeral(Base):
     ephemeral_b: Mapped[str] = mapped_column(String)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+
 
 class LoginSession(Base):
     __tablename__ = "login"

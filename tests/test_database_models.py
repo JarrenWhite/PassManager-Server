@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database.database_models import Base, User, AuthEphemeral, LoginSession
 
-class TestDatabaseUserModels():
+class TestDatabaseUserModel():
     """Test cases for the User database model"""
 
     @pytest.fixture(autouse=True)
@@ -345,7 +345,7 @@ class TestDatabaseUserModels():
         assert len(users) == 0
 
 
-class TestDatabaseAuthEphemeralModels():
+class TestDatabaseAuthEphemeralModel():
     """Test cases for the Auth Ephemeral database model"""
 
     @pytest.fixture(autouse=True)
@@ -504,7 +504,7 @@ class TestDatabaseAuthEphemeralModels():
         assert len(users) == 0
 
 
-class TestLoginSessionModels():
+class TestLoginSessionModel():
     """Test cases for the Login Session database model"""
 
     @pytest.fixture(autouse=True)
@@ -686,6 +686,23 @@ class TestLoginSessionModels():
 
         logins = self.session.query(LoginSession).all()
         assert len(logins) == 0
+
+
+class TestSecureDataModels():
+    """Test cases for the Secure Data database model"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
 
 
 if __name__ == '__main__':
