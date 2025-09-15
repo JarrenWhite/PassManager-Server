@@ -615,5 +615,9 @@ class TestLoginSessionModels():
         self.session.add(login)
         self.session.commit()
 
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
