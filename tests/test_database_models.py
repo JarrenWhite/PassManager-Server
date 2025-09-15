@@ -335,8 +335,8 @@ class TestDatabaseUserModels():
         self.session.add(user)
         self.session.commit()
 
-        db_user = self.session.query(User).first()
-        assert db_user is not None
+        users = self.session.query(User).all()
+        assert len(users) == 1
 
         self.session.delete(user)
         self.session.commit()
@@ -494,6 +494,9 @@ class TestDatabaseAuthEphemeralModels():
         self.session.add(ephemeral)
         self.session.commit()
 
+        users = self.session.query(AuthEphemeral).all()
+        assert len(users) == 1
+
         self.session.delete(ephemeral)
         self.session.commit()
 
@@ -622,6 +625,23 @@ class TestLoginSessionModels():
     def test_public_id_created(self):
         """Should create a public ID of length 32"""
         last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.public_id is not None
+        assert len(db_login.public_id) == 32
+
+    def test_all_fields_correct(self):
+        """Should store all fields correctly"""
+        last_used = datetime.now()
         expiry = datetime.now() + timedelta(hours=1)
         login = LoginSession(
             user_id=123456,
@@ -637,8 +657,35 @@ class TestLoginSessionModels():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.public_id is not None
-        assert len(db_login.public_id) == 32
+        assert db_login.user_id == 123456
+        assert db_login.session_key == "fake_session_key"
+        assert db_login.request_count == 0
+        assert db_login.last_used == last_used
+        assert db_login.maximum_requests == 5
+        assert db_login.expiry_time == expiry
+        assert db_login.password_change == True
+        assert db_login.public_id == login.public_id
+
+    def test_can_delete_entry(self):
+        """Should be possible to delete entry"""
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        logins = self.session.query(LoginSession).all()
+        assert len(logins) == 1
+
+        self.session.delete(login)
+        self.session.commit()
+
+        logins = self.session.query(LoginSession).all()
+        assert len(logins) == 0
 
 
 if __name__ == '__main__':
