@@ -31,5 +31,19 @@ class AuthEphemeral(Base):
 
     ephemeral_b: Mapped[str] = mapped_column(String)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
+    password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
 
+class LoginSession(Base):
+    __tablename__ = "login"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
+    user_id: Mapped[int] = mapped_column(Integer)
+
+    session_key: Mapped[str] = mapped_column(String)
+    request_count: Mapped[int] = mapped_column(Integer)
+    last_used: Mapped[datetime] = mapped_column(DateTime)
+
+    maximum_requests: Mapped[int] = mapped_column(Integer, nullable=True)
+    expiry_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
