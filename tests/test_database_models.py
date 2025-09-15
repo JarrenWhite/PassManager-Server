@@ -619,6 +619,27 @@ class TestLoginSessionModels():
         assert db_login is not None
         assert db_login.session_key == "fake_session_key"
 
+    def test_public_id_created(self):
+        """Should create a public ID of length 32"""
+        last_used = datetime.now()
+        expiry = datetime.now() + timedelta(hours=1)
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.public_id is not None
+        assert len(db_login.public_id) == 32
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
