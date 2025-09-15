@@ -88,9 +88,9 @@ Tracks user authentication sessions, storing session keys and related data.
 | **user_id**          | BIGINT    | **Foreign Key** → `User.id`, **Indexed**  |
 | **session_key**      | BLOB      |                                           |
 | **request_count**    | INT       |                                           |
+| **last_used**        | TIMESTAMP |                                           |
 | **maximum_requests** | INT       | **nullable**                              |
 | **expiry_time**      | TIMESTAMP | **nullable**                              |
-| **last_used**        | TIMESTAMP |                                           |
 | **password_change**  | BOOL      | **nullable**                              |
 
 ### **Relationships**
