@@ -704,6 +704,18 @@ class TestSecureDataModels():
         self.session.close()
         Base.metadata.drop_all(self.engine)
 
+    def test_can_create_data(self):
+        """Should be able to create SecureData with minimal fields"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_entry"
+            entry_data="fake_secure_data_name"
+        )
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.session_key == "fake_secure_data_entry"
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
