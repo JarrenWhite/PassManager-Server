@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database.database_models import Base, User, AuthEphemeral, LoginSession
+from database.database_models import Base, User, AuthEphemeral, LoginSession, SecureData
 
 class TestDatabaseUserModel():
     """Test cases for the User database model"""
@@ -708,13 +708,15 @@ class TestSecureDataModels():
         """Should be able to create SecureData with minimal fields"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_entry"
+            entry_name="fake_secure_data_entry",
             entry_data="fake_secure_data_name"
         )
+        self.session.add(data)
+        self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.session_key == "fake_secure_data_entry"
+        assert db_data.entry_name == "fake_secure_data_entry"
 
 
 if __name__ == '__main__':
