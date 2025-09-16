@@ -50,3 +50,13 @@ class LoginSession(Base):
     maximum_requests: Mapped[int] = mapped_column(Integer, nullable=True)
     expiry_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+
+
+class SecureData(Base):
+    __tablename__ = "data"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer)
+
+    entry_name: Mapped[str] = mapped_column(String)
+    entry_data: Mapped[str] = mapped_column(String)
