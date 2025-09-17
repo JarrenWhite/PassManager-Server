@@ -708,21 +708,21 @@ class TestSecureDataModels():
         """Should be able to create SecureData with minimal fields"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_entry",
-            entry_data="fake_secure_data_name"
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_entry"
+        assert db_data.entry_name == "fake_secure_data_name"
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
         data = SecureData(
-            entry_name="fake_secure_data_entry",
-            entry_data="fake_secure_data_name"
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
         )
         self.session.add(data)
 
@@ -736,7 +736,7 @@ class TestSecureDataModels():
 
         data = SecureData(
             user_id=123456,
-            entry_data="fake_secure_data_name"
+            entry_data="fake_secure_data_entry"
         )
         self.session.add(data)
 
@@ -750,7 +750,7 @@ class TestSecureDataModels():
 
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_entry"
+            entry_name="fake_secure_data_name"
         )
         self.session.add(data)
 
@@ -761,6 +761,22 @@ class TestSecureDataModels():
             error_message = str(e).lower()
             assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
+
+    def test_can_use_optional_fields(self):
+        """Should be able to create new AuthEphemeral with optional fields"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry",
+            new_entry_name="new_fake_secure_data_name",
+            new_entry_data="new_fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
 
 
 if __name__ == '__main__':
