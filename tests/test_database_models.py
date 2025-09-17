@@ -688,7 +688,7 @@ class TestLoginSessionModel():
         assert len(logins) == 0
 
 
-class TestSecureDataModels():
+class TestSecureDataModel():
     """Test cases for the Secure Data database model"""
 
     @pytest.fixture(autouse=True)
