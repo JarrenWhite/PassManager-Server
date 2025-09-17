@@ -718,6 +718,50 @@ class TestSecureDataModels():
         assert db_data is not None
         assert db_data.entry_name == "fake_secure_data_entry"
 
+    def test_all_required_fields_are_required(self):
+        """Should require all fields in order to create object"""
+        data = SecureData(
+            entry_name="fake_secure_data_entry",
+            entry_data="fake_secure_data_name"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        data = SecureData(
+            user_id=123456,
+            entry_data="fake_secure_data_name"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_entry"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
