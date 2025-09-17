@@ -778,6 +778,21 @@ class TestSecureDataModels():
         assert db_data is not None
         assert db_data.entry_name == "fake_secure_data_name"
 
+    def test_public_id_created(self):
+        """Should create a public ID of length 32"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.public_id is not None
+        assert len(db_data.public_id) == 32
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])

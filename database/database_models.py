@@ -56,6 +56,7 @@ class SecureData(Base):
     __tablename__ = "data"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(Integer)
 
     entry_name: Mapped[str] = mapped_column(String)
