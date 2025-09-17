@@ -85,7 +85,7 @@ Tracks user authentication sessions, storing session keys and related data.
 |----------------------|-----------|-------------------------------------------|
 | **id**               | BIGINT    | **Primary Key**, auto-increment           |
 | **public_id**        | CHAR(36)  | **Unique**, **Indexed**                   |
-| **user_id**          | BIGINT    | **Foreign Key** → `User.id`, **Indexed**  |
+| **user_id**          | BIGINT    | **Foreign Key** → `User.id`               |
 | **session_key**      | BLOB      |                                           |
 | **request_count**    | INT       |                                           |
 | **last_used**        | TIMESTAMP |                                           |

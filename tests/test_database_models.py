@@ -8,9 +8,9 @@ from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from database.database_models import Base, User, AuthEphemeral, LoginSession
+from database.database_models import Base, User, AuthEphemeral, LoginSession, SecureData
 
-class TestDatabaseUserModels():
+class TestDatabaseUserModel():
     """Test cases for the User database model"""
 
     @pytest.fixture(autouse=True)
@@ -345,7 +345,7 @@ class TestDatabaseUserModels():
         assert len(users) == 0
 
 
-class TestDatabaseAuthEphemeralModels():
+class TestDatabaseAuthEphemeralModel():
     """Test cases for the Auth Ephemeral database model"""
 
     @pytest.fixture(autouse=True)
@@ -504,7 +504,7 @@ class TestDatabaseAuthEphemeralModels():
         assert len(users) == 0
 
 
-class TestLoginSessionModels():
+class TestLoginSessionModel():
     """Test cases for the Login Session database model"""
 
     @pytest.fixture(autouse=True)
@@ -686,6 +686,152 @@ class TestLoginSessionModels():
 
         logins = self.session.query(LoginSession).all()
         assert len(logins) == 0
+
+
+class TestSecureDataModel():
+    """Test cases for the Secure Data database model"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+
+    def test_can_create_data(self):
+        """Should be able to create SecureData with minimal fields"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+    def test_all_required_fields_are_required(self):
+        """Should require all fields in order to create object"""
+        data = SecureData(
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        data = SecureData(
+            user_id=123456,
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected not null constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+    def test_can_use_optional_fields(self):
+        """Should be able to create new AuthEphemeral with optional fields"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry",
+            new_entry_name="new_fake_secure_data_name",
+            new_entry_data="new_fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+    def test_public_id_created(self):
+        """Should create a public ID of length 32"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.public_id is not None
+        assert len(db_data.public_id) == 32
+
+    def test_all_fields_correct(self):
+        """Should store all fields correctly"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry",
+            new_entry_name="new_fake_secure_data_name",
+            new_entry_data="new_fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.user_id == 123456
+        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_data == "fake_secure_data_entry"
+        assert db_data.new_entry_name == "new_fake_secure_data_name"
+        assert db_data.new_entry_data == "new_fake_secure_data_entry"
+        assert db_data.public_id == data.public_id
+
+    def test_can_delete_entry(self):
+        """Should be possible to delete entry"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        data_entries = self.session.query(SecureData).all()
+        assert len(data_entries) == 1
+
+        self.session.delete(data)
+        self.session.commit()
+
+        data_entries = self.session.query(SecureData).all()
+        assert len(data_entries) == 0
 
 
 if __name__ == '__main__':
