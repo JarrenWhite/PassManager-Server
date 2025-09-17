@@ -793,6 +793,46 @@ class TestSecureDataModels():
         assert db_data.public_id is not None
         assert len(db_data.public_id) == 32
 
+    def test_all_fields_correct(self):
+        """Should store all fields correctly"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry",
+            new_entry_name="new_fake_secure_data_name",
+            new_entry_data="new_fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.user_id == 123456
+        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_data == "fake_secure_data_entry"
+        assert db_data.new_entry_name == "new_fake_secure_data_name"
+        assert db_data.new_entry_data == "new_fake_secure_data_entry"
+        assert db_data.public_id == data.public_id
+
+    def test_can_delete_entry(self):
+        """Should be possible to delete entry"""
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        data_entries = self.session.query(SecureData).all()
+        assert len(data_entries) == 1
+
+        self.session.delete(data)
+        self.session.commit()
+
+        data_entries = self.session.query(SecureData).all()
+        assert len(data_entries) == 0
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
