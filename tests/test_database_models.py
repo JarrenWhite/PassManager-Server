@@ -957,6 +957,43 @@ class TestDatabaseRelationships():
         assert db_data is not None
         assert db_data.entry_name == "fake_secure_data_name"
 
+    def test_user_login_relationship(self):
+        """Should be a relationship between user and all user's login sessions"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user=user,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        last_used = datetime.now() + timedelta(hours=1)
+        login2 = LoginSession(
+            user=user,
+            session_key="fake_session_key_2",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login2)
+        self.session.commit()
+
+        assert len(user.login_sessions) == 2
+        assert login in user.login_sessions
+        assert login2 in user.login_sessions
+        assert login.user_id == user.id
+        assert login2.user_id == user.id
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
