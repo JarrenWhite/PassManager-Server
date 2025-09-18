@@ -1,10 +1,10 @@
 import uuid
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from sqlalchemy import String, Integer, DateTime, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 Base = declarative_base()
 
@@ -22,6 +22,8 @@ class User(Base):
     new_srp_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_master_key_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
+    login_sessions: Mapped[List["LoginSession"]] = relationship("LoginSession")
 
 
 class AuthEphemeral(Base):
@@ -50,6 +52,8 @@ class LoginSession(Base):
     maximum_requests: Mapped[int] = mapped_column(Integer, nullable=True)
     expiry_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+
+    user: Mapped["User"] = relationship("User", overlaps="login_sessions")
 
 
 class SecureData(Base):
