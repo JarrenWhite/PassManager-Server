@@ -853,9 +853,8 @@ class TestDatabaseRelationships():
         self.session.close()
         Base.metadata.drop_all(self.engine)
 
-    def test_existing_user_id(self):
+    def test_existing_user_id_required(self):
         """Should require existing user ID to create models"""
-
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
@@ -903,6 +902,61 @@ class TestDatabaseRelationships():
             error_message = str(e).lower()
             assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
+
+    def test_existing_user_id_functions(self):
+        """Should be possible to add models with existing user id"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=user.id,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=user.id,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+        data = SecureData(
+            user_id=user.id,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
