@@ -3,7 +3,7 @@ import sys
 import pytest
 from datetime import datetime, timedelta
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -55,7 +55,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -73,7 +73,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -91,7 +91,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -109,7 +109,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -157,7 +157,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected uniqueness constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("unique constraint failed" in error_message or "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
+            assert ("unique constraint failed" in error_message and "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -262,7 +262,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         user.srp_salt=None # type: ignore
@@ -271,7 +271,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         user.srp_verifier=None # type: ignore
@@ -280,7 +280,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         user.master_key_salt=None # type: ignore
@@ -289,7 +289,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         db_user = self.session.query(User).first()
@@ -390,7 +390,7 @@ class TestDatabaseAuthEphemeralModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
@@ -407,7 +407,7 @@ class TestDatabaseAuthEphemeralModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
@@ -424,7 +424,7 @@ class TestDatabaseAuthEphemeralModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
@@ -551,7 +551,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         login = LoginSession(
@@ -566,7 +566,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         login = LoginSession(
@@ -581,7 +581,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         login = LoginSession(
@@ -596,7 +596,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(LoginSession).all()
@@ -731,7 +731,7 @@ class TestSecureDataModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         data = SecureData(
@@ -745,7 +745,7 @@ class TestSecureDataModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         data = SecureData(
@@ -759,7 +759,7 @@ class TestSecureDataModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
     def test_can_use_optional_fields(self):
@@ -842,6 +842,9 @@ class TestDatabaseRelationships():
         self.engine = create_engine("sqlite:///:memory:")
         Base.metadata.create_all(self.engine)
 
+        with self.engine.connect() as conn:
+            conn.execute(text("PRAGMA foreign_keys=ON"))
+
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
@@ -850,6 +853,56 @@ class TestDatabaseRelationships():
         self.session.close()
         Base.metadata.drop_all(self.engine)
 
+    def test_existing_user_id(self):
+        """Should require existing user ID to create models"""
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
