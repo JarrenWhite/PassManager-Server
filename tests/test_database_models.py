@@ -957,6 +957,29 @@ class TestDatabaseRelationships():
         assert db_data is not None
         assert db_data.entry_name == "fake_secure_data_name"
 
+    def test_user_ephemeral_relationship(self):
+        """Should be a relationship from ephemeral to its user"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user=user,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        assert len(ephemeral.user) == 1
+        assert ephemeral.user == user
+
     def test_user_login_relationship(self):
         """Should be a relationship between user and all user's login sessions"""
         user = User(
