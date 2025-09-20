@@ -977,7 +977,7 @@ class TestDatabaseRelationships():
         self.session.add(ephemeral)
         self.session.commit()
 
-        assert len(ephemeral.user) == 1
+        assert ephemeral.user is not None
         assert ephemeral.user == user
 
     def test_user_login_relationship(self):

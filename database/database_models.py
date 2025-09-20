@@ -37,6 +37,8 @@ class AuthEphemeral(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
 
+    user: Mapped["User"] = relationship("User")
+
 
 class LoginSession(Base):
     __tablename__ = "login"
