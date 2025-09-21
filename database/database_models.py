@@ -23,7 +23,8 @@ class User(Base):
     new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_master_key_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
-    login_sessions: Mapped[List["LoginSession"]] = relationship("LoginSession")
+    login_sessions: Mapped[List["LoginSession"]] = relationship("LoginSession", back_populates="user")
+    secure_data: Mapped[List["SecureData"]] = relationship("SecureData", back_populates="user")
 
 
 class AuthEphemeral(Base):
@@ -55,7 +56,7 @@ class LoginSession(Base):
     expiry_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
 
-    user: Mapped["User"] = relationship("User", overlaps="login_sessions")
+    user: Mapped["User"] = relationship("User", back_populates="login_sessions")
 
 
 class SecureData(Base):
@@ -70,3 +71,5 @@ class SecureData(Base):
 
     new_entry_name: Mapped[str] = mapped_column(String, nullable=True)
     new_entry_data: Mapped[str] = mapped_column(String, nullable=True)
+
+    user: Mapped["User"] = relationship("User", back_populates="secure_data")
