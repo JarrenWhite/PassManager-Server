@@ -1017,6 +1017,39 @@ class TestDatabaseRelationships():
         assert login.user_id == user.id
         assert login2.user_id == user.id
 
+    def test_user_data_relationship(self):
+        """Should be a relationship between user and all user's login sessions"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        data = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        data2 = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data2)
+        self.session.commit()
+
+        assert len(user.secure_data) == 2
+        assert data in user.secure_data
+        assert data2 in user.secure_data
+        assert data.user_id == user.id
+        assert data2.user_id == user.id
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
