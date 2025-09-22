@@ -23,8 +23,8 @@ class User(Base):
     new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_master_key_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
-    login_sessions: Mapped[List["LoginSession"]] = relationship("LoginSession", back_populates="user")
-    secure_data: Mapped[List["SecureData"]] = relationship("SecureData", back_populates="user")
+    login_sessions: Mapped[List["LoginSession"]] = relationship("LoginSession", back_populates="user", cascade="all, delete-orphan")
+    secure_data: Mapped[List["SecureData"]] = relationship("SecureData", back_populates="user", cascade="all, delete-orphan")
 
 
 class AuthEphemeral(Base):
