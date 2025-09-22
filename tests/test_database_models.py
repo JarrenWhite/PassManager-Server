@@ -1161,7 +1161,7 @@ class TestDatabaseRelationships():
         assert data in user.secure_data
         assert data.user == user
 
-    def test_login_cascade_deletion(self):
+    def test_secure_data_cascade_deletion(self):
         """Should delete SecureData from User when SecureData deleted"""
         user = User(
             username_hash="fake_hash",
