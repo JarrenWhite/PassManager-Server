@@ -3,7 +3,7 @@ import sys
 import pytest
 from datetime import datetime, timedelta
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -55,7 +55,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -73,7 +73,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -91,7 +91,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -109,7 +109,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -157,7 +157,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected uniqueness constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("unique constraint failed" in error_message or "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
+            assert ("unique constraint failed" in error_message and "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
             self.session.rollback()
 
         users = self.session.query(User).all()
@@ -262,7 +262,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         user.srp_salt=None # type: ignore
@@ -271,7 +271,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         user.srp_verifier=None # type: ignore
@@ -280,7 +280,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         user.master_key_salt=None # type: ignore
@@ -289,7 +289,7 @@ class TestDatabaseUserModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         db_user = self.session.query(User).first()
@@ -390,7 +390,7 @@ class TestDatabaseAuthEphemeralModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
@@ -407,7 +407,7 @@ class TestDatabaseAuthEphemeralModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
@@ -424,7 +424,7 @@ class TestDatabaseAuthEphemeralModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
@@ -551,7 +551,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         login = LoginSession(
@@ -566,7 +566,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         login = LoginSession(
@@ -581,7 +581,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         login = LoginSession(
@@ -596,7 +596,7 @@ class TestLoginSessionModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         ephemerals = self.session.query(LoginSession).all()
@@ -731,7 +731,7 @@ class TestSecureDataModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         data = SecureData(
@@ -745,7 +745,7 @@ class TestSecureDataModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
         data = SecureData(
@@ -759,7 +759,7 @@ class TestSecureDataModel():
             raise AssertionError("Expected not null constraint violation but no exception was raised")
         except Exception as e:
             error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message or "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
             self.session.rollback()
 
     def test_can_use_optional_fields(self):
@@ -832,6 +832,389 @@ class TestSecureDataModel():
 
         data_entries = self.session.query(SecureData).all()
         assert len(data_entries) == 0
+
+
+class TestDatabaseRelationships():
+    """Test cases for the relationships between database models"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        with self.engine.connect() as conn:
+            conn.execute(text("PRAGMA foreign_keys=ON"))
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+
+    def test_existing_user_id_required(self):
+        """Should require existing user ID to create models"""
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+
+        try:
+            self.session.commit()
+            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
+            self.session.rollback()
+
+    def test_existing_user_id_functions(self):
+        """Should be possible to add models with existing user id"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=user.id,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=user.id,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+        data = SecureData(
+            user_id=user.id,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+    def test_user_ephemeral_relationship(self):
+        """Should be a relationship from ephemeral to its user"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user=user,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        assert ephemeral.user is not None
+        assert ephemeral.user == user
+
+    def test_user_login_relationship(self):
+        """Should be a relationship between user and all user's login sessions"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user=user,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        last_used = datetime.now() + timedelta(hours=1)
+        login2 = LoginSession(
+            user=user,
+            session_key="fake_session_key_2",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login2)
+        self.session.commit()
+
+        assert len(user.login_sessions) == 2
+        assert login in user.login_sessions
+        assert login2 in user.login_sessions
+        assert login.user_id == user.id
+        assert login2.user_id == user.id
+
+    def test_user_data_relationship(self):
+        """Should be a relationship between user and all user's login sessions"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        data = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        data2 = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data2)
+        self.session.commit()
+
+        assert len(user.secure_data) == 2
+        assert data in user.secure_data
+        assert data2 in user.secure_data
+        assert data.user_id == user.id
+        assert data2.user_id == user.id
+
+    def test_user_cascade_deletion(self):
+        """Should delete all LoginSessions and SecureData when User is deleted"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user=user,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        data = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+        assert login in user.login_sessions
+        assert data in user.secure_data
+        assert login.user == user
+        assert data.user == user
+
+        self.session.delete(user)
+        self.session.commit()
+
+        users = self.session.query(User).all()
+        assert len(users) == 0
+        login_sessions = self.session.query(LoginSession).all()
+        assert len(login_sessions) == 0
+        secure_data = self.session.query(SecureData).all()
+        assert len(secure_data) == 0
+
+    def test_login_cascade_deletion(self):
+        """Should delete LoginSession from User when LoginSession deleted"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user=user,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        data = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+        assert login in user.login_sessions
+        assert data in user.secure_data
+        assert login.user == user
+        assert data.user == user
+
+        self.session.delete(login)
+        self.session.commit()
+
+        login_sessions = self.session.query(LoginSession).all()
+        assert len(login_sessions) == 0
+        assert login not in user.login_sessions
+        assert data in user.secure_data
+        assert data.user == user
+
+    def test_secure_data_cascade_deletion(self):
+        """Should delete SecureData from User when SecureData deleted"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user=user,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        data = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+        assert login in user.login_sessions
+        assert data in user.secure_data
+        assert login.user == user
+        assert data.user == user
+
+        self.session.delete(data)
+        self.session.commit()
+
+        secure_data_entries = self.session.query(SecureData).all()
+        assert len(secure_data_entries) == 0
+        assert login in user.login_sessions
+        assert data not in user.secure_data
+        assert login.user == user
 
 
 if __name__ == '__main__':
