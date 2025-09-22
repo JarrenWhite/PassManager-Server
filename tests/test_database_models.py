@@ -1050,6 +1050,62 @@ class TestDatabaseRelationships():
         assert data.user_id == user.id
         assert data2.user_id == user.id
 
+    def test_cascade_deletion(self):
+        """Should delete all LoginSessions and SecureData when User is deleted"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user=user,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        data = SecureData(
+            user=user,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "fake_session_key"
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "fake_secure_data_name"
+
+        assert login in user.login_sessions
+        assert data in user.secure_data
+        assert login.user == user
+        assert data.user == user
+
+        self.session.delete(user)
+        self.session.commit()
+
+        users = self.session.query(User).all()
+        assert len(users) == 0
+        login_sessions = self.session.query(LoginSession).all()
+        assert len(login_sessions) == 0
+        secure_data = self.session.query(SecureData).all()
+        assert len(secure_data) == 0
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
