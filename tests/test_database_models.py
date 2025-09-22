@@ -1210,8 +1210,8 @@ class TestDatabaseRelationships():
         self.session.delete(data)
         self.session.commit()
 
-        secure_datas = self.session.query(SecureData).all()
-        assert len(secure_datas) == 0
+        secure_data_entries = self.session.query(SecureData).all()
+        assert len(secure_data_entries) == 0
         assert login in user.login_sessions
         assert data not in user.secure_data
         assert login.user == user
