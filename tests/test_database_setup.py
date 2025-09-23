@@ -37,6 +37,15 @@ class TestDatabaseSetup:
         DatabaseSetup.init_db(file_path, TestBase)
 
         assert directory.exists()
+    
+    def test_init_db_creates_database_file(self):
+        """Should create database file if none exists"""
+        TestBase = declarative_base()
+        directory = Path(self.test_dir)
+        file_path = directory / "test_vault.db"
+        DatabaseSetup.init_db(file_path, TestBase)
+
+        assert file_path.exists()
 
 
 if __name__ == '__main__':
