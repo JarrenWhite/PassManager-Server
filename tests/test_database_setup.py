@@ -22,38 +22,34 @@ class TestDatabaseSetup:
 
         shutil.rmtree(self.test_dir, ignore_errors=True)
         DatabaseSetup._reset_database()
+    
+    def _create_minimal_database(self):
+        """Helper function to create and initialise a database"""
+        TestBase = declarative_base()
+        file_path = Path(self.test_dir) / "test_vault.db"
+        DatabaseSetup.init_db(file_path, TestBase)
 
     def test_init_db_function_takes_correct_parameters(self):
         """Should take directory and Database Base"""
-        TestBase = declarative_base()
-        directory = Path(self.test_dir)
-        file_path = directory / "test_vault.db"
-        DatabaseSetup.init_db(file_path, TestBase)
+        self._create_minimal_database()
     
     def test_init_db_creates_directory(self):
         """Should create a directory if one does not exist"""
-        TestBase = declarative_base()
-        directory = Path(self.test_dir)
-        file_path = directory / "test_vault.db"
-        DatabaseSetup.init_db(file_path, TestBase)
+        self._create_minimal_database()
 
+        directory = Path(self.test_dir)
         assert directory.exists()
     
     def test_init_db_creates_database_file(self):
         """Should create database file if none exists"""
-        TestBase = declarative_base()
-        directory = Path(self.test_dir)
-        file_path = directory / "test_vault.db"
-        DatabaseSetup.init_db(file_path, TestBase)
+        self._create_minimal_database()
 
+        file_path = Path(self.test_dir) / "test_vault.db"
         assert file_path.exists()
 
     def test_init_db_fails_if_already_called_once(self):
         """Should fail if init_db has already been called once"""
-        TestBase = declarative_base()
-        directory = Path(self.test_dir)
-        file_path = directory / "test_vault.db"
-        DatabaseSetup.init_db(file_path, TestBase)
+        self._create_minimal_database()
 
         new_test_dir = tempfile.mkdtemp()
         NewTestBase = declarative_base()
