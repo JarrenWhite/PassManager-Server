@@ -6,3 +6,7 @@ class DatabaseSetup:
     @staticmethod
     def set_config(directory: Path, base: DeclarativeBase):
         pass
+
+    @staticmethod
+    def init_db():
+        raise RuntimeError("No config exists")
