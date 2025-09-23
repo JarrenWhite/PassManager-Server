@@ -21,6 +21,7 @@ class TestDatabaseSetup:
         yield
 
         shutil.rmtree(self.test_dir, ignore_errors=True)
+        DatabaseSetup._initialised = False
 
     def test_init_db_function_takes_correct_parameters(self):
         """Should take directory and Database Base"""
@@ -47,19 +48,26 @@ class TestDatabaseSetup:
 
         assert file_path.exists()
 
-    def test_init_db_does_not_overwrite_existing_db_file(self):
-        """Should not overwrite an existing db file at target"""
+    def test_init_db_fails_if_already_called_once(self):
+        """Should fail if init_db has already been called once"""
         TestBase = declarative_base()
         directory = Path(self.test_dir)
         file_path = directory / "test_vault.db"
-
         DatabaseSetup.init_db(file_path, TestBase)
-        initial_mtime = file_path.stat().st_mtime
 
-        DatabaseSetup.init_db(file_path, TestBase)
-        second_mtime = file_path.stat().st_mtime
+        new_test_dir = tempfile.mkdtemp()
+        NewTestBase = declarative_base()
+        new_directory = Path(new_test_dir)
+        new_file_path = new_directory / "new_test_vault.db"
 
-        assert initial_mtime == second_mtime
+        try:
+            DatabaseSetup.init_db(new_file_path, NewTestBase)
+            raise AssertionError("Expected already initialised violation but no exception was raised")
+        except Exception as e:
+            error_message = str(e).lower()
+            assert "database already initialised" in error_message, f"Expected 'database already initialised' error, got: {error_message}"
+        finally:
+            shutil.rmtree(new_test_dir, ignore_errors=True)
 
 
 if __name__ == '__main__':
