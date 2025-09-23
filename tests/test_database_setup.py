@@ -47,6 +47,20 @@ class TestDatabaseSetup:
 
         assert file_path.exists()
 
+    def test_init_db_does_not_overwrite_existing_db_file(self):
+        """Should not overwrite an existing db file at target"""
+        TestBase = declarative_base()
+        directory = Path(self.test_dir)
+        file_path = directory / "test_vault.db"
+
+        DatabaseSetup.init_db(file_path, TestBase)
+        initial_mtime = file_path.stat().st_mtime
+
+        DatabaseSetup.init_db(file_path, TestBase)
+        second_mtime = file_path.stat().st_mtime
+
+        assert initial_mtime == second_mtime
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
