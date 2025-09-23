@@ -21,7 +21,7 @@ class TestDatabaseSetup:
         yield
 
         shutil.rmtree(self.test_dir, ignore_errors=True)
-        DatabaseSetup._initialised = False
+        DatabaseSetup._reset_database()
 
     def test_init_db_function_takes_correct_parameters(self):
         """Should take directory and Database Base"""

@@ -7,6 +7,10 @@ class DatabaseSetup:
     _initialised: bool = False
 
     @staticmethod
+    def _reset_database():
+        DatabaseSetup._initialised = False
+
+    @staticmethod
     def init_db(directory: Path, base: DeclarativeBase):
         if DatabaseSetup._initialised:
             raise RuntimeError("Database already initialised.")
