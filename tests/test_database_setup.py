@@ -25,8 +25,18 @@ class TestDatabaseSetup:
     def test_init_db_function_takes_correct_parameters(self):
         """Should take directory and Database Base"""
         TestBase = declarative_base()
-        directory = Path(self.test_dir) / "test_vault.db"
-        DatabaseSetup.init_db(directory, TestBase)
+        directory = Path(self.test_dir)
+        file_path = directory / "test_vault.db"
+        DatabaseSetup.init_db(file_path, TestBase)
+    
+    def test_init_db_creates_directory(self):
+        """Should create a directory if one does not exist"""
+        TestBase = declarative_base()
+        directory = Path(self.test_dir)
+        file_path = directory / "test_vault.db"
+        DatabaseSetup.init_db(file_path, TestBase)
+
+        assert directory.exists()
 
 
 if __name__ == '__main__':

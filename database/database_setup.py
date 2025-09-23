@@ -5,4 +5,4 @@ class DatabaseSetup:
 
     @staticmethod
     def init_db(directory: Path, base: DeclarativeBase):
-        pass
+        directory.parent.mkdir(parents=True, exist_ok=True)
