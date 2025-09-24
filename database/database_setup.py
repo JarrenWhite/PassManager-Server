@@ -20,3 +20,7 @@ class DatabaseSetup:
         engine = create_engine(f"sqlite:///{directory}")
         base.metadata.create_all(engine)
         DatabaseSetup._initialised = True
+
+    @staticmethod
+    def get_session():
+        raise RuntimeError("Database not initialised.")
