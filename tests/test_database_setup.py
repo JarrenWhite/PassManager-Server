@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -74,6 +74,11 @@ class TestDatabaseSetup:
             error_message = str(e).lower()
             assert "database not initialised" in error_message, f"Expected 'database not initialised' error, got: {error_message}"
 
+    def test_get_session_after_init(self):
+        """Should get session maker after doing init"""
+        self._create_minimal_database()
+        session = DatabaseSetup.get_session()
+        assert isinstance(session, sessionmaker)
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
