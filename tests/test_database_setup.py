@@ -80,5 +80,6 @@ class TestDatabaseSetup:
         session = DatabaseSetup.get_session()
         assert isinstance(session, sessionmaker)
 
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
