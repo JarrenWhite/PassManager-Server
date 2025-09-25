@@ -36,6 +36,10 @@ class TestDatabaseSetup:
             __tablename__ = "test_table_two"
             id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
+        self.TestBase = TestBase
+        self.TestTableOne = TestTableOne
+        self.TestTableTwo = TestTableTwo
+
         file_path = Path(self.test_dir) / "test_vault.db"
         DatabaseSetup.init_db(file_path, TestBase)
 
@@ -103,6 +107,35 @@ class TestDatabaseSetup:
         tables = inspector.get_table_names()
         assert "test_table_one" in tables
         assert "test_table_two" in tables
+
+    def test_session_make_links_to_same_sessions(self):
+        """Should be able to see consistent data in sessions between sessions"""
+        self._create_minimal_database()
+        session_maker = DatabaseSetup.get_session()
+
+        session1 = session_maker()
+        row1 = session1.query(self.TestTableOne).all()
+        assert row1 == []
+
+        # Make record & add to session
+        record = self.TestTableOne()
+        session1.add(record)
+        session1.commit()
+        record_id = record.id
+        session1.close()
+
+        # Check exists on new session from same session maker
+        session2 = session_maker()
+        same_record = session2.query(self.TestTableOne).filter_by(id=record_id).one()
+        assert same_record.id == record_id
+        session2.close()
+
+        # Check exists on new session from new session maker
+        session_maker2 = DatabaseSetup.get_session()
+        session3 = session_maker2()
+        same_record = session3.query(self.TestTableOne).filter_by(id=record_id).one()
+        assert same_record.id == record_id
+        session3.close()
 
 
 if __name__ == '__main__':
