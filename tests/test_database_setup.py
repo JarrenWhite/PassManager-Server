@@ -5,7 +5,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker, Mapped, mapped_column
+from sqlalchemy import Integer, inspect
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -26,6 +27,15 @@ class TestDatabaseSetup:
     def _create_minimal_database(self):
         """Helper function to create and initialise a database"""
         TestBase = declarative_base()
+
+        class TestTableOne(TestBase):
+            __tablename__ = "test_table_one"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        class TestTableTwo(TestBase):
+            __tablename__ = "test_table_two"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
         file_path = Path(self.test_dir) / "test_vault.db"
         DatabaseSetup.init_db(file_path, TestBase)
 
@@ -79,6 +89,20 @@ class TestDatabaseSetup:
         self._create_minimal_database()
         session = DatabaseSetup.get_session()
         assert isinstance(session, sessionmaker)
+
+    def test_sessionmaker_has_expected_tables(self):
+        """Should create tables from Base and bind them to the sessionmaker"""
+        self._create_minimal_database()
+        session_maker = DatabaseSetup.get_session()
+        session = session_maker()
+        inspector = inspect(session.bind)
+
+        assert session is not None
+        assert inspector is not None
+
+        tables = inspector.get_table_names()
+        assert "test_table_one" in tables
+        assert "test_table_two" in tables
 
 
 if __name__ == '__main__':
