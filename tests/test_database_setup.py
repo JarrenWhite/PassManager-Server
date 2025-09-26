@@ -137,6 +137,31 @@ class TestDatabaseSetup:
         assert same_record.id == record_id
         session3.close()
 
+    def test_persistence_across_restarts(self):
+        """Should have persistent data even when a new engine is created"""
+        self._create_minimal_database()
+        session_maker = DatabaseSetup.get_session()
+
+        # Make record & add to session
+        session1 = session_maker()
+        record = self.TestTableOne()
+        session1.add(record)
+        session1.commit()
+        record_id = record.id
+        session1.close()
+
+        # Simulate restart
+        DatabaseSetup._reset_database()
+        file_path = Path(self.test_dir) / "test_vault.db"
+        DatabaseSetup.init_db(file_path, self.TestBase)
+        new_session_maker = DatabaseSetup.get_session()
+
+        # Check exists on new session from new session maker from new engine
+        session2 = new_session_maker()
+        same_record = session2.query(self.TestTableOne).filter_by(id=record_id).one()
+        assert same_record.id == record_id
+        session2.close()
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
