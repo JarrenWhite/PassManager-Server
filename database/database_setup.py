@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 
 class DatabaseSetup:
 
@@ -26,6 +26,16 @@ class DatabaseSetup:
             raise PermissionError(f"Permission denied: Cannot write to directory {directory.parent}") from e
 
         engine = create_engine(f"sqlite:///{directory}")
+
+        inspector = inspect(engine)
+        existing_tables = set(inspector.get_table_names())
+        expected_tables = set(base.metadata.tables.keys())
+
+        if existing_tables and existing_tables != expected_tables:
+            raise RuntimeError(f"Schema mismatch: Existing database has incompatible schema. "
+                             f"Expected tables: {sorted(expected_tables)}, "
+                             f"Found tables: {sorted(existing_tables)}")
+
         base.metadata.create_all(engine)
         DatabaseSetup._sessionMaker = sessionmaker(bind=engine)
 

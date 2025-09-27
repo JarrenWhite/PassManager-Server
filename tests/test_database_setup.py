@@ -246,6 +246,26 @@ class TestDatabaseSetupUnitTests:
             finally:
                 readonly_dir.chmod(0o755)
 
+    def test_reinit_with_different_base(self):
+        """Should raise exception when re-initialising with a different Base"""
+        self._create_minimal_database()
+
+        DatabaseSetup._reset_database()
+
+        DifferentBase = declarative_base()
+
+        class DifferentTable(DifferentBase):
+            __tablename__ = "different_table"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        file_path = Path(self.test_dir) / "test_vault.db"
+
+        with pytest.raises(Exception) as exc_info:
+            DatabaseSetup.init_db(file_path, DifferentBase)
+
+        error_message = str(exc_info.value).lower()
+        assert "schema mismatch" in error_message
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
