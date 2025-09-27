@@ -1,8 +1,10 @@
 import os
 import sys
+import stat
 import pytest
 import shutil
 import tempfile
+import platform
 from pathlib import Path
 
 from sqlalchemy.orm import declarative_base, sessionmaker, Mapped, mapped_column
@@ -207,6 +209,42 @@ class TestDatabaseSetupUnitTests:
 
         error_message = str(exc_info.value).lower()
         assert "file is not a database" in error_message
+
+    def test_init_db_fails_if_target_directory_not_writable(self):
+        """Should raise exception if the target directory is not writable"""
+        TestBase = declarative_base()
+
+        class TestTable(TestBase):
+            __tablename__ = "test_table"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        # Windows
+        if platform.system() == "Windows":
+            file_path = Path("Z:\\nonexistent\\path\\test_vault.db")
+
+            with pytest.raises(Exception) as exc_info:
+                DatabaseSetup.init_db(file_path, TestBase)
+
+            error_message = str(exc_info.value).lower()
+            assert "permission denied" in error_message
+
+        # Linux / Mac
+        else:
+            readonly_dir = Path(self.test_dir) / "readonly_dir"
+            readonly_dir.mkdir(parents=True, exist_ok=True)
+            readonly_dir.chmod(0o444)
+
+            try:
+                file_path = readonly_dir / "test_vault.db"
+
+                with pytest.raises(Exception) as exc_info:
+                    DatabaseSetup.init_db(file_path, TestBase)
+
+                error_message = str(exc_info.value).lower()
+                assert "permission denied" in error_message
+
+            finally:
+                readonly_dir.chmod(0o755)
 
 
 if __name__ == '__main__':

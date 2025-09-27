@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -17,7 +18,12 @@ class DatabaseSetup:
         if DatabaseSetup._sessionMaker is not None:
             raise RuntimeError("Database already initialised.")
 
-        directory.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            directory.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile(dir=directory.parent, delete=True):
+                pass
+        except (PermissionError, OSError) as e:
+            raise PermissionError(f"Permission denied: Cannot write to directory {directory.parent}") from e
 
         engine = create_engine(f"sqlite:///{directory}")
         base.metadata.create_all(engine)
