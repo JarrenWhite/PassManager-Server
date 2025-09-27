@@ -190,6 +190,24 @@ class TestDatabaseSetupUnitTests:
         file_path = Path(self.test_dir) / "test_vault.db"
         DatabaseSetup.init_db(file_path, TestBase)
 
+    def test_init_db_fails_if_target_file_exists_but_not_valid_sqlite(self):
+        """Should raise exception if target file already exists but is not a valid sqlite file"""
+        TestBase = declarative_base()
+
+        class TestTable(TestBase):
+            __tablename__ = "test_table"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        file_path = Path(self.test_dir) / "invalid_db.db"
+        with open(file_path, 'w') as f:
+            f.write("This is not a valid SQLite database file content")
+
+        with pytest.raises(Exception) as exc_info:
+            DatabaseSetup.init_db(file_path, TestBase)
+
+        error_message = str(exc_info.value).lower()
+        assert "file is not a database" in error_message
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
