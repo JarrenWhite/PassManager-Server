@@ -1217,5 +1217,22 @@ class TestDatabaseRelationships():
         assert login.user == user
 
 
+class TestDatabaseModelsUnitTests():
+    """Further unit tests for database models"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
+        yield
+
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])

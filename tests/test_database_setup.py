@@ -163,5 +163,37 @@ class TestDatabaseSetup:
         session2.close()
 
 
+class TestDatabaseSetupUnitTests:
+    """Further unit tests for database setup"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.test_dir = tempfile.mkdtemp()
+
+        yield
+
+        shutil.rmtree(self.test_dir, ignore_errors=True)
+        DatabaseSetup._reset_database()
+
+    def _create_minimal_database(self):
+        """Helper function to create and initialise a database"""
+        TestBase = declarative_base()
+
+        class TestTableOne(TestBase):
+            __tablename__ = "test_table_one"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        class TestTableTwo(TestBase):
+            __tablename__ = "test_table_two"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        self.TestBase = TestBase
+        self.TestTableOne = TestTableOne
+        self.TestTableTwo = TestTableTwo
+
+        file_path = Path(self.test_dir) / "test_vault.db"
+        DatabaseSetup.init_db(file_path, TestBase)
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
