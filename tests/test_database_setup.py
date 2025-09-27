@@ -70,23 +70,19 @@ class TestDatabaseSetup:
         new_directory = Path(new_test_dir)
         new_file_path = new_directory / "new_test_vault.db"
 
-        try:
+        with pytest.raises(RuntimeError) as exc_info:
             DatabaseSetup.init_db(new_file_path, NewTestBase)
-            raise AssertionError("Expected already initialised violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert "database already initialised" in error_message, f"Expected 'database already initialised' error, got: {error_message}"
-        finally:
-            shutil.rmtree(new_test_dir, ignore_errors=True)
+        error_message = str(exc_info.value).lower()
+        assert "database already initialised" in error_message
+
+        shutil.rmtree(new_test_dir, ignore_errors=True)
 
     def test_get_session_before_init(self):
         """Should fail if init_db had not been called"""
-        try:
+        with pytest.raises(RuntimeError) as exc_info:
             DatabaseSetup.get_session()
-            raise AssertionError("Expected already initialised violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert "database not initialised" in error_message, f"Expected 'database not initialised' error, got: {error_message}"
+        error_message = str(exc_info.value).lower()
+        assert "database not initialised" in error_message
 
     def test_get_session_after_init(self):
         """Should get session maker after doing init"""

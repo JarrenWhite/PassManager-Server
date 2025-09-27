@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import IntegrityError
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -50,13 +51,11 @@ class TestDatabaseUserModel():
         )
         self.session.add(user)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         users = self.session.query(User).all()
         assert len(users) == 0
@@ -68,13 +67,11 @@ class TestDatabaseUserModel():
         )
         self.session.add(user)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         users = self.session.query(User).all()
         assert len(users) == 0
@@ -86,13 +83,11 @@ class TestDatabaseUserModel():
         )
         self.session.add(user)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         users = self.session.query(User).all()
         assert len(users) == 0
@@ -104,13 +99,11 @@ class TestDatabaseUserModel():
         )
         self.session.add(user)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         users = self.session.query(User).all()
         assert len(users) == 0
@@ -152,13 +145,11 @@ class TestDatabaseUserModel():
         )
         self.session.add(user2)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected uniqueness constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("unique constraint failed" in error_message and "integrity" in error_message), f"Expected uniqueness constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "unique constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         users = self.session.query(User).all()
         assert len(users) == 1
@@ -257,40 +248,32 @@ class TestDatabaseUserModel():
         self.session.commit()
 
         user.username_hash=None # type: ignore
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         user.srp_salt=None # type: ignore
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         user.srp_verifier=None # type: ignore
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         user.master_key_salt=None # type: ignore
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
@@ -385,13 +368,11 @@ class TestDatabaseAuthEphemeralModel():
         )
         self.session.add(ephemeral)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
         assert len(ephemerals) == 0
@@ -402,13 +383,11 @@ class TestDatabaseAuthEphemeralModel():
         )
         self.session.add(ephemeral)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
         assert len(ephemerals) == 0
@@ -419,13 +398,11 @@ class TestDatabaseAuthEphemeralModel():
         )
         self.session.add(ephemeral)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         ephemerals = self.session.query(AuthEphemeral).all()
         assert len(ephemerals) == 0
@@ -546,13 +523,11 @@ class TestLoginSessionModel():
         )
         self.session.add(login)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         login = LoginSession(
             user_id=123456,
@@ -561,13 +536,11 @@ class TestLoginSessionModel():
         )
         self.session.add(login)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         login = LoginSession(
             user_id=123456,
@@ -576,13 +549,11 @@ class TestLoginSessionModel():
         )
         self.session.add(login)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         login = LoginSession(
             user_id=123456,
@@ -591,13 +562,11 @@ class TestLoginSessionModel():
         )
         self.session.add(login)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         ephemerals = self.session.query(LoginSession).all()
         assert len(ephemerals) == 0
@@ -726,13 +695,11 @@ class TestSecureDataModel():
         )
         self.session.add(data)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         data = SecureData(
             user_id=123456,
@@ -740,13 +707,11 @@ class TestSecureDataModel():
         )
         self.session.add(data)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         data = SecureData(
             user_id=123456,
@@ -754,13 +719,11 @@ class TestSecureDataModel():
         )
         self.session.add(data)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected not null constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("not null constraint failed" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
 
     def test_can_use_optional_fields(self):
         """Should be able to create new AuthEphemeral with optional fields"""
@@ -863,13 +826,11 @@ class TestDatabaseRelationships():
         )
         self.session.add(ephemeral)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "foreign key" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         last_used = datetime.now()
         login = LoginSession(
@@ -880,13 +841,11 @@ class TestDatabaseRelationships():
         )
         self.session.add(login)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "foreign key" in error_message and "integrity" in error_message
+        self.session.rollback()
 
         data = SecureData(
             user_id=123456,
@@ -895,13 +854,11 @@ class TestDatabaseRelationships():
         )
         self.session.add(data)
 
-        try:
+        with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
-            raise AssertionError("Expected foreign key constraint violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert ("foreign key" in error_message and "integrity" in error_message), f"Expected not null constraint violation, got: {error_message}"
-            self.session.rollback()
+        error_message = str(exc_info.value).lower()
+        assert "foreign key" in error_message and "integrity" in error_message
+        self.session.rollback()
 
     def test_existing_user_id_functions(self):
         """Should be possible to add models with existing user id"""
