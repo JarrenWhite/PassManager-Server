@@ -591,6 +591,37 @@ class TestLoginSessionModel():
         assert db_login is not None
         assert db_login.session_key == "fake_session_key"
 
+    def test_session_key_uniqueness(self):
+        """Should enforce unique session key"""
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        last_used_2 = datetime.now() + timedelta(hours=-1)
+        login2 = LoginSession(
+            user_id=1234567,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used_2
+        )
+        self.session.add(login2)
+
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "unique constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        logins = self.session.query(LoginSession).all()
+        assert len(logins) == 1
+        assert logins[0].id == login.id
+
     def test_public_id_created(self):
         """Should create a public ID of length 32"""
         last_used = datetime.now()
