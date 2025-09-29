@@ -1511,7 +1511,75 @@ class TestDatabaseModelsUnitTests():
 
     def test_spaces_and_cases(self):
         """Should be able to correctly handle spaces and case sensitivity in strings in all models"""
-        pass
+        user = User(
+            username_hash="abcd EFGH",
+            srp_salt="abcd EFGH",
+            srp_verifier="abcd EFGH",
+            master_key_salt="abcd EFGH",
+            new_srp_salt="abcd EFGH",
+            new_srp_verifier="abcd EFGH",
+            new_master_key_salt="abcd EFGH"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "abcd EFGH"
+        assert db_user.srp_salt == "abcd EFGH"
+        assert db_user.srp_verifier == "abcd EFGH"
+        assert db_user.master_key_salt == "abcd EFGH"
+        assert db_user.new_srp_salt == "abcd EFGH"
+        assert db_user.new_srp_verifier == "abcd EFGH"
+        assert db_user.new_master_key_salt == "abcd EFGH"
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="abcd EFGH",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "abcd EFGH"
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="abcd EFGH",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "abcd EFGH"
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="abcd EFGH",
+            entry_data="abcd EFGH",
+            new_entry_name="abcd EFGH",
+            new_entry_data="abcd EFGH"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "abcd EFGH"
+        assert db_data.entry_data == "abcd EFGH"
+        assert db_data.new_entry_name == "abcd EFGH"
+        assert db_data.new_entry_data == "abcd EFGH"
 
     def test_small_ints(self):
         """Should be able to handle small ints in all models"""
