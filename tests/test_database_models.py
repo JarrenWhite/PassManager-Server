@@ -1439,8 +1439,75 @@ class TestDatabaseModelsUnitTests():
 
     def test_unicode_characters(self):
         """Should be able to handle unusual unicode character strings in all models"""
-        # "测试用户🚀ñáéíóú"
-        pass
+        user = User(
+            username_hash="测试用户🚀ñáéíóú",
+            srp_salt="测试用户🚀ñáéíóú",
+            srp_verifier="测试用户🚀ñáéíóú",
+            master_key_salt="测试用户🚀ñáéíóú",
+            new_srp_salt="测试用户🚀ñáéíóú",
+            new_srp_verifier="测试用户🚀ñáéíóú",
+            new_master_key_salt="测试用户🚀ñáéíóú"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "测试用户🚀ñáéíóú"
+        assert db_user.srp_salt == "测试用户🚀ñáéíóú"
+        assert db_user.srp_verifier == "测试用户🚀ñáéíóú"
+        assert db_user.master_key_salt == "测试用户🚀ñáéíóú"
+        assert db_user.new_srp_salt == "测试用户🚀ñáéíóú"
+        assert db_user.new_srp_verifier == "测试用户🚀ñáéíóú"
+        assert db_user.new_master_key_salt == "测试用户🚀ñáéíóú"
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="测试用户🚀ñáéíóú",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "测试用户🚀ñáéíóú"
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="测试用户🚀ñáéíóú",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "测试用户🚀ñáéíóú"
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="测试用户🚀ñáéíóú",
+            entry_data="测试用户🚀ñáéíóú",
+            new_entry_name="测试用户🚀ñáéíóú",
+            new_entry_data="测试用户🚀ñáéíóú"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "测试用户🚀ñáéíóú"
+        assert db_data.entry_data == "测试用户🚀ñáéíóú"
+        assert db_data.new_entry_name == "测试用户🚀ñáéíóú"
+        assert db_data.new_entry_data == "测试用户🚀ñáéíóú"
 
     def test_spaces_and_cases(self):
         """Should be able to correctly handle spaces and case sensitivity in strings in all models"""
