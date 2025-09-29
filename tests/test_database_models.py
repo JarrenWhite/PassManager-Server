@@ -1296,31 +1296,31 @@ class TestDatabaseModelsUnitTests():
     def test_long_strings(self):
         """Should be able to handle long strings in all models"""
         user = User(
-            username_hash="x"*1000,
-            srp_salt="x"*1000,
-            srp_verifier="x"*1000,
-            master_key_salt="x"*1000,
-            new_srp_salt="x"*1000,
-            new_srp_verifier="x"*1000,
-            new_master_key_salt="x"*1000
+            username_hash="x"*10000,
+            srp_salt="x"*10000,
+            srp_verifier="x"*10000,
+            master_key_salt="x"*10000,
+            new_srp_salt="x"*10000,
+            new_srp_verifier="x"*10000,
+            new_master_key_salt="x"*10000
         )
         self.session.add(user)
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "x"*1000
-        assert db_user.srp_salt == "x"*1000
-        assert db_user.srp_verifier == "x"*1000
-        assert db_user.master_key_salt == "x"*1000
-        assert db_user.new_srp_salt == "x"*1000
-        assert db_user.new_srp_verifier == "x"*1000
-        assert db_user.new_master_key_salt == "x"*1000
+        assert db_user.username_hash == "x"*10000
+        assert db_user.srp_salt == "x"*10000
+        assert db_user.srp_verifier == "x"*10000
+        assert db_user.master_key_salt == "x"*10000
+        assert db_user.new_srp_salt == "x"*10000
+        assert db_user.new_srp_verifier == "x"*10000
+        assert db_user.new_master_key_salt == "x"*10000
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_b="x"*1000,
+            ephemeral_b="x"*10000,
             expires_at=expiry,
             password_change=True
         )
@@ -1329,12 +1329,12 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_b == "x"*1000
+        assert db_ephemeral.ephemeral_b == "x"*10000
 
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="x"*1000,
+            session_key="x"*10000,
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -1346,24 +1346,24 @@ class TestDatabaseModelsUnitTests():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "x"*1000
+        assert db_login.session_key == "x"*10000
 
         data = SecureData(
             user_id=123456,
-            entry_name="x"*1000,
-            entry_data="x"*1000,
-            new_entry_name="x"*1000,
-            new_entry_data="x"*1000
+            entry_name="x"*10000,
+            entry_data="x"*10000,
+            new_entry_name="x"*10000,
+            new_entry_data="x"*10000
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "x"*1000
-        assert db_data.entry_data == "x"*1000
-        assert db_data.new_entry_name == "x"*1000
-        assert db_data.new_entry_data == "x"*1000
+        assert db_data.entry_name == "x"*10000
+        assert db_data.entry_data == "x"*10000
+        assert db_data.new_entry_name == "x"*10000
+        assert db_data.new_entry_data == "x"*10000
 
     def test_special_characters(self):
         """Should be able to handle special character strings in all models"""
