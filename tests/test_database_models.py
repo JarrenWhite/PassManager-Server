@@ -1223,7 +1223,75 @@ class TestDatabaseModelsUnitTests():
 
     def test_empty_strings(self):
         """Should be able to handle empty strings in all models"""
-        pass
+        user = User(
+            username_hash="",
+            srp_salt="",
+            srp_verifier="",
+            master_key_salt="",
+            new_srp_salt="",
+            new_srp_verifier="",
+            new_master_key_salt=""
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == ""
+        assert db_user.srp_salt == ""
+        assert db_user.srp_verifier == ""
+        assert db_user.master_key_salt == ""
+        assert db_user.new_srp_salt == ""
+        assert db_user.new_srp_verifier == ""
+        assert db_user.new_master_key_salt == ""
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == ""
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == ""
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="",
+            entry_data="",
+            new_entry_name="",
+            new_entry_data=""
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == ""
+        assert db_data.entry_data == ""
+        assert db_data.new_entry_name == ""
+        assert db_data.new_entry_data == ""
 
     def test_long_strings(self):
         """Should be able to handle long strings in all models"""
