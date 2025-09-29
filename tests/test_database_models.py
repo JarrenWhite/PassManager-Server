@@ -1367,8 +1367,75 @@ class TestDatabaseModelsUnitTests():
 
     def test_special_characters(self):
         """Should be able to handle special character strings in all models"""
-        # "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        pass
+        user = User(
+            username_hash="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            srp_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            srp_verifier="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            master_key_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            new_srp_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            new_srp_verifier="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            new_master_key_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.srp_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.srp_verifier == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.master_key_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.new_srp_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.new_srp_verifier == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.new_master_key_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.ephemeral_b == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=123456,
+            session_key="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.session_key == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+
+        data = SecureData(
+            user_id=123456,
+            entry_name="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            entry_data="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            new_entry_name="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            new_entry_data="!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.entry_name == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_data.entry_data == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_data.new_entry_name == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_data.new_entry_data == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
 
     def test_unicode_characters(self):
         """Should be able to handle unusual unicode character strings in all models"""
