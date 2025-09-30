@@ -1605,6 +1605,9 @@ class TestDatabaseModelsUnitTests():
         """Should be able to handle far future datetime values"""
         pass
 
+    def test_int_fields_do_not_accept_floats(self):
+        """Int fields should not allow float values"""
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
