@@ -1,6 +1,5 @@
 import os
 import sys
-import stat
 import pytest
 import shutil
 import tempfile
@@ -220,7 +219,7 @@ class TestDatabaseSetupUnitTests:
 
         # Windows
         if platform.system() == "Windows":
-            file_path = Path("Z:\\nonexistent\\path\\test_vault.db")
+            file_path = Path("Z:\\non_existent\\path\\test_vault.db")
 
             with pytest.raises(Exception) as exc_info:
                 DatabaseSetup.init_db(file_path, TestBase)
@@ -246,7 +245,7 @@ class TestDatabaseSetupUnitTests:
             finally:
                 readonly_dir.chmod(0o755)
 
-    def test_reinit_with_different_base(self):
+    def test_re_init_with_different_base(self):
         """Should raise exception when re-initialising with a different Base"""
         self._create_minimal_database()
 
