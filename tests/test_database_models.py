@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database.database_models import Base, User, AuthEphemeral, LoginSession, SecureData
 
+
 class TestDatabaseUserModel():
     """Test cases for the User database model"""
 

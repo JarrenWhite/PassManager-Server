@@ -13,6 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database.database_setup import DatabaseSetup
 
+
 class TestDatabaseSetup:
     """Test cases for database setup"""
 
