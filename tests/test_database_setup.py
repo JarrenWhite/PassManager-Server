@@ -1,8 +1,10 @@
 import os
 import sys
+import stat
 import pytest
 import shutil
 import tempfile
+import platform
 from pathlib import Path
 
 from sqlalchemy.orm import declarative_base, sessionmaker, Mapped, mapped_column
@@ -70,23 +72,19 @@ class TestDatabaseSetup:
         new_directory = Path(new_test_dir)
         new_file_path = new_directory / "new_test_vault.db"
 
-        try:
+        with pytest.raises(RuntimeError) as exc_info:
             DatabaseSetup.init_db(new_file_path, NewTestBase)
-            raise AssertionError("Expected already initialised violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert "database already initialised" in error_message, f"Expected 'database already initialised' error, got: {error_message}"
-        finally:
-            shutil.rmtree(new_test_dir, ignore_errors=True)
+        error_message = str(exc_info.value).lower()
+        assert "database already initialised" in error_message
+
+        shutil.rmtree(new_test_dir, ignore_errors=True)
 
     def test_get_session_before_init(self):
         """Should fail if init_db had not been called"""
-        try:
+        with pytest.raises(RuntimeError) as exc_info:
             DatabaseSetup.get_session()
-            raise AssertionError("Expected already initialised violation but no exception was raised")
-        except Exception as e:
-            error_message = str(e).lower()
-            assert "database not initialised" in error_message, f"Expected 'database not initialised' error, got: {error_message}"
+        error_message = str(exc_info.value).lower()
+        assert "database not initialised" in error_message
 
     def test_get_session_after_init(self):
         """Should get session maker after doing init"""
@@ -161,6 +159,112 @@ class TestDatabaseSetup:
         same_record = session2.query(self.TestTableOne).filter_by(id=record_id).one()
         assert same_record.id == record_id
         session2.close()
+
+
+class TestDatabaseSetupUnitTests:
+    """Further unit tests for database setup"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
+        self.test_dir = tempfile.mkdtemp()
+
+        yield
+
+        shutil.rmtree(self.test_dir, ignore_errors=True)
+        DatabaseSetup._reset_database()
+
+    def _create_minimal_database(self):
+        """Helper function to create and initialise a database"""
+        TestBase = declarative_base()
+
+        class TestTableOne(TestBase):
+            __tablename__ = "test_table_one"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        class TestTableTwo(TestBase):
+            __tablename__ = "test_table_two"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        self.TestBase = TestBase
+        self.TestTableOne = TestTableOne
+        self.TestTableTwo = TestTableTwo
+
+        file_path = Path(self.test_dir) / "test_vault.db"
+        DatabaseSetup.init_db(file_path, TestBase)
+
+    def test_init_db_fails_if_target_file_exists_but_not_valid_sqlite(self):
+        """Should raise exception if target file already exists but is not a valid sqlite file"""
+        TestBase = declarative_base()
+
+        class TestTable(TestBase):
+            __tablename__ = "test_table"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        file_path = Path(self.test_dir) / "invalid_db.db"
+        with open(file_path, 'w') as f:
+            f.write("This is not a valid SQLite database file content")
+
+        with pytest.raises(Exception) as exc_info:
+            DatabaseSetup.init_db(file_path, TestBase)
+
+        error_message = str(exc_info.value).lower()
+        assert "file is not a database" in error_message
+
+    def test_init_db_fails_if_target_directory_not_writable(self):
+        """Should raise exception if the target directory is not writable"""
+        TestBase = declarative_base()
+
+        class TestTable(TestBase):
+            __tablename__ = "test_table"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        # Windows
+        if platform.system() == "Windows":
+            file_path = Path("Z:\\nonexistent\\path\\test_vault.db")
+
+            with pytest.raises(Exception) as exc_info:
+                DatabaseSetup.init_db(file_path, TestBase)
+
+            error_message = str(exc_info.value).lower()
+            assert "permission denied" in error_message
+
+        # Linux / Mac
+        else:
+            readonly_dir = Path(self.test_dir) / "readonly_dir"
+            readonly_dir.mkdir(parents=True, exist_ok=True)
+            readonly_dir.chmod(0o444)
+
+            try:
+                file_path = readonly_dir / "test_vault.db"
+
+                with pytest.raises(Exception) as exc_info:
+                    DatabaseSetup.init_db(file_path, TestBase)
+
+                error_message = str(exc_info.value).lower()
+                assert "permission denied" in error_message
+
+            finally:
+                readonly_dir.chmod(0o755)
+
+    def test_reinit_with_different_base(self):
+        """Should raise exception when re-initialising with a different Base"""
+        self._create_minimal_database()
+
+        DatabaseSetup._reset_database()
+
+        DifferentBase = declarative_base()
+
+        class DifferentTable(DifferentBase):
+            __tablename__ = "different_table"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+        file_path = Path(self.test_dir) / "test_vault.db"
+
+        with pytest.raises(Exception) as exc_info:
+            DatabaseSetup.init_db(file_path, DifferentBase)
+
+        error_message = str(exc_info.value).lower()
+        assert "schema mismatch" in error_message
 
 
 if __name__ == '__main__':

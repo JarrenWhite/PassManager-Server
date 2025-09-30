@@ -47,7 +47,7 @@ class LoginSession(Base):
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    session_key: Mapped[str] = mapped_column(String)
+    session_key: Mapped[str] = mapped_column(String, unique=True, index=True)
     request_count: Mapped[int] = mapped_column(Integer)
     last_used: Mapped[datetime] = mapped_column(DateTime)
 

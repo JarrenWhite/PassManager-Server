@@ -1,8 +1,9 @@
+import tempfile
 from pathlib import Path
 from typing import Optional
 
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 
 class DatabaseSetup:
 
@@ -17,9 +18,24 @@ class DatabaseSetup:
         if DatabaseSetup._sessionMaker is not None:
             raise RuntimeError("Database already initialised.")
 
-        directory.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            directory.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile(dir=directory.parent, delete=True):
+                pass
+        except (PermissionError, OSError) as e:
+            raise PermissionError(f"Permission denied: Cannot write to directory {directory.parent}") from e
 
         engine = create_engine(f"sqlite:///{directory}")
+
+        inspector = inspect(engine)
+        existing_tables = set(inspector.get_table_names())
+        expected_tables = set(base.metadata.tables.keys())
+
+        if existing_tables and existing_tables != expected_tables:
+            raise RuntimeError(f"Schema mismatch: Existing database has incompatible schema. "
+                             f"Expected tables: {sorted(expected_tables)}, "
+                             f"Found tables: {sorted(existing_tables)}")
+
         base.metadata.create_all(engine)
         DatabaseSetup._sessionMaker = sessionmaker(bind=engine)
 
