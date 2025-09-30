@@ -1632,7 +1632,52 @@ class TestDatabaseModelsUnitTests():
 
     def test_large_ints(self):
         """Should be able to handle large ints in all models"""
-        pass
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=9223372036854775807,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert ephemeral.user_id == 9223372036854775807
+
+        last_used = datetime.now()
+        login = LoginSession(
+            user_id=9223372036854775807,
+            session_key="fake_session_key",
+            request_count=9223372036854775807,
+            last_used=last_used,
+            maximum_requests=9223372036854775807,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.user_id == 9223372036854775807
+        assert db_login.request_count == 9223372036854775807
+        assert db_login.maximum_requests == 9223372036854775807
+
+        data = SecureData(
+            user_id=9223372036854775807,
+            entry_name="fake_secure_data_name",
+            entry_data="fake_secure_data_entry",
+            new_entry_name="new_fake_secure_data_name",
+            new_entry_data="new_fake_secure_data_entry"
+        )
+        self.session.add(data)
+        self.session.commit()
+
+        db_data = self.session.query(SecureData).first()
+        assert db_data is not None
+        assert db_data.user_id == 9223372036854775807
 
     def test_negative_ints(self):
         """Should be able to handle negative ints in all models"""
