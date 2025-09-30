@@ -1763,11 +1763,36 @@ class TestDatabaseModelsUnitTests():
 
     def test_future_datetimes(self):
         """Should be able to handle future datetime values"""
-        pass
+        expiry = datetime.max
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="fake_ephemeral_bytes",
+            expires_at=expiry,
+            password_change=True
+        )
+        self.session.add(ephemeral)
+        self.session.commit()
 
-    def test_far_future_datetimes(self):
-        """Should be able to handle far future datetime values"""
-        pass
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.expires_at == datetime.max
+
+        last_used = datetime.max
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used,
+            maximum_requests=5,
+            expiry_time=expiry,
+            password_change=True
+        )
+        self.session.add(login)
+        self.session.commit()
+
+        db_login = self.session.query(LoginSession).first()
+        assert db_login is not None
+        assert db_login.last_used == datetime.max
 
 
 if __name__ == '__main__':
