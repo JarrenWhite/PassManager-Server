@@ -1,6 +1,9 @@
 import os
 import sys
 import pytest
+from typing import Optional, Callable
+
+from sqlalchemy.exc import IntegrityError
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -9,17 +12,20 @@ from database.database_setup import DatabaseSetup
 
 
 class _FakeSession:
-    def __init__(self):
+    def __init__(self, on_commit: Optional[Callable[[], None]] = None):
         self._added = []
         self.commits = 0
         self.refreshes = 0
         self.closed = False
+        self._on_commit = on_commit
 
     def add(self, obj):
         self._added.append(obj)
 
     def commit(self):
         self.commits += 1
+        if self._on_commit:
+            self._on_commit()
 
     def refresh(self, obj):
         self.refreshes += 1
@@ -31,13 +37,21 @@ class _FakeSession:
 class TestDatabaseUtils():
     """Test cases for the database utilities"""
 
-    @pytest.fixture(autouse=True)
-    def setup_teardown(self, monkeypatch):
-        self._fake_session = _FakeSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+    def _prepare_fake_session(self, monkeypatch, exception_message : Optional[str] = None):
+        """Prepare a Fake Session with the given exception on commit"""
+        if exception_message:
+            def raise_exception():
+                raise IntegrityError(exception_message, params=None, orig=Exception("Fake exception"))
+            self._fake_session = _FakeSession(on_commit=raise_exception)
+            monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        else:
+            self._fake_session = _FakeSession()
+            monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-    def test_create_user(self):
+    def test_create_user(self, monkeypatch):
         """Should create user and add to Database"""
+        self._prepare_fake_session(monkeypatch)
+
         response = DatabaseUtils.create_user(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
