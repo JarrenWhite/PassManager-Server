@@ -54,6 +54,8 @@ class DatabaseUtils:
                     return True, None
                 user.username_hash = new_username_hash
                 return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
             return True, None
 

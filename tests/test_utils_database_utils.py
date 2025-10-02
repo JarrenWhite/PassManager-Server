@@ -151,6 +151,21 @@ class TestChangeUsername():
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True
 
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        _prepare_db_not_initialised_error(monkeypatch)
+
+        response = DatabaseUtils.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
