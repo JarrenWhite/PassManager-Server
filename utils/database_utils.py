@@ -31,7 +31,9 @@ class DatabaseUtils:
             master_key_salt=master_key_salt,
         )
 
-        with DatabaseUtils._get_db_session() as session:
-            session.add(user)
-
-        return True, None
+        try:
+            with DatabaseUtils._get_db_session() as session:
+                session.add(user)
+                return True, None
+        except:
+            return False, FailureReason.DUPLICATE
