@@ -43,3 +43,31 @@ class DatabaseUtils:
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
             return False, FailureReason.UNKNOWN_EXCEPTION
+
+
+    """
+    TODO - Implement functions:
+    change_username
+    delete_user
+
+    start_password_change
+    continue_password_change
+    complete_password_change
+    abort_password_change
+    add_password_change_encryption_entry
+
+    start_auth
+    complete_auth
+    delete_session
+    clean_sessions
+
+    create_entry
+    edit_entry
+    delete_entry
+    get_entry
+    get_list
+
+    initialise_database
+    clean_ephemerals
+    clean_sessions
+    """
