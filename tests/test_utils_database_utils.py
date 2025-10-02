@@ -128,6 +128,29 @@ class TestDatabaseUtils():
         assert self._fake_session.rollbacks == 1
         assert self._fake_session.closed is True
 
+    def test_create_user_handles_server_exception(self, monkeypatch):
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+
+        response = DatabaseUtils.create_user(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 1
+        assert self._fake_session.closed is True
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
