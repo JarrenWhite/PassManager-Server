@@ -36,28 +36,29 @@ class _FakeSession:
         self.closed = True
 
 
-class TestDatabaseUtils():
-    """Test cases for the database utilities"""
+def _prepare_fake_session(test_class, monkeypatch, exception_message : Optional[str] = None):
+    """Prepare a Fake Session with the given exception on commit"""
+    if exception_message:
+        def raise_exception():
+            raise IntegrityError(exception_message, params=None, orig=Exception("Fake exception"))
+        test_class._fake_session = _FakeSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: test_class._fake_session))
+    else:
+        test_class._fake_session = _FakeSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: test_class._fake_session))
 
-    def _prepare_fake_session(self, monkeypatch, exception_message : Optional[str] = None):
-        """Prepare a Fake Session with the given exception on commit"""
-        if exception_message:
-            def raise_exception():
-                raise IntegrityError(exception_message, params=None, orig=Exception("Fake exception"))
-            self._fake_session = _FakeSession(on_commit=raise_exception)
-            monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
-        else:
-            self._fake_session = _FakeSession()
-            monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+def _prepare_db_not_initialised_error(self, monkeypatch):
+    def _raise_runtime_error():
+        raise RuntimeError("Database not initialised.")
+    monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-    def _prepare_db_not_initialised_error(self, monkeypatch):
-        def _raise_runtime_error():
-            raise RuntimeError("Database not initialised.")
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-    def test_create_user(self, monkeypatch):
+class TestCreateUser():
+    """Test cases for the database utilities create_user function"""
+
+    def test_nominal_case(self, monkeypatch):
         """Should create user and add to Database"""
-        self._prepare_fake_session(monkeypatch)
+        _prepare_fake_session(self, monkeypatch)
 
         response = DatabaseUtils.create_user(
             username_hash="fake_hash",
@@ -81,9 +82,9 @@ class TestDatabaseUtils():
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True
 
-    def test_create_user_handles_database_unprepared_failure(self, monkeypatch):
+    def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        self._prepare_db_not_initialised_error(monkeypatch)
+        _prepare_db_not_initialised_error(self, monkeypatch)
 
         response = DatabaseUtils.create_user(
             username_hash="fake_hash",
@@ -98,9 +99,9 @@ class TestDatabaseUtils():
         assert response[0] == False
         assert response[1] == FailureReason.DATABASE_UNINITIALISED
 
-    def test_create_user_handles_unique_constraint_failure(self, monkeypatch):
+    def test_handles_unique_constraint_failure(self, monkeypatch):
         """Should return correct failure reason if username hash exists"""
-        self._prepare_fake_session(monkeypatch, "unique constraint failed")
+        _prepare_fake_session(self, monkeypatch, "unique constraint failed")
 
         self._fake_session.add(
             User(
@@ -128,7 +129,8 @@ class TestDatabaseUtils():
         assert self._fake_session.rollbacks == 1
         assert self._fake_session.closed is True
 
-    def test_create_user_handles_server_exception(self, monkeypatch):
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
         self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
