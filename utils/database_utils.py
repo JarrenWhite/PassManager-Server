@@ -44,10 +44,21 @@ class DatabaseUtils:
         except:
             return False, FailureReason.UNKNOWN_EXCEPTION
 
+    @staticmethod
+    def change_username(username_hash: str, new_username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
+
+        try:
+            with DatabaseUtils._get_db_session() as session:
+                user = session.query(User).filter(User.username_hash == username_hash).first()
+                if not user:
+                    return True, None
+                user.username_hash = new_username_hash
+                return True, None
+        except Exception:
+            return True, None
 
     """
     TODO - Implement functions:
-    change_username
     delete_user
 
     start_password_change
