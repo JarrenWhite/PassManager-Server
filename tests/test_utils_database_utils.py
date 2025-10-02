@@ -8,14 +8,16 @@ from sqlalchemy.exc import IntegrityError
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.database_utils import DatabaseUtils
+from utils.utils_enums import FailureReason
 from database.database_setup import DatabaseSetup
+from database.database_models import User
 
 
 class _FakeSession:
     def __init__(self, on_commit: Optional[Callable[[], None]] = None):
         self._added = []
         self.commits = 0
-        self.refreshes = 0
+        self.rollbacks = 0
         self.closed = False
         self._on_commit = on_commit
 
@@ -27,8 +29,8 @@ class _FakeSession:
         if self._on_commit:
             self._on_commit()
 
-    def refresh(self, obj):
-        self.refreshes += 1
+    def rollback(self):
+        self.rollbacks += 1
 
     def close(self):
         self.closed = True
@@ -71,7 +73,37 @@ class TestDatabaseUtils():
         assert created_user.srp_verifier == "fake_srp_verifier"
         assert created_user.master_key_salt == "fake_master_key_salt"
         assert self._fake_session.commits == 1
-        assert self._fake_session.refreshes == 0
+        assert self._fake_session.rollbacks == 0
+        assert self._fake_session.closed is True
+
+    def test_create_user_handles_unique_constraint_failure(self, monkeypatch):
+        """Should return correct failure reason if username hash exists"""
+        self._prepare_fake_session(monkeypatch, "unique constraint failed")
+
+        self._fake_session.add(
+            User(
+                username_hash="fake_hash",
+                srp_salt="fake_srp_salt",
+                srp_verifier="fake_srp_verifier",
+                master_key_salt="fake_master_key_salt"
+            )
+        )
+
+        response = DatabaseUtils.create_user(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DUPLICATE
+
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 1
         assert self._fake_session.closed is True
 
 
