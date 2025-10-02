@@ -35,5 +35,7 @@ class DatabaseUtils:
             with DatabaseUtils._get_db_session() as session:
                 session.add(user)
                 return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
         except:
             return False, FailureReason.DUPLICATE
