@@ -50,6 +50,11 @@ class TestDatabaseUtils():
             self._fake_session = _FakeSession()
             monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
+    def _prepare_db_not_initialised_error(self, monkeypatch):
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
     def test_create_user(self, monkeypatch):
         """Should create user and add to Database"""
         self._prepare_fake_session(monkeypatch)
@@ -75,6 +80,23 @@ class TestDatabaseUtils():
         assert self._fake_session.commits == 1
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True
+
+    def test_create_user_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        self._prepare_db_not_initialised_error(monkeypatch)
+
+        response = DatabaseUtils.create_user(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
 
     def test_create_user_handles_unique_constraint_failure(self, monkeypatch):
         """Should return correct failure reason if username hash exists"""

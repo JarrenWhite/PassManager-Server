@@ -2,4 +2,5 @@ from enum import Enum, auto
 
 
 class FailureReason(Enum):
+    DATABASE_UNINITIALISED = auto()
     DUPLICATE = auto()
