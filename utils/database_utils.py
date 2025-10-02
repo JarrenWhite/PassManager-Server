@@ -1,6 +1,8 @@
 from typing import Tuple, Optional
 from contextlib import contextmanager
 
+from sqlalchemy.exc import IntegrityError
+
 from database import DatabaseSetup, User
 from .utils_enums import FailureReason
 
@@ -35,7 +37,9 @@ class DatabaseUtils:
             with DatabaseUtils._get_db_session() as session:
                 session.add(user)
                 return True, None
+        except IntegrityError:
+            return False, FailureReason.DUPLICATE
         except RuntimeError:
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
-            return False, FailureReason.DUPLICATE
+            return False, FailureReason.UNKNOWN_EXCEPTION
