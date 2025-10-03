@@ -12,7 +12,7 @@ from database.database_setup import DatabaseSetup
 from database.database_models import User
 
 
-class TestCreateUser():
+class TestUserCreate():
     """Test cases for the database utils create_user function"""
 
     _fake_session: _FakeSession
@@ -21,7 +21,7 @@ class TestCreateUser():
         """Should create user and add to Database"""
         _prepare_fake_session(self, monkeypatch)
 
-        response = DatabaseUtils.create_user(
+        response = DatabaseUtils.user_create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -48,7 +48,7 @@ class TestCreateUser():
         """Should return correct failure reason if database is not setup"""
         _prepare_db_not_initialised_error(monkeypatch)
 
-        response = DatabaseUtils.create_user(
+        response = DatabaseUtils.user_create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -68,7 +68,7 @@ class TestCreateUser():
         self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-        response = DatabaseUtils.create_user(
+        response = DatabaseUtils.user_create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -98,7 +98,7 @@ class TestCreateUser():
             )
         )
 
-        response = DatabaseUtils.create_user(
+        response = DatabaseUtils.user_create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -116,7 +116,7 @@ class TestCreateUser():
         assert self._fake_session.closed is True
 
 
-class TestChangeUsername():
+class TestUserChangeUsername():
     """Test cases for the database utils change_username function"""
 
     _fake_session: _FakeSession
@@ -135,7 +135,7 @@ class TestChangeUsername():
 
         _fake_query_response(monkeypatch, [fake_user])
 
-        response = DatabaseUtils.change_username(
+        response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -157,7 +157,7 @@ class TestChangeUsername():
         """Should return correct failure reason if database is not setup"""
         _prepare_db_not_initialised_error(monkeypatch)
 
-        response = DatabaseUtils.change_username(
+        response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -175,7 +175,7 @@ class TestChangeUsername():
         self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-        response = DatabaseUtils.change_username(
+        response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -196,7 +196,7 @@ class TestChangeUsername():
 
         _fake_query_response(monkeypatch, [None])
 
-        response = DatabaseUtils.change_username(
+        response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -212,7 +212,7 @@ class TestChangeUsername():
         assert self._fake_session.closed is True
 
 
-class TestDeleteUser():
+class TestUserDelete():
     """Test cases for database utils delete_user function"""
 
     _fake_session: _FakeSession
@@ -231,7 +231,7 @@ class TestDeleteUser():
 
         _fake_query_response(monkeypatch, [fake_user])
 
-        response = DatabaseUtils.delete_user(
+        response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
         )
 
@@ -252,7 +252,7 @@ class TestDeleteUser():
         """Should return correct failure reason if database is not setup"""
         _prepare_db_not_initialised_error(monkeypatch)
 
-        response = DatabaseUtils.delete_user(
+        response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
         )
 
@@ -269,7 +269,7 @@ class TestDeleteUser():
         self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-        response = DatabaseUtils.delete_user(
+        response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
         )
 
@@ -289,7 +289,7 @@ class TestDeleteUser():
 
         _fake_query_response(monkeypatch, [None])
 
-        response = DatabaseUtils.delete_user(
+        response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
         )
 

@@ -24,7 +24,7 @@ class DatabaseUtils:
             session.close()
 
     @staticmethod
-    def create_user(username_hash: str, srp_salt: str, srp_verifier: str, master_key_salt: str) -> Tuple[bool, Optional[FailureReason]]:
+    def user_create(username_hash: str, srp_salt: str, srp_verifier: str, master_key_salt: str) -> Tuple[bool, Optional[FailureReason]]:
         """Create a new user and add them to the database"""
         user = User(
             username_hash=username_hash,
@@ -45,7 +45,7 @@ class DatabaseUtils:
             return False, FailureReason.UNKNOWN_EXCEPTION
 
     @staticmethod
-    def change_username(username_hash: str, new_username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
+    def user_change_username(username_hash: str, new_username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
         """Change username for an existing user"""
         try:
             with DatabaseUtils._get_db_session() as session:
@@ -60,7 +60,7 @@ class DatabaseUtils:
             return False, FailureReason.UNKNOWN_EXCEPTION
 
     @staticmethod
-    def delete_user(username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
+    def user_delete(username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given user"""
         try:
             with DatabaseUtils._get_db_session() as session:
