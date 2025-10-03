@@ -60,6 +60,30 @@ class TestCreateUser():
         assert response[0] == False
         assert response[1] == FailureReason.DATABASE_UNINITIALISED
 
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+
+        response = DatabaseUtils.create_user(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 1
+        assert self._fake_session.closed is True
+
     def test_handles_unique_constraint_failure(self, monkeypatch):
         """Should return correct failure reason if username hash exists"""
         _prepare_fake_session(self, monkeypatch, "unique constraint failed")
@@ -85,30 +109,6 @@ class TestCreateUser():
         assert isinstance(response[1], FailureReason)
         assert response[0] == False
         assert response[1] == FailureReason.DUPLICATE
-
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
-
-    def test_handles_server_exception(self, monkeypatch):
-        """Should return correct failure reason if other exception seen"""
-        def raise_unknown_exception():
-            raise ValueError("Something went wrong")
-        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
-
-        response = DatabaseUtils.create_user(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
-        )
-
-        assert isinstance(response, tuple)
-        assert isinstance(response[0], bool)
-        assert isinstance(response[1], FailureReason)
-        assert response[0] == False
-        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
 
         assert self._fake_session.commits == 1
         assert self._fake_session.rollbacks == 1
@@ -165,6 +165,49 @@ class TestChangeUsername():
         assert isinstance(response[1], FailureReason)
         assert response[0] == False
         assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+
+        response = DatabaseUtils.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert self._fake_session.commits == 0
+        assert self._fake_session.rollbacks == 1
+        assert self._fake_session.closed is True
+
+    def test_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        _prepare_fake_session(self, monkeypatch, "")
+
+        _fake_query_response(monkeypatch, [None])
+
+        response = DatabaseUtils.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 0
+        assert self._fake_session.closed is True
 
 
 if __name__ == '__main__':

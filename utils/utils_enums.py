@@ -5,3 +5,4 @@ class FailureReason(Enum):
     DATABASE_UNINITIALISED = auto()
     UNKNOWN_EXCEPTION = auto()
     DUPLICATE = auto()
+    NOT_FOUND = auto()
