@@ -144,7 +144,9 @@ class DatabaseUtils:
                     user=auth_ephemeral.user,
                     session_key=session_key,
                     request_count=0,
-                    last_used=datetime.now()
+                    last_used=datetime.now(),
+                    maximum_requests=maximum_requests,
+                    expiry_time=expiry_time
                 )
                 session.add(login_session)
                 session.flush()

@@ -516,7 +516,6 @@ class TestSessionCompleteAuth():
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
-        expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_complete_auth(
             public_id="session_fake_public_id",
             session_key="fake_session_key",
@@ -551,6 +550,70 @@ class TestSessionCompleteAuth():
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
         assert db_session.maximum_requests == None
         assert db_session.expiry_time == None
+        assert db_session.password_change == None
+
+    def test_nominal_case_maximal_inputs(self, monkeypatch):
+        """Should create login session & fetch srp_salt with maximal inputs"""
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        expiry = datetime.now() + timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            ephemeral_b="fake_ephemeral_b",
+            expires_at=expiry
+        )
+
+        def fake_query(self, model):
+            return _MockQuery([fake_ephemeral])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DatabaseUtils.session_complete_auth(
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=99,
+            expiry_time=expiry
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], str)
+        assert response[0] == True
+        assert response[1] == None
+        assert response[2] == "session_fake_public_id"
+
+        assert len(self._fake_session._added) == 1
+        assert len(self._fake_session._deletes) == 1
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 0
+        assert self._fake_session.closed is True
+
+        db_ephemeral = self._fake_session._deletes[0]
+        assert isinstance(db_ephemeral, AuthEphemeral)
+        assert db_ephemeral.public_id == "ephemeral_fake_public_id"
+
+        db_session = self._fake_session._added[0]
+        assert isinstance(db_session, LoginSession)
+        assert db_session.user == fake_user
+        assert db_session.public_id == "session_fake_public_id"
+        assert db_session.session_key == "fake_session_key"
+        assert db_session.request_count == 0
+        assert db_session.last_used < datetime.now()
+        assert db_session.last_used > datetime.now() - timedelta(seconds=2)
+        assert db_session.maximum_requests == 99
+        assert db_session.expiry_time == expiry
         assert db_session.password_change == None
 
 
