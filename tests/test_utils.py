@@ -63,6 +63,7 @@ def _prepare_fake_session(test_class, monkeypatch, exception_message : Optional[
         test_class._fake_session = _FakeSession()
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: test_class._fake_session))
 
+
 def _prepare_db_not_initialised_error(monkeypatch):
     def _raise_runtime_error():
         raise RuntimeError("Database not initialised.")
