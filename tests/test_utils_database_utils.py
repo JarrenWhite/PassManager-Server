@@ -3,9 +3,11 @@ import sys
 import pytest
 from datetime import datetime, timedelta
 
+from sqlalchemy.exc import IntegrityError
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from test_utils import _FakeSession, _FakeQuery, _prepare_fake_session, _prepare_db_not_initialised_error, _fake_query_response
+from tests.mock_classes import _MockSession, _MockQuery
 
 from utils.database_utils import DatabaseUtils
 from utils.utils_enums import FailureReason
@@ -16,11 +18,12 @@ from database.database_models import User, AuthEphemeral, LoginSession
 class TestUserCreate():
     """Test cases for the database utils user_create function"""
 
-    _fake_session: _FakeSession
+    _fake_session: _MockSession
 
     def test_nominal_case(self, monkeypatch):
         """Should create user and add to Database"""
-        _prepare_fake_session(self, monkeypatch)
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         response = DatabaseUtils.user_create(
             username_hash="fake_hash",
@@ -48,7 +51,9 @@ class TestUserCreate():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        _prepare_db_not_initialised_error(monkeypatch)
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
         response = DatabaseUtils.user_create(
             username_hash="fake_hash",
@@ -67,7 +72,7 @@ class TestUserCreate():
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         response = DatabaseUtils.user_create(
@@ -89,7 +94,10 @@ class TestUserCreate():
 
     def test_handles_unique_constraint_failure(self, monkeypatch):
         """Should return correct failure reason if username hash exists"""
-        _prepare_fake_session(self, monkeypatch, "unique constraint failed")
+        def raise_exception():
+            raise IntegrityError("unique constraint failed", params=None, orig=Exception("Fake exception"))
+        self._fake_session = _MockSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         self._fake_session.add(
             User(
@@ -121,11 +129,12 @@ class TestUserCreate():
 class TestUserChangeUsername():
     """Test cases for the database utils user_change_username function"""
 
-    _fake_session: _FakeSession
+    _fake_session: _MockSession
 
     def test_nominal_case(self, monkeypatch):
         """Should change username of given user"""
-        _prepare_fake_session(self, monkeypatch)
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         fake_user = User(
             username_hash="fake_hash",
@@ -134,7 +143,9 @@ class TestUserChangeUsername():
             master_key_salt="fake_master_key_salt"
         )
 
-        _fake_query_response(monkeypatch, [fake_user])
+        def fake_query(self, model):
+            return _MockQuery([fake_user])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
@@ -153,9 +164,29 @@ class TestUserChangeUsername():
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True
 
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
+        response = DatabaseUtils.user_change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
     def test_handles_unique_constraint_failure(self, monkeypatch):
         """Should return correct failure reason if new username hash already exists"""
-        _prepare_fake_session(self, monkeypatch, "unique constraint failed")
+        def raise_exception():
+            raise IntegrityError("unique constraint failed", params=None, orig=Exception("Fake exception"))
+        self._fake_session = _MockSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         fake_user = User(
             username_hash="fake_hash",
@@ -164,7 +195,9 @@ class TestUserChangeUsername():
             master_key_salt="fake_master_key_salt"
         )
 
-        _fake_query_response(monkeypatch, [fake_user])
+        def fake_query(self, model):
+            return _MockQuery([fake_user])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
@@ -181,26 +214,11 @@ class TestUserChangeUsername():
         assert self._fake_session.rollbacks == 1
         assert self._fake_session.closed is True
 
-    def test_handles_database_unprepared_failure(self, monkeypatch):
-        """Should return correct failure reason if database is not setup"""
-        _prepare_db_not_initialised_error(monkeypatch)
-
-        response = DatabaseUtils.user_change_username(
-            username_hash="fake_hash",
-            new_username_hash="new_fake_hash"
-        )
-
-        assert isinstance(response, tuple)
-        assert isinstance(response[0], bool)
-        assert isinstance(response[1], FailureReason)
-        assert response[0] == False
-        assert response[1] == FailureReason.DATABASE_UNINITIALISED
-
     def test_handles_server_exception(self, monkeypatch):
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         response = DatabaseUtils.user_change_username(
@@ -220,9 +238,12 @@ class TestUserChangeUsername():
 
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
-        _prepare_fake_session(self, monkeypatch, "")
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-        _fake_query_response(monkeypatch, [None])
+        def fake_query(self, model):
+            return _MockQuery([None])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
@@ -243,11 +264,12 @@ class TestUserChangeUsername():
 class TestUserDelete():
     """Test cases for database utils user_delete function"""
 
-    _fake_session: _FakeSession
+    _fake_session: _MockSession
 
     def test_nominal_case(self, monkeypatch):
         """Should delete given user"""
-        _prepare_fake_session(self, monkeypatch)
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         fake_user = User(
             username_hash="fake_hash",
@@ -257,7 +279,9 @@ class TestUserDelete():
         )
         self._fake_session.add(fake_user)
 
-        _fake_query_response(monkeypatch, [fake_user])
+        def fake_query(self, model):
+            return _MockQuery([fake_user])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
@@ -278,7 +302,9 @@ class TestUserDelete():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        _prepare_db_not_initialised_error(monkeypatch)
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
         response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
@@ -294,7 +320,7 @@ class TestUserDelete():
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         response = DatabaseUtils.user_delete(
@@ -313,9 +339,12 @@ class TestUserDelete():
 
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
-        _prepare_fake_session(self, monkeypatch, "")
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-        _fake_query_response(monkeypatch, [None])
+        def fake_query(self, model):
+            return _MockQuery([None])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
@@ -335,11 +364,12 @@ class TestUserDelete():
 class TestSessionStartAuth():
     """Test cases for database utils session_start_auth function"""
 
-    _fake_session: _FakeSession
+    _fake_session: _MockSession
 
     def test_nominal_case(self, monkeypatch):
         """Should create auth ephemeral & fetch srp_salt"""
-        _prepare_fake_session(self, monkeypatch)
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         fake_user = User(
             id=123456,
@@ -348,7 +378,10 @@ class TestSessionStartAuth():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt"
         )
-        _fake_query_response(monkeypatch, [fake_user])
+
+        def fake_query(self, model):
+            return _MockQuery([fake_user])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         monkeypatch.setattr(AuthEphemeral, "public_id", "fake_public_id")
 
@@ -383,7 +416,9 @@ class TestSessionStartAuth():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        _prepare_db_not_initialised_error(monkeypatch)
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
@@ -402,7 +437,7 @@ class TestSessionStartAuth():
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -424,9 +459,12 @@ class TestSessionStartAuth():
 
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
-        _prepare_fake_session(self, monkeypatch, "")
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
-        _fake_query_response(monkeypatch, [None])
+        def fake_query(self, model):
+            return _MockQuery([None])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
@@ -449,11 +487,12 @@ class TestSessionStartAuth():
 class TestSessionCompleteAuth():
     """Test cases for database utils session_complete_auth function"""
 
-    _fake_session: _FakeSession
+    _fake_session: _MockSession
 
     def test_nominal_case_minimal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with minimal inputs"""
-        _prepare_fake_session(self, monkeypatch)
+        self._fake_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
 
         fake_user = User(
             id=123456,
@@ -471,7 +510,9 @@ class TestSessionCompleteAuth():
             expires_at=expiry
         )
 
-        _fake_query_response(monkeypatch, [fake_ephemeral])
+        def fake_query(self, model):
+            return _MockQuery([fake_ephemeral])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
