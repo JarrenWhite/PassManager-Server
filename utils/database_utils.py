@@ -46,7 +46,7 @@ class DatabaseUtils:
 
     @staticmethod
     def change_username(username_hash: str, new_username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
-
+        """Change username for an existing user"""
         try:
             with DatabaseUtils._get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
