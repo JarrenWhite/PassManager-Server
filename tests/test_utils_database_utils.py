@@ -34,6 +34,7 @@ class TestCreateUser():
         assert response[1] == None
 
         assert len(self._fake_session._added) == 1
+        assert len(self._fake_session._deletes) == 0
         db_user = self._fake_session._added[0]
         assert db_user.username_hash == "fake_hash"
         assert db_user.srp_salt == "fake_srp_salt"
@@ -145,6 +146,7 @@ class TestChangeUsername():
         assert response[1] == None
 
         assert len(self._fake_session._added) == 1
+        assert len(self._fake_session._deletes) == 0
         db_user = self._fake_session._added[0]
         assert db_user.username_hash == "new_fake_hash"
         assert self._fake_session.commits == 1
@@ -238,6 +240,7 @@ class TestDeleteUser():
         assert response[0] == True
         assert response[1] == None
 
+        assert len(self._fake_session._added) == 1
         assert len(self._fake_session._deletes) == 1
         db_user = self._fake_session._deletes[0]
         assert db_user.username_hash == "fake_hash"

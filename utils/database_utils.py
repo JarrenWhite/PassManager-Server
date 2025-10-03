@@ -59,10 +59,17 @@ class DatabaseUtils:
         except Exception:
             return False, FailureReason.UNKNOWN_EXCEPTION
 
+    @staticmethod
+    def delete_user(username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
+        """Delete given user"""
+        with DatabaseUtils._get_db_session() as session:
+            user = session.query(User).filter(User.username_hash == username_hash).first()
+            session.delete(user)
+        return True, None
+
+
     """
     TODO - Implement functions:
-    delete_user
-
     start_password_change
     continue_password_change
     complete_password_change
