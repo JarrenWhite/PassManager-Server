@@ -28,6 +28,19 @@ class _FakeSession:
         self._on_commit = on_commit
         self._deletes= []
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            if exc_type is None:
+                self.commit()
+            else:
+                self.rollback()
+        finally:
+            self.close()
+        return True
+
     def add(self, obj):
         self._added.append(obj)
 

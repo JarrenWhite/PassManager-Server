@@ -153,6 +153,34 @@ class TestUserChangeUsername():
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True
 
+    def test_handles_unique_constraint_failure(self, monkeypatch):
+        """Should return correct failure reason if new username hash already exists"""
+        _prepare_fake_session(self, monkeypatch, "unique constraint failed")
+
+        fake_user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        _fake_query_response(monkeypatch, [fake_user])
+
+        response = DatabaseUtils.user_change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DUPLICATE
+
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 1
+        assert self._fake_session.closed is True
+
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
         _prepare_db_not_initialised_error(monkeypatch)

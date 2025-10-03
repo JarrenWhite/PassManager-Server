@@ -65,6 +65,8 @@ class DatabaseUtils:
                     return False, FailureReason.NOT_FOUND
                 user.username_hash = new_username_hash
                 return True, None
+        except IntegrityError:
+            return False, FailureReason.DUPLICATE
         except RuntimeError:
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
