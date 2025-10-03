@@ -51,13 +51,13 @@ class DatabaseUtils:
             with DatabaseUtils._get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if not user:
-                    return True, None
+                    return False, FailureReason.NOT_FOUND
                 user.username_hash = new_username_hash
                 return True, None
         except RuntimeError:
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
-            return True, None
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
     """
     TODO - Implement functions:
