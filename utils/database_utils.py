@@ -62,10 +62,17 @@ class DatabaseUtils:
     @staticmethod
     def delete_user(username_hash: str) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given user"""
-        with DatabaseUtils._get_db_session() as session:
-            user = session.query(User).filter(User.username_hash == username_hash).first()
-            session.delete(user)
-        return True, None
+        try:
+            with DatabaseUtils._get_db_session() as session:
+                user = session.query(User).filter(User.username_hash == username_hash).first()
+                if not user:
+                    return False, FailureReason.NOT_FOUND
+                session.delete(user)
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except Exception:
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
 
     """

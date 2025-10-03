@@ -248,6 +248,61 @@ class TestDeleteUser():
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True
 
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        _prepare_db_not_initialised_error(monkeypatch)
+
+        response = DatabaseUtils.delete_user(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        self._fake_session = _FakeSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+
+        response = DatabaseUtils.delete_user(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert self._fake_session.commits == 0
+        assert self._fake_session.rollbacks == 1
+        assert self._fake_session.closed is True
+
+    def test_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        _prepare_fake_session(self, monkeypatch, "")
+
+        _fake_query_response(monkeypatch, [None])
+
+        response = DatabaseUtils.delete_user(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 0
+        assert self._fake_session.closed is True
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
