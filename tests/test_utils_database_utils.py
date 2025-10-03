@@ -18,12 +18,10 @@ from database.database_models import User, AuthEphemeral, LoginSession
 class TestUserCreate():
     """Test cases for the database utils user_create function"""
 
-    _fake_session: _MockSession
-
     def test_nominal_case(self, monkeypatch):
         """Should create user and add to Database"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         response = DatabaseUtils.user_create(
             username_hash="fake_hash",
@@ -37,17 +35,17 @@ class TestUserCreate():
         assert response[0] == True
         assert response[1] == None
 
-        assert len(self._fake_session._added) == 1
-        assert len(self._fake_session._deletes) == 0
-        db_user = self._fake_session._added[0]
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 0
+        db_user = mock_session._added[0]
         assert isinstance(db_user, User)
         assert db_user.username_hash == "fake_hash"
         assert db_user.srp_salt == "fake_srp_salt"
         assert db_user.srp_verifier == "fake_srp_verifier"
         assert db_user.master_key_salt == "fake_master_key_salt"
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -72,8 +70,8 @@ class TestUserCreate():
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         response = DatabaseUtils.user_create(
             username_hash="fake_hash",
@@ -88,18 +86,18 @@ class TestUserCreate():
         assert response[0] == False
         assert response[1] == FailureReason.UNKNOWN_EXCEPTION
 
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
 
     def test_handles_unique_constraint_failure(self, monkeypatch):
         """Should return correct failure reason if username hash exists"""
         def raise_exception():
             raise IntegrityError("unique constraint failed", params=None, orig=Exception("Fake exception"))
-        self._fake_session = _MockSession(on_commit=raise_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        self._fake_session.add(
+        mock_session.add(
             User(
                 username_hash="fake_hash",
                 srp_salt="fake_srp_salt",
@@ -121,20 +119,18 @@ class TestUserCreate():
         assert response[0] == False
         assert response[1] == FailureReason.DUPLICATE
 
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
 
 
 class TestUserChangeUsername():
     """Test cases for the database utils user_change_username function"""
 
-    _fake_session: _MockSession
-
     def test_nominal_case(self, monkeypatch):
         """Should change username of given user"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         fake_user = User(
             username_hash="fake_hash",
@@ -157,12 +153,12 @@ class TestUserChangeUsername():
         assert response[0] == True
         assert response[1] == None
 
-        assert len(self._fake_session._added) == 0
-        assert len(self._fake_session._deletes) == 0
+        assert len(mock_session._added) == 0
+        assert len(mock_session._deletes) == 0
         assert fake_user.username_hash == "new_fake_hash"
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -185,8 +181,8 @@ class TestUserChangeUsername():
         """Should return correct failure reason if new username hash already exists"""
         def raise_exception():
             raise IntegrityError("unique constraint failed", params=None, orig=Exception("Fake exception"))
-        self._fake_session = _MockSession(on_commit=raise_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         fake_user = User(
             username_hash="fake_hash",
@@ -210,16 +206,16 @@ class TestUserChangeUsername():
         assert response[0] == False
         assert response[1] == FailureReason.DUPLICATE
 
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
 
     def test_handles_server_exception(self, monkeypatch):
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         response = DatabaseUtils.user_change_username(
             username_hash="fake_hash",
@@ -232,14 +228,14 @@ class TestUserChangeUsername():
         assert response[0] == False
         assert response[1] == FailureReason.UNKNOWN_EXCEPTION
 
-        assert self._fake_session.commits == 0
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
 
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         def fake_query(self, model):
             return _MockQuery([None])
@@ -256,20 +252,18 @@ class TestUserChangeUsername():
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
 
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
 
 class TestUserDelete():
     """Test cases for database utils user_delete function"""
 
-    _fake_session: _MockSession
-
     def test_nominal_case(self, monkeypatch):
         """Should delete given user"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         fake_user = User(
             username_hash="fake_hash",
@@ -277,7 +271,7 @@ class TestUserDelete():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt"
         )
-        self._fake_session.add(fake_user)
+        mock_session.add(fake_user)
 
         def fake_query(self, model):
             return _MockQuery([fake_user])
@@ -292,13 +286,13 @@ class TestUserDelete():
         assert response[0] == True
         assert response[1] == None
 
-        assert len(self._fake_session._added) == 1
-        assert len(self._fake_session._deletes) == 1
-        db_user = self._fake_session._deletes[0]
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 1
+        db_user = mock_session._deletes[0]
         assert db_user.username_hash == "fake_hash"
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -320,8 +314,8 @@ class TestUserDelete():
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         response = DatabaseUtils.user_delete(
             username_hash="fake_hash"
@@ -333,14 +327,14 @@ class TestUserDelete():
         assert response[0] == False
         assert response[1] == FailureReason.UNKNOWN_EXCEPTION
 
-        assert self._fake_session.commits == 0
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
 
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         def fake_query(self, model):
             return _MockQuery([None])
@@ -356,20 +350,18 @@ class TestUserDelete():
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
 
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
 
 class TestSessionStartAuth():
     """Test cases for database utils session_start_auth function"""
 
-    _fake_session: _MockSession
-
     def test_nominal_case(self, monkeypatch):
         """Should create auth ephemeral & fetch srp_salt"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         fake_user = User(
             id=123456,
@@ -401,13 +393,13 @@ class TestSessionStartAuth():
         assert response[2] == "fake_public_id"
         assert response[3] == "fake_srp_salt"
 
-        assert len(self._fake_session._added) == 1
-        assert len(self._fake_session._deletes) == 0
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 0
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
-        db_ephemeral = self._fake_session._added[0]
+        db_ephemeral = mock_session._added[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "fake_public_id"
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_b"
@@ -437,8 +429,8 @@ class TestSessionStartAuth():
         """Should return correct failure reason if other exception seen"""
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
-        self._fake_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
@@ -453,14 +445,14 @@ class TestSessionStartAuth():
         assert response[0] == False
         assert response[1] == FailureReason.UNKNOWN_EXCEPTION
 
-        assert self._fake_session.commits == 0
-        assert self._fake_session.rollbacks == 1
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
 
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         def fake_query(self, model):
             return _MockQuery([None])
@@ -479,20 +471,18 @@ class TestSessionStartAuth():
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
 
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
 
 class TestSessionCompleteAuth():
     """Test cases for database utils session_complete_auth function"""
 
-    _fake_session: _MockSession
-
     def test_nominal_case_minimal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with minimal inputs"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         fake_user = User(
             id=123456,
@@ -530,17 +520,17 @@ class TestSessionCompleteAuth():
         assert response[1] == None
         assert response[2] == "session_fake_public_id"
 
-        assert len(self._fake_session._added) == 1
-        assert len(self._fake_session._deletes) == 1
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 1
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
-        db_ephemeral = self._fake_session._deletes[0]
+        db_ephemeral = mock_session._deletes[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "ephemeral_fake_public_id"
 
-        db_session = self._fake_session._added[0]
+        db_session = mock_session._added[0]
         assert isinstance(db_session, LoginSession)
         assert db_session.user == fake_user
         assert db_session.public_id == "session_fake_public_id"
@@ -554,8 +544,8 @@ class TestSessionCompleteAuth():
 
     def test_nominal_case_maximal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with maximal inputs"""
-        self._fake_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: self._fake_session))
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         fake_user = User(
             id=123456,
@@ -594,17 +584,17 @@ class TestSessionCompleteAuth():
         assert response[1] == None
         assert response[2] == "session_fake_public_id"
 
-        assert len(self._fake_session._added) == 1
-        assert len(self._fake_session._deletes) == 1
-        assert self._fake_session.commits == 1
-        assert self._fake_session.rollbacks == 0
-        assert self._fake_session.closed is True
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 1
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
-        db_ephemeral = self._fake_session._deletes[0]
+        db_ephemeral = mock_session._deletes[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "ephemeral_fake_public_id"
 
-        db_session = self._fake_session._added[0]
+        db_session = mock_session._added[0]
         assert isinstance(db_session, LoginSession)
         assert db_session.user == fake_user
         assert db_session.public_id == "session_fake_public_id"
