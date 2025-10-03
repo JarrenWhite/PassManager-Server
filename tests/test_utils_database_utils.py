@@ -13,7 +13,7 @@ from database.database_models import User
 
 
 class TestCreateUser():
-    """Test cases for the database utilities create_user function"""
+    """Test cases for the database utils create_user function"""
 
     _fake_session: _FakeSession
 
@@ -116,7 +116,7 @@ class TestCreateUser():
 
 
 class TestChangeUsername():
-    """Test cases for the database utilities change_username function"""
+    """Test cases for the database utils change_username function"""
 
     _fake_session: _FakeSession
 
@@ -205,6 +205,42 @@ class TestChangeUsername():
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
 
+        assert self._fake_session.commits == 1
+        assert self._fake_session.rollbacks == 0
+        assert self._fake_session.closed is True
+
+
+class TestDeleteUser():
+    """Test cases for database utils delete_user function"""
+
+    _fake_session: _FakeSession
+
+    def test_nominal_case(self, monkeypatch):
+        """Should delete given user"""
+        _prepare_fake_session(self, monkeypatch)
+
+        fake_user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        self._fake_session.add(fake_user)
+
+        _fake_query_response(monkeypatch, [fake_user])
+
+        response = DatabaseUtils.delete_user(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert len(self._fake_session._deletes) == 1
+        db_user = self._fake_session._deletes[0]
+        assert db_user.username_hash == "fake_hash"
         assert self._fake_session.commits == 1
         assert self._fake_session.rollbacks == 0
         assert self._fake_session.closed is True

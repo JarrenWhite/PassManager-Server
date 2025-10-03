@@ -26,6 +26,7 @@ class _FakeSession:
         self.rollbacks = 0
         self.closed = False
         self._on_commit = on_commit
+        self._deletes= []
 
     def add(self, obj):
         self._added.append(obj)
@@ -43,6 +44,9 @@ class _FakeSession:
 
     def query(self):
         pass
+
+    def delete(self, obj):
+        self._deletes.append(obj)
 
 
 def _prepare_fake_session(test_class, monkeypatch, exception_message : Optional[str] = None):
