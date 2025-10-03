@@ -48,6 +48,9 @@ class _FakeSession:
     def delete(self, obj):
         self._deletes.append(obj)
 
+    def flush(self):
+        pass
+
 
 def _prepare_fake_session(test_class, monkeypatch, exception_message : Optional[str] = None):
     """Prepare a Fake Session with the given exception on commit"""
