@@ -24,6 +24,7 @@ class DBUtilsUser():
             srp_salt=srp_salt,
             srp_verifier=srp_verifier,
             master_key_salt=master_key_salt,
+            password_changing=False
         )
 
         try:

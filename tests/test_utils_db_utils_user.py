@@ -54,6 +54,10 @@ class TestCreate():
         assert db_user.srp_salt == "fake_srp_salt"
         assert db_user.srp_verifier == "fake_srp_verifier"
         assert db_user.master_key_salt == "fake_master_key_salt"
+        assert db_user.new_srp_salt == None
+        assert db_user.new_srp_verifier == None
+        assert db_user.new_master_key_salt == None
+        assert db_user.password_changing == False
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
@@ -137,7 +141,8 @@ class TestCreate():
                 username_hash="fake_hash",
                 srp_salt="fake_srp_salt",
                 srp_verifier="fake_srp_verifier",
-                master_key_salt="fake_master_key_salt"
+                master_key_salt="fake_master_key_salt",
+                password_changing=False
             )
         )
 
@@ -182,7 +187,8 @@ class TestChangeUsername():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         mock_query = _MockQuery([fake_user])
@@ -254,7 +260,8 @@ class TestChangeUsername():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         mock_query = _MockQuery([fake_user])
@@ -382,7 +389,8 @@ class TestDelete():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
         mock_session.add(fake_user)
 

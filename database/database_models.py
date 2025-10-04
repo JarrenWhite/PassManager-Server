@@ -17,6 +17,7 @@ class User(Base):
     srp_salt: Mapped[str] = mapped_column(String)
     srp_verifier: Mapped[str] = mapped_column(String)
     master_key_salt: Mapped[str] = mapped_column(String)
+    password_changing: Mapped[bool] = mapped_column(Boolean)
 
     new_srp_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)

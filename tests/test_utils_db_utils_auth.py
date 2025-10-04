@@ -39,7 +39,8 @@ class TestStart():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         mock_query = _MockQuery([fake_user])
@@ -214,7 +215,8 @@ class TestGetDetails():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -424,7 +426,8 @@ class TestGetDetails():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -487,7 +490,8 @@ class TestComplete():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -569,7 +573,8 @@ class TestComplete():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_changing=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
