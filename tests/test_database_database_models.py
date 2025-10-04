@@ -393,7 +393,8 @@ class TestDatabaseAuthEphemeralModel():
             user_id=123456,
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
         self.session.add(ephemeral)
         self.session.commit()
@@ -404,87 +405,98 @@ class TestDatabaseAuthEphemeralModel():
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
-        )
-        self.session.add(ephemeral)
-
-        with pytest.raises(IntegrityError) as exc_info:
-            self.session.commit()
-        error_message = str(exc_info.value).lower()
-        assert "not null constraint failed" in error_message and "integrity" in error_message
-        self.session.rollback()
-
-        ephemerals = self.session.query(AuthEphemeral).all()
-        assert len(ephemerals) == 0
-
-        ephemeral = AuthEphemeral(
-            user_id=123456,
-            ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
-        )
-        self.session.add(ephemeral)
-
-        with pytest.raises(IntegrityError) as exc_info:
-            self.session.commit()
-        error_message = str(exc_info.value).lower()
-        assert "not null constraint failed" in error_message and "integrity" in error_message
-        self.session.rollback()
-
-        ephemerals = self.session.query(AuthEphemeral).all()
-        assert len(ephemerals) == 0
-
-        ephemeral = AuthEphemeral(
-            user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            expiry_time=expiry
-        )
-        self.session.add(ephemeral)
-
-        with pytest.raises(IntegrityError) as exc_info:
-            self.session.commit()
-        error_message = str(exc_info.value).lower()
-        assert "not null constraint failed" in error_message and "integrity" in error_message
-        self.session.rollback()
-
-        ephemerals = self.session.query(AuthEphemeral).all()
-        assert len(ephemerals) == 0
-
-        ephemeral = AuthEphemeral(
-            user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes"
-        )
-        self.session.add(ephemeral)
-
-        with pytest.raises(IntegrityError) as exc_info:
-            self.session.commit()
-        error_message = str(exc_info.value).lower()
-        assert "not null constraint failed" in error_message and "integrity" in error_message
-        self.session.rollback()
-
-        ephemerals = self.session.query(AuthEphemeral).all()
-        assert len(ephemerals) == 0
-
-    def test_can_use_optional_fields(self):
-        """Should be able to create new AuthEphemeral with optional fields"""
-        expiry = datetime.now() + timedelta(hours=1)
-        ephemeral = AuthEphemeral(
-            user_id=123456,
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_bytes",
             expiry_time=expiry,
-            password_change=True
+            password_change=False
         )
         self.session.add(ephemeral)
-        self.session.commit()
 
-        db_ephemeral = self.session.query(AuthEphemeral).first()
-        assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_b="fake_ephemeral_bytes",
+            expiry_time=expiry,
+            password_change=False
+        )
+        self.session.add(ephemeral)
+
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_salt="fake_ephemeral_salt",
+            expiry_time=expiry,
+            password_change=False
+        )
+        self.session.add(ephemeral)
+
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_salt="fake_ephemeral_salt",
+            ephemeral_b="fake_ephemeral_bytes",
+            password_change=False
+        )
+        self.session.add(ephemeral)
+
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user_id=123456,
+            ephemeral_salt="fake_ephemeral_salt",
+            ephemeral_b="fake_ephemeral_bytes",
+            expiry_time=expiry
+        )
+        self.session.add(ephemeral)
+
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
 
     def test_public_id_created(self):
         """Should create a public ID of length 32"""
@@ -493,7 +505,8 @@ class TestDatabaseAuthEphemeralModel():
             user_id=123456,
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
         self.session.add(ephemeral)
         self.session.commit()
@@ -571,7 +584,8 @@ class TestLoginSessionModel():
             user_id=123456,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -586,7 +600,8 @@ class TestLoginSessionModel():
         login = LoginSession(
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
 
@@ -599,7 +614,8 @@ class TestLoginSessionModel():
         login = LoginSession(
             user_id=123456,
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
 
@@ -612,7 +628,8 @@ class TestLoginSessionModel():
         login = LoginSession(
             user_id=123456,
             session_key="fake_session_key",
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
 
@@ -625,7 +642,25 @@ class TestLoginSessionModel():
         login = LoginSession(
             user_id=123456,
             session_key="fake_session_key",
-            request_count=0
+            request_count=0,
+            password_change=False
+        )
+        self.session.add(login)
+
+        with pytest.raises(IntegrityError) as exc_info:
+            self.session.commit()
+        error_message = str(exc_info.value).lower()
+        assert "not null constraint failed" in error_message and "integrity" in error_message
+        self.session.rollback()
+
+        ephemerals = self.session.query(LoginSession).all()
+        assert len(ephemerals) == 0
+
+        login = LoginSession(
+            user_id=123456,
+            session_key="fake_session_key",
+            request_count=0,
+            last_used=last_used
         )
         self.session.add(login)
 
@@ -665,7 +700,8 @@ class TestLoginSessionModel():
             user_id=123456,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -675,7 +711,8 @@ class TestLoginSessionModel():
             user_id=1234567,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used_2
+            last_used=last_used_2,
+            password_change=False
         )
         self.session.add(login2)
 
@@ -696,7 +733,8 @@ class TestLoginSessionModel():
             user_id=123456,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -740,7 +778,8 @@ class TestLoginSessionModel():
             user_id=123456,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -921,7 +960,8 @@ class TestDatabaseRelationships():
             user_id=123456,
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
         self.session.add(ephemeral)
 
@@ -936,7 +976,8 @@ class TestDatabaseRelationships():
             user_id=123456,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
 
@@ -980,7 +1021,8 @@ class TestDatabaseRelationships():
             user_id=user.id,
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
         self.session.add(ephemeral)
         self.session.commit()
@@ -994,7 +1036,8 @@ class TestDatabaseRelationships():
             user_id=user.id,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -1032,7 +1075,8 @@ class TestDatabaseRelationships():
             user=user,
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_bytes",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
         self.session.add(ephemeral)
         self.session.commit()
@@ -1057,7 +1101,8 @@ class TestDatabaseRelationships():
             user=user,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -1067,7 +1112,8 @@ class TestDatabaseRelationships():
             user=user,
             session_key="fake_session_key_2",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login2)
         self.session.commit()
@@ -1129,7 +1175,8 @@ class TestDatabaseRelationships():
             user=user,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -1186,7 +1233,8 @@ class TestDatabaseRelationships():
             user=user,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()
@@ -1242,7 +1290,8 @@ class TestDatabaseRelationships():
             user=user,
             session_key="fake_session_key",
             request_count=0,
-            last_used=last_used
+            last_used=last_used,
+            password_change=False
         )
         self.session.add(login)
         self.session.commit()

@@ -37,7 +37,7 @@ class AuthEphemeral(Base):
     ephemeral_salt: Mapped[str] = mapped_column(String)
     ephemeral_b: Mapped[str] = mapped_column(String)
     expiry_time: Mapped[datetime] = mapped_column(DateTime)
-    password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    password_change: Mapped[bool] = mapped_column(Boolean)
 
     user: Mapped["User"] = relationship("User")
 
@@ -55,7 +55,7 @@ class LoginSession(Base):
 
     maximum_requests: Mapped[int] = mapped_column(Integer, nullable=True)
     expiry_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    password_change: Mapped[bool] = mapped_column(Boolean)
 
     user: Mapped["User"] = relationship("User", back_populates="login_sessions")
 

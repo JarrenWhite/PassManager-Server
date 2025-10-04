@@ -31,7 +31,8 @@ class DBUtilsAuth():
                     user=user,
                     ephemeral_salt=ephemeral_salt,
                     ephemeral_b=ephemeral_b,
-                    expiry_time=expiry_time
+                    expiry_time=expiry_time,
+                    password_change=False
                 )
                 session.add(auth_ephemeral)
                 session.flush()
@@ -95,7 +96,8 @@ class DBUtilsAuth():
                     request_count=0,
                     last_used=datetime.now(),
                     maximum_requests=maximum_requests,
-                    expiry_time=expiry_time
+                    expiry_time=expiry_time,
+                    password_change=False
                 )
                 session.add(login_session)
                 session.flush()

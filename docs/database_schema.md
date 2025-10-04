@@ -62,7 +62,7 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 | **ephemeral_b**     | BLOB      |                                                  |
 | **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
 | **expiry_time**     | TIMESTAMP | When the ephemeral value expires                 |
-| **password_change** | BOOL      | **nullable**                                     |
+| **password_change** | BOOL      |                                                  |
 
 ### **Relationships**
 - Belongs to **User** → `user_id`
@@ -95,7 +95,7 @@ Tracks user authentication sessions, storing session keys and related data.
 | **last_used**        | TIMESTAMP |                                           |
 | **maximum_requests** | INT       | **nullable**                              |
 | **expiry_time**      | TIMESTAMP | **nullable**                              |
-| **password_change**  | BOOL      | **nullable**                              |
+| **password_change**  | BOOL      |                                           |
 
 ### **Relationships**
 - Belongs to **User** → `user_id`

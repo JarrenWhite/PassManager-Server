@@ -79,7 +79,7 @@ class TestStart():
         assert db_ephemeral.ephemeral_salt == "fake_ephemeral_salt"
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_b"
         assert db_ephemeral.expiry_time == expiry
-        assert db_ephemeral.password_change == None
+        assert db_ephemeral.password_change == False
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -225,7 +225,8 @@ class TestGetDetails():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -374,7 +375,8 @@ class TestGetDetails():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -436,7 +438,8 @@ class TestGetDetails():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -500,7 +503,8 @@ class TestComplete():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -544,7 +548,7 @@ class TestComplete():
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
         assert db_session.maximum_requests == None
         assert db_session.expiry_time == None
-        assert db_session.password_change == None
+        assert db_session.password_change == False
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -583,7 +587,8 @@ class TestComplete():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -628,7 +633,7 @@ class TestComplete():
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
         assert db_session.maximum_requests == 99
         assert db_session.expiry_time == expiry
-        assert db_session.password_change == None
+        assert db_session.password_change == False
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]

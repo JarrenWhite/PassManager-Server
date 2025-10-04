@@ -51,7 +51,8 @@ class TestGetDetails():
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
-            expiry_time=None
+            expiry_time=None,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_login_session])
@@ -202,7 +203,8 @@ class TestGetDetails():
             request_count=3,
             last_used=last_used,
             maximum_requests=3,
-            expiry_time=None
+            expiry_time=None,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_login_session])
@@ -258,7 +260,8 @@ class TestGetDetails():
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
-            expiry_time=expiry_time
+            expiry_time=expiry_time,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_login_session])
@@ -322,7 +325,8 @@ class TestGetDetails():
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
-            expiry_time=None
+            expiry_time=None,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_login_session])
