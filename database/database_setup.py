@@ -1,9 +1,11 @@
 import tempfile
 from pathlib import Path
 from typing import Optional
+from contextlib import contextmanager
 
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
 from sqlalchemy import create_engine, inspect
+
 
 class DatabaseSetup:
 
@@ -14,7 +16,7 @@ class DatabaseSetup:
         DatabaseSetup._sessionMaker = None
 
     @staticmethod
-    def init_db(directory: Path, base: DeclarativeBase):
+    def init_db(directory: Path, base: type[DeclarativeBase]):
         if DatabaseSetup._sessionMaker is not None:
             raise RuntimeError("Database already initialised.")
 
@@ -44,3 +46,18 @@ class DatabaseSetup:
         if not DatabaseSetup._sessionMaker:
             raise RuntimeError("Database not initialised.")
         return DatabaseSetup._sessionMaker
+
+    @staticmethod
+    @contextmanager
+    def get_db_session():
+        if not DatabaseSetup._sessionMaker:
+            raise RuntimeError("Database not initialised.")
+        session = DatabaseSetup._sessionMaker()
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
