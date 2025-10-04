@@ -1,0 +1,393 @@
+import os
+import sys
+import pytest
+
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.elements import BinaryExpression
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from tests.mock_classes import _MockSession, _MockQuery
+from utils.utils_enums import FailureReason
+from utils.db_utils_user import DBUtilsUser
+from database.database_setup import DatabaseSetup
+from database.database_models import User
+
+
+class TestUserCreate():
+    """Test cases for the database utils user_create function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should create user and add to Database"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        response = DBUtilsUser.create(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 0
+        db_user = mock_session._added[0]
+        assert isinstance(db_user, User)
+        assert db_user.username_hash == "fake_hash"
+        assert db_user.srp_salt == "fake_srp_salt"
+        assert db_user.srp_verifier == "fake_srp_verifier"
+        assert db_user.master_key_salt == "fake_master_key_salt"
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
+        response = DBUtilsUser.create(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        response = DBUtilsUser.create(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+    def test_handles_unique_constraint_failure(self, monkeypatch):
+        """Should return correct failure reason if username hash exists"""
+        def raise_exception():
+            raise IntegrityError("unique constraint failed", params=None, orig=Exception("Fake exception"))
+        mock_session = _MockSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        mock_session.add(
+            User(
+                username_hash="fake_hash",
+                srp_salt="fake_srp_salt",
+                srp_verifier="fake_srp_verifier",
+                master_key_salt="fake_master_key_salt"
+            )
+        )
+
+        response = DBUtilsUser.create(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DUPLICATE
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+
+class TestUserChangeUsername():
+    """Test cases for the database utils user_change_username function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should change username of given user"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        fake_user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsUser.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert len(mock_session._added) == 0
+        assert len(mock_session._deletes) == 0
+        assert fake_user.username_hash == "new_fake_hash"
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
+
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
+        response = DBUtilsUser.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_unique_constraint_failure(self, monkeypatch):
+        """Should return correct failure reason if new username hash already exists"""
+        def raise_exception():
+            raise IntegrityError("unique constraint failed", params=None, orig=Exception("Fake exception"))
+        mock_session = _MockSession(on_commit=raise_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        fake_user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsUser.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DUPLICATE
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        response = DBUtilsUser.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+    def test_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        mock_query = _MockQuery([None])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsUser.change_username(
+            username_hash="fake_hash",
+            new_username_hash="new_fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
+
+
+class TestUserDelete():
+    """Test cases for database utils user_delete function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should delete given user"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        fake_user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+        mock_session.add(fake_user)
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsUser.delete(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 1
+        db_user = mock_session._deletes[0]
+        assert db_user.username_hash == "fake_hash"
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
+
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
+        response = DBUtilsUser.delete(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        response = DBUtilsUser.delete(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+    def test_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        mock_query = _MockQuery([None])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsUser.delete(
+            username_hash="fake_hash"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
+
+
+if __name__ == '__main__':
+    pytest.main(['-v', __file__])
