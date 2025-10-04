@@ -169,6 +169,7 @@ class DatabaseUtils:
     add_password_change_encryption_entry
 
     get_ephemeral_details
+    get_session_details
     delete_session
     clean_sessions
 

@@ -606,6 +606,78 @@ class TestSessionCompleteAuth():
         assert db_session.expiry_time == expiry
         assert db_session.password_change == None
 
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DatabaseUtils.session_complete_auth(
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=99,
+            expiry_time=expiry
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DatabaseUtils.session_complete_auth(
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=99,
+            expiry_time=expiry
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+    def test_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        def fake_query(self, model):
+            return _MockQuery([None])
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DatabaseUtils.session_complete_auth(
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=99,
+            expiry_time=expiry
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
