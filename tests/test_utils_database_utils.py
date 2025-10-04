@@ -564,7 +564,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
         response = DatabaseUtils.session_complete_auth(
-            public_id="session_fake_public_id",
+            public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=None,
             expiry_time=None
@@ -603,7 +603,7 @@ class TestSessionCompleteAuth():
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
-        assert condition.right.value == "session_fake_public_id"
+        assert condition.right.value == "ephemeral_fake_public_id"
 
     def test_nominal_case_maximal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with maximal inputs"""
@@ -636,7 +636,7 @@ class TestSessionCompleteAuth():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_complete_auth(
-            public_id="session_fake_public_id",
+            public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
             expiry_time=expiry
@@ -675,7 +675,7 @@ class TestSessionCompleteAuth():
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
-        assert condition.right.value == "session_fake_public_id"
+        assert condition.right.value == "ephemeral_fake_public_id"
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -685,7 +685,7 @@ class TestSessionCompleteAuth():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_complete_auth(
-            public_id="session_fake_public_id",
+            public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
             expiry_time=expiry
@@ -706,7 +706,7 @@ class TestSessionCompleteAuth():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_complete_auth(
-            public_id="session_fake_public_id",
+            public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
             expiry_time=expiry
@@ -734,7 +734,7 @@ class TestSessionCompleteAuth():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_complete_auth(
-            public_id="session_fake_public_id",
+            public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
             expiry_time=expiry
@@ -754,7 +754,7 @@ class TestSessionCompleteAuth():
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
-        assert condition.right.value == "session_fake_public_id"
+        assert condition.right.value == "ephemeral_fake_public_id"
 
 
 if __name__ == '__main__':
