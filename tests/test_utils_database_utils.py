@@ -380,6 +380,7 @@ class TestSessionStartAuth():
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
             username_hash="fake_hash",
+            ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
             expires_at=expiry
         )
@@ -402,6 +403,7 @@ class TestSessionStartAuth():
         db_ephemeral = mock_session._added[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "fake_public_id"
+        assert db_ephemeral.ephemeral_salt == "fake_ephemeral_salt"
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_b"
         assert db_ephemeral.expires_at == expiry
         assert db_ephemeral.password_change == None
@@ -415,6 +417,7 @@ class TestSessionStartAuth():
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
             username_hash="fake_hash",
+            ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
             expires_at=expiry
         )
@@ -435,6 +438,7 @@ class TestSessionStartAuth():
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
             username_hash="fake_hash",
+            ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
             expires_at=expiry
         )
@@ -461,6 +465,7 @@ class TestSessionStartAuth():
         expiry = datetime.now() + timedelta(hours=1)
         response = DatabaseUtils.session_start_auth(
             username_hash="fake_hash",
+            ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
             expires_at=expiry
         )
@@ -496,6 +501,7 @@ class TestSessionCompleteAuth():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
+            ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
             expires_at=expiry
         )
@@ -559,6 +565,7 @@ class TestSessionCompleteAuth():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
+            ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
             expires_at=expiry
         )

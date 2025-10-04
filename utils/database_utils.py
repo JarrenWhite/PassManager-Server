@@ -94,6 +94,7 @@ class DatabaseUtils:
     @staticmethod
     def session_start_auth(
         username_hash: str,
+        ephemeral_salt: str,
         ephemeral_b: str,
         expires_at: datetime
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
@@ -109,6 +110,7 @@ class DatabaseUtils:
 
                 auth_ephemeral = AuthEphemeral(
                     user=user,
+                    ephemeral_salt=ephemeral_salt,
                     ephemeral_b=ephemeral_b,
                     expires_at=expires_at
                 )
