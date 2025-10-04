@@ -217,24 +217,35 @@ class DatabaseUtils:
 
     """
     TODO - Implement functions:
-    start_password_change
-    continue_password_change
-    complete_password_change
-    abort_password_change
-    add_password_change_encryption_entry
+        User
+    create
+    change_username
+    delete
 
+        Auth
+    start_auth
+    get_ephemeral_details
+    complete_auth
+    start_auth_password
+    complete_auth_password
+    clean_ephemerals
+
+        Session
+    get_session_details
     increment_request_count
     delete_session
     clean_sessions
     clean_all_sessions
 
+        Password
+    complete_password_change
+    abort_password_change
+    add_password_change_encryption_entry
+
+        Data
     create_entry
     edit_entry
     delete_entry
     get_entry
     get_list
-
-    initialise_database
-    clean_ephemerals
-    clean_sessions
     """
