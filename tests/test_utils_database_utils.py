@@ -4,6 +4,7 @@ import pytest
 from datetime import datetime, timedelta
 
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.elements import BinaryExpression
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -139,8 +140,9 @@ class TestUserChangeUsername():
             master_key_salt="fake_master_key_salt"
         )
 
+        mock_query = _MockQuery([fake_user])
         def fake_query(self, model):
-            return _MockQuery([fake_user])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_change_username(
@@ -159,6 +161,12 @@ class TestUserChangeUsername():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -191,8 +199,9 @@ class TestUserChangeUsername():
             master_key_salt="fake_master_key_salt"
         )
 
+        mock_query = _MockQuery([fake_user])
         def fake_query(self, model):
-            return _MockQuery([fake_user])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_change_username(
@@ -209,6 +218,12 @@ class TestUserChangeUsername():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
 
     def test_handles_server_exception(self, monkeypatch):
         """Should return correct failure reason if other exception seen"""
@@ -237,8 +252,9 @@ class TestUserChangeUsername():
         mock_session = _MockSession()
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
+        mock_query = _MockQuery([None])
         def fake_query(self, model):
-            return _MockQuery([None])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_change_username(
@@ -255,6 +271,12 @@ class TestUserChangeUsername():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
 
 
 class TestUserDelete():
@@ -273,8 +295,9 @@ class TestUserDelete():
         )
         mock_session.add(fake_user)
 
+        mock_query = _MockQuery([fake_user])
         def fake_query(self, model):
-            return _MockQuery([fake_user])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_delete(
@@ -293,6 +316,12 @@ class TestUserDelete():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -336,8 +365,9 @@ class TestUserDelete():
         mock_session = _MockSession()
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
+        mock_query = _MockQuery([None])
         def fake_query(self, model):
-            return _MockQuery([None])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DatabaseUtils.user_delete(
@@ -353,6 +383,12 @@ class TestUserDelete():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
 
 
 class TestSessionStartAuth():
@@ -371,8 +407,9 @@ class TestSessionStartAuth():
             master_key_salt="fake_master_key_salt"
         )
 
+        mock_query = _MockQuery([fake_user])
         def fake_query(self, model):
-            return _MockQuery([fake_user])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         monkeypatch.setattr(AuthEphemeral, "public_id", "fake_public_id")
@@ -408,6 +445,12 @@ class TestSessionStartAuth():
         assert db_ephemeral.expires_at == expiry
         assert db_ephemeral.password_change == None
 
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
+
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
         def _raise_runtime_error():
@@ -458,8 +501,9 @@ class TestSessionStartAuth():
         mock_session = _MockSession()
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
+        mock_query = _MockQuery([None])
         def fake_query(self, model):
-            return _MockQuery([None])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -479,6 +523,12 @@ class TestSessionStartAuth():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "username_hash"
+        assert condition.right.value == "fake_hash"
 
 
 class TestSessionCompleteAuth():
@@ -506,8 +556,9 @@ class TestSessionCompleteAuth():
             expires_at=expiry
         )
 
+        mock_query = _MockQuery([fake_ephemeral])
         def fake_query(self, model):
-            return _MockQuery([fake_ephemeral])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
@@ -548,6 +599,12 @@ class TestSessionCompleteAuth():
         assert db_session.expiry_time == None
         assert db_session.password_change == None
 
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
+
     def test_nominal_case_maximal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with maximal inputs"""
         mock_session = _MockSession()
@@ -570,8 +627,9 @@ class TestSessionCompleteAuth():
             expires_at=expiry
         )
 
+        mock_query = _MockQuery([fake_ephemeral])
         def fake_query(self, model):
-            return _MockQuery([fake_ephemeral])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
@@ -613,6 +671,12 @@ class TestSessionCompleteAuth():
         assert db_session.expiry_time == expiry
         assert db_session.password_change == None
 
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
+
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
         def _raise_runtime_error():
@@ -663,8 +727,9 @@ class TestSessionCompleteAuth():
         mock_session = _MockSession()
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
+        mock_query = _MockQuery([None])
         def fake_query(self, model):
-            return _MockQuery([None])
+            return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -684,6 +749,12 @@ class TestSessionCompleteAuth():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
 
 
 if __name__ == '__main__':

@@ -4,8 +4,10 @@ from typing import Optional, Callable
 class _MockQuery:
     def __init__(self, results):
         self._results = results
+        self._filters = []
 
     def filter(self, condition):
+        self._filters.append(condition)
         return self
 
     def first(self):
