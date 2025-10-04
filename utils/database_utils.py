@@ -96,7 +96,7 @@ class DatabaseUtils:
         username_hash: str,
         ephemeral_salt: str,
         ephemeral_b: str,
-        expires_at: datetime
+        expiry_time: datetime
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
         """
         Begin auth ephemeral session for the user
@@ -112,7 +112,7 @@ class DatabaseUtils:
                     user=user,
                     ephemeral_salt=ephemeral_salt,
                     ephemeral_b=ephemeral_b,
-                    expires_at=expires_at
+                    expiry_time=expiry_time
                 )
                 session.add(auth_ephemeral)
                 session.flush()
@@ -138,7 +138,7 @@ class DatabaseUtils:
 
                 if auth_ephemeral is None:
                     return False, FailureReason.NOT_FOUND, "", ""
-                if auth_ephemeral.expires_at < datetime.now():
+                if auth_ephemeral.expiry_time < datetime.now():
                     session.delete(auth_ephemeral)
                     return False, FailureReason.NOT_FOUND, "", ""
 
@@ -187,6 +187,34 @@ class DatabaseUtils:
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
+    @staticmethod
+    def session_get_session_details(
+        public_id: str
+    ) -> Tuple[bool, Optional[FailureReason], str, int]:
+        """
+        Get the session details for the given session id
+        return:     (str, int)      -> (session_key, request_count)
+        """
+        try:
+            with DatabaseUtils._get_db_session() as session:
+                login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
+
+                if login_session is None:
+                    return False, FailureReason.NOT_FOUND, "", 0
+                if login_session.expiry_time and login_session.expiry_time < datetime.now():
+                    session.delete(login_session)
+                    return False, FailureReason.NOT_FOUND, "", 0
+                if login_session.maximum_requests is not None and login_session.maximum_requests <= login_session.request_count:
+                    session.delete(login_session)
+                    return False, FailureReason.NOT_FOUND, "", 0
+
+                return True, None, login_session.session_key, login_session.request_count
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, "", 0
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", 0
+
+
     """
     TODO - Implement functions:
     start_password_change
@@ -195,9 +223,10 @@ class DatabaseUtils:
     abort_password_change
     add_password_change_encryption_entry
 
-    get_session_details
+    increment_request_count
     delete_session
     clean_sessions
+    clean_all_sessions
 
     create_entry
     edit_entry

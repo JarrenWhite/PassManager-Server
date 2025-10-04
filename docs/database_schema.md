@@ -59,7 +59,7 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 | **ephemeral_salt**  | CHAR(36)  |                                                  |
 | **ephemeral_b**     | BLOB      |                                                  |
 | **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
-| **expires_at**      | TIMESTAMP | When the ephemeral value expires                 |
+| **expiry_time**     | TIMESTAMP | When the ephemeral value expires                 |
 | **password_change** | BOOL      | **nullable**                                     |
 
 ### **Relationships**

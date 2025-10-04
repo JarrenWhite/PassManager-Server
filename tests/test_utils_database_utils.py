@@ -419,7 +419,7 @@ class TestSessionStartAuth():
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -442,7 +442,7 @@ class TestSessionStartAuth():
         assert db_ephemeral.public_id == "fake_public_id"
         assert db_ephemeral.ephemeral_salt == "fake_ephemeral_salt"
         assert db_ephemeral.ephemeral_b == "fake_ephemeral_b"
-        assert db_ephemeral.expires_at == expiry
+        assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.password_change == None
 
         assert len(mock_query._filters) == 1
@@ -462,7 +462,7 @@ class TestSessionStartAuth():
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -483,7 +483,7 @@ class TestSessionStartAuth():
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -511,7 +511,7 @@ class TestSessionStartAuth():
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -532,7 +532,7 @@ class TestSessionStartAuth():
 
 
 class TestSessionGetEphemeralDetails():
-    """Test cases for database utils get_ephemeral_details function"""
+    """Test cases for database utils session_get_ephemeral_details function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should correctly fetch ephemeral details"""
@@ -553,7 +553,7 @@ class TestSessionGetEphemeralDetails():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -663,7 +663,7 @@ class TestSessionGetEphemeralDetails():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -716,7 +716,7 @@ class TestSessionCompleteAuth():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -787,7 +787,7 @@ class TestSessionCompleteAuth():
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
-            expires_at=expiry
+            expiry_time=expiry
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -918,6 +918,217 @@ class TestSessionCompleteAuth():
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "ephemeral_fake_public_id"
+
+
+class TestSessionGetSessionDetails():
+    """Test cases for database utils session_get_session_details function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should correctly fetch ephemeral details"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        last_used = datetime.now() - timedelta(hours=1)
+        fake_login_session = LoginSession(
+            user=fake_user,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=None
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DatabaseUtils.session_get_session_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], str)
+        assert isinstance(response[3], int)
+        assert response[0] == True
+        assert response[1] == None
+        assert response[2] == "fake_session_key"
+        assert response[3] == 3
+
+        assert len(mock_session._added) == 0
+        assert len(mock_session._deletes) == 0
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
+
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        def _raise_runtime_error():
+            raise RuntimeError("Database not initialised.")
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+
+        response = DatabaseUtils.session_get_session_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        response = DatabaseUtils.session_get_session_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
+    def test_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        mock_query = _MockQuery([None])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DatabaseUtils.session_get_session_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
+
+    def test_entry_expired_request_count(self, monkeypatch):
+        """Should return correct failure reason if entry is expired due to request count, and delete entry"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        last_used = datetime.now() - timedelta(hours=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=3,
+            expiry_time=None
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DatabaseUtils.session_get_session_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        db_ephemeral = mock_session._deletes[0]
+        assert db_ephemeral.public_id == "session_fake_public_id"
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
+
+    def test_entry_expired_expiry_time(self, monkeypatch):
+        """Should return correct failure reason if entry is expired due to expiry time, and delete entry"""
+        mock_session = _MockSession()
+        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() - timedelta(seconds=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DatabaseUtils.session_get_session_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        db_ephemeral = mock_session._deletes[0]
+        assert db_ephemeral.public_id == "session_fake_public_id"
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "session_fake_public_id"
 
 
 if __name__ == '__main__':

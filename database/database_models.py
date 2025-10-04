@@ -35,7 +35,7 @@ class AuthEphemeral(Base):
 
     ephemeral_salt: Mapped[str] = mapped_column(String)
     ephemeral_b: Mapped[str] = mapped_column(String)
-    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    expiry_time: Mapped[datetime] = mapped_column(DateTime)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
 
     user: Mapped["User"] = relationship("User")
