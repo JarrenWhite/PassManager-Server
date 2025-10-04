@@ -316,7 +316,7 @@ class TestUserChangeUsername():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
-    def test_entry_not_found(self, monkeypatch):
+    def test_handles_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
 
@@ -464,7 +464,7 @@ class TestUserDelete():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
-    def test_entry_not_found(self, monkeypatch):
+    def test_handles_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
 

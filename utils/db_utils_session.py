@@ -12,6 +12,7 @@ class DBUtilsSession():
 
     @staticmethod
     def get_session_details(
+        username_hash: str,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], str, int]:
         """
@@ -30,6 +31,8 @@ class DBUtilsSession():
                 if login_session.maximum_requests is not None and login_session.maximum_requests <= login_session.request_count:
                     session.delete(login_session)
                     return False, FailureReason.NOT_FOUND, "", 0
+                if login_session.user.username_hash is not username_hash:
+                    return False, FailureReason.NO_MATCH, "", 0
 
                 return True, None, login_session.session_key, login_session.request_count
         except RuntimeError:

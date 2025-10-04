@@ -45,6 +45,7 @@ class DBUtilsAuth():
 
     @staticmethod
     def get_ephemeral_details(
+        username_hash: str,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
         """
@@ -60,6 +61,8 @@ class DBUtilsAuth():
                 if auth_ephemeral.expiry_time < datetime.now():
                     session.delete(auth_ephemeral)
                     return False, FailureReason.NOT_FOUND, "", ""
+                if auth_ephemeral.user.username_hash is not username_hash:
+                    return False, FailureReason.NO_MATCH, "", ""
 
                 return True, None, auth_ephemeral.ephemeral_salt, auth_ephemeral.ephemeral_b
         except RuntimeError:

@@ -144,7 +144,7 @@ class TestSessionStartAuth():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
-    def test_entry_not_found(self, monkeypatch):
+    def test_handles_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
 
@@ -232,6 +232,7 @@ class TestSessionGetEphemeralDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_ephemeral_details(
+            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -264,6 +265,7 @@ class TestSessionGetEphemeralDetails():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_ephemeral_details(
+            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -292,6 +294,7 @@ class TestSessionGetEphemeralDetails():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_ephemeral_details(
+            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -305,7 +308,7 @@ class TestSessionGetEphemeralDetails():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
-    def test_entry_not_found(self, monkeypatch):
+    def test_handles_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
 
@@ -327,6 +330,7 @@ class TestSessionGetEphemeralDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_ephemeral_details(
+            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -346,7 +350,7 @@ class TestSessionGetEphemeralDetails():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
-    def test_entry_expired(self, monkeypatch):
+    def test_handles_entry_expired(self, monkeypatch):
         """Should return correct failure reason if entry is expired, and delete entry"""
         mock_session = _MockSession()
 
@@ -377,6 +381,7 @@ class TestSessionGetEphemeralDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_ephemeral_details(
+            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -387,6 +392,65 @@ class TestSessionGetEphemeralDetails():
         assert db_ephemeral.public_id == "ephemeral_fake_public_id"
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "fake_public_id"
+
+    def test_handles_username_not_matching(self, monkeypatch):
+        """Should return correct failure reason if username hash does not match"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt"
+        )
+
+        expiry = datetime.now() + timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            ephemeral_salt="fake_ephemeral_salt",
+            ephemeral_b="fake_ephemeral_b",
+            expiry_time=expiry
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsAuth.get_ephemeral_details(
+            username_hash="fake_hash_unmatching",
+            public_id="fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NO_MATCH
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
@@ -625,7 +689,7 @@ class TestSessionCompleteAuth():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
-    def test_entry_not_found(self, monkeypatch):
+    def test_handles_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
 
