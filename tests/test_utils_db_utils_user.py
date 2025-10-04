@@ -15,8 +15,8 @@ from database.database_setup import DatabaseSetup
 from database.database_models import User
 
 
-class TestUserCreate():
-    """Test cases for the database utils user_create function"""
+class TestCreate():
+    """Test cases for the database utils user create function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should create user and add to Database"""
@@ -159,8 +159,8 @@ class TestUserCreate():
         assert mock_session.closed is True
 
 
-class TestUserChangeUsername():
-    """Test cases for the database utils user_change_username function"""
+class TestChangeUsername():
+    """Test cases for the database utils user change_username function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should change username of given user"""
@@ -359,8 +359,8 @@ class TestUserChangeUsername():
         assert condition.right.value == "fake_hash"
 
 
-class TestUserDelete():
-    """Test cases for database utils user_delete function"""
+class TestDelete():
+    """Test cases for database utils user delete function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should delete given user"""

@@ -11,7 +11,7 @@ class DBUtilsSession():
 
 
     @staticmethod
-    def get_session_details(
+    def get_details(
         username_hash: str,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], str, int]:

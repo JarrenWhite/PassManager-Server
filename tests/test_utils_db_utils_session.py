@@ -15,8 +15,8 @@ from database.database_setup import DatabaseSetup
 from database.database_models import User, LoginSession
 
 
-class TestSessionGetSessionDetails():
-    """Test cases for database utils session_get_session_details function"""
+class TestGetDetails():
+    """Test cases for database utils session get_details function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should correctly fetch ephemeral details"""
@@ -58,7 +58,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash",
             public_id="session_fake_public_id"
         )
@@ -91,7 +91,7 @@ class TestSessionGetSessionDetails():
             yield
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash",
             public_id="session_fake_public_id"
         )
@@ -120,7 +120,7 @@ class TestSessionGetSessionDetails():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash",
             public_id="session_fake_public_id"
         )
@@ -156,7 +156,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash",
             public_id="session_fake_public_id"
         )
@@ -209,7 +209,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash",
             public_id="session_fake_public_id"
         )
@@ -265,7 +265,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash",
             public_id="session_fake_public_id"
         )
@@ -328,7 +328,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsSession.get_session_details(
+        response = DBUtilsSession.get_details(
             username_hash="fake_hash_unmatching",
             public_id="session_fake_public_id"
         )

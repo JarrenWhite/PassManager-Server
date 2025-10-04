@@ -15,8 +15,8 @@ from database.database_setup import DatabaseSetup
 from database.database_models import User, AuthEphemeral, LoginSession
 
 
-class TestSessionStartAuth():
-    """Test cases for database utils session_start_auth function"""
+class TestStart():
+    """Test cases for database utils auth start function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should create auth ephemeral & fetch srp_salt"""
@@ -50,7 +50,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(AuthEphemeral, "public_id", "fake_public_id")
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.start_auth(
+        response = DBUtilsAuth.start(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -95,7 +95,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.start_auth(
+        response = DBUtilsAuth.start(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -127,7 +127,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.start_auth(
+        response = DBUtilsAuth.start(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -166,7 +166,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.start_auth(
+        response = DBUtilsAuth.start(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -190,8 +190,8 @@ class TestSessionStartAuth():
         assert condition.right.value == "fake_hash"
 
 
-class TestSessionGetEphemeralDetails():
-    """Test cases for database utils session_get_ephemeral_details function"""
+class TestGetDetails():
+    """Test cases for database utils auth get_details function"""
 
     def test_nominal_case(self, monkeypatch):
         """Should correctly fetch ephemeral details"""
@@ -231,7 +231,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsAuth.get_ephemeral_details(
+        response = DBUtilsAuth.get_details(
             username_hash="fake_hash",
             public_id="fake_public_id"
         )
@@ -264,7 +264,7 @@ class TestSessionGetEphemeralDetails():
             yield
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        response = DBUtilsAuth.get_ephemeral_details(
+        response = DBUtilsAuth.get_details(
             username_hash="fake_hash",
             public_id="fake_public_id"
         )
@@ -293,7 +293,7 @@ class TestSessionGetEphemeralDetails():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        response = DBUtilsAuth.get_ephemeral_details(
+        response = DBUtilsAuth.get_details(
             username_hash="fake_hash",
             public_id="fake_public_id"
         )
@@ -329,7 +329,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsAuth.get_ephemeral_details(
+        response = DBUtilsAuth.get_details(
             username_hash="fake_hash",
             public_id="fake_public_id"
         )
@@ -380,7 +380,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsAuth.get_ephemeral_details(
+        response = DBUtilsAuth.get_details(
             username_hash="fake_hash",
             public_id="fake_public_id"
         )
@@ -441,7 +441,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsAuth.get_ephemeral_details(
+        response = DBUtilsAuth.get_details(
             username_hash="fake_hash_unmatching",
             public_id="fake_public_id"
         )
@@ -463,8 +463,8 @@ class TestSessionGetEphemeralDetails():
         assert condition.right.value == "fake_public_id"
 
 
-class TestSessionCompleteAuth():
-    """Test cases for database utils session_complete_auth function"""
+class TestComplete():
+    """Test cases for database utils auth complete function"""
 
     def test_nominal_case_minimal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with minimal inputs"""
@@ -506,7 +506,7 @@ class TestSessionCompleteAuth():
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
-        response = DBUtilsAuth.complete_auth(
+        response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=None,
@@ -589,7 +589,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.complete_auth(
+        response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -640,7 +640,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.complete_auth(
+        response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -672,7 +672,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.complete_auth(
+        response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -711,7 +711,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DBUtilsAuth.complete_auth(
+        response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,

@@ -11,7 +11,7 @@ class DBUtilsAuth():
 
 
     @staticmethod
-    def start_auth(
+    def start(
         username_hash: str,
         ephemeral_salt: str,
         ephemeral_b: str,
@@ -44,7 +44,7 @@ class DBUtilsAuth():
 
 
     @staticmethod
-    def get_ephemeral_details(
+    def get_details(
         username_hash: str,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
@@ -72,7 +72,7 @@ class DBUtilsAuth():
 
 
     @staticmethod
-    def complete_auth(
+    def complete(
         public_id: str,
         session_key: str,
         maximum_requests: Optional[int],
