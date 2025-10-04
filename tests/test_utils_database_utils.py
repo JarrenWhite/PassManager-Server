@@ -10,7 +10,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tests.mock_classes import _MockSession, _MockQuery
 
-from utils.database_utils import DatabaseUtils
+from utils.db_utils_user import DBUtilsUser
+from utils.db_utils_auth import DBUtilsAuth
+from utils.db_utils_session import DBUtilsSession
+
 from utils.utils_enums import FailureReason
 from database.database_setup import DatabaseSetup
 from database.database_models import User, AuthEphemeral, LoginSession
@@ -24,7 +27,7 @@ class TestUserCreate():
         mock_session = _MockSession()
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        response = DatabaseUtils.user_create(
+        response = DBUtilsUser.create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -54,7 +57,7 @@ class TestUserCreate():
             raise RuntimeError("Database not initialised.")
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-        response = DatabaseUtils.user_create(
+        response = DBUtilsUser.create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -74,7 +77,7 @@ class TestUserCreate():
         mock_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        response = DatabaseUtils.user_create(
+        response = DBUtilsUser.create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -107,7 +110,7 @@ class TestUserCreate():
             )
         )
 
-        response = DatabaseUtils.user_create(
+        response = DBUtilsUser.create(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -145,7 +148,7 @@ class TestUserChangeUsername():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.user_change_username(
+        response = DBUtilsUser.change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -174,7 +177,7 @@ class TestUserChangeUsername():
             raise RuntimeError("Database not initialised.")
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-        response = DatabaseUtils.user_change_username(
+        response = DBUtilsUser.change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -204,7 +207,7 @@ class TestUserChangeUsername():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.user_change_username(
+        response = DBUtilsUser.change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -232,7 +235,7 @@ class TestUserChangeUsername():
         mock_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        response = DatabaseUtils.user_change_username(
+        response = DBUtilsUser.change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -257,7 +260,7 @@ class TestUserChangeUsername():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.user_change_username(
+        response = DBUtilsUser.change_username(
             username_hash="fake_hash",
             new_username_hash="new_fake_hash"
         )
@@ -300,7 +303,7 @@ class TestUserDelete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.user_delete(
+        response = DBUtilsUser.delete(
             username_hash="fake_hash"
         )
 
@@ -329,7 +332,7 @@ class TestUserDelete():
             raise RuntimeError("Database not initialised.")
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-        response = DatabaseUtils.user_delete(
+        response = DBUtilsUser.delete(
             username_hash="fake_hash"
         )
 
@@ -346,7 +349,7 @@ class TestUserDelete():
         mock_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        response = DatabaseUtils.user_delete(
+        response = DBUtilsUser.delete(
             username_hash="fake_hash"
         )
 
@@ -370,7 +373,7 @@ class TestUserDelete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.user_delete(
+        response = DBUtilsUser.delete(
             username_hash="fake_hash"
         )
 
@@ -415,7 +418,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(AuthEphemeral, "public_id", "fake_public_id")
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_start_auth(
+        response = DBUtilsAuth.start_auth(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -458,7 +461,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_start_auth(
+        response = DBUtilsAuth.start_auth(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -479,7 +482,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_start_auth(
+        response = DBUtilsAuth.start_auth(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -507,7 +510,7 @@ class TestSessionStartAuth():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_start_auth(
+        response = DBUtilsAuth.start_auth(
             username_hash="fake_hash",
             ephemeral_salt="fake_ephemeral_salt",
             ephemeral_b="fake_ephemeral_b",
@@ -561,7 +564,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_ephemeral_details(
+        response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
         )
 
@@ -591,7 +594,7 @@ class TestSessionGetEphemeralDetails():
             raise RuntimeError("Database not initialised.")
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-        response = DatabaseUtils.session_get_ephemeral_details(
+        response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
         )
 
@@ -608,7 +611,7 @@ class TestSessionGetEphemeralDetails():
         mock_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        response = DatabaseUtils.session_get_ephemeral_details(
+        response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
         )
 
@@ -632,7 +635,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_ephemeral_details(
+        response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
         )
 
@@ -671,7 +674,7 @@ class TestSessionGetEphemeralDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_ephemeral_details(
+        response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
         )
 
@@ -726,7 +729,7 @@ class TestSessionCompleteAuth():
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
-        response = DatabaseUtils.session_complete_auth(
+        response = DBUtilsAuth.complete_auth(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=None,
@@ -798,7 +801,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_complete_auth(
+        response = DBUtilsAuth.complete_auth(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -847,7 +850,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_complete_auth(
+        response = DBUtilsAuth.complete_auth(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -868,7 +871,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_complete_auth(
+        response = DBUtilsAuth.complete_auth(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -896,7 +899,7 @@ class TestSessionCompleteAuth():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         expiry = datetime.now() + timedelta(hours=1)
-        response = DatabaseUtils.session_complete_auth(
+        response = DBUtilsAuth.complete_auth(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             maximum_requests=99,
@@ -952,7 +955,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_session_details(
+        response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
         )
 
@@ -982,7 +985,7 @@ class TestSessionGetSessionDetails():
             raise RuntimeError("Database not initialised.")
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
 
-        response = DatabaseUtils.session_get_session_details(
+        response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
         )
 
@@ -999,7 +1002,7 @@ class TestSessionGetSessionDetails():
         mock_session = _MockSession(on_commit=raise_unknown_exception)
         monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
 
-        response = DatabaseUtils.session_get_session_details(
+        response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
         )
 
@@ -1023,7 +1026,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_session_details(
+        response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
         )
 
@@ -1064,7 +1067,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_session_details(
+        response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
         )
 
@@ -1108,7 +1111,7 @@ class TestSessionGetSessionDetails():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DatabaseUtils.session_get_session_details(
+        response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
         )
 
