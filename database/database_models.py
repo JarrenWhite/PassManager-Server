@@ -33,6 +33,7 @@ class AuthEphemeral(Base):
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
+    ephemeral_salt: Mapped[str] = mapped_column(String)
     ephemeral_b: Mapped[str] = mapped_column(String)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
