@@ -125,6 +125,31 @@ class DatabaseUtils:
 
 
     @staticmethod
+    def session_get_ephemeral_details(
+        public_id: str
+    ) -> Tuple[bool, Optional[FailureReason], str, str]:
+        """
+        Get the ephemeral details for the given ephemeral id
+        return:     (str, str)      -> (ephemeral_salt, ephemeral_bytes)
+        """
+        try:
+            with DatabaseUtils._get_db_session() as session:
+                auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
+
+                if auth_ephemeral is None:
+                    return False, FailureReason.NOT_FOUND, "", ""
+                if auth_ephemeral.expires_at < datetime.now():
+                    session.delete(auth_ephemeral)
+                    return False, FailureReason.NOT_FOUND, "", ""
+
+                return True, None, auth_ephemeral.ephemeral_salt, auth_ephemeral.ephemeral_b
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
+
+
+    @staticmethod
     def session_complete_auth(
         public_id: str,
         session_key: str,
@@ -170,7 +195,6 @@ class DatabaseUtils:
     abort_password_change
     add_password_change_encryption_entry
 
-    get_ephemeral_details
     get_session_details
     delete_session
     clean_sessions
