@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 
 from sqlalchemy.sql.elements import BinaryExpression
@@ -20,7 +21,18 @@ class TestSessionGetSessionDetails():
     def test_nominal_case(self, monkeypatch):
         """Should correctly fetch ephemeral details"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
             id=123456,
@@ -72,9 +84,11 @@ class TestSessionGetSessionDetails():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        def _raise_runtime_error():
+        @contextmanager
+        def mock_get_db_session():
             raise RuntimeError("Database not initialised.")
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+            yield
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
@@ -91,7 +105,18 @@ class TestSessionGetSessionDetails():
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
         mock_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsSession.get_session_details(
             public_id="session_fake_public_id"
@@ -110,7 +135,18 @@ class TestSessionGetSessionDetails():
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         mock_query = _MockQuery([None])
         def fake_query(self, model):
@@ -140,7 +176,18 @@ class TestSessionGetSessionDetails():
     def test_entry_expired_request_count(self, monkeypatch):
         """Should return correct failure reason if entry is expired due to request count, and delete entry"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         last_used = datetime.now() - timedelta(hours=1)
         fake_login_session = LoginSession(
@@ -183,7 +230,18 @@ class TestSessionGetSessionDetails():
     def test_entry_expired_expiry_time(self, monkeypatch):
         """Should return correct failure reason if entry is expired due to expiry time, and delete entry"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         last_used = datetime.now() - timedelta(hours=1)
         expiry_time = datetime.now() - timedelta(seconds=1)

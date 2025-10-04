@@ -12,20 +12,6 @@ class DBUtilsUser():
 
 
     @staticmethod
-    @contextmanager
-    def _get_db_session():
-        session = DatabaseSetup.get_session()()
-        try:
-            yield session
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
-        finally:
-            session.close()
-
-
-    @staticmethod
     def create(
         username_hash: str,
         srp_salt: str,
@@ -41,7 +27,7 @@ class DBUtilsUser():
         )
 
         try:
-            with DBUtilsUser._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 session.add(user)
                 return True, None
         except IntegrityError:
@@ -59,7 +45,7 @@ class DBUtilsUser():
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Change username for an existing user"""
         try:
-            with DBUtilsUser._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
@@ -79,7 +65,7 @@ class DBUtilsUser():
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given user"""
         try:
-            with DBUtilsUser._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND

@@ -11,20 +11,6 @@ class DBUtilsAuth():
 
 
     @staticmethod
-    @contextmanager
-    def _get_db_session():
-        session = DatabaseSetup.get_session()()
-        try:
-            yield session
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
-        finally:
-            session.close()
-
-
-    @staticmethod
     def start_auth(
         username_hash: str,
         ephemeral_salt: str,
@@ -36,7 +22,7 @@ class DBUtilsAuth():
         return:     (str, str)      -> (public_id, srp_salt)
         """
         try:
-            with DBUtilsAuth._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if user is None:
                     return False, FailureReason.NOT_FOUND, "", ""
@@ -66,7 +52,7 @@ class DBUtilsAuth():
         return:     (str, str)      -> (ephemeral_salt, ephemeral_bytes)
         """
         try:
-            with DBUtilsAuth._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
@@ -94,7 +80,7 @@ class DBUtilsAuth():
         return:     str             -> public_id
         """
         try:
-            with DBUtilsAuth._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:

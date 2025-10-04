@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 
 from sqlalchemy.sql.elements import BinaryExpression
@@ -20,7 +21,18 @@ class TestSessionStartAuth():
     def test_nominal_case(self, monkeypatch):
         """Should create auth ephemeral & fetch srp_salt"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
             id=123456,
@@ -76,9 +88,11 @@ class TestSessionStartAuth():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        def _raise_runtime_error():
+        @contextmanager
+        def mock_get_db_session():
             raise RuntimeError("Database not initialised.")
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+            yield
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start_auth(
@@ -99,7 +113,18 @@ class TestSessionStartAuth():
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
         mock_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start_auth(
@@ -122,7 +147,18 @@ class TestSessionStartAuth():
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         mock_query = _MockQuery([None])
         def fake_query(self, model):
@@ -160,7 +196,18 @@ class TestSessionGetEphemeralDetails():
     def test_nominal_case(self, monkeypatch):
         """Should correctly fetch ephemeral details"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
             id=123456,
@@ -210,9 +257,11 @@ class TestSessionGetEphemeralDetails():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        def _raise_runtime_error():
+        @contextmanager
+        def mock_get_db_session():
             raise RuntimeError("Database not initialised.")
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+            yield
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
@@ -229,7 +278,18 @@ class TestSessionGetEphemeralDetails():
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
         mock_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_ephemeral_details(
             public_id="fake_public_id"
@@ -248,7 +308,18 @@ class TestSessionGetEphemeralDetails():
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         mock_query = _MockQuery([None])
         def fake_query(self, model):
@@ -278,7 +349,18 @@ class TestSessionGetEphemeralDetails():
     def test_entry_expired(self, monkeypatch):
         """Should return correct failure reason if entry is expired, and delete entry"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() - timedelta(hours=1)
         fake_ephemeral = AuthEphemeral(
@@ -323,7 +405,18 @@ class TestSessionCompleteAuth():
     def test_nominal_case_minimal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with minimal inputs"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
             id=123456,
@@ -394,7 +487,18 @@ class TestSessionCompleteAuth():
     def test_nominal_case_maximal_inputs(self, monkeypatch):
         """Should create login session & fetch srp_salt with maximal inputs"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
             id=123456,
@@ -465,9 +569,11 @@ class TestSessionCompleteAuth():
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
-        def _raise_runtime_error():
+        @contextmanager
+        def mock_get_db_session():
             raise RuntimeError("Database not initialised.")
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: _raise_runtime_error)
+            yield
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.complete_auth(
@@ -488,7 +594,18 @@ class TestSessionCompleteAuth():
         def raise_unknown_exception():
             raise ValueError("Something went wrong")
         mock_session = _MockSession(on_commit=raise_unknown_exception)
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.complete_auth(
@@ -511,7 +628,18 @@ class TestSessionCompleteAuth():
     def test_entry_not_found(self, monkeypatch):
         """Should return correct failure reason if entry is not found"""
         mock_session = _MockSession()
-        monkeypatch.setattr(DatabaseSetup, "get_session", lambda: (lambda: mock_session))
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         mock_query = _MockQuery([None])
         def fake_query(self, model):

@@ -11,20 +11,6 @@ class DBUtilsSession():
 
 
     @staticmethod
-    @contextmanager
-    def _get_db_session():
-        session = DatabaseSetup.get_session()()
-        try:
-            yield session
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
-        finally:
-            session.close()
-
-
-    @staticmethod
     def get_session_details(
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], str, int]:
@@ -33,7 +19,7 @@ class DBUtilsSession():
         return:     (str, int)      -> (session_key, request_count)
         """
         try:
-            with DBUtilsSession._get_db_session() as session:
+            with DatabaseSetup.get_db_session() as session:
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if login_session is None:
