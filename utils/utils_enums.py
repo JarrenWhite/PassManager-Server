@@ -6,3 +6,4 @@ class FailureReason(Enum):
     UNKNOWN_EXCEPTION = auto()
     DUPLICATE = auto()
     NOT_FOUND = auto()
+    PASSWORD_CHANGE = auto()

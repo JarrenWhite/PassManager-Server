@@ -35,7 +35,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -50,7 +50,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
 
@@ -67,7 +67,7 @@ class TestDatabaseUserModel():
             username_hash="fake_hash",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
 
@@ -84,7 +84,7 @@ class TestDatabaseUserModel():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
 
@@ -101,7 +101,7 @@ class TestDatabaseUserModel():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
 
@@ -138,7 +138,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="new_srp_salt",
             new_srp_verifier="new_srp_verifier",
             new_master_key_salt="new_master_key_salt"
@@ -157,7 +157,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -167,7 +167,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt_2",
             srp_verifier="fake_srp_verifier_2",
             master_key_salt="fake_master_key_salt_2",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user2)
 
@@ -188,7 +188,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="new_srp_salt",
             new_srp_verifier="new_srp_verifier",
             new_master_key_salt="new_master_key_salt"
@@ -203,7 +203,7 @@ class TestDatabaseUserModel():
         assert db_user.srp_salt == "fake_srp_salt"
         assert db_user.srp_verifier == "fake_srp_verifier"
         assert db_user.master_key_salt == "fake_master_key_salt"
-        assert db_user.password_changing == False
+        assert db_user.password_change == False
         assert db_user.new_srp_salt == "new_srp_salt"
         assert db_user.new_srp_verifier == "new_srp_verifier"
         assert db_user.new_master_key_salt == "new_master_key_salt"
@@ -215,7 +215,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -229,7 +229,7 @@ class TestDatabaseUserModel():
         user.srp_salt="new_fake_srp_salt"
         user.srp_verifier="new_fake_srp_verifier"
         user.master_key_salt="new_fake_master_key_salt"
-        user.password_changing=True
+        user.password_change=True
         self.session.commit()
 
         users = self.session.query(User).filter_by(username_hash="fake_hash").all()
@@ -242,7 +242,7 @@ class TestDatabaseUserModel():
         assert db_user.srp_salt == "new_fake_srp_salt"
         assert db_user.srp_verifier == "new_fake_srp_verifier"
         assert db_user.master_key_salt == "new_fake_master_key_salt"
-        assert db_user.password_changing == True
+        assert db_user.password_change == True
 
     def test_can_add_optional_fields_late(self):
         """Should be able to add optional fields at a later point"""
@@ -251,7 +251,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -275,7 +275,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -308,7 +308,7 @@ class TestDatabaseUserModel():
         assert "not null constraint failed" in error_message and "integrity" in error_message
         self.session.rollback()
 
-        user.password_changing=None # type: ignore
+        user.password_change=None # type: ignore
         with pytest.raises(IntegrityError) as exc_info:
             self.session.commit()
         error_message = str(exc_info.value).lower()
@@ -329,7 +329,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="new_srp_salt",
             new_srp_verifier="new_srp_verifier",
             new_master_key_salt="new_master_key_salt"
@@ -355,7 +355,7 @@ class TestDatabaseUserModel():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1007,7 +1007,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1065,7 +1065,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1091,7 +1091,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1131,7 +1131,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1165,7 +1165,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1223,7 +1223,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1280,7 +1280,7 @@ class TestDatabaseRelationships():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_changing=False
+            password_change=False
         )
         self.session.add(user)
         self.session.commit()
@@ -1354,7 +1354,7 @@ class TestDatabaseModelsUnitTests():
             srp_salt="",
             srp_verifier="",
             master_key_salt="",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="",
             new_srp_verifier="",
             new_master_key_salt=""
@@ -1429,7 +1429,7 @@ class TestDatabaseModelsUnitTests():
             srp_salt="x"*10000,
             srp_verifier="x"*10000,
             master_key_salt="x"*10000,
-            password_changing=False,
+            password_change=False,
             new_srp_salt="x"*10000,
             new_srp_verifier="x"*10000,
             new_master_key_salt="x"*10000
@@ -1504,7 +1504,7 @@ class TestDatabaseModelsUnitTests():
             srp_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
             srp_verifier="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
             master_key_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
             new_srp_verifier="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
             new_master_key_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
@@ -1579,7 +1579,7 @@ class TestDatabaseModelsUnitTests():
             srp_salt="测试用户🚀ñáéíóú",
             srp_verifier="测试用户🚀ñáéíóú",
             master_key_salt="测试用户🚀ñáéíóú",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="测试用户🚀ñáéíóú",
             new_srp_verifier="测试用户🚀ñáéíóú",
             new_master_key_salt="测试用户🚀ñáéíóú"
@@ -1654,7 +1654,7 @@ class TestDatabaseModelsUnitTests():
             srp_salt="abcd EFGH",
             srp_verifier="abcd EFGH",
             master_key_salt="abcd EFGH",
-            password_changing=False,
+            password_change=False,
             new_srp_salt="abcd EFGH",
             new_srp_verifier="abcd EFGH",
             new_master_key_salt="abcd EFGH"

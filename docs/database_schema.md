@@ -22,7 +22,7 @@ Store main user information, including SRP authentication data, salts for encryp
 | **srp_salt**            | BLOB      |                                 |
 | **srp_verifier**        | BLOB      |                                 |
 | **master_key_salt**     | BLOB      |                                 |
-| **password_changing**   | BOOL      |                                 |
+| **password_change**   | BOOL      |                                 |
 | **new_srp_salt**        | BLOB      | **nullable**                    |
 | **new_srp_verifier**    | BLOB      | **nullable**                    |
 | **new_master_key_salt** | BLOB      | **nullable**                    |
@@ -39,7 +39,7 @@ Store main user information, including SRP authentication data, salts for encryp
 **master_key_salt:** The salt used to create the master key
 **login_session:** List of all linked LoginSession entries
 **secure_data:** List of all linked SecureData entries
-**password_changing:** Flag representing whether the user is currently undergoing a password change
+**password_change:** Flag representing whether the user is currently undergoing a password change
 **new_srp_salt:** Temporary store for new srp salt, while changing password
 **new_srp_verifier:** Temporary store for new srp verifier name, while changing password
 **new_master_key_salt:** Temporary store for new master key salt, while changing password
