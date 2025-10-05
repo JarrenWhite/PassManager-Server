@@ -12,30 +12,32 @@ class DBUtilsSession():
 
     @staticmethod
     def get_details(
-        username_hash: str,
         public_id: str
-    ) -> Tuple[bool, Optional[FailureReason], str, int]:
+    ) -> Tuple[bool, Optional[FailureReason], str, str, int]:
         """
         Get the session details for the given session id
-        return:     (str, int)      -> (session_key, request_count)
+        return:     (str, str, int) -> (username_hash, session_key, request_count)
         """
         try:
             with DatabaseSetup.get_db_session() as session:
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if login_session is None:
-                    return False, FailureReason.NOT_FOUND, "", 0
+                    return False, FailureReason.NOT_FOUND, "", "", 0
                 if login_session.expiry_time and login_session.expiry_time < datetime.now():
                     session.delete(login_session)
-                    return False, FailureReason.NOT_FOUND, "", 0
+                    return False, FailureReason.NOT_FOUND, "", "", 0
                 if login_session.maximum_requests is not None and login_session.maximum_requests <= login_session.request_count:
                     session.delete(login_session)
-                    return False, FailureReason.NOT_FOUND, "", 0
-                if login_session.user.username_hash is not username_hash:
-                    return False, FailureReason.NO_MATCH, "", 0
+                    return False, FailureReason.NOT_FOUND, "", "", 0
 
-                return True, None, login_session.session_key, login_session.request_count
+                return (
+                    True, None,
+                    login_session.user.username_hash,
+                    login_session.session_key,
+                    login_session.request_count
+                )
         except RuntimeError:
-            return False, FailureReason.DATABASE_UNINITIALISED, "", 0
+            return False, FailureReason.DATABASE_UNINITIALISED, "", "", 0
         except:
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", 0
+            return False, FailureReason.UNKNOWN_EXCEPTION,"", "", 0
