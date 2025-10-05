@@ -9,15 +9,15 @@ from sqlalchemy import create_engine, inspect
 
 class DatabaseSetup:
 
-    _sessionMaker: Optional[sessionmaker] = None
+    _session_maker: Optional[sessionmaker] = None
 
     @staticmethod
     def _reset_database():
-        DatabaseSetup._sessionMaker = None
+        DatabaseSetup._session_maker = None
 
     @staticmethod
     def init_db(directory: Path, base: type[DeclarativeBase]):
-        if DatabaseSetup._sessionMaker is not None:
+        if DatabaseSetup._session_maker is not None:
             raise RuntimeError("Database already initialised.")
 
         try:
@@ -39,14 +39,14 @@ class DatabaseSetup:
                              f"Found tables: {sorted(existing_tables)}")
 
         base.metadata.create_all(engine)
-        DatabaseSetup._sessionMaker = sessionmaker(bind=engine)
+        DatabaseSetup._session_maker = sessionmaker(bind=engine)
 
     @staticmethod
     @contextmanager
     def get_db_session() -> Generator[Session, None, None]:
-        if not DatabaseSetup._sessionMaker:
+        if not DatabaseSetup._session_maker:
             raise RuntimeError("Database not initialised.")
-        session = DatabaseSetup._sessionMaker()
+        session = DatabaseSetup._session_maker()
         try:
             yield session
             session.commit()
