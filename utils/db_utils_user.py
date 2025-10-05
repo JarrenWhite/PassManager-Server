@@ -50,6 +50,8 @@ class DBUtilsUser():
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
+                if user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
                 user.username_hash = new_username_hash
                 return True, None
         except IntegrityError:
@@ -70,6 +72,8 @@ class DBUtilsUser():
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
+                if user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
                 session.delete(user)
                 return True, None
         except RuntimeError:
