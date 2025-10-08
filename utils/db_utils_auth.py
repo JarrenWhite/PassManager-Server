@@ -108,7 +108,7 @@ class DBUtilsAuth():
                     last_used=datetime.now(),
                     maximum_requests=maximum_requests,
                     expiry_time=expiry_time,
-                    password_change=False
+                    password_change=auth_ephemeral.password_change
                 )
                 session.add(login_session)
                 session.flush()
