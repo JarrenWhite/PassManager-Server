@@ -184,6 +184,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
+            id=123456,
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -197,7 +198,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_hash="fake_hash",
+            username_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -216,8 +217,8 @@ class TestChangeUsername():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -228,7 +229,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.change_username(
-            username_hash="fake_hash",
+            username_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -257,6 +258,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
+            id=123456,
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -270,7 +272,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_hash="fake_hash",
+            username_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -287,8 +289,8 @@ class TestChangeUsername():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
     def test_handles_server_exception(self, monkeypatch):
         """Should return correct failure reason if other exception seen"""
@@ -309,7 +311,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.change_username(
-            username_hash="fake_hash",
+            username_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -345,7 +347,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_hash="fake_hash",
+            username_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -362,8 +364,8 @@ class TestChangeUsername():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
     def test_handles_password_change_in_progress(self, monkeypatch):
         """Should return correct failure reason if password change is in progress"""
@@ -382,6 +384,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
+            id=123456,
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -395,7 +398,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_hash="fake_hash",
+            username_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -412,8 +415,8 @@ class TestChangeUsername():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
 
 class TestDelete():

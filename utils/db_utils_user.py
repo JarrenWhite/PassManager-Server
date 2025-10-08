@@ -1,5 +1,4 @@
 from typing import Tuple, Optional
-from contextlib import contextmanager
 
 from sqlalchemy.exc import IntegrityError
 
@@ -41,13 +40,13 @@ class DBUtilsUser():
 
     @staticmethod
     def change_username(
-        username_hash: str,
+        username_id: int,
         new_username_hash: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Change username for an existing user"""
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.username_hash == username_hash).first()
+                user = session.query(User).filter(User.id == username_id).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:

@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Tuple, Optional
-from contextlib import contextmanager
 
 from database import DatabaseSetup, LoginSession
 from .utils_enums import FailureReason
