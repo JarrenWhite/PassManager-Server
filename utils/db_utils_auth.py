@@ -18,7 +18,10 @@ class DBUtilsAuth():
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
         """
         Begin auth ephemeral session for the user
-        return:     (str, str)      -> (public_id, srp_salt)
+
+        Returns:
+            (str)   public_id
+            (str)   srp_salt
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -49,7 +52,12 @@ class DBUtilsAuth():
     ) -> Tuple[bool, Optional[FailureReason], str, int, str, str]:
         """
         Get the ephemeral details for the given ephemeral id
-        return:     (str, int, str, str) -> (username_hash, user_id, ephemeral_salt, ephemeral_bytes)
+
+        Returns:
+            (str)   username_hash
+            (int)   user_id
+            (str)   ephemeral_salt
+            (str)   ephemeral_b
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -82,7 +90,9 @@ class DBUtilsAuth():
     ) -> Tuple[bool, Optional[FailureReason], str]:
         """
         Complete login session creation
-        return:     str             -> public_id
+
+        Returns:
+            (str)   public_id
         """
         try:
             with DatabaseSetup.get_db_session() as session:

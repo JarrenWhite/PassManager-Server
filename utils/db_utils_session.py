@@ -15,7 +15,13 @@ class DBUtilsSession():
     ) -> Tuple[bool, Optional[FailureReason], int, int, str, int, bool]:
         """
         Get the session details for the given session id
-        return:     (int, int, str, int, bool) -> (user_id, session_id, session_key, request_count, password_change)
+
+        Returns:
+            (int)   user_id
+            (int)   session_id
+            (str)   session_key
+            (int)   request_count
+            (bool)  password_change
         """
         try:
             with DatabaseSetup.get_db_session() as session:
