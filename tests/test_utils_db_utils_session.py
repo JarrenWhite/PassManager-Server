@@ -45,6 +45,7 @@ class TestGetDetails():
 
         last_used = datetime.now() - timedelta(hours=1)
         fake_login_session = LoginSession(
+            id=789123,
             user=fake_user,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
@@ -66,14 +67,18 @@ class TestGetDetails():
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
-        assert isinstance(response[2], str)
-        assert isinstance(response[3], str)
-        assert isinstance(response[4], int)
+        assert isinstance(response[2], int)
+        assert isinstance(response[3], int)
+        assert isinstance(response[4], str)
+        assert isinstance(response[5], int)
+        assert isinstance(response[6], bool)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == "fake_hash"
-        assert response[3] == "fake_session_key"
-        assert response[4] == 3
+        assert response[2] == 123456
+        assert response[3] == 789123
+        assert response[4] == "fake_session_key"
+        assert response[5] == 3
+        assert response[6] == False
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
