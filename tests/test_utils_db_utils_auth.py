@@ -221,6 +221,7 @@ class TestGetDetails():
 
         expiry = datetime.now() + timedelta(hours=1)
         fake_ephemeral = AuthEphemeral(
+            id=123456,
             user=fake_user,
             public_id="ephemeral_fake_public_id",
             ephemeral_salt="fake_ephemeral_salt",
@@ -241,13 +242,15 @@ class TestGetDetails():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], str)
-        assert isinstance(response[3], str)
+        assert isinstance(response[3], int)
         assert isinstance(response[4], str)
+        assert isinstance(response[5], str)
         assert response[0] == True
         assert response[1] == None
         assert response[2] == "fake_hash"
-        assert response[3] == "fake_ephemeral_salt"
-        assert response[4] == "fake_ephemeral_b"
+        assert response[3] == 123456
+        assert response[4] == "fake_ephemeral_salt"
+        assert response[5] == "fake_ephemeral_b"
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
