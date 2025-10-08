@@ -12,8 +12,8 @@ class DBUtilsAuth():
     @staticmethod
     def start(
         username_hash: str,
-        ephemeral_salt: str,
-        ephemeral_b: str,
+        eph_private_b: str,
+        eph_public_b: str,
         expiry_time: datetime
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
         """
@@ -31,8 +31,8 @@ class DBUtilsAuth():
 
                 auth_ephemeral = AuthEphemeral(
                     user=user,
-                    ephemeral_salt=ephemeral_salt,
-                    ephemeral_b=ephemeral_b,
+                    eph_private_b=eph_private_b,
+                    eph_public_b=eph_public_b,
                     expiry_time=expiry_time,
                     password_change=False
                 )
@@ -56,8 +56,8 @@ class DBUtilsAuth():
         Returns:
             (str)   username_hash
             (int)   user_id
-            (str)   ephemeral_salt
-            (str)   ephemeral_b
+            (str)   eph_private_b
+            (str)   eph_public_b
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -72,8 +72,8 @@ class DBUtilsAuth():
                 return (True, None,
                     auth_ephemeral.user.username_hash,
                     auth_ephemeral.user.id,
-                    auth_ephemeral.ephemeral_salt,
-                    auth_ephemeral.ephemeral_b
+                    auth_ephemeral.eph_private_b,
+                    auth_ephemeral.eph_public_b
                 )
         except RuntimeError:
             return False, FailureReason.DATABASE_UNINITIALISED, "", 0, "", ""

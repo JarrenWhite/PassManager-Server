@@ -31,8 +31,8 @@ user_id: int
 
 In
 username_hash: str
-ephemeral_salt: str
-ephemeral_b: str
+eph_private_b: str
+eph_public_b: str
 expiry_time: datetime
 srp_salt: str
 srp_verifier: str
@@ -65,8 +65,8 @@ entry_data: str
 ## start
 In
 username_hash: str
-ephemeral_salt: str
-ephemeral_b: str
+eph_private_b: str
+eph_public_b: str
 expiry_time: datetime
 
 Out
@@ -80,8 +80,8 @@ public_id: str
 Out
 username_hash: str
 user_id: int
-ephemeral_salt: str
-ephemeral_bytes: str
+eph_private_b: str
+eph_public_b: str
 
 ## complete
 In

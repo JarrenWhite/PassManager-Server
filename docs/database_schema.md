@@ -58,8 +58,8 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 |---------------------|-----------|--------------------------------------------------|
 | **id**              | BIGINT    | **Primary Key**, auto-increment                  |
 | **public_id**       | CHAR(36)  | **Indexed**                                      |
-| **ephemeral_salt**  | CHAR(36)  |                                                  |
-| **ephemeral_b**     | BLOB      |                                                  |
+| **eph_private_b**  | CHAR(36)  |                                                  |
+| **eph_public_b**     | BLOB      |                                                  |
 | **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
 | **expiry_time**     | TIMESTAMP | When the ephemeral value expires                 |
 | **password_change** | BOOL      |                                                  |
@@ -69,8 +69,8 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 
 ### Column Descriptions
 **id:** Database ID for the entry
-**ephemeral_salt:** Randomly generated salt value (b) for this SRP auth attempt
-**ephemeral_b:** Unique server ephemeral value (B) for this SRP auth attempt
+**eph_private_b:** Randomly generated salt value (b) for this SRP auth attempt
+**eph_public_b:** Unique server ephemeral value (B) for this SRP auth attempt
 **user_id:** The user that the AuthEphemeral is associated with
 **expires_at:** Timestamp when the ephemeral value expires (2 minutes from creation)
 **password_change:** Flag indicating whether the ephemeral is for use with a password change action

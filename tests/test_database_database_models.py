@@ -391,8 +391,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -401,7 +401,7 @@ class TestDatabaseAuthEphemeralModel():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
@@ -410,8 +410,8 @@ class TestDatabaseAuthEphemeralModel():
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -429,7 +429,7 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -447,7 +447,7 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
+            eph_private_b="fake_eph_private_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -465,8 +465,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             password_change=False
         )
         self.session.add(ephemeral)
@@ -483,8 +483,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
         self.session.add(ephemeral)
@@ -503,8 +503,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -521,8 +521,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )
@@ -531,8 +531,8 @@ class TestDatabaseAuthEphemeralModel():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_salt == "fake_ephemeral_salt"
-        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
         assert db_ephemeral.user_id == 123456
         assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.public_id == ephemeral.public_id
@@ -543,8 +543,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )
@@ -958,8 +958,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -1019,8 +1019,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=user.id,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -1029,7 +1029,7 @@ class TestDatabaseRelationships():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_b == "fake_ephemeral_bytes"
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1073,8 +1073,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user=user,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -1375,8 +1375,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="",
-            ephemeral_b="",
+            eph_private_b="",
+            eph_public_b="",
             expiry_time=expiry,
             password_change=True
         )
@@ -1385,8 +1385,8 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_salt == ""
-        assert db_ephemeral.ephemeral_b == ""
+        assert db_ephemeral.eph_private_b == ""
+        assert db_ephemeral.eph_public_b == ""
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1450,8 +1450,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="x"*10000,
-            ephemeral_b="x"*10000,
+            eph_private_b="x"*10000,
+            eph_public_b="x"*10000,
             expiry_time=expiry,
             password_change=True
         )
@@ -1460,8 +1460,8 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_salt == "x"*10000
-        assert db_ephemeral.ephemeral_b == "x"*10000
+        assert db_ephemeral.eph_private_b == "x"*10000
+        assert db_ephemeral.eph_public_b == "x"*10000
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1525,8 +1525,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            ephemeral_b="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            eph_private_b="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            eph_public_b="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
             expiry_time=expiry,
             password_change=True
         )
@@ -1535,8 +1535,8 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_b == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_ephemeral.ephemeral_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_ephemeral.eph_public_b == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_ephemeral.eph_private_b == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1600,8 +1600,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="测试用户🚀ñáéíóú",
-            ephemeral_b="测试用户🚀ñáéíóú",
+            eph_private_b="测试用户🚀ñáéíóú",
+            eph_public_b="测试用户🚀ñáéíóú",
             expiry_time=expiry,
             password_change=True
         )
@@ -1610,8 +1610,8 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_salt == "测试用户🚀ñáéíóú"
-        assert db_ephemeral.ephemeral_b == "测试用户🚀ñáéíóú"
+        assert db_ephemeral.eph_private_b == "测试用户🚀ñáéíóú"
+        assert db_ephemeral.eph_public_b == "测试用户🚀ñáéíóú"
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1675,8 +1675,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="abcd EFGH",
-            ephemeral_b="abcd EFGH",
+            eph_private_b="abcd EFGH",
+            eph_public_b="abcd EFGH",
             expiry_time=expiry,
             password_change=True
         )
@@ -1685,8 +1685,8 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.ephemeral_salt == "abcd EFGH"
-        assert db_ephemeral.ephemeral_b == "abcd EFGH"
+        assert db_ephemeral.eph_private_b == "abcd EFGH"
+        assert db_ephemeral.eph_public_b == "abcd EFGH"
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1727,8 +1727,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=0,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )
@@ -1777,8 +1777,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=9223372036854775807,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )
@@ -1827,8 +1827,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=-9223372036854775806,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )
@@ -1877,8 +1877,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.min
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )
@@ -1911,8 +1911,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.max
         ephemeral = AuthEphemeral(
             user_id=123456,
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_bytes",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=True
         )

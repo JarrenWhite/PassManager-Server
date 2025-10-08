@@ -53,8 +53,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -76,8 +76,8 @@ class TestStart():
         db_ephemeral = mock_session._added[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "fake_public_id"
-        assert db_ephemeral.ephemeral_salt == "fake_ephemeral_salt"
-        assert db_ephemeral.ephemeral_b == "fake_ephemeral_b"
+        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
         assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.password_change == False
 
@@ -98,8 +98,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -130,8 +130,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -169,8 +169,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -224,8 +224,8 @@ class TestGetDetails():
             id=123456,
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -249,8 +249,8 @@ class TestGetDetails():
         assert response[1] == None
         assert response[2] == "fake_hash"
         assert response[3] == 123456
-        assert response[4] == "fake_ephemeral_salt"
-        assert response[5] == "fake_ephemeral_b"
+        assert response[4] == "fake_eph_private_b"
+        assert response[5] == "fake_eph_public_b"
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
@@ -374,8 +374,8 @@ class TestGetDetails():
         fake_ephemeral = AuthEphemeral(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -440,8 +440,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
@@ -524,8 +524,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
             password_change=False
         )
