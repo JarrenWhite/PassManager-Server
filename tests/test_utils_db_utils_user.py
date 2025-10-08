@@ -439,6 +439,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
+            id=123456,
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -453,7 +454,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.delete(
-            username_hash="fake_hash"
+            user_id=123456
         )
 
         assert isinstance(response, tuple)
@@ -472,8 +473,8 @@ class TestDelete():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -484,7 +485,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.delete(
-            username_hash="fake_hash"
+            user_id=123456
         )
 
         assert isinstance(response, tuple)
@@ -512,7 +513,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.delete(
-            username_hash="fake_hash"
+            user_id=123456
         )
 
         assert isinstance(response, tuple)
@@ -547,7 +548,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.delete(
-            username_hash="fake_hash"
+            user_id=123456
         )
 
         assert isinstance(response, tuple)
@@ -563,8 +564,8 @@ class TestDelete():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
     def test_handles_password_change_in_progress(self, monkeypatch):
         """Should return correct failure reason if password change is in progress"""
@@ -583,6 +584,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         fake_user = User(
+            id=123456,
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
@@ -596,7 +598,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.delete(
-            username_hash="fake_hash"
+            user_id=123456
         )
 
         assert isinstance(response, tuple)
@@ -612,8 +614,8 @@ class TestDelete():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
 
 if __name__ == '__main__':

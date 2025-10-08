@@ -63,12 +63,12 @@ class DBUtilsUser():
 
     @staticmethod
     def delete(
-        username_hash: str
+        user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given user"""
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.username_hash == username_hash).first()
+                user = session.query(User).filter(User.id == user_id).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
