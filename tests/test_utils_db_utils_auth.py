@@ -683,6 +683,71 @@ class TestComplete():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "ephemeral_fake_public_id"
 
+    def test_handles_entry_expired(self, monkeypatch):
+        """Should return correct failure reason if entry is expired, and delete entry"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False
+        )
+
+        expiry = datetime.now() - timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        response = DBUtilsAuth.complete(
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=None,
+            expiry_time=None
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "ephemeral_fake_public_id"
+
     def test_password_change_setting_retained(self, monkeypatch):
         """Should create password change session from password change ephemeral"""
         mock_session = _MockSession()
