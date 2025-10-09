@@ -100,6 +100,9 @@ class DBUtilsAuth():
 
                 if auth_ephemeral is None:
                     return False, FailureReason.NOT_FOUND, ""
+                if auth_ephemeral.expiry_time < datetime.now():
+                    session.delete(auth_ephemeral)
+                    return False, FailureReason.NOT_FOUND, ""
 
                 login_session = LoginSession(
                     user=auth_ephemeral.user,
