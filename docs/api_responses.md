@@ -129,14 +129,14 @@ A brief introduction to the possible responses for all defined APIs.
 | username        | string   | Yes      | Hash of the user's username.                                 |
 | auth_id         | string   | success  | The public ID of the in progress auth request.               |
 | srp_salt        | string   | success  | The salt used to create the verifier in SRP.                 |
-| ephemeral_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
+| eph_public_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
 
 **Encryption Encoding**
 ```
 [4 bytes: username length][username bytes]
 [4 bytes: auth_id length][auth_id bytes]
 [4 bytes: srp_salt length][srp_salt bytes]
-[4 bytes: ephemeral_b length][ephemeral_b bytes]
+[4 bytes: eph_public_b length][eph_public_b bytes]
 ```
 
 **Success Response**
@@ -306,7 +306,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.                   |
 | auth_id         | string   | success  | The public ID of the in progress auth request.               |
 | srp_salt        | string   | success  | The salt used to create the verifier in SRP.                 |
-| ephemeral_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
+| eph_public_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
 | master_key_salt | string   | success  | The salt used to create the master key.                      |
 | errors          | [error]  | failure  | json list of each error.                                     |
 

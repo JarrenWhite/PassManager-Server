@@ -1,5 +1,4 @@
 from typing import Tuple, Optional
-from contextlib import contextmanager
 
 from sqlalchemy.exc import IntegrityError
 
@@ -24,6 +23,7 @@ class DBUtilsUser():
             srp_salt=srp_salt,
             srp_verifier=srp_verifier,
             master_key_salt=master_key_salt,
+            password_change=False
         )
 
         try:
@@ -40,15 +40,17 @@ class DBUtilsUser():
 
     @staticmethod
     def change_username(
-        username_hash: str,
+        username_id: int,
         new_username_hash: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Change username for an existing user"""
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.username_hash == username_hash).first()
+                user = session.query(User).filter(User.id == username_id).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
+                if user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
                 user.username_hash = new_username_hash
                 return True, None
         except IntegrityError:
@@ -61,14 +63,16 @@ class DBUtilsUser():
 
     @staticmethod
     def delete(
-        username_hash: str
+        user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given user"""
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.username_hash == username_hash).first()
+                user = session.query(User).filter(User.id == user_id).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
+                if user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
                 session.delete(user)
                 return True, None
         except RuntimeError:

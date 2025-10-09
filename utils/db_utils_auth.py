@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Tuple, Optional
-from contextlib import contextmanager
 
 from database import DatabaseSetup, User, AuthEphemeral, LoginSession
 from .utils_enums import FailureReason
@@ -13,13 +12,16 @@ class DBUtilsAuth():
     @staticmethod
     def start(
         username_hash: str,
-        ephemeral_salt: str,
-        ephemeral_b: str,
+        eph_private_b: str,
+        eph_public_b: str,
         expiry_time: datetime
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
         """
         Begin auth ephemeral session for the user
-        return:     (str, str)      -> (public_id, srp_salt)
+
+        Returns:
+            (str)   public_id
+            (str)   srp_salt
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -29,9 +31,10 @@ class DBUtilsAuth():
 
                 auth_ephemeral = AuthEphemeral(
                     user=user,
-                    ephemeral_salt=ephemeral_salt,
-                    ephemeral_b=ephemeral_b,
-                    expiry_time=expiry_time
+                    eph_private_b=eph_private_b,
+                    eph_public_b=eph_public_b,
+                    expiry_time=expiry_time,
+                    password_change=False
                 )
                 session.add(auth_ephemeral)
                 session.flush()
@@ -45,30 +48,37 @@ class DBUtilsAuth():
 
     @staticmethod
     def get_details(
-        username_hash: str,
         public_id: str
-    ) -> Tuple[bool, Optional[FailureReason], str, str]:
+    ) -> Tuple[bool, Optional[FailureReason], str, int, str, str]:
         """
         Get the ephemeral details for the given ephemeral id
-        return:     (str, str)      -> (ephemeral_salt, ephemeral_bytes)
+
+        Returns:
+            (str)   username_hash
+            (int)   user_id
+            (str)   eph_private_b
+            (str)   eph_public_b
         """
         try:
             with DatabaseSetup.get_db_session() as session:
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    return False, FailureReason.NOT_FOUND, "", ""
+                    return False, FailureReason.NOT_FOUND, "", 0, "", ""
                 if auth_ephemeral.expiry_time < datetime.now():
                     session.delete(auth_ephemeral)
-                    return False, FailureReason.NOT_FOUND, "", ""
-                if auth_ephemeral.user.username_hash is not username_hash:
-                    return False, FailureReason.NO_MATCH, "", ""
+                    return False, FailureReason.NOT_FOUND, "", 0, "", ""
 
-                return True, None, auth_ephemeral.ephemeral_salt, auth_ephemeral.ephemeral_b
+                return (True, None,
+                    auth_ephemeral.user.username_hash,
+                    auth_ephemeral.user.id,
+                    auth_ephemeral.eph_private_b,
+                    auth_ephemeral.eph_public_b
+                )
         except RuntimeError:
-            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+            return False, FailureReason.DATABASE_UNINITIALISED, "", 0, "", ""
         except:
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", 0, "", ""
 
 
     @staticmethod
@@ -80,13 +90,18 @@ class DBUtilsAuth():
     ) -> Tuple[bool, Optional[FailureReason], str]:
         """
         Complete login session creation
-        return:     str             -> public_id
+
+        Returns:
+            (str)   public_id
         """
         try:
             with DatabaseSetup.get_db_session() as session:
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
+                    return False, FailureReason.NOT_FOUND, ""
+                if auth_ephemeral.expiry_time < datetime.now():
+                    session.delete(auth_ephemeral)
                     return False, FailureReason.NOT_FOUND, ""
 
                 login_session = LoginSession(
@@ -95,7 +110,8 @@ class DBUtilsAuth():
                     request_count=0,
                     last_used=datetime.now(),
                     maximum_requests=maximum_requests,
-                    expiry_time=expiry_time
+                    expiry_time=expiry_time,
+                    password_change=auth_ephemeral.password_change
                 )
                 session.add(login_session)
                 session.flush()

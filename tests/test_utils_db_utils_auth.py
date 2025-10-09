@@ -39,7 +39,8 @@ class TestStart():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_user])
@@ -52,8 +53,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -75,10 +76,10 @@ class TestStart():
         db_ephemeral = mock_session._added[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "fake_public_id"
-        assert db_ephemeral.ephemeral_salt == "fake_ephemeral_salt"
-        assert db_ephemeral.ephemeral_b == "fake_ephemeral_b"
+        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
         assert db_ephemeral.expiry_time == expiry
-        assert db_ephemeral.password_change == None
+        assert db_ephemeral.password_change == False
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -97,8 +98,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -129,8 +130,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -168,8 +169,8 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
             username_hash="fake_hash",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
             expiry_time=expiry
         )
 
@@ -214,16 +215,19 @@ class TestGetDetails():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_change=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
         fake_ephemeral = AuthEphemeral(
+            id=123456,
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -232,18 +236,21 @@ class TestGetDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_details(
-            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], str)
-        assert isinstance(response[3], str)
+        assert isinstance(response[3], int)
+        assert isinstance(response[4], str)
+        assert isinstance(response[5], str)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == "fake_ephemeral_salt"
-        assert response[3] == "fake_ephemeral_b"
+        assert response[2] == "fake_hash"
+        assert response[3] == 123456
+        assert response[4] == "fake_eph_private_b"
+        assert response[5] == "fake_eph_public_b"
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
@@ -265,7 +272,6 @@ class TestGetDetails():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_details(
-            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -294,7 +300,6 @@ class TestGetDetails():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_details(
-            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -330,7 +335,6 @@ class TestGetDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_details(
-            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -370,9 +374,10 @@ class TestGetDetails():
         fake_ephemeral = AuthEphemeral(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -381,7 +386,6 @@ class TestGetDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_details(
-            username_hash="fake_hash",
             public_id="fake_public_id"
         )
 
@@ -392,65 +396,6 @@ class TestGetDetails():
         assert db_ephemeral.public_id == "ephemeral_fake_public_id"
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
-
-        assert mock_session.commits == 1
-        assert mock_session.rollbacks == 0
-        assert mock_session.closed is True
-
-        assert len(mock_query._filters) == 1
-        condition = mock_query._filters[0]
-        assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "public_id"
-        assert condition.right.value == "fake_public_id"
-
-    def test_handles_username_not_matching(self, monkeypatch):
-        """Should return correct failure reason if username hash does not match"""
-        mock_session = _MockSession()
-
-        @contextmanager
-        def mock_get_db_session():
-            try:
-                yield mock_session
-                mock_session.commit()
-            except Exception:
-                mock_session.rollback()
-                raise
-            finally:
-                mock_session.close()
-        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
-
-        fake_user = User(
-            id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
-        )
-
-        expiry = datetime.now() + timedelta(hours=1)
-        fake_ephemeral = AuthEphemeral(
-            user=fake_user,
-            public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
-        )
-
-        mock_query = _MockQuery([fake_ephemeral])
-        def fake_query(self, model):
-            return mock_query
-        monkeypatch.setattr(_MockSession, "query", fake_query)
-
-        response = DBUtilsAuth.get_details(
-            username_hash="fake_hash_unmatching",
-            public_id="fake_public_id"
-        )
-
-        assert isinstance(response, tuple)
-        assert isinstance(response[0], bool)
-        assert isinstance(response[1], FailureReason)
-        assert response[0] == False
-        assert response[1] == FailureReason.NO_MATCH
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
@@ -487,16 +432,18 @@ class TestComplete():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_change=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -540,7 +487,7 @@ class TestComplete():
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
         assert db_session.maximum_requests == None
         assert db_session.expiry_time == None
-        assert db_session.password_change == None
+        assert db_session.password_change == False
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -569,16 +516,18 @@ class TestComplete():
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            master_key_salt="fake_master_key_salt",
+            password_change=False
         )
 
         expiry = datetime.now() + timedelta(hours=1)
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            ephemeral_salt="fake_ephemeral_salt",
-            ephemeral_b="fake_ephemeral_b",
-            expiry_time=expiry
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])
@@ -623,7 +572,7 @@ class TestComplete():
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
         assert db_session.maximum_requests == 99
         assert db_session.expiry_time == expiry
-        assert db_session.password_change == None
+        assert db_session.password_change == False
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -733,6 +682,177 @@ class TestComplete():
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "ephemeral_fake_public_id"
+
+    def test_handles_entry_expired(self, monkeypatch):
+        """Should return correct failure reason if entry is expired, and delete entry"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False
+        )
+
+        expiry = datetime.now() - timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        response = DBUtilsAuth.complete(
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=None,
+            expiry_time=None
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "ephemeral_fake_public_id"
+
+    def test_password_change_setting_retained(self, monkeypatch):
+        """Should create password change session from password change ephemeral"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+        expiry = datetime.now() + timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        response = DBUtilsAuth.complete(
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=None,
+            expiry_time=None
+        )
+
+        db_session = mock_session._added[0]
+        assert isinstance(db_session, LoginSession)
+        assert db_session.password_change == True
+
+    def test_password_change_setting_not_linked_to_user(self, monkeypatch):
+        """Should not create password change session just because user password change is True"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+        expiry = datetime.now() + timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        response = DBUtilsAuth.complete(
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=None,
+            expiry_time=None
+        )
+
+        db_session = mock_session._added[0]
+        assert isinstance(db_session, LoginSession)
+        assert db_session.password_change == False
 
 
 if __name__ == '__main__':

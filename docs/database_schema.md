@@ -22,6 +22,7 @@ Store main user information, including SRP authentication data, salts for encryp
 | **srp_salt**            | BLOB      |                                 |
 | **srp_verifier**        | BLOB      |                                 |
 | **master_key_salt**     | BLOB      |                                 |
+| **password_change**   | BOOL      |                                 |
 | **new_srp_salt**        | BLOB      | **nullable**                    |
 | **new_srp_verifier**    | BLOB      | **nullable**                    |
 | **new_master_key_salt** | BLOB      | **nullable**                    |
@@ -38,6 +39,7 @@ Store main user information, including SRP authentication data, salts for encryp
 **master_key_salt:** The salt used to create the master key
 **login_session:** List of all linked LoginSession entries
 **secure_data:** List of all linked SecureData entries
+**password_change:** Flag representing whether the user is currently undergoing a password change
 **new_srp_salt:** Temporary store for new srp salt, while changing password
 **new_srp_verifier:** Temporary store for new srp verifier name, while changing password
 **new_master_key_salt:** Temporary store for new master key salt, while changing password
@@ -56,19 +58,19 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 |---------------------|-----------|--------------------------------------------------|
 | **id**              | BIGINT    | **Primary Key**, auto-increment                  |
 | **public_id**       | CHAR(36)  | **Indexed**                                      |
-| **ephemeral_salt**  | CHAR(36)  |                                                  |
-| **ephemeral_b**     | BLOB      |                                                  |
+| **eph_private_b**  | CHAR(36)  |                                                  |
+| **eph_public_b**     | BLOB      |                                                  |
 | **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
 | **expiry_time**     | TIMESTAMP | When the ephemeral value expires                 |
-| **password_change** | BOOL      | **nullable**                                     |
+| **password_change** | BOOL      |                                                  |
 
 ### **Relationships**
 - Belongs to **User** → `user_id`
 
 ### Column Descriptions
 **id:** Database ID for the entry
-**ephemeral_salt:** Randomly generated salt value (b) for this SRP auth attempt
-**ephemeral_b:** Unique server ephemeral value (B) for this SRP auth attempt
+**eph_private_b:** Randomly generated salt value (b) for this SRP auth attempt
+**eph_public_b:** Unique server ephemeral value (B) for this SRP auth attempt
 **user_id:** The user that the AuthEphemeral is associated with
 **expires_at:** Timestamp when the ephemeral value expires (2 minutes from creation)
 **password_change:** Flag indicating whether the ephemeral is for use with a password change action
@@ -93,7 +95,7 @@ Tracks user authentication sessions, storing session keys and related data.
 | **last_used**        | TIMESTAMP |                                           |
 | **maximum_requests** | INT       | **nullable**                              |
 | **expiry_time**      | TIMESTAMP | **nullable**                              |
-| **password_change**  | BOOL      | **nullable**                              |
+| **password_change**  | BOOL      |                                           |
 
 ### **Relationships**
 - Belongs to **User** → `user_id`

@@ -17,6 +17,7 @@ class User(Base):
     srp_salt: Mapped[str] = mapped_column(String)
     srp_verifier: Mapped[str] = mapped_column(String)
     master_key_salt: Mapped[str] = mapped_column(String)
+    password_change: Mapped[bool] = mapped_column(Boolean)
 
     new_srp_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
@@ -33,10 +34,10 @@ class AuthEphemeral(Base):
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    ephemeral_salt: Mapped[str] = mapped_column(String)
-    ephemeral_b: Mapped[str] = mapped_column(String)
+    eph_private_b: Mapped[str] = mapped_column(String)
+    eph_public_b: Mapped[str] = mapped_column(String)
     expiry_time: Mapped[datetime] = mapped_column(DateTime)
-    password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    password_change: Mapped[bool] = mapped_column(Boolean)
 
     user: Mapped["User"] = relationship("User")
 
@@ -54,7 +55,7 @@ class LoginSession(Base):
 
     maximum_requests: Mapped[int] = mapped_column(Integer, nullable=True)
     expiry_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    password_change: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    password_change: Mapped[bool] = mapped_column(Boolean)
 
     user: Mapped["User"] = relationship("User", back_populates="login_sessions")
 
