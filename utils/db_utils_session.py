@@ -60,7 +60,22 @@ class DBUtilsSession():
         Returns:
             (str)   session_key
         """
-        return False, None, ""
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                login_session = session.query(LoginSession).filter(LoginSession.id == session_id).first()
+
+                if login_session is None:
+                    return False, FailureReason.NOT_FOUND, ""
+                if login_session.expiry_time and login_session.expiry_time < datetime.now():
+                    session.delete(login_session)
+                    return False, FailureReason.NOT_FOUND, ""
+
+                login_session.request_count += 1
+                return True, None, login_session.session_key
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
     @staticmethod
