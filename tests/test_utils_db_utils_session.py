@@ -435,5 +435,65 @@ class TestLogUse():
         assert mock_session.closed is True
 
 
+class TestDelete():
+    """Test cases for database utils session delete function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should delete given session"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() + timedelta(seconds=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsSession.delete(
+            public_id="fake_session_key"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert len(mock_session._deletes) == 1
+        db_session = mock_session._deletes[0]
+        assert db_session.public_id == "session_fake_public_id"
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "fake_session_key"
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
