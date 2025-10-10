@@ -314,7 +314,7 @@ class TestLogUse():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         last_used = datetime.now() - timedelta(hours=1)
-        expiry_time = datetime.now() - timedelta(seconds=1)
+        expiry_time = datetime.now() + timedelta(seconds=1)
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
@@ -331,8 +331,8 @@ class TestLogUse():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsSession.get_details(
-            public_id="session_fake_public_id"
+        response = DBUtilsSession.log_use(
+            session_id=123456
         )
 
         assert isinstance(response, tuple)
@@ -343,6 +343,11 @@ class TestLogUse():
         assert response[2] == "fake_session_key"
         assert fake_login_session.request_count == 4
 
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
 
 if __name__ == '__main__':
