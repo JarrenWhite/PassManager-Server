@@ -48,3 +48,39 @@ class DBUtilsSession():
             return False, FailureReason.DATABASE_UNINITIALISED, 0, 0, "", 0, False
         except:
             return False, FailureReason.UNKNOWN_EXCEPTION, 0, 0, "", 0, False
+
+
+    @staticmethod
+    def log_use(
+        session_id: int
+    ) -> Tuple[bool, Optional[FailureReason], str]:
+        """
+        Log the use of a login session
+
+        Returns:
+            (str)   session_key
+        """
+        return False, None, ""
+
+
+    @staticmethod
+    def delete(
+        public_id: str
+    ) -> Tuple[bool, Optional[FailureReason]]:
+        """Delete given login session"""
+        return False, None
+
+
+    @staticmethod
+    def clean_user(
+        user_id: int
+    ) -> Tuple[bool, Optional[FailureReason]]:
+        """Remove all Login Sessions and Auth Ephemerals for the user"""
+        return False, None
+
+
+    @staticmethod
+    def clean_all(
+    ) -> Tuple[bool, Optional[FailureReason]]:
+        """Remove all expired Login Sessions from the database"""
+        return False, None
