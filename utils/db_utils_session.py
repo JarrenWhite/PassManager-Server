@@ -83,7 +83,19 @@ class DBUtilsSession():
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given login session"""
-        return False, None
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
+                if not login_session:
+                    return False, FailureReason.NOT_FOUND
+                if login_session.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
+                session.delete(login_session)
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except Exception:
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
 
     @staticmethod
