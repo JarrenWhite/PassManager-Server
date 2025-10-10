@@ -1,12 +1,47 @@
 from datetime import datetime
 from typing import Tuple, Optional
 
+from sqlalchemy.orm import Session
 from database import DatabaseSetup, LoginSession
 from .utils_enums import FailureReason
 
 
 class DBUtilsSession():
     """Utility functions for managing session based database functions"""
+
+    @staticmethod
+    def _check_expiry(
+        db_session: Session,
+        login_session: LoginSession
+    ) -> bool:
+        """
+        Checks if a login session is expired, and cleans up appropriately
+
+        Returns:
+            (bool)  True if expired & being deleted, false otherwise
+        """
+        is_expired = False
+
+        if (
+            login_session.expiry_time and
+            login_session.expiry_time < datetime.now()
+        ):
+            is_expired = True
+
+        if (
+            login_session.maximum_requests is not None and
+            login_session.maximum_requests <= login_session.request_count
+        ):
+            is_expired = True
+
+        if is_expired:
+            if login_session.password_change:
+                # TODO - Handle password change session differently
+                db_session.delete(login_session)
+            else:
+                db_session.delete(login_session)
+
+        return is_expired
 
 
     @staticmethod
@@ -29,11 +64,7 @@ class DBUtilsSession():
 
                 if login_session is None:
                     return False, FailureReason.NOT_FOUND, 0, 0, "", 0, False
-                if login_session.expiry_time and login_session.expiry_time < datetime.now():
-                    session.delete(login_session)
-                    return False, FailureReason.NOT_FOUND, 0, 0, "", 0, False
-                if login_session.maximum_requests is not None and login_session.maximum_requests <= login_session.request_count:
-                    session.delete(login_session)
+                if DBUtilsSession._check_expiry(session, login_session):
                     return False, FailureReason.NOT_FOUND, 0, 0, "", 0, False
 
                 return (
@@ -66,8 +97,7 @@ class DBUtilsSession():
 
                 if login_session is None:
                     return False, FailureReason.NOT_FOUND, ""
-                if login_session.expiry_time and login_session.expiry_time < datetime.now():
-                    session.delete(login_session)
+                if DBUtilsSession._check_expiry(session, login_session):
                     return False, FailureReason.NOT_FOUND, ""
 
                 login_session.request_count += 1
@@ -86,10 +116,14 @@ class DBUtilsSession():
         try:
             with DatabaseSetup.get_db_session() as session:
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
+
                 if not login_session:
                     return False, FailureReason.NOT_FOUND
                 if login_session.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
+                if DBUtilsSession._check_expiry(session, login_session):
+                    return False, FailureReason.NOT_FOUND
+
                 session.delete(login_session)
                 return True, None
         except RuntimeError:
