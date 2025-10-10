@@ -56,6 +56,11 @@ public_id: str
 entry_name: str
 entry_data: str
 
+## _clean_password_change
+"""Remove all partial password change entries, ephemerals and login sessions"""
+In
+db_session: Session
+user: User
 
 ---
 
@@ -95,6 +100,11 @@ public_id: str
 
 ## clean_all
 ()
+
+## _check_expiry
+In
+db_session: Session
+auth_ephemeral: AuthEphemeral
 
 
 ---
@@ -180,3 +190,8 @@ user_id: int
 
 ## clean_all
 ()
+
+## _check_expiry
+In
+db_session: Session
+login_session: LoginSession
