@@ -294,5 +294,56 @@ class TestGetDetails():
         assert condition.right.value == "session_fake_public_id"
 
 
+class TestLogUse():
+    """Test cases for database utils session get_details function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should increment the request count by 1, and return the session key"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() - timedelta(seconds=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsSession.get_details(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], str)
+        assert response[0] == True
+        assert response[1] == None
+        assert response[2] == "fake_session_key"
+        assert fake_login_session.request_count == 4
+
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
