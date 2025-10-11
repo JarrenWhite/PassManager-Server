@@ -56,7 +56,7 @@ public_id: str
 entry_name: str
 entry_data: str
 
-## _clean_password_change
+## clean_password_change
 """Remove all partial password change entries, ephemerals and login sessions"""
 In
 db_session: Session

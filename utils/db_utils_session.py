@@ -2,8 +2,10 @@ from datetime import datetime
 from typing import Tuple, Optional
 
 from sqlalchemy.orm import Session
+
 from database import DatabaseSetup, LoginSession
 from .utils_enums import FailureReason
+from .db_utils_password import DBUtilsPassword
 
 
 class DBUtilsSession():
@@ -36,7 +38,10 @@ class DBUtilsSession():
 
         if is_expired:
             if login_session.password_change:
-                # TODO - Handle password change session differently
+                DBUtilsPassword.clean_password_change(
+                    db_session=db_session,
+                    user=login_session.user
+                )
                 db_session.delete(login_session)
             else:
                 db_session.delete(login_session)
