@@ -140,7 +140,7 @@ class DBUtilsSession():
     def clean_user(
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
-        """Remove all Login Sessions and Auth Ephemerals for the user"""
+        """Remove all Login Sessions for the user"""
         return False, None
 
 
