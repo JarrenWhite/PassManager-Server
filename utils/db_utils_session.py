@@ -42,7 +42,6 @@ class DBUtilsSession():
                     db_session=db_session,
                     user=login_session.user
                 )
-                db_session.delete(login_session)
             else:
                 db_session.delete(login_session)
 
