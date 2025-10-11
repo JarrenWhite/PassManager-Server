@@ -123,10 +123,10 @@ class DBUtilsSession():
 
                 if not login_session:
                     return False, FailureReason.NOT_FOUND
-                if login_session.password_change:
-                    return False, FailureReason.PASSWORD_CHANGE
                 if DBUtilsSession._check_expiry(session, login_session):
                     return False, FailureReason.NOT_FOUND
+                if login_session.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(login_session)
                 return True, None

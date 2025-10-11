@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tests.mock_classes import _MockSession, _MockQuery
 from utils.utils_enums import FailureReason
 from utils.db_utils_session import DBUtilsSession
+from utils.db_utils_password import DBUtilsPassword
 from database.database_setup import DatabaseSetup
 from database.database_models import User, LoginSession
 
@@ -473,7 +474,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
-            public_id="fake_session_key"
+            public_id="session_fake_public_id"
         )
 
         assert isinstance(response, tuple)
@@ -492,7 +493,7 @@ class TestDelete():
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
-        assert condition.right.value == "fake_session_key"
+        assert condition.right.value == "session_fake_public_id"
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -503,7 +504,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsSession.delete(
-            public_id="fake_session_key"
+            public_id="session_fake_public_id"
         )
 
         assert isinstance(response, tuple)
@@ -531,7 +532,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsSession.delete(
-            public_id="fake_session_key"
+            public_id="session_fake_public_id"
         )
 
         assert isinstance(response, tuple)
@@ -566,7 +567,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
-            public_id="fake_session_key"
+            public_id="session_fake_public_id"
         )
 
         assert isinstance(response, tuple)
@@ -626,6 +627,148 @@ class TestDelete():
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
+
+    def test_handles_entry_expired_request_count(self, monkeypatch):
+        """Should return correct failure reason if entry is expired due to request count, and delete entry"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=3,
+            expiry_time=None,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsSession.delete(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        db_ephemeral = mock_session._deletes[0]
+        assert db_ephemeral.public_id == "session_fake_public_id"
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+    def test_handles_entry_expired_expiry_time(self, monkeypatch):
+        """Should return correct failure reason if entry is expired due to expiry time, and delete entry"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() - timedelta(seconds=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsSession.delete(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        db_ephemeral = mock_session._deletes[0]
+        assert db_ephemeral.public_id == "session_fake_public_id"
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+    def test_handles_entry_expired_with_password_change(self, monkeypatch):
+        """Should return correct failure reason if entry is expired due to expiry time, and delete entry"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() - timedelta(seconds=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsSession.delete(
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+        assert called["cleaned"]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
