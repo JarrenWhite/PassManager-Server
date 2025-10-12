@@ -799,7 +799,7 @@ class TestCleanUser():
             last_used=last_used,
             maximum_requests=None,
             expiry_time=expiry_time,
-            password_change=True
+            password_change=False
         )
         fake_login_session_two = LoginSession(
             user_id=123456,
@@ -809,7 +809,7 @@ class TestCleanUser():
             last_used=last_used,
             maximum_requests=None,
             expiry_time=expiry_time,
-            password_change=True
+            password_change=False
         )
         fake_login_session_three = LoginSession(
             user_id=123456,
@@ -819,7 +819,7 @@ class TestCleanUser():
             last_used=last_used,
             maximum_requests=None,
             expiry_time=expiry_time,
-            password_change=True
+            password_change=False
         )
 
         fake_user = User(
