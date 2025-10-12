@@ -958,6 +958,69 @@ class TestCleanUser():
         assert str(condition.left.name) == "id"
         assert condition.right.value == 123456
 
+    def test_clean_password_login_session(self, monkeypatch):
+        """Should call clean_password_change for password session"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() + timedelta(seconds=1)
+        fake_login_session_one = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id_one",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=True
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            login_sessions=[fake_login_session_one]
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsSession.clean_user(
+            user_id=123456
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert len(mock_session._deletes) == 0
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
