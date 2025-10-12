@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from database import DatabaseSetup, LoginSession
+from database import DatabaseSetup, LoginSession, User
 from .utils_enums import FailureReason
 from .db_utils_password import DBUtilsPassword
 
@@ -141,7 +141,22 @@ class DBUtilsSession():
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Remove all Login Sessions for the user"""
-        return False, None
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.id == user_id).first()
+
+                if not user:
+                    return False, FailureReason.NOT_FOUND
+
+                for login_session in user.login_sessions:
+                    expired = DBUtilsSession._check_expiry(session, login_session)
+                    if not expired:
+                        session.delete(login_session)
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except Exception:
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
 
     @staticmethod
