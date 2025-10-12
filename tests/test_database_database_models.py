@@ -1059,7 +1059,7 @@ class TestDatabaseRelationships():
         assert db_data.entry_name == "fake_secure_data_name"
 
     def test_user_ephemeral_relationship(self):
-        """Should be a relationship from ephemeral to its user"""
+        """Should be a relationship between user and all user's auth ephemerals"""
         user = User(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
@@ -1081,8 +1081,22 @@ class TestDatabaseRelationships():
         self.session.add(ephemeral)
         self.session.commit()
 
-        assert ephemeral.user is not None
-        assert ephemeral.user == user
+        expiry2 = datetime.now() + timedelta(hours=2)
+        ephemeral2 = AuthEphemeral(
+            user=user,
+            eph_private_b="fake_eph_private_b_2",
+            eph_public_b="fake_eph_public_b_2",
+            expiry_time=expiry2,
+            password_change=False
+        )
+        self.session.add(ephemeral2)
+        self.session.commit()
+
+        assert len(user.auth_ephemerals) == 2
+        assert ephemeral in user.auth_ephemerals
+        assert ephemeral2 in user.auth_ephemerals
+        assert ephemeral.user_id == user.id
+        assert ephemeral2.user_id == user.id
 
     def test_user_login_relationship(self):
         """Should be a relationship between user and all user's login sessions"""
@@ -1159,7 +1173,7 @@ class TestDatabaseRelationships():
         assert data2.user_id == user.id
 
     def test_user_cascade_deletion(self):
-        """Should delete all LoginSessions and SecureData when User is deleted"""
+        """Should delete all LoginSessions, AuthEphemerals and SecureData when User is deleted"""
         user = User(
             username_hash="fake_hash",
             srp_salt="fake_srp_salt",
@@ -1168,6 +1182,17 @@ class TestDatabaseRelationships():
             password_change=False
         )
         self.session.add(user)
+        self.session.commit()
+
+        expiry = datetime.now() + timedelta(hours=1)
+        ephemeral = AuthEphemeral(
+            user=user,
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
+        )
+        self.session.add(ephemeral)
         self.session.commit()
 
         last_used = datetime.now()
@@ -1197,13 +1222,19 @@ class TestDatabaseRelationships():
         assert db_login is not None
         assert db_login.session_key == "fake_session_key"
 
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
         assert db_data.entry_name == "fake_secure_data_name"
 
         assert login in user.login_sessions
+        assert ephemeral in user.auth_ephemerals
         assert data in user.secure_data
         assert login.user == user
+        assert ephemeral.user == user
         assert data.user == user
 
         self.session.delete(user)
@@ -1211,10 +1242,53 @@ class TestDatabaseRelationships():
 
         users = self.session.query(User).all()
         assert len(users) == 0
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
         login_sessions = self.session.query(LoginSession).all()
         assert len(login_sessions) == 0
         secure_data = self.session.query(SecureData).all()
         assert len(secure_data) == 0
+    
+    def test_auth_ephemeral_cascade_deletion(self):
+        """Should delete AuthEphemeral from User when AuthEphemeral deleted"""
+        user = User(
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False
+        )
+        self.session.add(user)
+        self.session.commit()
+
+        expiry = datetime.now() + timedelta(hours=1)
+        eph = AuthEphemeral(
+            user=user,
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
+        )
+        self.session.add(eph)
+        self.session.commit()
+
+        db_user = self.session.query(User).first()
+        assert db_user is not None
+        assert db_user.username_hash == "fake_hash"
+
+        db_ephemeral = self.session.query(AuthEphemeral).first()
+        assert db_ephemeral is not None
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+
+        assert eph in user.auth_ephemerals
+
+        self.session.delete(eph)
+        self.session.commit()
+
+        ephemerals = self.session.query(AuthEphemeral).all()
+        assert len(ephemerals) == 0
+        assert eph not in user.auth_ephemerals
+        assert user in self.session.query(User).all()
 
     def test_login_cascade_deletion(self):
         """Should delete LoginSession from User when LoginSession deleted"""

@@ -22,12 +22,13 @@ Store main user information, including SRP authentication data, salts for encryp
 | **srp_salt**            | BLOB      |                                 |
 | **srp_verifier**        | BLOB      |                                 |
 | **master_key_salt**     | BLOB      |                                 |
-| **password_change**   | BOOL      |                                 |
+| **password_change**     | BOOL      |                                 |
 | **new_srp_salt**        | BLOB      | **nullable**                    |
 | **new_srp_verifier**    | BLOB      | **nullable**                    |
 | **new_master_key_salt** | BLOB      | **nullable**                    |
 
 ### **Relationships**
+- **AuthEphemeral** -> `AuthEphemeral.user_id` (one-to-many) cascading delete
 - **LoginSession** → `LoginSession.user_id` (one-to-many) cascading delete
 - **SecureData** → `SecureData.user_id` (one-to-many) cascading delete
 
@@ -58,8 +59,8 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 |---------------------|-----------|--------------------------------------------------|
 | **id**              | BIGINT    | **Primary Key**, auto-increment                  |
 | **public_id**       | CHAR(36)  | **Indexed**                                      |
-| **eph_private_b**  | CHAR(36)  |                                                  |
-| **eph_public_b**     | BLOB      |                                                  |
+| **eph_private_b**   | CHAR(36)  |                                                  |
+| **eph_public_b**    | BLOB      |                                                  |
 | **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
 | **expiry_time**     | TIMESTAMP | When the ephemeral value expires                 |
 | **password_change** | BOOL      |                                                  |

@@ -773,7 +773,7 @@ class TestDelete():
 class TestCleanUser():
     """Test cases for database utils session clean_user function"""
 
-    def test_nominal_case(self, monkeypatch):
+    def test_delete_login_sessions(self, monkeypatch):
         """Should delete all login sessions for given user"""
         mock_session = _MockSession()
 
@@ -865,7 +865,7 @@ class TestCleanUser():
         assert str(condition.left.name) == "id"
         assert condition.right.value == 123456
 
-    def test_deletes_expired_sessions(self, monkeypatch):
+    def test_deletes_expired_login_sessions(self, monkeypatch):
         """Should delete all expired login sessions for given user"""
         mock_session = _MockSession()
 
