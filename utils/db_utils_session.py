@@ -151,7 +151,10 @@ class DBUtilsSession():
                 for login_session in user.login_sessions:
                     expired = DBUtilsSession._check_expiry(session, login_session)
                     if not expired:
-                        session.delete(login_session)
+                        if login_session.password_change:
+                            DBUtilsPassword.clean_password_change(session, login_session.user)
+                        else:
+                            session.delete(login_session)
                 return True, None
         except RuntimeError:
             return False, FailureReason.DATABASE_UNINITIALISED
