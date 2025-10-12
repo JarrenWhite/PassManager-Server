@@ -790,7 +790,7 @@ class TestCleanUser():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         last_used = datetime.now() - timedelta(hours=1)
-        expiry_time = datetime.now() - timedelta(seconds=1)
+        expiry_time = datetime.now() + timedelta(seconds=1)
         fake_login_session_one = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_one",
@@ -847,11 +847,14 @@ class TestCleanUser():
         assert response[1] == None
 
         assert len(mock_session._deletes) == 3
-        deleted_ids = [mock_session._deletes[0], mock_session._deletes[1], mock_session._deletes[2]]
-        db_session_list = mock_session._deletes[0]
-        assert "session_fake_public_id_one" in db_session_list
-        assert "session_fake_public_id_two" in db_session_list
-        assert "session_fake_public_id_three" in db_session_list
+        deleted_ids = [
+            mock_session._deletes[0].public_id,
+            mock_session._deletes[1].public_id,
+            mock_session._deletes[2].public_id
+        ]
+        assert "session_fake_public_id_one" in deleted_ids
+        assert "session_fake_public_id_two" in deleted_ids
+        assert "session_fake_public_id_three" in deleted_ids
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
