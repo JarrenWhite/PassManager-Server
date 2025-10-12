@@ -1161,7 +1161,7 @@ class TestCleanUser():
             mock_session._deletes[1].public_id,
             mock_session._deletes[2].public_id
         ]
-        assert "ephemeral_fake_public_id_ont" in deleted_ids
+        assert "ephemeral_fake_public_id_one" in deleted_ids
         assert "ephemeral_fake_public_id_two" in deleted_ids
         assert "ephemeral_fake_public_id_three" in deleted_ids
         assert mock_session.commits == 1

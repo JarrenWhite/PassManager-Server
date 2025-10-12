@@ -148,6 +148,9 @@ class DBUtilsSession():
                 if not user:
                     return False, FailureReason.NOT_FOUND
 
+                for auth_ephemeral in user.auth_ephemerals:
+                    session.delete(auth_ephemeral)
+
                 for login_session in user.login_sessions:
                     expired = DBUtilsSession._check_expiry(session, login_session)
                     if not expired:
