@@ -149,7 +149,10 @@ class DBUtilsSession():
                     return False, FailureReason.NOT_FOUND
 
                 for auth_ephemeral in user.auth_ephemerals:
-                    session.delete(auth_ephemeral)
+                    if auth_ephemeral.password_change:
+                        DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
+                    else:
+                        session.delete(auth_ephemeral)
 
                 for login_session in user.login_sessions:
                     if login_session.password_change:
