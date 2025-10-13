@@ -170,4 +170,14 @@ class DBUtilsSession():
     def clean_all(
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Remove all expired Login Sessions from the database"""
-        return False, None
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                login_sessions = session.query(LoginSession)
+                for login_session in login_sessions:
+                    _ = DBUtilsSession._check_expiry(session, login_session)
+
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except Exception:
+            return False, FailureReason.UNKNOWN_EXCEPTION
