@@ -13,6 +13,9 @@ class _MockQuery:
     def first(self):
         return self._results[0] if self._results else None
 
+    def __iter__(self):
+        return iter(self._results)
+
 
 class _MockSession:
     def __init__(self, on_commit: Optional[Callable[[], None]] = None):
