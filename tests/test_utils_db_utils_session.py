@@ -1838,6 +1838,119 @@ class TestCleanAll():
 
         assert len(mock_session._deletes) == 0
 
+    def test_mixed_list(self, monkeypatch):
+        """Should correctly handle a mix of login session types"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        now = datetime.now()
+
+        expired_request_session = LoginSession(
+            user_id=1,
+            public_id="expired_request",
+            session_key="key1",
+            request_count=5,
+            last_used=now - timedelta(hours=2),
+            maximum_requests=3,
+            expiry_time=None,
+            password_change=False
+        )
+        valid_session_one = LoginSession(
+            user_id=2,
+            public_id="valid_session_one",
+            session_key="key2",
+            request_count=1,
+            last_used=now - timedelta(minutes=30),
+            maximum_requests=None,
+            expiry_time=now + timedelta(hours=1),
+            password_change=False
+        )
+        expired_time_session = LoginSession(
+            user_id=3,
+            public_id="expired_time",
+            session_key="key3",
+            request_count=1,
+            last_used=now - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=now - timedelta(minutes=5),
+            password_change=False
+        )
+        expired_password_change_one = LoginSession(
+            user_id=4,
+            public_id="expired_password_one",
+            session_key="key4",
+            request_count=2,
+            last_used=now - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=now - timedelta(hours=1),
+            password_change=True
+        )
+        valid_session_two = LoginSession(
+            user_id=5,
+            public_id="valid_session_two",
+            session_key="key5",
+            request_count=1,
+            last_used=now - timedelta(minutes=30),
+            maximum_requests=None,
+            expiry_time=now + timedelta(hours=1),
+            password_change=False
+        )
+        expired_password_change_two = LoginSession(
+            user_id=6,
+            public_id="expired_password_two",
+            session_key="key6",
+            request_count=2,
+            last_used=now - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=now - timedelta(hours=1),
+            password_change=True
+        )
+
+        mock_query = _MockQuery([
+            expired_request_session,
+            valid_session_one,
+            expired_time_session,
+            expired_password_change_one,
+            valid_session_two,
+            expired_password_change_two
+        ])
+
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": 0}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = called["cleaned"] + 1
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsSession.clean_all()
+
+        assert isinstance(response, tuple)
+        assert response[0] is True
+        assert response[1] is None
+
+        deleted_ids = [s.public_id for s in mock_session._deletes]
+        assert "expired_request" in deleted_ids
+        assert "valid_session_one" not in deleted_ids
+        assert "expired_time" in deleted_ids
+        assert "expired_password_one" not in deleted_ids
+        assert "valid_session_two" not in deleted_ids
+        assert "expired_password_two" not in deleted_ids
+
+        assert called["cleaned"] == 2
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
