@@ -1702,6 +1702,99 @@ class TestCleanAll():
         login_session = mock_session._deletes[0]
         assert login_session.public_id == "session_fake_public_id"
 
+    def test_expired_password_change_request_count(self, monkeypatch):
+        """Should call clean_password_change for expired password change session"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=3,
+            expiry_time=None,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsSession.clean_all()
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+        assert called["cleaned"]
+
+    def test_expired_password_change_expiry_time(self, monkeypatch):
+        """Should call clean_password_change for expired password change session"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() - timedelta(hours=1)
+        fake_login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsSession.clean_all()
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+        assert called["cleaned"]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
