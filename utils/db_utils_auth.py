@@ -123,3 +123,8 @@ class DBUtilsAuth():
             return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
+
+
+    # @staticmethod
+    # def clean_all():
+    #     pass
