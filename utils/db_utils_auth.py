@@ -125,6 +125,6 @@ class DBUtilsAuth():
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
-    @staticmethod
-    def clean_all():
-        pass
+    # @staticmethod
+    # def clean_all():
+    #     pass
