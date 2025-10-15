@@ -1297,6 +1297,52 @@ class TestCleanAll():
 
         assert called["cleaned"] == 2
 
+    def test_handles_database_unprepared_failure(self, monkeypatch):
+        """Should return correct failure reason if database is not setup"""
+        @contextmanager
+        def mock_get_db_session():
+            raise RuntimeError("Database not initialised.")
+            yield
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        response = DBUtilsAuth.clean_all()
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+
+    def test_handles_server_exception(self, monkeypatch):
+        """Should return correct failure reason if other exception seen"""
+        def raise_unknown_exception():
+            raise ValueError("Something went wrong")
+        mock_session = _MockSession(on_commit=raise_unknown_exception)
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        response = DBUtilsAuth.clean_all()
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+
+        assert mock_session.commits == 0
+        assert mock_session.rollbacks == 1
+        assert mock_session.closed is True
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
