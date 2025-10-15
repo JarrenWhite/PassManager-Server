@@ -158,7 +158,7 @@ class TestGetDetails():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        mock_query = _MockQuery([None])
+        mock_query = _MockQuery([])
         def fake_query(self, model):
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
@@ -416,7 +416,7 @@ class TestLogUse():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        mock_query = _MockQuery([None])
+        mock_query = _MockQuery([])
         def fake_query(self, model):
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
@@ -561,7 +561,7 @@ class TestDelete():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        mock_query = _MockQuery([None])
+        mock_query = _MockQuery([])
         def fake_query(self, model):
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
@@ -1584,7 +1584,7 @@ class TestCleanUser():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        mock_query = _MockQuery([None])
+        mock_query = _MockQuery([])
         def fake_query(self, model):
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
