@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tests.mock_classes import _MockSession, _MockQuery
 from utils.utils_enums import FailureReason
 from utils.db_utils_auth import DBUtilsAuth
+from utils.db_utils_password import DBUtilsPassword
 from database.database_setup import DatabaseSetup
 from database.database_models import User, AuthEphemeral, LoginSession
 
@@ -406,6 +407,54 @@ class TestGetDetails():
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
+
+    def test_expired_password_change(self, monkeypatch):
+        """Should call clean_password_change if expired password change ephemeral"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        expiry = datetime.now() - timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user_id=123456,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsAuth.get_details(
+            public_id="fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert len(mock_session._deletes) == 0
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+        assert called["cleaned"]
 
 
 class TestComplete():
@@ -853,6 +902,57 @@ class TestComplete():
         db_session = mock_session._added[0]
         assert isinstance(db_session, LoginSession)
         assert db_session.password_change == False
+
+    def test_expired_password_change(self, monkeypatch):
+        """Should call clean_password_change if expired password change ephemeral"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        expiry = datetime.now() - timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user_id=123456,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsAuth.complete(
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key",
+            maximum_requests=None,
+            expiry_time=None
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert len(mock_session._deletes) == 0
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+        assert called["cleaned"]
 
 
 # class TestCleanAll():
