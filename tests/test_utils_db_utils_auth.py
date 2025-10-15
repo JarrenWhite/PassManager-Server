@@ -969,88 +969,88 @@ class TestComplete():
         assert called["cleaned"]
 
 
-# class TestCleanAll():
-#     """Test cases for database utils auth clean all function"""
+class TestCleanAll():
+    """Test cases for database utils auth clean all function"""
 
-#     def test_handles_empty_list(self, monkeypatch):
-#         """Should not attempt any deletions for an empty list"""
-#         mock_session = _MockSession()
+    def test_handles_empty_list(self, monkeypatch):
+        """Should not attempt any deletions for an empty list"""
+        mock_session = _MockSession()
 
-#         @contextmanager
-#         def mock_get_db_session():
-#             try:
-#                 yield mock_session
-#                 mock_session.commit()
-#             except Exception:
-#                 mock_session.rollback()
-#                 raise
-#             finally:
-#                 mock_session.close()
-#         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-#         mock_query = _MockQuery([None])
-#         def fake_query(self, model):
-#             return mock_query
-#         monkeypatch.setattr(_MockSession, "query", fake_query)
+        mock_query = _MockQuery([None])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
-#         assert len(mock_session._deletes) == 0
+        assert len(mock_session._deletes) == 0
 
-#     def test_all_unexpired_entries(self, monkeypatch):
-#         """Should not delete any entries when all entries in date"""
-#         mock_session = _MockSession()
+    def test_all_unexpired_entries(self, monkeypatch):
+        """Should not delete any entries when all entries in date"""
+        mock_session = _MockSession()
 
-#         @contextmanager
-#         def mock_get_db_session():
-#             try:
-#                 yield mock_session
-#                 mock_session.commit()
-#             except Exception:
-#                 mock_session.rollback()
-#                 raise
-#             finally:
-#                 mock_session.close()
-#         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-#         fake_user = User(
-#             id=123456,
-#             username_hash="fake_hash",
-#             srp_salt="fake_srp_salt",
-#             srp_verifier="fake_srp_verifier",
-#             master_key_salt="fake_master_key_salt",
-#             password_change=True
-#         )
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
 
-#         mock_session.add(AuthEphemeral(
-#             user=fake_user,
-#             public_id="ephemeral_fake_public_id",
-#             eph_private_b="fake_eph_private_b",
-#             eph_public_b="fake_eph_public_b",
-#             expiry_time=datetime.now() + timedelta(hours=1),
-#             password_change=False
-#         ))
-#         mock_session.add(AuthEphemeral(
-#             user=fake_user,
-#             public_id="ephemeral_fake_public_id",
-#             eph_private_b="fake_eph_private_b",
-#             eph_public_b="fake_eph_public_b",
-#             expiry_time=datetime.now() + timedelta(hours=1),
-#             password_change=False
-#         ))
-#         mock_session.add(AuthEphemeral(
-#             user=fake_user,
-#             public_id="ephemeral_fake_public_id",
-#             eph_private_b="fake_eph_private_b",
-#             eph_public_b="fake_eph_public_b",
-#             expiry_time=datetime.now() + timedelta(hours=1),
-#             password_change=False
-#         ))
+        mock_session.add(AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        ))
+        mock_session.add(AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        ))
+        mock_session.add(AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        ))
 
-#         mock_query = _MockQuery([None])
-#         def fake_query(self, model):
-#             return mock_query
-#         monkeypatch.setattr(_MockSession, "query", fake_query)
+        mock_query = _MockQuery([None])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
 
-#         assert len(mock_session._deletes) == 0
+        assert len(mock_session._deletes) == 0
 
 #     def test_all_expired_entries(self, monkeypatch):
 #         """Should delete all entries when all entries expired"""
