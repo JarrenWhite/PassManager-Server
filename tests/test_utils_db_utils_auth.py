@@ -839,6 +839,11 @@ class TestComplete():
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
@@ -849,6 +854,8 @@ class TestComplete():
         db_session = mock_session._added[0]
         assert isinstance(db_session, LoginSession)
         assert db_session.password_change == True
+        assert len(mock_session._deletes) == 1
+        called["cleaned"] = False
 
     def test_password_change_setting_not_linked_to_user(self, monkeypatch):
         """Should not create password change session just because user password change is True"""
@@ -892,6 +899,11 @@ class TestComplete():
 
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
@@ -902,6 +914,8 @@ class TestComplete():
         db_session = mock_session._added[0]
         assert isinstance(db_session, LoginSession)
         assert db_session.password_change == False
+        assert len(mock_session._deletes) == 1
+        called["cleaned"] = False
 
     def test_expired_password_change(self, monkeypatch):
         """Should call clean_password_change if expired password change ephemeral"""
