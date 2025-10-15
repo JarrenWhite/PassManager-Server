@@ -1111,6 +1111,192 @@ class TestCleanAll():
         assert "ephemeral_fake_public_id_two" in deleted_ids
         assert "ephemeral_fake_public_id_three" in deleted_ids
 
+    def test_expired_password_change_entry(self, monkeypatch):
+        """Should call clean_password_change for expired password-change ephemeral entries"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        expired_ephemeral = AuthEphemeral(
+            user_id=1,
+            public_id="expired_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() - timedelta(hours=1),
+            password_change=True
+        )
+
+        mock_query = _MockQuery([expired_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsAuth.clean_all()
+
+        assert isinstance(response, tuple)
+        assert response[0] is True
+        assert response[1] is None
+        assert called["cleaned"]
+        assert len(mock_session._deletes) == 0
+
+    def test_not_expired_password_change_entry(self, monkeypatch):
+        """Should not delete or clean password-change ephemeral entries that are not expired"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        valid_ephemeral = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+
+        mock_query = _MockQuery([valid_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsAuth.clean_all()
+
+        assert isinstance(response, tuple)
+        assert response[0] is True
+        assert response[1] is None
+        assert len(mock_session._deletes) == 0
+        assert called["cleaned"] is False
+
+    def test_mixed_list(self, monkeypatch):
+        """Should correctly handle a mix of ephemerals"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        now = datetime.now()
+
+        expired_ephemeral = AuthEphemeral(
+            user_id=1,
+            public_id="expired_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=now - timedelta(hours=1),
+            password_change=False
+        )
+        valid_ephemeral_one = AuthEphemeral(
+            user_id=2,
+            public_id="valid_ephemeral_one",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=now + timedelta(hours=1),
+            password_change=False
+        )
+        expired_password_ephemeral = AuthEphemeral(
+            user_id=3,
+            public_id="expired_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=now - timedelta(hours=1),
+            password_change=True
+        )
+        valid_ephemeral_two = AuthEphemeral(
+            user_id=4,
+            public_id="valid_ephemeral_two",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=now + timedelta(hours=1),
+            password_change=False
+        )
+        expired_ephemeral_two = AuthEphemeral(
+            user_id=5,
+            public_id="expired_ephemeral_two",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=now - timedelta(hours=2),
+            password_change=False
+        )
+        expired_password_ephemeral_two = AuthEphemeral(
+            user_id=6,
+            public_id="expired_password_ephemeral_two",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=now - timedelta(hours=2),
+            password_change=True
+        )
+
+        mock_query = _MockQuery([
+            expired_ephemeral,
+            valid_ephemeral_one,
+            expired_password_ephemeral,
+            valid_ephemeral_two,
+            expired_ephemeral_two,
+            expired_password_ephemeral_two,
+        ])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": 0}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] += 1
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
+
+        response = DBUtilsAuth.clean_all()
+
+        assert isinstance(response, tuple)
+        assert response[0] is True
+        assert response[1] is None
+
+        deleted_ids = [s.public_id for s in mock_session._deletes]
+        assert "expired_ephemeral" in deleted_ids
+        assert "expired_ephemeral_two" in deleted_ids
+        assert "valid_ephemeral_one" not in deleted_ids
+        assert "valid_ephemeral_two" not in deleted_ids
+        assert "expired_password_ephemeral" not in deleted_ids
+        assert "expired_password_ephemeral_two" not in deleted_ids
+
+        assert called["cleaned"] == 2
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
