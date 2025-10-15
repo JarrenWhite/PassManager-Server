@@ -160,4 +160,14 @@ class DBUtilsAuth():
     def clean_all(
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Remove all expired Auth Ephemerals from the database"""
-        return True, None
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                auth_ephemerals = session.query(AuthEphemeral)
+                for auth_ephemeral in auth_ephemerals:
+                    _ = DBUtilsAuth._check_expiry(session, auth_ephemeral)
+
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except Exception:
+            return False, FailureReason.UNKNOWN_EXCEPTION
