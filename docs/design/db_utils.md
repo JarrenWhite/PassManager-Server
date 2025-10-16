@@ -128,8 +128,8 @@ public_id: str
 
 In
 public_id: str
-entry_name: str
-entry_data: str
+entry_name: str?
+entry_data: str?
 
 ## delete
 > Note: Halt if password change in progress
