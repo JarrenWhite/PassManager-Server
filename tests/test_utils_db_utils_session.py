@@ -1613,6 +1613,34 @@ class TestCleanUser():
 class TestCleanAll():
     """Test cases for database utils session clean_all function"""
 
+    def test_handles_empty_list(self, monkeypatch):
+        """Should not attempt any deletions for an empty list"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        mock_query = _MockQuery([])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsSession.clean_all()
+
+        assert isinstance(response, tuple)
+        assert response[0] is True
+        assert response[1] is None
+        assert len(mock_session._deletes) == 0
+
     def test_deletes_expired_request_count(self, monkeypatch):
         """Should delete login session with an expired request count"""
         mock_session = _MockSession()
