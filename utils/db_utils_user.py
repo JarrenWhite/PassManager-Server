@@ -9,7 +9,6 @@ from .utils_enums import FailureReason
 class DBUtilsUser():
     """Utility functions for managing user based database functions"""
 
-
     @staticmethod
     def create(
         username_hash: str,

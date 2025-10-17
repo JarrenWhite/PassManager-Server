@@ -47,6 +47,8 @@ class TestCreate():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
+        monkeypatch.setattr(SecureData, "public_id", "fake_public_id")
+
         response = DBUtilsData.create(
             user_id=123456,
             entry_name="fake_encrypted_entry_name",
@@ -58,6 +60,7 @@ class TestCreate():
         assert isinstance(response[2], str)
         assert response[0] == True
         assert response[1] == None
+        assert response[2] == "fake_public_id"
 
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 0

@@ -1,7 +1,7 @@
 from typing import Tuple, Optional
 
 from .utils_enums import FailureReason
-
+from database import DatabaseSetup, SecureData, User
 
 class DBUtilsData():
     """Utility functions for managing data based database functions"""
@@ -18,7 +18,25 @@ class DBUtilsData():
         Returns:
             (str)  The public ID of the created data entry
         """
-        return False, None, ""
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.id == user_id).first()
+                if not user:
+                    return False, FailureReason.NOT_FOUND, ""
+
+                secure_data = SecureData(
+                    user=user,
+                    entry_name=entry_name,
+                    entry_data=entry_data
+                )
+                session.add(secure_data)
+                session.flush()
+
+                return True, None, secure_data.public_id
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
     @staticmethod
