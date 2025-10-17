@@ -266,7 +266,7 @@ class TestEdit():
 
         response = DBUtilsData.edit(
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
+            entry_name="new_fake_entry_name",
             entry_data=None
         )
 
@@ -286,6 +286,10 @@ class TestEdit():
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
+
+        assert secure_data.entry_name == "new_fake_entry_name"
+        assert secure_data.entry_data == "fake_entry_data"
+
 
 
 if __name__ == '__main__':
