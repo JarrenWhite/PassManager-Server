@@ -72,6 +72,7 @@ class TestCreate():
         assert db_secure_data.entry_data == "fake_encrypted_entry_data"
 
         assert mock_session.commits == 1
+        assert mock_session.flushes == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
 
