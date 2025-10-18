@@ -505,6 +505,8 @@ Request the details to create a new login session, including SRP details, master
 |-----------------|--------|----------|--------------------------------------------------|
 | username        | string | Yes      | Hash of the user's username.                     |
 
+> **Note:** Auth requests are valid for 180 seconds. Requests not completed within this time will be invalidated.
+
 **[Response Format](api_responses.md#start-auth-session)**
 
 **Example Request**
