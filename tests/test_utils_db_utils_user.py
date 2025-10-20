@@ -198,7 +198,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_id=123456,
+            user_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -229,7 +229,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.change_username(
-            username_id=123456,
+            user_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -272,7 +272,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_id=123456,
+            user_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -311,7 +311,7 @@ class TestChangeUsername():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.change_username(
-            username_id=123456,
+            user_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -347,7 +347,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_id=123456,
+            user_id=123456,
             new_username_hash="new_fake_hash"
         )
 
@@ -398,7 +398,7 @@ class TestChangeUsername():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsUser.change_username(
-            username_id=123456,
+            user_id=123456,
             new_username_hash="new_fake_hash"
         )
 
