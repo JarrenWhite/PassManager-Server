@@ -576,6 +576,55 @@ class TestEdit():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
+    def test_handles_password_change(self, monkeypatch):
+        """Should return correct error if user is in process of password change"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+        secure_data = SecureData(
+            user=fake_user,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data"
+        )
+
+        mock_query = _MockQuery([secure_data])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsData.edit(
+            public_id="fake_public_id",
+            entry_name=None,
+            entry_data=None
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.PASSWORD_CHANGE
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
