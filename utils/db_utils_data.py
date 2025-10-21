@@ -141,7 +141,7 @@ class DBUtilsData():
                 if user.password_change:
                     return False, FailureReason.PASSWORD_CHANGE, {}
 
-                all_entries = {data_entry.public_id: data_entry.entry_name for data_entry in user.secure_data}
+                all_entries = {data.public_id: data.entry_name for data in user.secure_data}
 
                 return True, None, all_entries
         except RuntimeError:
