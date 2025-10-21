@@ -129,7 +129,22 @@ class DBUtilsData():
         Make a data entry with the given data values
 
         Returns:
-            (str)  The encrypted entry name
-            (str)  The encrypted entry data
+            dict[str, str]
+                (str)  The encrypted entry public id
+                (str)  The encrypted entry name
         """
-        return False, None, {}
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.id == user_id).first()
+                if not user:
+                    return False, FailureReason.NOT_FOUND, {}
+                if user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE, {}
+
+                all_entries = {data_entry.public_id: data_entry.entry_name for data_entry in user.secure_data}
+
+                return True, None, all_entries
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, {}
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, {}
