@@ -1029,5 +1029,50 @@ class TestGetEntry():
         assert response[1] == FailureReason.PASSWORD_CHANGE
 
 
+class TestGetList():
+    """Test cases for database utils data get list function"""
+
+    def test_no_data_entries(self, monkeypatch):
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        mock_query = _MockQuery([])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsData.get_list(
+            user_id=123456
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], dict)
+        assert response[0] == True
+        assert response[1] == None
+        assert response[2] == {}
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
