@@ -1083,6 +1083,67 @@ class TestGetList():
         assert str(condition.left.name) == "id"
         assert condition.right.value == 123456
 
+    def test_one_data_entry(self, monkeypatch):
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        secure_data = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data"
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False,
+            secure_data=[secure_data]
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsData.get_list(
+            user_id=123456
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], dict)
+        assert response[0] == True
+        assert response[1] == None
+        assert len(response[2]) == 1
+        assert "fake_public_id" in response[2]
+        assert isinstance(response[2]["fake_public_id"], str)
+        assert response[2]["fake_public_id"] == "fake_entry_name"
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
