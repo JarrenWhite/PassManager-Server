@@ -651,7 +651,7 @@ class TestDelete():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_change=True
+            password_change=False
         )
 
         secure_data = SecureData(
@@ -677,7 +677,7 @@ class TestDelete():
 
         assert len(mock_session._deletes) == 1
         db_session = mock_session._deletes[0]
-        assert db_session.public_id == "session_fake_public_id"
+        assert db_session.public_id == "fake_public_id"
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
