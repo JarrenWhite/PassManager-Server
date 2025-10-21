@@ -78,7 +78,21 @@ class DBUtilsData():
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete the given data entry"""
-        return False, None
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+                if not secure_data:
+                    return False, FailureReason.NOT_FOUND
+                if secure_data.user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE
+
+                session.delete(secure_data)
+
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
 
     @staticmethod
