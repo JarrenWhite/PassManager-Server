@@ -106,7 +106,19 @@ class DBUtilsData():
             (str)  The encrypted entry name
             (str)  The encrypted entry data
         """
-        return False, None, "", ""
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+                if not secure_data:
+                    return False, FailureReason.NOT_FOUND, "", ""
+                if secure_data.user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE, "", ""
+
+                return True, None, secure_data.entry_name, secure_data.entry_data
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
 
 
     @staticmethod
