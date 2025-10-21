@@ -1047,7 +1047,17 @@ class TestGetList():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        mock_query = _MockQuery([])
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False,
+            secure_data=[]
+        )
+
+        mock_query = _MockQuery([fake_user])
         def fake_query(self, model):
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
