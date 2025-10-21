@@ -1144,6 +1144,112 @@ class TestGetList():
         assert str(condition.left.name) == "id"
         assert condition.right.value == 123456
 
+    def test_multiple_data_entries(self, monkeypatch):
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        secure_data_one = SecureData(
+            user_id=123456,
+            public_id="fake_public_id_one",
+            entry_name="fake_entry_name_one",
+            entry_data="fake_entry_data_one"
+        )
+        secure_data_two = SecureData(
+            user_id=123457,
+            public_id="fake_public_id_two",
+            entry_name="fake_entry_name_two",
+            entry_data="fake_entry_data_two"
+        )
+        secure_data_three = SecureData(
+            user_id=123458,
+            public_id="fake_public_id_three",
+            entry_name="fake_entry_name_three",
+            entry_data="fake_entry_data_three"
+        )
+        secure_data_four = SecureData(
+            user_id=123459,
+            public_id="fake_public_id_four",
+            entry_name="fake_entry_name_four",
+            entry_data="fake_entry_data_four"
+        )
+        secure_data_five = SecureData(
+            user_id=123460,
+            public_id="fake_public_id_five",
+            entry_name="fake_entry_name_five",
+            entry_data="fake_entry_data_five"
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False,
+            secure_data=[
+                secure_data_one,
+                secure_data_two,
+                secure_data_three,
+                secure_data_four,
+                secure_data_five
+            ]
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsData.get_list(
+            user_id=123456
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], dict)
+        assert response[0] == True
+        assert response[1] == None
+        assert len(response[2]) == 5
+
+        assert "fake_public_id_one" in response[2]
+        assert "fake_public_id_two" in response[2]
+        assert "fake_public_id_three" in response[2]
+        assert "fake_public_id_four" in response[2]
+        assert "fake_public_id_five" in response[2]
+
+        assert isinstance(response[2]["fake_public_id_one"], str)
+        assert isinstance(response[2]["fake_public_id_two"], str)
+        assert isinstance(response[2]["fake_public_id_three"], str)
+        assert isinstance(response[2]["fake_public_id_four"], str)
+        assert isinstance(response[2]["fake_public_id_five"], str)
+
+        assert response[2]["fake_public_id_one"] == "fake_entry_name_one"
+        assert response[2]["fake_public_id_two"] == "fake_entry_name_two"
+        assert response[2]["fake_public_id_three"] == "fake_entry_name_three"
+        assert response[2]["fake_public_id_four"] == "fake_entry_name_four"
+        assert response[2]["fake_public_id_five"] == "fake_entry_name_five"
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
