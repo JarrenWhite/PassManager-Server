@@ -2,16 +2,23 @@
 
 ## Create Password Change Session
 1) Start password change
-2) Get the Auth details
-3) Complete the Auth to get the Session
-4) Return list of all data public ids
+    - DBUtilsPassword.start
+2) Complete the Auth to get the Session
+    - DBUtilsAuth.get_details
+    - DBUtilsAuth.complete
+3) Return list of all data public ids
+    - DBUtilsPassword.get_list
 
 ## Edit Secure Data entry
 1) Get the details of a specific entry
+    - DBUtilsData.get_details
 2) Add new details for the entry
+    - DBUtilsPassword.update
 
 ## Complete Password Change
 1) Complete password change
+    - DBUtilsPassword.complete
 
 ## Abort Password Change
 1) Abort password change
+    - DBUtilsPassword.abort
