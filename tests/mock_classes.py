@@ -21,6 +21,7 @@ class _MockSession:
     def __init__(self, on_commit: Optional[Callable[[], None]] = None):
         self._added = []
         self.commits = 0
+        self.flushes = 0
         self.rollbacks = 0
         self.closed = False
         self._on_commit = on_commit
@@ -60,4 +61,4 @@ class _MockSession:
         self._deletes.append(obj)
 
     def flush(self):
-        pass
+        self.flushes+= 1

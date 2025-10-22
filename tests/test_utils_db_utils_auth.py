@@ -71,6 +71,7 @@ class TestStart():
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 0
         assert mock_session.commits == 1
+        assert mock_session.flushes == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
 
@@ -519,6 +520,7 @@ class TestComplete():
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 1
         assert mock_session.commits == 1
+        assert mock_session.flushes == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
 

@@ -9,7 +9,6 @@ from .utils_enums import FailureReason
 class DBUtilsUser():
     """Utility functions for managing user based database functions"""
 
-
     @staticmethod
     def create(
         username_hash: str,
@@ -40,13 +39,13 @@ class DBUtilsUser():
 
     @staticmethod
     def change_username(
-        username_id: int,
+        user_id: int,
         new_username_hash: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Change username for an existing user"""
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.id == username_id).first()
+                user = session.query(User).filter(User.id == user_id).first()
                 if not user:
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
