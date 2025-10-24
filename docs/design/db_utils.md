@@ -42,16 +42,12 @@ Out
 public_id: str
 srp_salt: str
 
-## get_list
+## complete
 In
 user_id: int
 
 Out
 public_ids: [str]
-
-## complete
-In
-user_id: int
 
 ## abort
 In
