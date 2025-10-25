@@ -45,6 +45,9 @@ public_id: str
 In
 user_id: int
 
+Out
+public_ids: [str]
+
 ## abort
 In
 user_id: int
