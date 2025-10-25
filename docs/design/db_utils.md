@@ -40,7 +40,6 @@ master_key_salt: str
 
 Out
 public_id: str
-srp_salt: str
 
 ## complete
 In
