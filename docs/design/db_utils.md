@@ -40,11 +40,13 @@ master_key_salt: str
 
 Out
 public_id: str
-srp_salt: str
 
 ## complete
 In
 user_id: int
+
+Out
+public_ids: [str]
 
 ## abort
 In
