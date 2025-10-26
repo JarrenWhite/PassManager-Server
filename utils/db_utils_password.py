@@ -20,7 +20,7 @@ class DBUtilsPassword():
 
     @staticmethod
     def start(
-        username_hash: str,
+        user_id: int,
         eph_private_b: str,
         eph_public_b: str,
         expiry_time: datetime,

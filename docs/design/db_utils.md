@@ -30,7 +30,7 @@ user_id: int
 > Note: Halt if password change in progress
 
 In
-username_hash: str
+user_id: int
 eph_private_b: str
 eph_public_b: str
 expiry_time: datetime
