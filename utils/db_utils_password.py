@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 
 from sqlalchemy.orm import Session
 
@@ -18,6 +18,7 @@ class DBUtilsPassword():
         """Remove all partial password change entries, ephemerals and login sessions"""
         pass
 
+
     @staticmethod
     def start(
         user_id: int,
@@ -35,3 +36,16 @@ class DBUtilsPassword():
             (str)   public_id
         """
         return False, None, ""
+
+
+    @staticmethod
+    def complete(
+        user_id: int
+    ) -> Tuple[bool, Optional[FailureReason], Optional[List[str]]]:
+        """
+        Complete password change process
+
+        Returns:
+            ([str]) [public_id]
+        """
+        return False, None, None
