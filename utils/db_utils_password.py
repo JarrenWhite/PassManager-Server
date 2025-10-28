@@ -49,3 +49,10 @@ class DBUtilsPassword():
             ([str]) [public_id]
         """
         return False, None, None
+
+    @staticmethod
+    def abort(
+        user_id: int
+    ) -> Tuple[bool, Optional[FailureReason]]:
+        """Abort the password change for a user"""
+        return False, None
