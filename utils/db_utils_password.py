@@ -18,6 +18,9 @@ class DBUtilsPassword():
         """Remove all partial password change entries, ephemerals and login sessions"""
         user.password_change = False
 
+        for ephemeral in user.auth_ephemerals:
+            db_session.delete(ephemeral)
+
 
     @staticmethod
     def start(
