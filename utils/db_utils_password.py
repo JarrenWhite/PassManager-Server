@@ -50,9 +50,19 @@ class DBUtilsPassword():
         """
         return False, None, None
 
+
     @staticmethod
     def abort(
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Abort the password change for a user"""
         return False, None
+
+
+    @staticmethod
+    def update(
+        public_id: str,
+        entry_name: str,
+        entry_data: str
+    ) -> Tuple[bool, Optional[FailureReason]]:
+        """Add new encrypted entries for """
