@@ -16,7 +16,7 @@ class DBUtilsPassword():
         user: User
     ):
         """Remove all partial password change entries, ephemerals and login sessions"""
-        pass
+        user.password_change = False
 
 
     @staticmethod
