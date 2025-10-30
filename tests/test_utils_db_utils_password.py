@@ -56,7 +56,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
-            auth_ephemerals=[ephemeral],
+            auth_ephemerals=[
+                ephemeral
+            ],
             login_sessions=[],
             secure_data=[]
         )
@@ -68,6 +70,111 @@ class TestCleanPasswordChange():
 
         assert len(mock_session._deletes) == 1
         assert mock_session._deletes[0] == ephemeral
+    
+    def test_non_password_ephemerals(self):
+        """Should not delete auth ephemerals that are not password related"""
+        mock_session = _MockSession()
+
+        ephemeral_1 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+        ephemeral_2 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+        ephemeral_3 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            auth_ephemerals=[
+                ephemeral_1,
+                ephemeral_2,
+                ephemeral_3
+            ],
+            login_sessions=[],
+            secure_data=[]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert len(mock_session._deletes) == 0
+    
+    def test_non_password_ephemeral_among_others(self):
+        """Should delete correct ephemeral in list of others"""
+        mock_session = _MockSession()
+
+        ephemeral_1 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+        ephemeral_2 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+        ephemeral_3 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            auth_ephemerals=[
+                ephemeral_1,
+                ephemeral_2,
+                ephemeral_3
+            ],
+            login_sessions=[],
+            secure_data=[]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert len(mock_session._deletes) == 1
+        assert mock_session._deletes[0] == ephemeral_2
 
 
 if __name__ == '__main__':
