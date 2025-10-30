@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tests.mock_classes import _MockSession
 from utils.db_utils_password import DBUtilsPassword
-from database.database_models import User, AuthEphemeral
+from database.database_models import User, AuthEphemeral, LoginSession
 
 
 class TestCleanPasswordChange():
@@ -175,6 +175,42 @@ class TestCleanPasswordChange():
 
         assert len(mock_session._deletes) == 1
         assert mock_session._deletes[0] == ephemeral_2
+    
+    def test_delete_password_session(self):
+        """Should delete any password change login session"""
+        mock_session = _MockSession()
+
+        login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            login_sessions=[
+                login_session
+            ],
+            secure_data=[]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert len(mock_session._deletes) == 1
+        assert mock_session._deletes[0] == login_session
 
 
 if __name__ == '__main__':
