@@ -19,7 +19,8 @@ class DBUtilsPassword():
         user.password_change = False
 
         for ephemeral in user.auth_ephemerals:
-            db_session.delete(ephemeral)
+            if ephemeral.password_change:
+                db_session.delete(ephemeral)
 
 
     @staticmethod
