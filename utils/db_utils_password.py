@@ -26,6 +26,10 @@ class DBUtilsPassword():
             if login_session.password_change:
                 db_session.delete(login_session)
 
+        for secure_data in user.secure_data:
+            secure_data.new_entry_name = None
+            secure_data.new_entry_data = None
+
 
     @staticmethod
     def start(
