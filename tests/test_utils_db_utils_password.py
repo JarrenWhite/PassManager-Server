@@ -366,6 +366,64 @@ class TestCleanPasswordChange():
         assert secure_data.new_entry_name == None
         assert secure_data.new_entry_data == None
 
+    def test_multiple_secure_data_entries(self):
+        """Should remove data from all secure data in a list"""
+        mock_session = _MockSession()
+
+        secure_data_1 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_data"
+        )
+        secure_data_2 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_data"
+        )
+        secure_data_3 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_data"
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            auth_ephemerals=[],
+            login_sessions=[],
+            secure_data=[
+                secure_data_1,
+                secure_data_2,
+                secure_data_3
+            ]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert len(mock_session._deletes) == 0
+        assert secure_data_1.new_entry_name == None
+        assert secure_data_1.new_entry_data == None
+        assert secure_data_2.new_entry_name == None
+        assert secure_data_2.new_entry_data == None
+        assert secure_data_3.new_entry_name == None
+        assert secure_data_3.new_entry_data == None
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
