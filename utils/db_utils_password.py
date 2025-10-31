@@ -21,9 +21,10 @@ class DBUtilsPassword():
         for ephemeral in user.auth_ephemerals:
             if ephemeral.password_change:
                 db_session.delete(ephemeral)
-        
+
         for login_session in user.login_sessions:
-            db_session.delete(login_session)
+            if login_session.password_change:
+                db_session.delete(login_session)
 
 
     @staticmethod
