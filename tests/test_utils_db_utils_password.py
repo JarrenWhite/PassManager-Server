@@ -1,12 +1,16 @@
 import os
 import sys
 import pytest
+from contextlib import contextmanager
 from datetime import datetime, timedelta
+
+from sqlalchemy.sql.elements import BinaryExpression
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from tests.mock_classes import _MockSession
+from tests.mock_classes import _MockSession, _MockQuery
 from utils.db_utils_password import DBUtilsPassword
+from database.database_setup import DatabaseSetup
 from database.database_models import User, AuthEphemeral, LoginSession, SecureData
 
 
@@ -632,6 +636,73 @@ class TestCleanPasswordChange():
         assert secure_data_2.new_entry_data == None
         assert secure_data_3.new_entry_name == None
         assert secure_data_3.new_entry_data == None
+
+
+class TestStart():
+    """Test cases for database utils password start function"""
+
+    def test_set_new_password_details(self, monkeypatch):
+        """Should add new password details to a user"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(AuthEphemeral, "public_id", "fake_public_id")
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DBUtilsPassword.start(
+            user_id=123456,
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            srp_salt="new_fake_srp_salt",
+            srp_verifier="new_fake_srp_verifier",
+            master_key_salt="new_fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], str)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert fake_user.password_change
+        assert fake_user.srp_salt == "fake_srp_salt"
+        assert fake_user.srp_verifier == "fake_srp_verifier"
+        assert fake_user.master_key_salt == "fake_master_key_salt"
+        assert fake_user.new_srp_salt == "new_fake_srp_salt"
+        assert fake_user.new_srp_verifier == "new_fake_srp_verifier"
+        assert fake_user.new_master_key_salt == "new_fake_master_key_salt"
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
 
 if __name__ == '__main__':
