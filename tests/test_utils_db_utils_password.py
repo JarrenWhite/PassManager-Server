@@ -365,6 +365,10 @@ class TestCleanPasswordChange():
         assert len(mock_session._deletes) == 0
         assert secure_data.new_entry_name == None
         assert secure_data.new_entry_data == None
+        assert secure_data.user_id == 123456
+        assert secure_data.public_id == "fake_public_id"
+        assert secure_data.entry_name == "fake_entry_name"
+        assert secure_data.entry_data == "fake_entry_data"
 
     def test_multiple_secure_data_entries(self):
         """Should remove data from all secure data in a list"""
@@ -417,6 +421,171 @@ class TestCleanPasswordChange():
         )
 
         assert len(mock_session._deletes) == 0
+        assert secure_data_1.new_entry_name == None
+        assert secure_data_1.new_entry_data == None
+        assert secure_data_2.new_entry_name == None
+        assert secure_data_2.new_entry_data == None
+        assert secure_data_3.new_entry_name == None
+        assert secure_data_3.new_entry_data == None
+
+    def test_multiple_secure_data_entries(self):
+        """Should not adjust data content of non password secure data"""
+        mock_session = _MockSession()
+
+        secure_data = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name=None,
+            new_entry_data=None
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            auth_ephemerals=[],
+            login_sessions=[],
+            secure_data=[
+                secure_data
+            ]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert len(mock_session._deletes) == 0
+        assert secure_data.new_entry_name == None
+        assert secure_data.new_entry_data == None
+        assert secure_data.user_id == 123456
+        assert secure_data.public_id == "fake_public_id"
+        assert secure_data.entry_name == "fake_entry_name"
+        assert secure_data.entry_data == "fake_entry_data"
+
+    def test_mix_of_details(self):
+        """Should delete the correct entries, ignoring the rest"""
+        mock_session = _MockSession()
+
+        ephemeral_1 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+        ephemeral_2 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+        ephemeral_3 = AuthEphemeral(
+            user_id=1,
+            public_id="valid_password_ephemeral",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+
+        login_session_1 = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+        login_session_2 = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+        login_session_3 = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+
+        secure_data_1 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name=None,
+            new_entry_data=None
+        )
+        secure_data_2 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_data"
+        )
+        secure_data_3 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_data"
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            auth_ephemerals=[
+                ephemeral_1,
+                ephemeral_2,
+                ephemeral_3
+            ],
+            login_sessions=[
+                login_session_1,
+                login_session_2,
+                login_session_3
+            ],
+            secure_data=[
+                secure_data_1,
+                secure_data_2,
+                secure_data_3
+            ]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert fake_user.password_change == False
+        assert len(mock_session._deletes) == 2
+        assert ephemeral_2 in mock_session._deletes
+        assert login_session_2 in mock_session._deletes
         assert secure_data_1.new_entry_name == None
         assert secure_data_1.new_entry_data == None
         assert secure_data_2.new_entry_name == None
