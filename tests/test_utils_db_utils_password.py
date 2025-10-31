@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tests.mock_classes import _MockSession
 from utils.db_utils_password import DBUtilsPassword
-from database.database_models import User, AuthEphemeral, LoginSession
+from database.database_models import User, AuthEphemeral, LoginSession, SecureData
 
 
 class TestCleanPasswordChange():
@@ -198,6 +198,7 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            auth_ephemerals=[],
             login_sessions=[
                 login_session
             ],
@@ -328,6 +329,42 @@ class TestCleanPasswordChange():
 
         assert len(mock_session._deletes) == 1
         assert mock_session._deletes[0] == login_session_2
+
+    def test_remove_details_from_completed_data(self):
+        """Should remove new password details from all sessions"""
+        mock_session = _MockSession()
+
+        secure_data = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_data"
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            auth_ephemerals=[],
+            login_sessions=[],
+            secure_data=[
+                secure_data
+            ]
+        )
+
+        DBUtilsPassword.clean_password_change(
+            db_session=mock_session,
+            user=fake_user
+        )
+
+        assert len(mock_session._deletes) == 0
+        assert secure_data.new_entry_name == None
+        assert secure_data.new_entry_name == None
 
 
 if __name__ == '__main__':
