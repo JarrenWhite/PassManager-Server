@@ -24,6 +24,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[]
@@ -35,6 +38,9 @@ class TestCleanPasswordChange():
         )
 
         assert fake_user.password_change == False
+        assert fake_user.new_srp_salt == None
+        assert fake_user.new_srp_verifier == None
+        assert fake_user.new_master_key_salt == None
 
     def test_delete_auth_ephemeral(self):
         """Should delete any password change auth ephemerals"""
@@ -56,6 +62,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[
                 ephemeral
             ],
@@ -107,6 +116,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -159,6 +171,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -198,6 +213,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -255,6 +273,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -313,6 +334,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -350,6 +374,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -406,6 +433,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -448,6 +478,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -560,6 +593,9 @@ class TestCleanPasswordChange():
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
             password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_master_key_salt",
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -583,6 +619,10 @@ class TestCleanPasswordChange():
         )
 
         assert fake_user.password_change == False
+        assert fake_user.new_srp_salt == None
+        assert fake_user.new_srp_verifier == None
+        assert fake_user.new_master_key_salt == None
+
         assert len(mock_session._deletes) == 2
         assert ephemeral_2 in mock_session._deletes
         assert login_session_2 in mock_session._deletes
