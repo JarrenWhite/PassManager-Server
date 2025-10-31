@@ -364,7 +364,7 @@ class TestCleanPasswordChange():
 
         assert len(mock_session._deletes) == 0
         assert secure_data.new_entry_name == None
-        assert secure_data.new_entry_name == None
+        assert secure_data.new_entry_data == None
 
 
 if __name__ == '__main__':
