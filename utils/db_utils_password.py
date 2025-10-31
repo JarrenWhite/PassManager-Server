@@ -17,6 +17,9 @@ class DBUtilsPassword():
     ):
         """Remove all partial password change entries, ephemerals and login sessions"""
         user.password_change = False
+        user.new_srp_salt = None
+        user.new_srp_verifier = None
+        user.new_master_key_salt = None
 
         for ephemeral in user.auth_ephemerals:
             if ephemeral.password_change:
