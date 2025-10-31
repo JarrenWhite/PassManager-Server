@@ -3,7 +3,7 @@ from typing import Tuple, Optional, List
 
 from sqlalchemy.orm import Session
 
-from database import User
+from database import DatabaseSetup, User, AuthEphemeral
 from .utils_enums import FailureReason
 
 
@@ -50,7 +50,20 @@ class DBUtilsPassword():
         Returns:
             (str)   public_id
         """
-        return False, None, ""
+        with DatabaseSetup.get_db_session() as session:
+            user = session.query(User).filter(User.id == user_id).first()
+            if user is None:
+                return False, FailureReason.NOT_FOUND, ""
+
+            if user.password_change:
+                return False, FailureReason.PASSWORD_CHANGE, ""
+
+            user.password_change = True
+            user.new_srp_salt = srp_salt
+            user.new_srp_verifier = srp_verifier
+            user.new_master_key_salt = master_key_salt
+
+            return True, None, ""
 
 
     @staticmethod
