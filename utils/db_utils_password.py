@@ -102,6 +102,9 @@ class DBUtilsPassword():
             user.new_srp_verifier = None
             user.new_master_key_salt = None
 
+            for login_session in user.login_sessions:
+                session.delete(login_session)
+
             return True, None, []
 
         return False, None, None
