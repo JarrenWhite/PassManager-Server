@@ -50,30 +50,35 @@ class DBUtilsPassword():
         Returns:
             (str)   public_id
         """
-        with DatabaseSetup.get_db_session() as session:
-            user = session.query(User).filter(User.id == user_id).first()
-            if user is None:
-                return False, FailureReason.NOT_FOUND, ""
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.id == user_id).first()
+                if user is None:
+                    return False, FailureReason.NOT_FOUND, ""
 
-            if user.password_change:
-                return False, FailureReason.PASSWORD_CHANGE, ""
+                if user.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE, ""
 
-            user.password_change = True
-            user.new_srp_salt = srp_salt
-            user.new_srp_verifier = srp_verifier
-            user.new_master_key_salt = master_key_salt
+                user.password_change = True
+                user.new_srp_salt = srp_salt
+                user.new_srp_verifier = srp_verifier
+                user.new_master_key_salt = master_key_salt
 
-            auth_ephemeral = AuthEphemeral(
-                user=user,
-                eph_private_b=eph_private_b,
-                eph_public_b=eph_public_b,
-                expiry_time=expiry_time,
-                password_change=True
-            )
-            session.add(auth_ephemeral)
-            session.flush()
+                auth_ephemeral = AuthEphemeral(
+                    user=user,
+                    eph_private_b=eph_private_b,
+                    eph_public_b=eph_public_b,
+                    expiry_time=expiry_time,
+                    password_change=True
+                )
+                session.add(auth_ephemeral)
+                session.flush()
 
-            return True, None, auth_ephemeral.public_id
+                return True, None, auth_ephemeral.public_id
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
 
 
     @staticmethod
