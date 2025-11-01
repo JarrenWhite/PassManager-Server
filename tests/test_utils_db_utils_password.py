@@ -31,7 +31,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[]
@@ -69,7 +69,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[
                 ephemeral
             ],
@@ -123,7 +123,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -178,7 +178,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -220,7 +220,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -280,7 +280,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -341,7 +341,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -381,7 +381,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -440,7 +440,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -485,7 +485,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -600,7 +600,7 @@ class TestCleanPasswordChange():
             password_change=True,
             new_srp_salt="new_fake_srp_salt",
             new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_master_key_salt",
+            new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -944,6 +944,82 @@ class TestStart():
         assert mock_session.commits == 0
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
+
+
+class TestComplete():
+    """Test cases for database utils password clean password change function"""
+
+    def test_completes_user_details(self, monkeypatch):
+        """Should move new srp details, and remove password change status"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_fake_master_key_salt",
+            auth_ephemerals=[],
+            login_sessions=[
+                login_session
+            ],
+            secure_data=[]
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsPassword.complete(
+            user_id=123456
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert not fake_user.password_change
+        assert fake_user.srp_salt == "new_fake_srp_salt"
+        assert fake_user.srp_verifier == "new_fake_srp_verifier"
+        assert fake_user.master_key_salt == "new_fake_master_key_salt"
+        assert fake_user.new_srp_salt == None
+        assert fake_user.new_srp_verifier == None
+        assert fake_user.new_master_key_salt == None
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
 
 
 if __name__ == '__main__':
