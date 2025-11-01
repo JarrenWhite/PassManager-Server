@@ -767,7 +767,7 @@ class TestStart():
         assert db_ephemeral.eph_private_b == "fake_eph_private_b"
         assert db_ephemeral.eph_public_b == "fake_eph_public_b"
         assert db_ephemeral.expiry_time == expiry
-        assert db_ephemeral.password_change == False
+        assert db_ephemeral.password_change == True
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
