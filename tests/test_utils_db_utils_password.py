@@ -704,6 +704,77 @@ class TestStart():
         assert str(condition.left.name) == "id"
         assert condition.right.value == 123456
 
+    def test_create_change_password_auth_ephemeral(self, monkeypatch):
+        """Should create a password change auth ephemeral"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(AuthEphemeral, "public_id", "fake_public_id")
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DBUtilsPassword.start(
+            user_id=123456,
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            srp_salt="new_fake_srp_salt",
+            srp_verifier="new_fake_srp_verifier",
+            master_key_salt="new_fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], str)
+        assert response[0] == True
+        assert response[1] == None
+        assert response[2] == "fake_public_id"
+
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 0
+        assert mock_session.commits == 1
+        assert mock_session.flushes == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        db_ephemeral = mock_session._added[0]
+        assert isinstance(db_ephemeral, AuthEphemeral)
+        assert db_ephemeral.public_id == "fake_public_id"
+        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
+        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.expiry_time == expiry
+        assert db_ephemeral.password_change == False
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
