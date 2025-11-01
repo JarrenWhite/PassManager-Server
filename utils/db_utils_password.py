@@ -63,7 +63,17 @@ class DBUtilsPassword():
             user.new_srp_verifier = srp_verifier
             user.new_master_key_salt = master_key_salt
 
-            return True, None, ""
+            auth_ephemeral = AuthEphemeral(
+                user=user,
+                eph_private_b=eph_private_b,
+                eph_public_b=eph_public_b,
+                expiry_time=expiry_time,
+                password_change=True
+            )
+            session.add(auth_ephemeral)
+            session.flush()
+
+            return True, None, auth_ephemeral.public_id
 
 
     @staticmethod
