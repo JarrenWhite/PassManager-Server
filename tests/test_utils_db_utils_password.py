@@ -1037,7 +1037,7 @@ class TestComplete():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        login_session = LoginSession(
+        login_session_1 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
@@ -1045,7 +1045,27 @@ class TestComplete():
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
             expiry_time=datetime.now() + timedelta(hours=1),
-            password_change=True
+            password_change=False
+        )
+        login_session_2 = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
+        )
+        login_session_3 = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=False
         )
 
         fake_user = User(
@@ -1060,7 +1080,9 @@ class TestComplete():
             new_master_key_salt="new_fake_master_key_salt",
             auth_ephemerals=[],
             login_sessions=[
-                login_session
+                login_session_1,
+                login_session_2,
+                login_session_3
             ],
             secure_data=[]
         )
@@ -1074,8 +1096,10 @@ class TestComplete():
             user_id=123456
         )
 
-        assert len(mock_session._deletes) == 1
-        assert mock_session._deletes[0] == login_session
+        assert len(mock_session._deletes) == 3
+        assert login_session_1 in mock_session._deletes
+        assert login_session_2 in mock_session._deletes
+        assert login_session_3 in mock_session._deletes
 
 
 if __name__ == '__main__':
