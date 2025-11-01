@@ -91,6 +91,19 @@ class DBUtilsPassword():
         Returns:
             ([str]) [public_id]
         """
+        with DatabaseSetup.get_db_session() as session:
+            user = session.query(User).filter(User.id == user_id).first()
+
+            user.password_change = False
+            user.srp_salt = user.new_srp_salt
+            user.srp_verifier = user.new_srp_verifier
+            user.master_key_salt = user.new_master_key_salt
+            user.new_srp_salt = None
+            user.new_srp_verifier = None
+            user.new_master_key_salt = None
+
+            return True, None, []
+
         return False, None, None
 
 
