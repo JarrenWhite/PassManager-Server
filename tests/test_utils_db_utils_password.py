@@ -9,6 +9,7 @@ from sqlalchemy.sql.elements import BinaryExpression
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tests.mock_classes import _MockSession, _MockQuery
+from utils.utils_enums import FailureReason
 from utils.db_utils_password import DBUtilsPassword
 from database.database_setup import DatabaseSetup
 from database.database_models import User, AuthEphemeral, LoginSession, SecureData
@@ -768,6 +769,111 @@ class TestStart():
         assert db_ephemeral.eph_public_b == "fake_eph_public_b"
         assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.password_change == True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
+
+    def test_handles_entry_not_found(self, monkeypatch):
+        """Should return correct failure reason if entry is not found"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        mock_query = _MockQuery([])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DBUtilsPassword.start(
+            user_id=123456,
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            srp_salt="new_fake_srp_salt",
+            srp_verifier="new_fake_srp_verifier",
+            master_key_salt="new_fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 123456
+
+    def test_handles_password_change_in_progress(self, monkeypatch):
+        """Should return correct failure reason if password change is in progress"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        expiry = datetime.now() + timedelta(hours=1)
+        response = DBUtilsPassword.start(
+            user_id=123456,
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            srp_salt="new_fake_srp_salt",
+            srp_verifier="new_fake_srp_verifier",
+            master_key_salt="new_fake_master_key_salt"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.PASSWORD_CHANGE
+
+        assert mock_session.commits == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
