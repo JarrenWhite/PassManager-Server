@@ -1201,6 +1201,94 @@ class TestComplete():
         assert secure_data_3.new_entry_name == None
         assert secure_data_3.new_entry_data == None
 
+    def test_updates_secure_data_entries(self, monkeypatch):
+        """Should move new encrypted data into current slots"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        login_session = LoginSession(
+            user_id=123456,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=datetime.now() - timedelta(hours=1),
+            maximum_requests=None,
+            expiry_time=datetime.now() + timedelta(hours=1),
+            password_change=True
+        )
+
+        secure_data_1 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id_1",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name_1",
+            new_entry_data="new_fake_entry_data_1"
+        )
+        secure_data_2 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id_2",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name_2",
+            new_entry_data="new_fake_entry_data_2"
+        )
+        secure_data_3 = SecureData(
+            user_id=123456,
+            public_id="fake_public_id_3",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name_3",
+            new_entry_data="new_fake_entry_data_3"
+        )
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_fake_master_key_salt",
+            auth_ephemerals=[],
+            login_sessions=[
+                login_session
+            ],
+            secure_data=[
+                secure_data_1,
+                secure_data_2,
+                secure_data_3
+            ]
+        )
+
+        mock_query = _MockQuery([fake_user])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsPassword.complete(
+            user_id=123456
+        )
+
+        assert isinstance(response[2], list)
+
+        assert "fake_public_id_1" in response[2]
+        assert "fake_public_id_2" in response[2]
+        assert "fake_public_id_3" in response[2]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
