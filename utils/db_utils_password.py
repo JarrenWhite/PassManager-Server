@@ -105,6 +105,12 @@ class DBUtilsPassword():
             for login_session in user.login_sessions:
                 session.delete(login_session)
 
+            for secure_data in user.secure_data:
+                secure_data.entry_name = secure_data.new_entry_name
+                secure_data.entry_data = secure_data.new_entry_data
+                secure_data.new_entry_name = None
+                secure_data.new_entry_data = None
+
             return True, None, []
 
         return False, None, None
