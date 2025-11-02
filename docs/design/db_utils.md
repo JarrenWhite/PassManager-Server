@@ -43,6 +43,14 @@ public_id: str
 
 ## complete
 In
+public_id: str
+session_key: str
+
+Out
+public_id: str
+
+## commit
+In
 user_id: int
 
 Out
