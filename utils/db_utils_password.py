@@ -134,6 +134,14 @@ class DBUtilsPassword():
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Abort the password change for a user"""
+        with DatabaseSetup.get_db_session() as session:
+            user = session.query(User).filter(User.id == user_id).first()
+
+            DBUtilsPassword.clean_password_change(session, user)
+
+            return True, None
+
+
         return False, None
 
 
