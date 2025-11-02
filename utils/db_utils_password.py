@@ -82,7 +82,7 @@ class DBUtilsPassword():
 
 
     @staticmethod
-    def complete(
+    def commit(
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason], Optional[List[str]]]:
         """

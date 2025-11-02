@@ -946,8 +946,8 @@ class TestStart():
         assert mock_session.closed is True
 
 
-class TestComplete():
-    """Test cases for database utils password clean password change function"""
+class TestCommit():
+    """Test cases for database utils password commit function"""
 
     def test_completes_user_details(self, monkeypatch):
         """Should move new srp details, and remove password change status"""
@@ -998,7 +998,7 @@ class TestComplete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1092,7 +1092,7 @@ class TestComplete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1179,7 +1179,7 @@ class TestComplete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1279,7 +1279,7 @@ class TestComplete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1344,7 +1344,7 @@ class TestComplete():
             called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1441,7 +1441,7 @@ class TestComplete():
             called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1475,7 +1475,7 @@ class TestComplete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1503,7 +1503,7 @@ class TestComplete():
             yield
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
@@ -1531,7 +1531,7 @@ class TestComplete():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
-        response = DBUtilsPassword.complete(
+        response = DBUtilsPassword.commit(
             user_id=123456
         )
 
