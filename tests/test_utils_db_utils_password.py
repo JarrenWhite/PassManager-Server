@@ -1707,6 +1707,61 @@ class TestAbort():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
+class TestUpdate():
+    """Test cases for database utils password clean password change function"""
+
+    def test_nominal_case(self, monkeypatch):
+        """Should add new data to given secure data entry"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        secure_data = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name=None,
+            new_entry_data=None
+        )
+
+        mock_query = _MockQuery([secure_data])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsPassword.update(
+            public_id="fake_public_id",
+            entry_name="new_fake_entry_name",
+            entry_data="new_fake_entry_data"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert response[0] == True
+        assert response[1] == None
+
+        assert secure_data.entry_name == "fake_entry_name"
+        assert secure_data.entry_data == "fake_entry_data"
+        assert secure_data.new_entry_name == "new_fake_entry_name"
+        assert secure_data.new_entry_data == "new_fake_entry_data"
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "fake_public_id"
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
