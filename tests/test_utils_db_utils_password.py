@@ -38,7 +38,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -78,7 +78,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -134,7 +134,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -189,7 +189,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -229,7 +229,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -291,7 +291,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -352,7 +352,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -390,7 +390,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -451,7 +451,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -463,7 +463,7 @@ class TestCleanPasswordChange():
         assert secure_data_3.new_entry_name == None
         assert secure_data_3.new_entry_data == None
 
-    def test_multiple_secure_data_entries(self):
+    def test_multiple_incomplete_secure_data_entries(self):
         """Should not adjust data content of non password secure data"""
         mock_session = _MockSession()
 
@@ -494,7 +494,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -619,7 +619,7 @@ class TestCleanPasswordChange():
         )
 
         DBUtilsPassword.clean_password_change(
-            db_session=mock_session,
+            db_session=mock_session, # type: ignore
             user=fake_user
         )
 
@@ -1201,8 +1201,8 @@ class TestComplete():
         assert secure_data_3.new_entry_name == None
         assert secure_data_3.new_entry_data == None
 
-    def test_updates_secure_data_entries(self, monkeypatch):
-        """Should move new encrypted data into current slots"""
+    def test_public_id_returns(self, monkeypatch):
+        """Should return list of public IDs"""
         mock_session = _MockSession()
 
         @contextmanager

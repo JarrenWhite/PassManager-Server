@@ -98,6 +98,10 @@ class DBUtilsPassword():
                 if user is None:
                     return False, FailureReason.NOT_FOUND, []
 
+                if not user.new_srp_salt or not user.new_srp_verifier or not user.new_master_key_salt:
+                    DBUtilsPassword.clean_password_change(session, user)
+                    return False, FailureReason.INCOMPLETE, []
+
                 user.password_change = False
                 user.srp_salt = user.new_srp_salt
                 user.srp_verifier = user.new_srp_verifier
@@ -112,7 +116,7 @@ class DBUtilsPassword():
                 public_ids = []
 
                 for secure_data in user.secure_data:
-                    if not secure_data.new_entry_name:
+                    if not secure_data.new_entry_name or not secure_data.new_entry_data:
                         DBUtilsPassword.clean_password_change(session, user)
                         return False, FailureReason.INCOMPLETE, []
 
