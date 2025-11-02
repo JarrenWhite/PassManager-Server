@@ -1726,13 +1726,25 @@ class TestUpdate():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_fake_master_key_salt"
+        )
+
         secure_data = SecureData(
-            user_id=123456,
             public_id="fake_public_id",
             entry_name="fake_entry_name",
             entry_data="fake_entry_data",
             new_entry_name=None,
-            new_entry_data=None
+            new_entry_data=None,
+            user=fake_user
         )
 
         mock_query = _MockQuery([secure_data])
@@ -1778,19 +1790,38 @@ class TestUpdate():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_fake_master_key_salt"
+        )
+
         secure_data = SecureData(
             user_id=123456,
             public_id="fake_public_id",
             entry_name="fake_entry_name",
             entry_data="fake_entry_data",
             new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_name"
+            new_entry_data="new_fake_entry_name",
+            user=fake_user
         )
 
         mock_query = _MockQuery([secure_data])
         def fake_query(self, model):
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        called = {"cleaned": False, "user": None}
+        def fake_clean_password(db_session, user):
+            called["cleaned"] = True
+            called["user"] = user
+        monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsPassword.update(
             public_id="fake_public_id",
@@ -1803,6 +1834,9 @@ class TestUpdate():
         assert isinstance(response[1], FailureReason)
         assert response[0] == False
         assert response[1] == FailureReason.DUPLICATE
+
+        assert called["cleaned"] == True
+        assert called["user"] == fake_user
 
 
 if __name__ == '__main__':
