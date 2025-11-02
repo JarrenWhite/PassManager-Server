@@ -161,19 +161,22 @@ class DBUtilsPassword():
         entry_data: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Add new encrypted entries for a secure entry"""
-        with DatabaseSetup.get_db_session() as session:
-            secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
-            if secure_data is None:
-                return False, FailureReason.NOT_FOUND
+                if secure_data is None:
+                    return False, FailureReason.NOT_FOUND
 
-            if secure_data.new_entry_name or secure_data.new_entry_data:
-                DBUtilsPassword.clean_password_change(session, secure_data.user)
-                return False, FailureReason.DUPLICATE
+                if secure_data.new_entry_name or secure_data.new_entry_data:
+                    DBUtilsPassword.clean_password_change(session, secure_data.user)
+                    return False, FailureReason.DUPLICATE
 
-            secure_data.new_entry_name = entry_name
-            secure_data.new_entry_data = entry_data
+                secure_data.new_entry_name = entry_name
+                secure_data.new_entry_data = entry_data
 
-            return True, None
-
-        return False, None
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION
