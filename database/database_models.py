@@ -71,7 +71,7 @@ class SecureData(Base):
     entry_name: Mapped[str] = mapped_column(String)
     entry_data: Mapped[str] = mapped_column(String)
 
-    new_entry_name: Mapped[str] = mapped_column(String, nullable=True)
-    new_entry_data: Mapped[str] = mapped_column(String, nullable=True)
+    new_entry_name: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    new_entry_data: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="secure_data")

@@ -6,12 +6,10 @@
 2) Complete the Auth to get the Session
     - DBUtilsAuth.get_details
     - DBUtilsAuth.complete
-3) Return list of all data public ids
-    - DBUtilsPassword.get_list
 
 ## Edit Secure Data entry
 1) Get the details of a specific entry
-    - DBUtilsData.get_details
+    - DBUtilsData.get_entry
 2) Add new details for the entry
     - DBUtilsPassword.update
 
