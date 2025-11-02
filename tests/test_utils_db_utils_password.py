@@ -1762,6 +1762,48 @@ class TestUpdate():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
+    def test_handles_already_completed_secure_data(self, monkeypatch):
+        """Should correctly handle case when secure data is already completed"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        secure_data = SecureData(
+            user_id=123456,
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name="new_fake_entry_name",
+            new_entry_data="new_fake_entry_name"
+        )
+
+        mock_query = _MockQuery([secure_data])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsPassword.update(
+            public_id="fake_public_id",
+            entry_name="new_fake_entry_name",
+            entry_data="new_fake_entry_data"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.DUPLICATE
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
