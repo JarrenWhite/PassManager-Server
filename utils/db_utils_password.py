@@ -76,9 +76,9 @@ class DBUtilsPassword():
 
                 return True, None, auth_ephemeral.public_id
         except RuntimeError:
-            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+            return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
     @staticmethod
@@ -96,7 +96,7 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, []
 
                 user.password_change = False
                 user.srp_salt = user.new_srp_salt
@@ -124,9 +124,9 @@ class DBUtilsPassword():
 
                 return True, None, public_ids
         except RuntimeError:
-            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+            return False, FailureReason.DATABASE_UNINITIALISED, []
         except:
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, []
 
 
     @staticmethod
@@ -134,15 +134,20 @@ class DBUtilsPassword():
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Abort the password change for a user"""
-        with DatabaseSetup.get_db_session() as session:
-            user = session.query(User).filter(User.id == user_id).first()
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.id == user_id).first()
 
-            DBUtilsPassword.clean_password_change(session, user)
+                if user is None:
+                    return False, FailureReason.NOT_FOUND
 
-            return True, None
+                DBUtilsPassword.clean_password_change(session, user)
 
-
-        return False, None
+                return True, None
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
 
     @staticmethod
@@ -151,4 +156,5 @@ class DBUtilsPassword():
         entry_name: str,
         entry_data: str
     ) -> Tuple[bool, Optional[FailureReason]]:
-        """Add new encrypted entries for """
+        """Add new encrypted entries for a secure entry"""
+        return False, None
