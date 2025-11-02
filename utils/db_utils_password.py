@@ -91,36 +91,42 @@ class DBUtilsPassword():
         Returns:
             ([str]) [public_id]
         """
-        with DatabaseSetup.get_db_session() as session:
-            user = session.query(User).filter(User.id == user_id).first()
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.id == user_id).first()
 
-            user.password_change = False
-            user.srp_salt = user.new_srp_salt
-            user.srp_verifier = user.new_srp_verifier
-            user.master_key_salt = user.new_master_key_salt
-            user.new_srp_salt = None
-            user.new_srp_verifier = None
-            user.new_master_key_salt = None
+                if user is None:
+                    return False, FailureReason.NOT_FOUND, ""
 
-            for login_session in user.login_sessions:
-                session.delete(login_session)
+                user.password_change = False
+                user.srp_salt = user.new_srp_salt
+                user.srp_verifier = user.new_srp_verifier
+                user.master_key_salt = user.new_master_key_salt
+                user.new_srp_salt = None
+                user.new_srp_verifier = None
+                user.new_master_key_salt = None
 
-            public_ids = []
+                for login_session in user.login_sessions:
+                    session.delete(login_session)
 
-            for secure_data in user.secure_data:
-                if not secure_data.new_entry_name:
-                    DBUtilsPassword.clean_password_change(session, user)
-                    return False, FailureReason.INCOMPLETE, []
+                public_ids = []
 
-                public_ids.append(secure_data.public_id)
-                secure_data.entry_name = secure_data.new_entry_name
-                secure_data.entry_data = secure_data.new_entry_data
-                secure_data.new_entry_name = None
-                secure_data.new_entry_data = None
+                for secure_data in user.secure_data:
+                    if not secure_data.new_entry_name:
+                        DBUtilsPassword.clean_password_change(session, user)
+                        return False, FailureReason.INCOMPLETE, []
 
-            return True, None, public_ids
+                    public_ids.append(secure_data.public_id)
+                    secure_data.entry_name = secure_data.new_entry_name
+                    secure_data.entry_data = secure_data.new_entry_data
+                    secure_data.new_entry_name = None
+                    secure_data.new_entry_data = None
 
-        return False, None, None
+                return True, None, public_ids
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
 
 
     @staticmethod
