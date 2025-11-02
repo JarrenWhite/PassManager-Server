@@ -9,7 +9,7 @@
 
 ## Edit Secure Data entry
 1) Get the details of a specific entry
-    - DBUtilsData.get_details
+    - DBUtilsData.get_entry
 2) Add new details for the entry
     - DBUtilsPassword.update
 
