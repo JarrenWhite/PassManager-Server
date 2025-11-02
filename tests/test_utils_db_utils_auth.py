@@ -800,7 +800,7 @@ class TestComplete():
         assert condition.right.value == "ephemeral_fake_public_id"
 
     def test_password_change_setting_retained(self, monkeypatch):
-        """Should create password change session from password change ephemeral"""
+        """Should return failure from password change ephemeral"""
         mock_session = _MockSession()
 
         @contextmanager
@@ -853,11 +853,11 @@ class TestComplete():
             expiry_time=None
         )
 
-        db_session = mock_session._added[0]
-        assert isinstance(db_session, LoginSession)
-        assert db_session.password_change == True
-        assert len(mock_session._deletes) == 1
-        called["cleaned"] = False
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert response[0] == False
+        assert response[1] == FailureReason.PASSWORD_CHANGE
 
     def test_password_change_setting_not_linked_to_user(self, monkeypatch):
         """Should not create password change session just because user password change is True"""

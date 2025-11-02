@@ -134,6 +134,8 @@ class DBUtilsAuth():
                     return False, FailureReason.NOT_FOUND, ""
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
                     return False, FailureReason.NOT_FOUND, ""
+                if auth_ephemeral.password_change:
+                    return False, FailureReason.PASSWORD_CHANGE, ""
 
                 login_session = LoginSession(
                     user=auth_ephemeral.user,
@@ -142,7 +144,7 @@ class DBUtilsAuth():
                     last_used=datetime.now(),
                     maximum_requests=maximum_requests,
                     expiry_time=expiry_time,
-                    password_change=auth_ephemeral.password_change
+                    password_change=False
                 )
                 session.add(login_session)
                 session.flush()
