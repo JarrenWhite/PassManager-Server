@@ -3,7 +3,7 @@ from typing import Tuple, Optional, List
 
 from sqlalchemy.orm import Session
 
-from database import DatabaseSetup, User, AuthEphemeral
+from database import DatabaseSetup, User, AuthEphemeral, SecureData
 from .utils_enums import FailureReason
 
 
@@ -161,4 +161,15 @@ class DBUtilsPassword():
         entry_data: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Add new encrypted entries for a secure entry"""
+        with DatabaseSetup.get_db_session() as session:
+            secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+
+            if secure_data is None:
+                return False, FailureReason.NOT_FOUND
+
+            secure_data.new_entry_name = entry_name
+            secure_data.new_entry_data = entry_data
+
+            return True, None
+
         return False, None
