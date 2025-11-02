@@ -108,6 +108,10 @@ class DBUtilsPassword():
             public_ids = []
 
             for secure_data in user.secure_data:
+                if not secure_data.new_entry_name:
+                    DBUtilsPassword.clean_password_change(session, user)
+                    return False, FailureReason.INCOMPLETE, []
+
                 public_ids.append(secure_data.public_id)
                 secure_data.entry_name = secure_data.new_entry_name
                 secure_data.entry_data = secure_data.new_entry_data

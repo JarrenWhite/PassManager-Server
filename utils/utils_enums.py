@@ -7,3 +7,4 @@ class FailureReason(Enum):
     DUPLICATE = auto()
     NOT_FOUND = auto()
     PASSWORD_CHANGE = auto()
+    INCOMPLETE = auto()
