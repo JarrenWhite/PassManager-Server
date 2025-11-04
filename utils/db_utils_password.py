@@ -82,6 +82,20 @@ class DBUtilsPassword():
 
 
     @staticmethod
+    def complete(
+        public_id: str,
+        session_key: str
+    ) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+        """
+        Complete password change login session creation
+
+        Returns:
+            (str)   public_id
+        """
+        return False, None, None
+
+
+    @staticmethod
     def commit(
         user_id: int
     ) -> Tuple[bool, Optional[FailureReason], Optional[List[str]]]:
