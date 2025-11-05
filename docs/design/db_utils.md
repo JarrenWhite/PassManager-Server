@@ -45,6 +45,7 @@ public_id: str
 In
 public_id: str
 session_key: str
+expiry_time: datetime
 
 Out
 public_id: str
