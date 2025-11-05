@@ -946,6 +946,92 @@ class TestStart():
         assert mock_session.closed is True
 
 
+class TestComplete():
+    """Test cases for database utils password commit function"""
+
+    def test_nominal_case(self, monkeypatch):
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=False
+        )
+
+        expiry = datetime.now() + timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        response = DBUtilsPassword.complete(
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[2], str)
+        assert response[0] == True
+        assert response[1] == None
+        assert response[2] == "session_fake_public_id"
+
+        assert len(mock_session._added) == 1
+        assert len(mock_session._deletes) == 1
+        assert mock_session.commits == 1
+        assert mock_session.flushes == 1
+        assert mock_session.rollbacks == 0
+        assert mock_session.closed is True
+
+        db_ephemeral = mock_session._deletes[0]
+        assert isinstance(db_ephemeral, AuthEphemeral)
+        assert db_ephemeral.public_id == "ephemeral_fake_public_id"
+
+        db_session = mock_session._added[0]
+        assert isinstance(db_session, LoginSession)
+        assert db_session.user == fake_user
+        assert db_session.public_id == "session_fake_public_id"
+        assert db_session.session_key == "fake_session_key"
+        assert db_session.request_count == 0
+        assert db_session.last_used < datetime.now()
+        assert db_session.last_used > datetime.now() - timedelta(seconds=2)
+        assert db_session.maximum_requests == None
+        assert db_session.expiry_time == None
+        assert db_session.password_change == True
+
+        assert len(mock_query._filters) == 1
+        condition = mock_query._filters[0]
+        assert isinstance(condition, BinaryExpression)
+        assert str(condition.left.name) == "public_id"
+        assert condition.right.value == "ephemeral_fake_public_id"
+
+
 class TestCommit():
     """Test cases for database utils password commit function"""
 
