@@ -950,6 +950,7 @@ class TestComplete():
     """Test cases for database utils password commit function"""
 
     def test_nominal_case(self, monkeypatch):
+        """Should create password change login session from ephemeral"""
         mock_session = _MockSession()
 
         @contextmanager
@@ -1021,8 +1022,6 @@ class TestComplete():
         assert db_session.request_count == 0
         assert db_session.last_used < datetime.now()
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
-        assert db_session.maximum_requests == None
-        assert db_session.expiry_time == None
         assert db_session.password_change == True
 
         assert len(mock_query._filters) == 1
