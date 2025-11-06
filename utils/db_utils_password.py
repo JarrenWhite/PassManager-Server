@@ -84,7 +84,8 @@ class DBUtilsPassword():
     @staticmethod
     def complete(
         public_id: str,
-        session_key: str
+        session_key: str,
+        expiry: datetime
     ) -> Tuple[bool, Optional[FailureReason], str]:
         """
         Complete password change login session creation
@@ -103,8 +104,8 @@ class DBUtilsPassword():
                 session_key=session_key,
                 request_count=0,
                 last_used=datetime.now(),
-                maximum_requests=None,
-                expiry_time=None,
+                maximum_requests=1,
+                expiry_time=expiry,
                 password_change=True
             )
             session.add(login_session)

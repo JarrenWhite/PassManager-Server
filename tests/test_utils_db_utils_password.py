@@ -993,7 +993,8 @@ class TestComplete():
 
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key"
+            session_key="fake_session_key",
+            expiry=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1022,6 +1023,8 @@ class TestComplete():
         assert db_session.request_count == 0
         assert db_session.last_used < datetime.now()
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
+        assert db_session.maximum_requests == 1
+        assert db_session.expiry_time == expiry
         assert db_session.password_change == True
 
         assert len(mock_query._filters) == 1
