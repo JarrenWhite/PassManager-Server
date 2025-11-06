@@ -3,7 +3,7 @@ from typing import Tuple, Optional, List
 
 from sqlalchemy.orm import Session
 
-from database import DatabaseSetup, User, AuthEphemeral, SecureData
+from database import DatabaseSetup, User, AuthEphemeral, SecureData, LoginSession
 from .utils_enums import FailureReason
 
 
@@ -85,14 +85,35 @@ class DBUtilsPassword():
     def complete(
         public_id: str,
         session_key: str
-    ) -> Tuple[bool, Optional[FailureReason], Optional[str]]:
+    ) -> Tuple[bool, Optional[FailureReason], str]:
         """
         Complete password change login session creation
 
         Returns:
             (str)   public_id
         """
-        return False, None, None
+        with DatabaseSetup.get_db_session() as session:
+            auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
+
+            if auth_ephemeral is None:
+                return False, FailureReason.NOT_FOUND, ""
+
+            login_session = LoginSession(
+                user=auth_ephemeral.user,
+                session_key=session_key,
+                request_count=0,
+                last_used=datetime.now(),
+                maximum_requests=None,
+                expiry_time=None,
+                password_change=True
+            )
+            session.add(login_session)
+            session.flush()
+
+            session.delete(auth_ephemeral)
+
+            return True, None, login_session.public_id
+        return False, None, ""
 
 
     @staticmethod
