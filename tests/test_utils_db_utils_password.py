@@ -971,7 +971,8 @@ class TestComplete():
             srp_salt="fake_srp_salt",
             srp_verifier="fake_srp_verifier",
             master_key_salt="fake_master_key_salt",
-            password_change=False
+            password_change=False,
+            secure_data=[]
         )
 
         expiry = datetime.now() + timedelta(hours=1)
@@ -981,8 +982,7 @@ class TestComplete():
             eph_private_b="fake_eph_private_b",
             eph_public_b="fake_eph_public_b",
             expiry_time=expiry,
-            password_change=False,
-            secure_data=[]
+            password_change=False
         )
 
         mock_query = _MockQuery([fake_ephemeral])

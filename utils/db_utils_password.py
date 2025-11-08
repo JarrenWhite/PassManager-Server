@@ -99,12 +99,15 @@ class DBUtilsPassword():
             if auth_ephemeral is None:
                 return False, FailureReason.NOT_FOUND, ""
 
+            secure_data_count = len(auth_ephemeral.user.secure_data)
+            max_requests = (secure_data_count * 2) + 1
+
             login_session = LoginSession(
                 user=auth_ephemeral.user,
                 session_key=session_key,
                 request_count=0,
                 last_used=datetime.now(),
-                maximum_requests=1,
+                maximum_requests=max_requests,
                 expiry_time=expiry,
                 password_change=True
             )
