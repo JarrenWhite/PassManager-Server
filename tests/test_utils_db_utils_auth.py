@@ -799,7 +799,7 @@ class TestComplete():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "ephemeral_fake_public_id"
 
-    def test_password_change_setting_retained(self, monkeypatch):
+    def test_password_change_setting_fails(self, monkeypatch):
         """Should return failure from password change ephemeral"""
         mock_session = _MockSession()
 
