@@ -98,6 +98,8 @@ class DBUtilsPassword():
 
             if auth_ephemeral is None:
                 return False, FailureReason.NOT_FOUND, ""
+            if not auth_ephemeral.password_change:
+                return False, FailureReason.INCOMPLETE, ""
 
             secure_data_count = len(auth_ephemeral.user.secure_data)
             max_requests = (secure_data_count * 2) + 1
