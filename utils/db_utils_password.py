@@ -93,36 +93,40 @@ class DBUtilsPassword():
         Returns:
             (str)   public_id
         """
-        with DatabaseSetup.get_db_session() as session:
-            auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
-            if auth_ephemeral is None:
-                return False, FailureReason.NOT_FOUND, ""
-            if auth_ephemeral.expiry_time < datetime.now():
-                DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
-                return False, FailureReason.NOT_FOUND, ""
-            if not auth_ephemeral.password_change:
-                return False, FailureReason.INCOMPLETE, ""
+                if auth_ephemeral is None:
+                    return False, FailureReason.NOT_FOUND, ""
+                if auth_ephemeral.expiry_time < datetime.now():
+                    DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
+                    return False, FailureReason.NOT_FOUND, ""
+                if not auth_ephemeral.password_change:
+                    return False, FailureReason.INCOMPLETE, ""
 
-            secure_data_count = len(auth_ephemeral.user.secure_data)
-            max_requests = (secure_data_count * 2) + 1
+                secure_data_count = len(auth_ephemeral.user.secure_data)
+                max_requests = (secure_data_count * 2) + 1
 
-            login_session = LoginSession(
-                user=auth_ephemeral.user,
-                session_key=session_key,
-                request_count=0,
-                last_used=datetime.now(),
-                maximum_requests=max_requests,
-                expiry_time=expiry,
-                password_change=True
-            )
-            session.add(login_session)
-            session.flush()
+                login_session = LoginSession(
+                    user=auth_ephemeral.user,
+                    session_key=session_key,
+                    request_count=0,
+                    last_used=datetime.now(),
+                    maximum_requests=max_requests,
+                    expiry_time=expiry,
+                    password_change=True
+                )
+                session.add(login_session)
+                session.flush()
 
-            session.delete(auth_ephemeral)
+                session.delete(auth_ephemeral)
 
-            return True, None, login_session.public_id
-        return False, None, ""
+                return True, None, login_session.public_id
+        except RuntimeError:
+            return False, FailureReason.DATABASE_UNINITIALISED, ""
+        except:
+            return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
     @staticmethod
