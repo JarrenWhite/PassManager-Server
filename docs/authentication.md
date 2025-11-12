@@ -48,7 +48,7 @@ This document outlines the authentication and password management system for the
 12. Client verifies server proof M2
 ```
 
-**API Endpoints:** 
+**API Endpoints:**
 - `POST /api/session/start` - Initiate authentication
 - `POST /api/session/auth` - Complete authentication
 
@@ -95,7 +95,8 @@ The system supports two distinct session types:
 | Login Session | Configurable (default: 100) | Configurable (default: 1 hour) | `password_change: false` |
 | Password Change | `(# entries × 2) + 1` | 5 minutes | `password_change: true` |
 
-> **Note:** Password change sessions have limited requests to ensure they can only read/write each entry once, plus one request to complete the change.
+> **Note:** Password change sessions have limited requests to ensure they can only read/write each entry once.
+Two for each data entry, plus one request to complete the change.
 
 ---
 
@@ -119,7 +120,7 @@ The system supports two distinct session types:
 #### 3. Process Entries
 - **Requirement:** Password change session
 - **Action:** Request and update each entry with new encryption
-- **Process:** 
+- **Process:**
   - Request entry data: `POST /api/password/get`
   - Update entry encryption: `POST /api/password/update`
 - **Constraint:** Must process all entries before completion

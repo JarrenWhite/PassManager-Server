@@ -735,10 +735,21 @@ class TestDelete():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+
         last_used = datetime.now() - timedelta(hours=1)
         expiry_time = datetime.now() - timedelta(seconds=1)
         fake_login_session = LoginSession(
-            user_id=123456,
+            user=fake_user,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
             request_count=3,
@@ -753,9 +764,10 @@ class TestDelete():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.delete(
@@ -768,6 +780,7 @@ class TestDelete():
         assert response[0] == False
         assert response[1] == FailureReason.NOT_FOUND
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
 
 class TestCleanUser():
@@ -1005,9 +1018,10 @@ class TestCleanUser():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_user(
@@ -1024,6 +1038,7 @@ class TestCleanUser():
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
     def test_clean_password_expired_login_session(self, monkeypatch):
         """Should call clean_password_change for expired password session"""
@@ -1070,9 +1085,10 @@ class TestCleanUser():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_user(
@@ -1089,6 +1105,7 @@ class TestCleanUser():
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
     def test_delete_auth_ephemerals(self, monkeypatch):
         """Should delete all auth ephemerals for given user"""
@@ -1304,9 +1321,10 @@ class TestCleanUser():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_user(
@@ -1323,6 +1341,7 @@ class TestCleanUser():
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
     def test_clean_expired_password_auth_ephemeral(self, monkeypatch):
         """Should call clean_password_change for expired password ephemeral"""
@@ -1366,9 +1385,10 @@ class TestCleanUser():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_user(
@@ -1479,9 +1499,10 @@ class TestCleanUser():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_user(
@@ -1517,6 +1538,7 @@ class TestCleanUser():
         assert str(condition.left.name) == "id"
         assert condition.right.value == 123456
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -1746,9 +1768,19 @@ class TestCleanAll():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+
         last_used = datetime.now() - timedelta(hours=1)
         fake_login_session = LoginSession(
-            user_id=123456,
+            user=fake_user,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
             request_count=3,
@@ -1763,9 +1795,10 @@ class TestCleanAll():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_all()
@@ -1775,6 +1808,7 @@ class TestCleanAll():
         assert response[0] == True
         assert response[1] == None
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
     def test_expired_password_change_expiry_time(self, monkeypatch):
         """Should call clean_password_change for expired password change session"""
@@ -1792,10 +1826,19 @@ class TestCleanAll():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
         last_used = datetime.now() - timedelta(hours=1)
         expiry_time = datetime.now() - timedelta(hours=1)
         fake_login_session = LoginSession(
-            user_id=123456,
+            user=fake_user,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
             request_count=3,
@@ -1810,9 +1853,10 @@ class TestCleanAll():
             return mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        called = {"cleaned": False}
+        called = {"cleaned": False, "user": None}
         def fake_clean_password(db_session, user):
             called["cleaned"] = True
+            called["user"] = user
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.clean_all()
@@ -1822,6 +1866,7 @@ class TestCleanAll():
         assert response[0] == True
         assert response[1] == None
         assert called["cleaned"]
+        assert called["user"] == fake_user
 
     def test_not_expired_entry(self, monkeypatch):
         """Should make no action if session is not expired."""

@@ -5,7 +5,7 @@
     - DBUtilsPassword.start
 2) Complete the Auth to get the Session
     - DBUtilsAuth.get_details
-    - DBUtilsAuth.complete
+    - DBUtilsPassword.complete
 
 ## Edit Secure Data entry
 1) Get the details of a specific entry
@@ -15,7 +15,7 @@
 
 ## Complete Password Change
 1) Complete password change
-    - DBUtilsPassword.complete
+    - DBUtilsPassword.commit
 
 ## Abort Password Change
 1) Abort password change

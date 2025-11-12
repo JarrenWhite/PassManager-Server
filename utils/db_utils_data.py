@@ -97,7 +97,8 @@ class DBUtilsData():
 
     @staticmethod
     def get_entry(
-        public_id: str
+        public_id: str,
+        password_change: bool = False
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
         """
         Make a data entry with the given data values
@@ -111,7 +112,7 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
                 if not secure_data:
                     return False, FailureReason.NOT_FOUND, "", ""
-                if secure_data.user.password_change:
+                if secure_data.user.password_change and not password_change:
                     return False, FailureReason.PASSWORD_CHANGE, "", ""
 
                 return True, None, secure_data.entry_name, secure_data.entry_data
