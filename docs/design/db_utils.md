@@ -195,6 +195,7 @@ public_id: str
 
 Out
 user_id: int
+username_hash: str
 session_id: int
 session_key: str
 request_count: int
