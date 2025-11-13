@@ -83,6 +83,7 @@ class DBUtilsPassword():
 
     @staticmethod
     def complete(
+        user_id: int,
         public_id: str,
         session_key: str,
         expiry: datetime

@@ -993,6 +993,7 @@ class TestComplete():
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
@@ -1107,6 +1108,7 @@ class TestComplete():
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
@@ -1167,6 +1169,7 @@ class TestComplete():
         monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
 
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
@@ -1227,6 +1230,7 @@ class TestComplete():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
@@ -1251,6 +1255,7 @@ class TestComplete():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
@@ -1282,6 +1287,7 @@ class TestComplete():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
@@ -1320,6 +1326,7 @@ class TestComplete():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.complete(
+            user_id=123456,
             public_id="ephemeral_fake_public_id",
             session_key="fake_session_key",
             expiry=expiry
