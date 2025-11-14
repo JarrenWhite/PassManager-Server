@@ -2400,6 +2400,62 @@ class TestUpdate():
         assert mock_session.rollbacks == 1
         assert mock_session.closed is True
 
+    def test_user_id_match_fails(self, monkeypatch):
+        """Should fail if user id does not match"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            new_srp_salt="new_fake_srp_salt",
+            new_srp_verifier="new_fake_srp_verifier",
+            new_master_key_salt="new_fake_master_key_salt"
+        )
+
+        secure_data = SecureData(
+            public_id="fake_public_id",
+            entry_name="fake_entry_name",
+            entry_data="fake_entry_data",
+            new_entry_name=None,
+            new_entry_data=None,
+            user=fake_user
+        )
+
+        mock_query = _MockQuery([secure_data])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsPassword.update(
+            user_id=654321,
+            public_id="fake_public_id",
+            entry_name="new_fake_entry_name",
+            entry_data="new_fake_entry_data"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert len(mock_session._deletes) == 0
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])

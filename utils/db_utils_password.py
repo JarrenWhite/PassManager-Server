@@ -219,7 +219,8 @@ class DBUtilsPassword():
 
                 if secure_data is None:
                     return False, FailureReason.NOT_FOUND
-
+                if secure_data.user.id != user_id:
+                    return False, FailureReason.NOT_FOUND
                 if secure_data.new_entry_name or secure_data.new_entry_data:
                     DBUtilsPassword.clean_password_change(session, secure_data.user)
                     return False, FailureReason.DUPLICATE
