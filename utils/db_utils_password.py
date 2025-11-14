@@ -103,6 +103,8 @@ class DBUtilsPassword():
                 if auth_ephemeral.expiry_time < datetime.now():
                     DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
                     return False, FailureReason.NOT_FOUND, ""
+                if auth_ephemeral.user.id != user_id:
+                    return False, FailureReason.NOT_FOUND, ""
                 if not auth_ephemeral.password_change:
                     return False, FailureReason.INCOMPLETE, ""
 

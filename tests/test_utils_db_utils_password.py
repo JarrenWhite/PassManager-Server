@@ -1348,6 +1348,63 @@ class TestComplete():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "ephemeral_fake_public_id"
 
+    def test_user_id_match_fails(self, monkeypatch):
+        """Should fail if user id does not match"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True,
+            secure_data=[]
+        )
+
+        expiry = datetime.now() + timedelta(hours=1)
+        fake_ephemeral = AuthEphemeral(
+            user=fake_user,
+            public_id="ephemeral_fake_public_id",
+            eph_private_b="fake_eph_private_b",
+            eph_public_b="fake_eph_public_b",
+            expiry_time=expiry,
+            password_change=True
+        )
+
+        mock_query = _MockQuery([fake_ephemeral])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        monkeypatch.setattr(LoginSession, "public_id", "session_fake_public_id")
+
+        response = DBUtilsPassword.complete(
+            user_id=654321,
+            public_id="ephemeral_fake_public_id",
+            session_key="fake_session_key",
+            expiry=expiry
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert len(mock_session._deletes) == 0
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
+
 
 class TestCommit():
     """Test cases for database utils password commit function"""
