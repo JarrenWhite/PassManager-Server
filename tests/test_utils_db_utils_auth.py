@@ -238,6 +238,7 @@ class TestGetDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_details(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -274,6 +275,7 @@ class TestGetDetails():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_details(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -302,6 +304,7 @@ class TestGetDetails():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsAuth.get_details(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -337,6 +340,7 @@ class TestGetDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_details(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -388,6 +392,7 @@ class TestGetDetails():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsAuth.get_details(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -456,6 +461,7 @@ class TestGetDetails():
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsAuth.get_details(
+            user_id=123456,
             public_id="fake_public_id"
         )
 

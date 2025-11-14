@@ -81,6 +81,7 @@ class DBUtilsAuth():
 
     @staticmethod
     def get_details(
+        user_id: int,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], str, int, str, str]:
         """
