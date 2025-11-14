@@ -2213,6 +2213,7 @@ class TestUpdate():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsPassword.update(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data="new_fake_entry_data"
@@ -2284,6 +2285,7 @@ class TestUpdate():
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsPassword.update(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data="new_fake_entry_data"
@@ -2320,6 +2322,7 @@ class TestUpdate():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsPassword.update(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data="new_fake_entry_data"
@@ -2350,6 +2353,7 @@ class TestUpdate():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsPassword.update(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data="new_fake_entry_data"
@@ -2380,6 +2384,7 @@ class TestUpdate():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsPassword.update(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data="new_fake_entry_data"

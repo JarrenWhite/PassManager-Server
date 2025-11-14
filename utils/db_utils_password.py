@@ -207,6 +207,7 @@ class DBUtilsPassword():
 
     @staticmethod
     def update(
+        user_id: int,
         public_id: str,
         entry_name: str,
         entry_data: str
