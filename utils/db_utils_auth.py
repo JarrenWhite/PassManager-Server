@@ -99,6 +99,8 @@ class DBUtilsAuth():
 
                 if auth_ephemeral is None:
                     return False, FailureReason.NOT_FOUND, "", 0, "", ""
+                if auth_ephemeral.user.id != user_id:
+                    return False, FailureReason.NOT_FOUND, "", 0, "", ""
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
                     return False, FailureReason.NOT_FOUND, "", 0, "", ""
 
