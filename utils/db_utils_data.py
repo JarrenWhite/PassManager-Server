@@ -87,6 +87,8 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
                 if not secure_data:
                     return False, FailureReason.NOT_FOUND
+                if secure_data.user.id != user_id:
+                    return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
 
