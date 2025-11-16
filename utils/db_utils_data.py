@@ -43,6 +43,7 @@ class DBUtilsData():
 
     @staticmethod
     def edit(
+        user_id: int,
         public_id: str,
         entry_name: Optional[str],
         entry_data: Optional[str]

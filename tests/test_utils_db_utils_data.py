@@ -265,6 +265,7 @@ class TestEdit():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data=None
@@ -328,6 +329,7 @@ class TestEdit():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
             entry_data="new_fake_entry_data"
@@ -391,6 +393,7 @@ class TestEdit():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name="new_fake_entry_name",
             entry_data="new_fake_entry_data"
@@ -454,6 +457,7 @@ class TestEdit():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
             entry_data=None
@@ -488,6 +492,7 @@ class TestEdit():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
             entry_data=None
@@ -518,6 +523,7 @@ class TestEdit():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
             entry_data=None
@@ -555,6 +561,7 @@ class TestEdit():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
             entry_data=None
@@ -614,6 +621,7 @@ class TestEdit():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.edit(
+            user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
             entry_data=None
