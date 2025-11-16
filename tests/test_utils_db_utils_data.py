@@ -726,6 +726,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.delete(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -756,6 +757,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsData.delete(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -784,6 +786,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsData.delete(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -819,6 +822,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.delete(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
@@ -876,6 +880,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsData.delete(
+            user_id=123456,
             public_id="fake_public_id"
         )
 
