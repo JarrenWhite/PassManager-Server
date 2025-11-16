@@ -103,6 +103,7 @@ class DBUtilsData():
 
     @staticmethod
     def get_entry(
+        user_id: int,
         public_id: str,
         password_change: bool = False
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
