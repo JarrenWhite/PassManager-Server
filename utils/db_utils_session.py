@@ -114,6 +114,7 @@ class DBUtilsSession():
 
     @staticmethod
     def delete(
+        user_id: int,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given login session"""
