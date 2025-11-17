@@ -1,7 +1,8 @@
 from json import load as load_json
 from pathlib import Path
 from typing import Optional, Dict, Any
-import logging.config
+from logging import config as logging_config
+
 
 """
 Current logging levels, by order of priority:
@@ -32,4 +33,4 @@ def setup_logging(log_dir: Path, config_path: Optional[Path] = None):
             original = Path(handler["filename"]).name
             handler["filename"] = str(log_dir / original)
 
-    logging.config.dictConfig(config)
+    logging_config.dictConfig(config)
