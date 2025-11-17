@@ -4,7 +4,7 @@
     "filters": {},
     "formatters": {
         "simple": {
-            "format": "%(levelname)s : %(message)s"
+            "format": "[%(levelname)s|%(funcName)s] : %(message)s"
         },
         "detailed": {
             "format": "[%(levelname)s|%(module)s|%(filename)s:%(lineno)d|%(funcName)s] %(asctime)s: %(message)s",
