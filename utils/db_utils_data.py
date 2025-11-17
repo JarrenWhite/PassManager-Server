@@ -43,6 +43,7 @@ class DBUtilsData():
 
     @staticmethod
     def edit(
+        user_id: int,
         public_id: str,
         entry_name: Optional[str],
         entry_data: Optional[str]
@@ -57,6 +58,8 @@ class DBUtilsData():
             with DatabaseSetup.get_db_session() as session:
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
                 if not secure_data:
+                    return False, FailureReason.NOT_FOUND
+                if secure_data.user.id != user_id:
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
@@ -75,6 +78,7 @@ class DBUtilsData():
 
     @staticmethod
     def delete(
+        user_id: int,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete the given data entry"""
@@ -82,6 +86,8 @@ class DBUtilsData():
             with DatabaseSetup.get_db_session() as session:
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
                 if not secure_data:
+                    return False, FailureReason.NOT_FOUND
+                if secure_data.user.id != user_id:
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
@@ -97,6 +103,7 @@ class DBUtilsData():
 
     @staticmethod
     def get_entry(
+        user_id: int,
         public_id: str,
         password_change: bool = False
     ) -> Tuple[bool, Optional[FailureReason], str, str]:
@@ -111,6 +118,8 @@ class DBUtilsData():
             with DatabaseSetup.get_db_session() as session:
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
                 if not secure_data:
+                    return False, FailureReason.NOT_FOUND, "", ""
+                if secure_data.user.id != user_id:
                     return False, FailureReason.NOT_FOUND, "", ""
                 if secure_data.user.password_change and not password_change:
                     return False, FailureReason.PASSWORD_CHANGE, "", ""

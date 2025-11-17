@@ -42,7 +42,10 @@ Out
 public_id: str
 
 ## complete
+> Note: Risk of Insecure Direct Object Reference
+
 In
+user_id: int
 public_id: str
 session_key: str
 expiry_time: datetime
@@ -62,7 +65,10 @@ In
 user_id: int
 
 ## update
+> Note: Risk of Insecure Direct Object Reference
+
 In
+user_id: int
 public_id: str
 entry_name: str
 entry_data: str
@@ -91,7 +97,10 @@ public_id: str
 srp_salt: str
 
 ## get_details
+> Note: Risk of Insecure Direct Object Reference
+
 In
+user_id: int
 public_id: str
 
 Out
@@ -136,23 +145,29 @@ Out
 public_id: str
 
 ## edit
+> Note: Risk of Insecure Direct Object Reference
 > Note: Halt if password change in progress
 
 In
+user_id: int
 public_id: str
 entry_name: str?
 entry_data: str?
 
 ## delete
+> Note: Risk of Insecure Direct Object Reference
 > Note: Halt if password change in progress
 
 In
+user_id: int
 public_id: str
 
 ## get_entry
 > Note: Halt if password change in progress
+> Note: Risk of Insecure Direct Object Reference
 
 In
+user_id: int
 public_id: str
 
 Out
@@ -180,6 +195,7 @@ public_id: str
 
 Out
 user_id: int
+username_hash: str
 session_id: int
 session_key: str
 request_count: int
@@ -193,7 +209,10 @@ Out
 session_key: str
 
 ## delete
+> Note: Risk of Insecure Direct Object Reference
+
 In
+user_id: int
 public_id: str
 
 ## clean_user

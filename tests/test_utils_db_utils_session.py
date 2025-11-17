@@ -69,17 +69,19 @@ class TestGetDetails():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], int)
-        assert isinstance(response[3], int)
-        assert isinstance(response[4], str)
-        assert isinstance(response[5], int)
-        assert isinstance(response[6], bool)
+        assert isinstance(response[3], str)
+        assert isinstance(response[4], int)
+        assert isinstance(response[5], str)
+        assert isinstance(response[6], int)
+        assert isinstance(response[7], bool)
         assert response[0] == True
         assert response[1] == None
         assert response[2] == 123456
-        assert response[3] == 789123
-        assert response[4] == "fake_session_key"
-        assert response[5] == 3
-        assert response[6] == False
+        assert response[3] == "fake_hash"
+        assert response[4] == 789123
+        assert response[5] == "fake_session_key"
+        assert response[6] == 3
+        assert response[7] == False
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
@@ -455,10 +457,19 @@ class TestDelete():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
         last_used = datetime.now() - timedelta(hours=1)
         expiry_time = datetime.now() + timedelta(seconds=1)
         fake_login_session = LoginSession(
-            user_id=123456,
+            user=fake_user,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
             request_count=3,
@@ -474,6 +485,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -504,6 +516,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -532,6 +545,7 @@ class TestDelete():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -567,6 +581,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -596,10 +611,19 @@ class TestDelete():
                 mock_session.close()
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
         last_used = datetime.now() - timedelta(hours=1)
         expiry_time = datetime.now() + timedelta(seconds=1)
         fake_login_session = LoginSession(
-            user_id=123456,
+            user=fake_user,
             public_id="session_fake_public_id",
             session_key="fake_session_key",
             request_count=3,
@@ -615,6 +639,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="fake_session_key"
         )
 
@@ -662,6 +687,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -708,6 +734,7 @@ class TestDelete():
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -771,6 +798,7 @@ class TestDelete():
         monkeypatch.setattr(DBUtilsPassword, "clean_password_change", fake_clean_password)
 
         response = DBUtilsSession.delete(
+            user_id=123456,
             public_id="session_fake_public_id"
         )
 
@@ -781,6 +809,61 @@ class TestDelete():
         assert response[1] == FailureReason.NOT_FOUND
         assert called["cleaned"]
         assert called["user"] == fake_user
+
+    def test_user_id_match_fails(self, monkeypatch):
+        """Should fail if user id does not match"""
+        mock_session = _MockSession()
+
+        @contextmanager
+        def mock_get_db_session():
+            try:
+                yield mock_session
+                mock_session.commit()
+            except Exception:
+                mock_session.rollback()
+                raise
+            finally:
+                mock_session.close()
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
+
+        fake_user = User(
+            id=123456,
+            username_hash="fake_hash",
+            srp_salt="fake_srp_salt",
+            srp_verifier="fake_srp_verifier",
+            master_key_salt="fake_master_key_salt",
+            password_change=True
+        )
+
+        last_used = datetime.now() - timedelta(hours=1)
+        expiry_time = datetime.now() + timedelta(seconds=1)
+        fake_login_session = LoginSession(
+            user=fake_user,
+            public_id="session_fake_public_id",
+            session_key="fake_session_key",
+            request_count=3,
+            last_used=last_used,
+            maximum_requests=None,
+            expiry_time=expiry_time,
+            password_change=False
+        )
+
+        mock_query = _MockQuery([fake_login_session])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        response = DBUtilsSession.delete(
+            user_id=654321,
+            public_id="session_fake_public_id"
+        )
+
+        assert isinstance(response, tuple)
+        assert isinstance(response[0], bool)
+        assert isinstance(response[1], FailureReason)
+        assert len(mock_session._deletes) == 0
+        assert response[0] == False
+        assert response[1] == FailureReason.NOT_FOUND
 
 
 class TestCleanUser():

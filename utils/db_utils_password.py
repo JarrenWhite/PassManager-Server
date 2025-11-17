@@ -83,6 +83,7 @@ class DBUtilsPassword():
 
     @staticmethod
     def complete(
+        user_id: int,
         public_id: str,
         session_key: str,
         expiry: datetime
@@ -101,6 +102,8 @@ class DBUtilsPassword():
                     return False, FailureReason.NOT_FOUND, ""
                 if auth_ephemeral.expiry_time < datetime.now():
                     DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
+                    return False, FailureReason.NOT_FOUND, ""
+                if auth_ephemeral.user.id != user_id:
                     return False, FailureReason.NOT_FOUND, ""
                 if not auth_ephemeral.password_change:
                     return False, FailureReason.INCOMPLETE, ""
@@ -204,6 +207,7 @@ class DBUtilsPassword():
 
     @staticmethod
     def update(
+        user_id: int,
         public_id: str,
         entry_name: str,
         entry_data: str
@@ -215,7 +219,8 @@ class DBUtilsPassword():
 
                 if secure_data is None:
                     return False, FailureReason.NOT_FOUND
-
+                if secure_data.user.id != user_id:
+                    return False, FailureReason.NOT_FOUND
                 if secure_data.new_entry_name or secure_data.new_entry_data:
                     DBUtilsPassword.clean_password_change(session, secure_data.user)
                     return False, FailureReason.DUPLICATE

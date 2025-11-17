@@ -51,12 +51,13 @@ class DBUtilsSession():
     @staticmethod
     def get_details(
         public_id: str
-    ) -> Tuple[bool, Optional[FailureReason], int, int, str, int, bool]:
+    ) -> Tuple[bool, Optional[FailureReason], int, str, int, str, int, bool]:
         """
         Get the session details for the given session id
 
         Returns:
             (int)   user_id
+            (str)   username_hash
             (int)   session_id
             (str)   session_key
             (int)   request_count
@@ -67,22 +68,23 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if login_session is None:
-                    return False, FailureReason.NOT_FOUND, 0, 0, "", 0, False
+                    return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
                 if DBUtilsSession._check_expiry(session, login_session):
-                    return False, FailureReason.NOT_FOUND, 0, 0, "", 0, False
+                    return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
 
                 return (
                     True, None,
                     login_session.user.id,
+                    login_session.user.username_hash,
                     login_session.id,
                     login_session.session_key,
                     login_session.request_count,
                     login_session.password_change
                 )
         except RuntimeError:
-            return False, FailureReason.DATABASE_UNINITIALISED, 0, 0, "", 0, False
+            return False, FailureReason.DATABASE_UNINITIALISED, 0, "", 0, "", 0, False
         except:
-            return False, FailureReason.UNKNOWN_EXCEPTION, 0, 0, "", 0, False
+            return False, FailureReason.UNKNOWN_EXCEPTION, 0,"", 0, "", 0, False
 
 
     @staticmethod
@@ -114,6 +116,7 @@ class DBUtilsSession():
 
     @staticmethod
     def delete(
+        user_id: int,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Delete given login session"""
@@ -124,6 +127,8 @@ class DBUtilsSession():
                 if not login_session:
                     return False, FailureReason.NOT_FOUND
                 if DBUtilsSession._check_expiry(session, login_session):
+                    return False, FailureReason.NOT_FOUND
+                if login_session.user.id != user_id:
                     return False, FailureReason.NOT_FOUND
                 if login_session.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
