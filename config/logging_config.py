@@ -11,6 +11,11 @@ Info:       Logged to terminal & file
 Debug:      Logged to terminal
 """
 
+"""
+Logging messages are to start with capitalisations,
+and use full grammar, including ending punctuation.
+"""
+
 def setup_logging():
     config_file = pathlib.Path(__file__).parent / "logging_config.json"
     with open(config_file) as f_in:
