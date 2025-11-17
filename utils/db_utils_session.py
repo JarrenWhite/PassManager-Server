@@ -126,6 +126,8 @@ class DBUtilsSession():
                     return False, FailureReason.NOT_FOUND
                 if DBUtilsSession._check_expiry(session, login_session):
                     return False, FailureReason.NOT_FOUND
+                if login_session.user.id != user_id:
+                    return False, FailureReason.NOT_FOUND
                 if login_session.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
 
