@@ -17,6 +17,22 @@
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
+        "main_files": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "detailed",
+            "filename": "logs/main.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
+        "main_concernfile": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "WARNING",
+            "formatter": "detailed",
+            "filename": "logs/main_concerns.log",
+            "maxBytes": 1000000,
+            "backupCount": 3
+        },
         "database_files": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
@@ -67,6 +83,14 @@
         }
     },
     "loggers": {
+        "main": {
+            "level": "DEBUG",
+            "handlers": [
+                "stdout",
+                "main_files",
+                "main_concernfile"
+            ]
+        },
         "database": {
             "level": "DEBUG",
             "handlers": [
