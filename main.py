@@ -1,11 +1,12 @@
+import sys
 from pathlib import Path
 
 from utils import setup_logging, DatabaseConfig
 from database import DatabaseSetup, Base
 
 
-def initialise_config():
-    DatabaseConfig.load()
+def initialise_config(config_path = None):
+    DatabaseConfig.load(config_path)
 
 
 def initialise_logging():
@@ -28,7 +29,12 @@ def initialise_database():
 
 
 def main():
-    initialise_config()
+    if len(sys.argv) > 1:
+        config_path = Path(sys.argv[1])
+    else:
+        config_path = None
+
+    initialise_config(config_path)
     initialise_logging()
     initialise_database()
 
