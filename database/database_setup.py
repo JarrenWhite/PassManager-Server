@@ -3,6 +3,9 @@ from pathlib import Path
 from typing import Optional, Generator
 from contextlib import contextmanager
 
+from logging import getLogger
+logger = getLogger("database")
+
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
 from sqlalchemy import create_engine, inspect
 
@@ -17,6 +20,8 @@ class DatabaseSetup:
 
     @staticmethod
     def init_db(directory: Path, base: type[DeclarativeBase]):
+        logger.debug("Initialising database...")
+
         if DatabaseSetup._session_maker is not None:
             raise RuntimeError("Database already initialised.")
 
@@ -40,6 +45,7 @@ class DatabaseSetup:
 
         base.metadata.create_all(engine)
         DatabaseSetup._session_maker = sessionmaker(bind=engine)
+        logger.info(f"Database initialised to {str(directory)}")
 
     @staticmethod
     @contextmanager

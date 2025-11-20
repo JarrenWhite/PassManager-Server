@@ -1,6 +1,9 @@
 import sys
 from pathlib import Path
 
+from logging import getLogger
+logger = getLogger("database")
+
 from utils import setup_logging, DatabaseConfig
 from database import DatabaseSetup, Base
 
@@ -34,9 +37,13 @@ def main():
     else:
         config_path = None
 
-    initialise_config(config_path)
-    initialise_logging()
-    initialise_database()
+    try:
+        initialise_config(config_path)
+        initialise_logging()
+        initialise_database()
+    except Exception as e:
+        logger.exception("Failed during application initialisation")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
