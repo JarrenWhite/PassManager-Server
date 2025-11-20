@@ -41,7 +41,7 @@ def main():
         initialise_config(config_path)
         initialise_logging()
         initialise_database()
-    except Exception as e:
+    except Exception:
         logger.exception("Failed during application initialisation")
         sys.exit(1)
 

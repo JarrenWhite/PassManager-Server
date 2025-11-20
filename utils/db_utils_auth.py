@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Tuple, Optional
 
+from logging import getLogger
+logger = getLogger("database")
+
 from sqlalchemy.orm import Session
 
 from database import DatabaseSetup, User, AuthEphemeral, LoginSession
@@ -72,10 +75,13 @@ class DBUtilsAuth():
                 session.add(auth_ephemeral)
                 session.flush()
 
+                logger.info(f"Auth Ephemeral {auth_ephemeral.public_id[-4:]} created.")
                 return True, None, auth_ephemeral.public_id, user.srp_salt
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, "", ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
 
 
@@ -111,8 +117,10 @@ class DBUtilsAuth():
                     auth_ephemeral.eph_public_b
                 )
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, "", 0, "", ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, "", 0, "", ""
 
 
@@ -154,10 +162,13 @@ class DBUtilsAuth():
 
                 session.delete(auth_ephemeral)
 
+                logger.info(f"Login Session {login_session.public_id[-4:]} created.")
                 return True, None, login_session.public_id
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
@@ -171,8 +182,11 @@ class DBUtilsAuth():
                 for auth_ephemeral in auth_ephemerals:
                     _ = DBUtilsAuth._check_expiry(session, auth_ephemeral)
 
+                logger.info("Auth Ephemerals cleaned.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
