@@ -1,7 +1,11 @@
 from typing import Tuple, Optional
 
+from logging import getLogger
+logger = getLogger("database")
+
 from .utils_enums import FailureReason
 from database import DatabaseSetup, SecureData, User
+
 
 class DBUtilsData():
     """Utility functions for managing data based database functions"""
@@ -34,10 +38,13 @@ class DBUtilsData():
                 session.add(secure_data)
                 session.flush()
 
+                logger.info(f"Secure Data {secure_data.public_id[-4:]} created.")
                 return True, None, secure_data.public_id
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
@@ -69,10 +76,13 @@ class DBUtilsData():
                 if entry_data:
                     secure_data.entry_data = entry_data
 
+                logger.info(f"Secure Data {public_id[-4:]} edited.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -94,10 +104,13 @@ class DBUtilsData():
 
                 session.delete(secure_data)
 
+                logger.info(f"Secure Data {public_id[-4:]} deleted.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -124,10 +137,13 @@ class DBUtilsData():
                 if secure_data.user.password_change and not password_change:
                     return False, FailureReason.PASSWORD_CHANGE, "", ""
 
+                logger.info(f"Secure Data {public_id[-4:]} requested.")
                 return True, None, secure_data.entry_name, secure_data.entry_data
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, "", ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
 
 
@@ -153,8 +169,11 @@ class DBUtilsData():
 
                 all_entries = {data.public_id: data.entry_name for data in user.secure_data}
 
+                logger.info(f"Secure Data List requested for User: {user.public_id[-4:]}.")
                 return True, None, all_entries
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, {}
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, {}
