@@ -1,5 +1,8 @@
 from typing import Tuple, Optional
 
+from logging import getLogger
+logger = getLogger("database")
+
 from sqlalchemy.exc import IntegrityError
 
 from database import DatabaseSetup, User
@@ -30,10 +33,13 @@ class DBUtilsUser():
                 session.add(user)
                 return True, None
         except IntegrityError:
+            logger.info(f"Username Hash {username_hash[-4:]} already exists.")
             return False, FailureReason.DUPLICATE
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -55,8 +61,10 @@ class DBUtilsUser():
         except IntegrityError:
             return False, FailureReason.DUPLICATE
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -75,6 +83,8 @@ class DBUtilsUser():
                 session.delete(user)
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
