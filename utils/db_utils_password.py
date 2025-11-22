@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Tuple, Optional, List
 
+from logging import getLogger
+logger = getLogger("database")
+
 from sqlalchemy.orm import Session
 
 from database import DatabaseSetup, User, AuthEphemeral, SecureData, LoginSession
@@ -74,10 +77,13 @@ class DBUtilsPassword():
                 session.add(auth_ephemeral)
                 session.flush()
 
+                logger.info(f"Password Auth Ephemeral {auth_ephemeral.public_id[-4:]} created.")
                 return True, None, auth_ephemeral.public_id
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
@@ -125,10 +131,13 @@ class DBUtilsPassword():
 
                 session.delete(auth_ephemeral)
 
+                logger.info(f"Password Login Session {login_session.public_id[-4:]} created.")
                 return True, None, login_session.public_id
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
@@ -177,10 +186,13 @@ class DBUtilsPassword():
                     secure_data.new_entry_name = None
                     secure_data.new_entry_data = None
 
+                logger.info(f"Password change for User {user.username_hash[-4:]} completed.")
                 return True, None, public_ids
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, []
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, []
 
 
@@ -198,10 +210,13 @@ class DBUtilsPassword():
 
                 DBUtilsPassword.clean_password_change(session, user)
 
+                logger.info(f"Password change for User {user.username_hash[-4:]} cancelled.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -228,8 +243,11 @@ class DBUtilsPassword():
                 secure_data.new_entry_name = entry_name
                 secure_data.new_entry_data = entry_data
 
+                logger.info(f"Secure Data {public_id[-4:]} updated for Password change.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
