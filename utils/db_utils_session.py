@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Tuple, Optional
 
+from logging import getLogger
+logger = getLogger("database")
+
 from sqlalchemy.orm import Session
 
 from database import DatabaseSetup, LoginSession, User
@@ -72,6 +75,7 @@ class DBUtilsSession():
                 if DBUtilsSession._check_expiry(session, login_session):
                     return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
 
+                logger.debug(f"Login Session {public_id[-4:]} requested.")
                 return (
                     True, None,
                     login_session.user.id,
@@ -82,8 +86,10 @@ class DBUtilsSession():
                     login_session.password_change
                 )
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, 0, "", 0, "", 0, False
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, 0,"", 0, "", 0, False
 
 
@@ -107,10 +113,13 @@ class DBUtilsSession():
                     return False, FailureReason.NOT_FOUND, ""
 
                 login_session.request_count += 1
+                logger.debug(f"Login Session {login_session.public_id[-4:]} request count incremented.")
                 return True, None, login_session.session_key
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED, ""
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION, ""
 
 
@@ -134,10 +143,13 @@ class DBUtilsSession():
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(login_session)
+                logger.debug(f"Login Session {public_id[-4:]} deleted.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -164,10 +176,14 @@ class DBUtilsSession():
                         DBUtilsPassword.clean_password_change(session, login_session.user)
                     else:
                         session.delete(login_session)
+
+                logger.debug(f"Login Sessions cleaned for User {user.username_hash[-4:]}.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -181,8 +197,11 @@ class DBUtilsSession():
                 for login_session in login_sessions:
                     _ = DBUtilsSession._check_expiry(session, login_session)
 
+                logger.debug("Login Sessions cleaned.")
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
