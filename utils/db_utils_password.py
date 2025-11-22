@@ -19,6 +19,8 @@ class DBUtilsPassword():
         user: User
     ):
         """Remove all partial password change entries, ephemerals and login sessions"""
+        logger.info(f"Cleaned password change for User {user.username_hash[-4:]}.")
+
         user.password_change = False
         user.new_srp_salt = None
         user.new_srp_verifier = None
