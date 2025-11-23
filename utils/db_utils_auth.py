@@ -65,6 +65,7 @@ class DBUtilsAuth():
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
                 if user is None:
+                    logger.debug(f"User {username_hash[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, "", ""
 
                 auth_ephemeral = AuthEphemeral(
@@ -106,10 +107,13 @@ class DBUtilsAuth():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
+                    logger.debug(f"Auth Ehemeral {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, "", 0, "", ""
                 if auth_ephemeral.user.id != user_id:
+                    logger.debug(f"Auth Ehemeral {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND, "", 0, "", ""
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
+                    logger.debug(f"Auth Ehemeral {public_id[-4:]} expired.")
                     return False, FailureReason.NOT_FOUND, "", 0, "", ""
 
                 return (True, None,
@@ -144,10 +148,13 @@ class DBUtilsAuth():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
+                    logger.debug(f"Auth Ehemeral {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
+                    logger.debug(f"Auth Ehemeral {public_id[-4:]} expired.")
                     return False, FailureReason.NOT_FOUND, ""
                 if auth_ephemeral.password_change:
+                    logger.debug(f"Auth Ehemeral {public_id[-4:]} is password change type.")
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 login_session = LoginSession(
