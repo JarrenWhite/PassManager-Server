@@ -58,6 +58,7 @@ class DBUtilsPassword():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if user is None:
                     return False, FailureReason.NOT_FOUND, ""
 
@@ -130,7 +131,6 @@ class DBUtilsPassword():
                 )
                 session.add(login_session)
                 session.flush()
-
                 session.delete(auth_ephemeral)
 
                 logger.info(f"Password Login Session {login_session.public_id[-4:]} created.")
@@ -159,7 +159,6 @@ class DBUtilsPassword():
 
                 if user is None:
                     return False, FailureReason.NOT_FOUND, []
-
                 if not user.new_srp_salt or not user.new_srp_verifier or not user.new_master_key_salt:
                     DBUtilsPassword.clean_password_change(session, user)
                     return False, FailureReason.INCOMPLETE, []

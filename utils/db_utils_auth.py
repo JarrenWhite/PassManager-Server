@@ -64,6 +64,7 @@ class DBUtilsAuth():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.username_hash == username_hash).first()
+
                 if user is None:
                     logger.debug(f"User {username_hash[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, "", ""
@@ -168,7 +169,6 @@ class DBUtilsAuth():
                 )
                 session.add(login_session)
                 session.flush()
-
                 session.delete(auth_ephemeral)
 
                 logger.info(f"Login Session {login_session.public_id[-4:]} created.")

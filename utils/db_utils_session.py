@@ -115,6 +115,7 @@ class DBUtilsSession():
                     return False, FailureReason.NOT_FOUND, ""
 
                 login_session.request_count += 1
+
                 logger.debug(f"Login Session {login_session.public_id[-4:]} request count incremented.")
                 return True, None, login_session.session_key
         except RuntimeError:
@@ -145,6 +146,7 @@ class DBUtilsSession():
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(login_session)
+
                 logger.debug(f"Login Session {public_id[-4:]} deleted.")
                 return True, None
         except RuntimeError:
@@ -172,7 +174,6 @@ class DBUtilsSession():
                         DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
                     else:
                         session.delete(auth_ephemeral)
-
                 for login_session in user.login_sessions:
                     if login_session.password_change:
                         DBUtilsPassword.clean_password_change(session, login_session.user)

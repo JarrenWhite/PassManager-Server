@@ -52,11 +52,14 @@ class DBUtilsUser():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if not user:
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
+
                 user.username_hash = new_username_hash
+
                 return True, None
         except IntegrityError:
             return False, FailureReason.DUPLICATE
@@ -76,11 +79,14 @@ class DBUtilsUser():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if not user:
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
                     return False, FailureReason.PASSWORD_CHANGE
+
                 session.delete(user)
+
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")

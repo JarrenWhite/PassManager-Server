@@ -25,6 +25,7 @@ class DBUtilsData():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if not user:
                     logger.debug(f"User {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
@@ -66,6 +67,7 @@ class DBUtilsData():
         try:
             with DatabaseSetup.get_db_session() as session:
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+
                 if not secure_data:
                     logger.debug(f"Secure Data {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND
@@ -100,6 +102,7 @@ class DBUtilsData():
         try:
             with DatabaseSetup.get_db_session() as session:
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+
                 if not secure_data:
                     logger.debug(f"Secure Data {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND
@@ -138,6 +141,7 @@ class DBUtilsData():
         try:
             with DatabaseSetup.get_db_session() as session:
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
+
                 if not secure_data:
                     logger.debug(f"Secure Data {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, "", ""
@@ -173,6 +177,7 @@ class DBUtilsData():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if not user:
                     logger.debug(f"User {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, {}
