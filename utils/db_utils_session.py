@@ -40,7 +40,9 @@ class DBUtilsSession():
             is_expired = True
 
         if is_expired:
+            logger.debug(f"Login Session {login_session.public_id[-4:]} has expired.")
             if login_session.password_change:
+                logger.debug("Password Login Session being passed for cleaning.")
                 DBUtilsPassword.clean_password_change(
                     db_session=db_session,
                     user=login_session.user

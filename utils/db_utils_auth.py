@@ -34,7 +34,9 @@ class DBUtilsAuth():
             is_expired = True
 
         if is_expired:
+            logger.debug(f"Auth Ephemeral {auth_ephemeral.public_id[-4:]} has expired.")
             if auth_ephemeral.password_change:
+                logger.debug("Password Auth Ephemeral being passed for cleaning.")
                 DBUtilsPassword.clean_password_change(
                     db_session=db_session,
                     user=auth_ephemeral.user
