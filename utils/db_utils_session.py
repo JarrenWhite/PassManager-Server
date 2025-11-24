@@ -73,8 +73,10 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if login_session is None:
+                    logger.debug(f"Login Session {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
                 if DBUtilsSession._check_expiry(session, login_session):
+                    logger.debug(f"Login Session {public_id[-4:]} expired.")
                     return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
 
                 logger.debug(f"Login Session {public_id[-4:]} requested.")
@@ -110,8 +112,10 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.id == session_id).first()
 
                 if login_session is None:
+                    logger.debug(f"Login Session {session_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if DBUtilsSession._check_expiry(session, login_session):
+                    logger.debug(f"Login Session {login_session.public_id[-4:]} expired.")
                     return False, FailureReason.NOT_FOUND, ""
 
                 login_session.request_count += 1
@@ -137,12 +141,16 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if not login_session:
+                    logger.debug(f"Login Session {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND
                 if DBUtilsSession._check_expiry(session, login_session):
+                    logger.debug(f"Login Session {public_id[-4:]} expired.")
                     return False, FailureReason.NOT_FOUND
                 if login_session.user.id != user_id:
+                    logger.debug(f"Login Session {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND
                 if login_session.password_change:
+                    logger.debug(f"Login Session {public_id[-4:]} is password change type.")
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(login_session)
