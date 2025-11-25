@@ -4,12 +4,12 @@ import logging
 logger = logging.getLogger("api")
 
 
-password_bp = Blueprint('user', __name__, url_prefix='/password/user')
+password_bp = Blueprint('user', __name__, url_prefix='/api/password')
 
 
 @password_bp.route('/health', methods=['GET'])
 def health_check():
-    """Health check endpoint for the session API"""
+    """Health check endpoint for the password API"""
     logger.debug("password health_check: Received")
     return jsonify({
         'status': 'healthy',

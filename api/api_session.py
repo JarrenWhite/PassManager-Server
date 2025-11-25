@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger("api")
 
 
-session_bp = Blueprint('user', __name__, url_prefix='/session/user')
+session_bp = Blueprint('user', __name__, url_prefix='/api/session')
 
 
 @session_bp.route('/health', methods=['GET'])
