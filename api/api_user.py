@@ -10,7 +10,7 @@ user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 @user_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for the user API"""
-    logger.debug("user health_check: Received")
+    logger.debug("User health check received")
     return jsonify({
         'status': 'healthy',
         'service': 'data-api'
