@@ -1,5 +1,8 @@
 from typing import Tuple, Optional
 
+from logging import getLogger
+logger = getLogger("database")
+
 from sqlalchemy.exc import IntegrityError
 
 from database import DatabaseSetup, User
@@ -30,10 +33,13 @@ class DBUtilsUser():
                 session.add(user)
                 return True, None
         except IntegrityError:
+            logger.info(f"Username Hash {username_hash[-4:]} already exists.")
             return False, FailureReason.DUPLICATE
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -46,17 +52,24 @@ class DBUtilsUser():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if not user:
+                    logger.debug(f"User {user_id} not found.")
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
+                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE
+
                 user.username_hash = new_username_hash
+
                 return True, None
         except IntegrityError:
             return False, FailureReason.DUPLICATE
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
 
 
@@ -68,13 +81,20 @@ class DBUtilsUser():
         try:
             with DatabaseSetup.get_db_session() as session:
                 user = session.query(User).filter(User.id == user_id).first()
+
                 if not user:
+                    logger.debug(f"User {user_id} not found.")
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
+                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE
+
                 session.delete(user)
+
                 return True, None
         except RuntimeError:
+            logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
         except Exception:
+            logger.exception("Unknown database session exception.")
             return False, FailureReason.UNKNOWN_EXCEPTION
