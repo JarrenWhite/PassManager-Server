@@ -187,7 +187,7 @@ class DBUtilsData():
 
                 all_entries = {data.public_id: data.entry_name for data in user.secure_data}
 
-                logger.info(f"Secure Data List requested for User: {user.public_id[-4:]}.")
+                logger.info(f"Secure Data List requested for User: {user.username_hash[-4:]}.")
                 return True, None, all_entries
         except RuntimeError:
             logger.warning("Database uninitialised.")
