@@ -60,7 +60,7 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if user.password_change:
                     logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
@@ -166,7 +166,7 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, []
                 if not user.new_srp_salt or not user.new_srp_verifier or not user.new_master_key_salt:
                     logger.debug(f"User {user.username_hash} password change failed: Insufficient new srp details.")
@@ -218,7 +218,7 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND
 
                 DBUtilsPassword.clean_password_change(session, user)

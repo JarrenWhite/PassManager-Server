@@ -27,7 +27,7 @@ class DBUtilsData():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if user.password_change:
                     logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
@@ -179,7 +179,7 @@ class DBUtilsData():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, {}
                 if user.password_change:
                     logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")

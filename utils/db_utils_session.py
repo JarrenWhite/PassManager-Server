@@ -112,7 +112,7 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.id == session_id).first()
 
                 if login_session is None:
-                    logger.debug(f"Login Session {session_id} not found.")
+                    logger.debug(f"Login Session id: {session_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if DBUtilsSession._check_expiry(session, login_session):
                     logger.debug(f"Login Session {login_session.public_id[-4:]} expired.")
