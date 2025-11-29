@@ -7,22 +7,51 @@ on:
     branches: main
 
 jobs:
+  full-tests:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - run: |
+        python -m pytest tests/ -v --tb=short
+
+
   discover-tests:
+    needs: full-tests
+    if: failure() && needs.full-tests.result == 'failure'
     runs-on: ubuntu-latest
     outputs:
       test-files: ${{ steps.collect.outputs.tests }}
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - id: collect
       run: |
-        # Find all .py test files under tests/
         files=$(find tests -maxdepth 1 -name "test_*.py" | jq -R -s -c 'split("\n")[:-1]')
         echo "tests=$files" >> "$GITHUB_OUTPUT"
 
+
   test:
     needs: discover-tests
+    if: needs.discover-tests.result == 'success'
     runs-on: ubuntu-latest
 
     strategy:
@@ -33,27 +62,22 @@ jobs:
     name: Test ${{ matrix.file }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    - name: Cache pip dependencies
-      uses: actions/cache@v3
+    - uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Install dependencies
-      run: |
+    - run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests for this file
-      run: |
+    - run: |
         python -m pytest ${{ matrix.file }} -v --tb=short
