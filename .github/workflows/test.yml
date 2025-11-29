@@ -8,33 +8,37 @@ on:
 
 jobs:
   discover-tests:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.collect.outputs.matrix }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+  runs-on: ubuntu-latest
+  outputs:
+    matrix: ${{ steps.collect.outputs.matrix }}
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
 
-    - id: collect
-      run: |
-        # Build a JSON array of objects: [{ "file": "...", "label": "..." }, ...]
-        echo "Collecting test files..."
-        matrix=$(printf '['
-        for f in tests/test_*.py; do
-            base=$(basename "$f")              # test_api_login.py
-            stem=${base%.py}                   # test_api_login
-            trimmed=${stem#test_}              # api_login
+  - id: collect
+    run: |
+      echo "Collecting test files..."
 
-            # Convert snake_case → Capitalized Words
-            label=$(echo "$trimmed" | sed -E 's/_/ /g' | sed -E 's/(^| )(.)/\1\u\2/g')
+      arr="[]"
 
-            # Append JSON object
-            matrix="${matrix}{\"file\":\"$f\",\"label\":\"$label\"},"
-        done
-        # Trim trailing comma + close array
-        matrix="${matrix%,}]"
-        echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
-        echo "Discovered matrix: $matrix"
+      for f in tests/test_*.py; do
+          base=$(basename "$f")          # test_api_login.py
+          stem=${base%.py}               # test_api_login
+          trimmed=${stem#test_}          # api_login
+
+          label=$(echo "$trimmed" \
+            | sed -E 's/_/ /g' \
+            | sed -E 's/(^| )(.)/\1\u\2/g')
+
+          arr=$(jq -c \
+            --arg file "$f" \
+            --arg label "$label" \
+            '. + [{"file": $file, "label": $label}]' \
+            <<< "$arr")
+      done
+
+      echo "matrix=$arr" >> "$GITHUB_OUTPUT"
+      echo "Discovered matrix: $arr"
 
   test:
     needs: discover-tests
