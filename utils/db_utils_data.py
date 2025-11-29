@@ -27,10 +27,10 @@ class DBUtilsData():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if user.password_change:
-                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 secure_data = SecureData(
@@ -41,7 +41,7 @@ class DBUtilsData():
                 session.add(secure_data)
                 session.flush()
 
-                logger.info(f"Secure Data {secure_data.public_id[-4:]} created.")
+                logger.info(f"Secure Data: {secure_data.public_id[-4:]} created.")
                 return True, None, secure_data.public_id
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -69,13 +69,13 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if not secure_data:
-                    logger.debug(f"Secure Data {public_id[-4:]} not found.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.id != user_id:
-                    logger.debug(f"Secure Data {public_id[-4:]} does not belong to user.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
-                    logger.debug(f"Secure Data {secure_data.public_id[-4:]} undergoing password change.")
+                    logger.debug(f"Secure Data: {secure_data.public_id[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE
 
                 if entry_name:
@@ -83,7 +83,7 @@ class DBUtilsData():
                 if entry_data:
                     secure_data.entry_data = entry_data
 
-                logger.info(f"Secure Data {public_id[-4:]} edited.")
+                logger.info(f"Secure Data: {public_id[-4:]} edited.")
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -104,18 +104,18 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if not secure_data:
-                    logger.debug(f"Secure Data {public_id[-4:]} not found.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.id != user_id:
-                    logger.debug(f"Secure Data {public_id[-4:]} does not belong to user.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
-                    logger.debug(f"Secure Data {secure_data.public_id[-4:]} undergoing password change.")
+                    logger.debug(f"Secure Data: {secure_data.public_id[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(secure_data)
 
-                logger.info(f"Secure Data {public_id[-4:]} deleted.")
+                logger.info(f"Secure Data: {public_id[-4:]} deleted.")
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -143,16 +143,16 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if not secure_data:
-                    logger.debug(f"Secure Data {public_id[-4:]} not found.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, "", ""
                 if secure_data.user.id != user_id:
-                    logger.debug(f"Secure Data {public_id[-4:]} does not belong to user.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND, "", ""
                 if secure_data.user.password_change and not password_change:
-                    logger.debug(f"Secure Data {secure_data.public_id[-4:]} undergoing password change.")
+                    logger.debug(f"Secure Data: {secure_data.public_id[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE, "", ""
 
-                logger.info(f"Secure Data {public_id[-4:]} requested.")
+                logger.info(f"Secure Data: {public_id[-4:]} requested.")
                 return True, None, secure_data.entry_name, secure_data.entry_data
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -179,10 +179,10 @@ class DBUtilsData():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug(f"User {user_id} not found.")
+                    logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, {}
                 if user.password_change:
-                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE, {}
 
                 all_entries = {data.public_id: data.entry_name for data in user.secure_data}
