@@ -10,16 +10,31 @@ jobs:
   discover-tests:
     runs-on: ubuntu-latest
     outputs:
-      test-files: ${{ steps.collect.outputs.tests }}
+      matrix: ${{ steps.collect.outputs.matrix }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - id: collect
       run: |
-        # Find all .py test files under tests/
-        files=$(find tests -maxdepth 1 -name "test_*.py" | jq -R -s -c 'split("\n")[:-1]')
-        echo "tests=$files" >> "$GITHUB_OUTPUT"
+        # Build a JSON array of objects: [{ "file": "...", "label": "..." }, ...]
+        echo "Collecting test files..."
+        matrix=$(printf '['
+        for f in tests/test_*.py; do
+            base=$(basename "$f")              # test_api_login.py
+            stem=${base%.py}                   # test_api_login
+            trimmed=${stem#test_}              # api_login
+
+            # Convert snake_case → Capitalized Words
+            label=$(echo "$trimmed" | sed -E 's/_/ /g' | sed -E 's/(^| )(.)/\1\u\2/g')
+
+            # Append JSON object
+            matrix="${matrix}{\"file\":\"$f\",\"label\":\"$label\"},"
+        done
+        # Trim trailing comma + close array
+        matrix="${matrix%,}]"
+        echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+        echo "Discovered matrix: $matrix"
 
   test:
     needs: discover-tests
@@ -28,9 +43,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        file: ${{ fromJson(needs.discover-tests.outputs.test-files) }}
+        include: ${{ fromJson(needs.discover-tests.outputs.matrix) }}
 
-    name: Test ${{ matrix.file }}
+    name: Test ${{ matrix.label }}
 
     steps:
     - name: Checkout code
