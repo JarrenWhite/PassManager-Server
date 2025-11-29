@@ -81,7 +81,7 @@ class DBUtilsPassword():
                 session.add(auth_ephemeral)
                 session.flush()
 
-                logger.info(f"Password Auth Ephemeral {auth_ephemeral.public_id[-4:]} created.")
+                logger.info(f"Password Auth Ephemeral: {auth_ephemeral.public_id[-4:]} created.")
                 return True, None, auth_ephemeral.public_id
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -109,20 +109,20 @@ class DBUtilsPassword():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    logger.debug(f"Auth Ephemeral {public_id[-4:]} not found.")
+                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if auth_ephemeral.expiry_time < datetime.now():
                     if auth_ephemeral.password_change:
                         DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
                     else:
                         session.delete(auth_ephemeral)
-                    logger.debug(f"Auth Ephemeral {public_id[-4:]} expired.")
+                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} expired.")
                     return False, FailureReason.NOT_FOUND, ""
                 if auth_ephemeral.user.id != user_id:
-                    logger.debug(f"Auth Ephemeral {public_id[-4:]} does not belong to user.")
+                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND, ""
                 if not auth_ephemeral.password_change:
-                    logger.debug(f"Auth Ephemeral {public_id[-4:]} not password change type.")
+                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} not password change type.")
                     return False, FailureReason.INCOMPLETE, ""
 
                 secure_data_count = len(auth_ephemeral.user.secure_data)
@@ -141,7 +141,7 @@ class DBUtilsPassword():
                 session.flush()
                 session.delete(auth_ephemeral)
 
-                logger.info(f"Password Login Session {login_session.public_id[-4:]} created.")
+                logger.info(f"Password Login Session: {login_session.public_id[-4:]} created.")
                 return True, None, login_session.public_id
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -246,20 +246,20 @@ class DBUtilsPassword():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if secure_data is None:
-                    logger.debug(f"Secure Data {public_id[-4:]} not found.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.id != user_id:
-                    logger.debug(f"Secure Data {public_id[-4:]} does not belong to user.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} does not belong to user.")
                     return False, FailureReason.NOT_FOUND
                 if secure_data.new_entry_name or secure_data.new_entry_data:
-                    logger.debug(f"Secure Data {public_id[-4:]} has already been updated.")
+                    logger.debug(f"Secure Data: {public_id[-4:]} has already been updated.")
                     DBUtilsPassword.clean_password_change(session, secure_data.user)
                     return False, FailureReason.DUPLICATE
 
                 secure_data.new_entry_name = entry_name
                 secure_data.new_entry_data = entry_data
 
-                logger.info(f"Secure Data {public_id[-4:]} updated for Password change.")
+                logger.info(f"Secure Data: {public_id[-4:]} updated for Password change.")
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
