@@ -66,7 +66,7 @@ class DBUtilsAuth():
                 user = session.query(User).filter(User.username_hash == username_hash).first()
 
                 if user is None:
-                    logger.debug(f"User {username_hash[-4:]} not found.")
+                    logger.debug(f"User: {username_hash[-4:]} not found.")
                     return False, FailureReason.NOT_FOUND, "", ""
 
                 auth_ephemeral = AuthEphemeral(

@@ -19,7 +19,7 @@ class DBUtilsPassword():
         user: User
     ):
         """Remove all partial password change entries, ephemerals and login sessions"""
-        logger.info(f"Cleaned password change for User {user.username_hash[-4:]}.")
+        logger.info(f"Cleaned password change for User: {user.username_hash[-4:]}.")
 
         user.password_change = False
         user.new_srp_salt = None
@@ -63,7 +63,7 @@ class DBUtilsPassword():
                     logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if user.password_change:
-                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 user.password_change = True
@@ -169,7 +169,7 @@ class DBUtilsPassword():
                     logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, []
                 if not user.new_srp_salt or not user.new_srp_verifier or not user.new_master_key_salt:
-                    logger.debug(f"User {user.username_hash} password change failed: Insufficient new srp details.")
+                    logger.debug(f"User: {user.username_hash} password change failed: Insufficient new srp details.")
                     DBUtilsPassword.clean_password_change(session, user)
                     return False, FailureReason.INCOMPLETE, []
 
@@ -188,7 +188,7 @@ class DBUtilsPassword():
 
                 for secure_data in user.secure_data:
                     if not secure_data.new_entry_name or not secure_data.new_entry_data:
-                        logger.debug(f"User {user.username_hash} password change failed: Secure Data not all updated.")
+                        logger.debug(f"User: {user.username_hash} password change failed: Secure Data not all updated.")
                         DBUtilsPassword.clean_password_change(session, user)
                         return False, FailureReason.INCOMPLETE, []
 
@@ -198,7 +198,7 @@ class DBUtilsPassword():
                     secure_data.new_entry_name = None
                     secure_data.new_entry_data = None
 
-                logger.info(f"Password change for User {user.username_hash[-4:]} completed.")
+                logger.info(f"Password change for User: {user.username_hash[-4:]} completed.")
                 return True, None, public_ids
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -223,7 +223,7 @@ class DBUtilsPassword():
 
                 DBUtilsPassword.clean_password_change(session, user)
 
-                logger.info(f"Password change for User {user.username_hash[-4:]} cancelled.")
+                logger.info(f"Password change for User: {user.username_hash[-4:]} cancelled.")
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")

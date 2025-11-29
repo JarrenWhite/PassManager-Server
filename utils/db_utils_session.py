@@ -188,7 +188,7 @@ class DBUtilsSession():
                     else:
                         session.delete(login_session)
 
-                logger.debug(f"Login Sessions cleaned for User {user.username_hash[-4:]}.")
+                logger.debug(f"Login Sessions cleaned for User: {user.username_hash[-4:]}.")
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")

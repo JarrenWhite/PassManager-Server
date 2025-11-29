@@ -30,7 +30,7 @@ class DBUtilsData():
                     logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, ""
                 if user.password_change:
-                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 secure_data = SecureData(
@@ -182,7 +182,7 @@ class DBUtilsData():
                     logger.debug(f"User id: {user_id} not found.")
                     return False, FailureReason.NOT_FOUND, {}
                 if user.password_change:
-                    logger.debug(f"User {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
                     return False, FailureReason.PASSWORD_CHANGE, {}
 
                 all_entries = {data.public_id: data.entry_name for data in user.secure_data}
