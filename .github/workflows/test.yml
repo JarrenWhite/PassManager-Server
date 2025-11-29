@@ -8,37 +8,38 @@ on:
 
 jobs:
   discover-tests:
-  runs-on: ubuntu-latest
-  outputs:
-    matrix: ${{ steps.collect.outputs.matrix }}
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v4
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.collect.outputs.matrix }}
 
-  - id: collect
-    run: |
-      echo "Collecting test files..."
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      arr="[]"
+      - id: collect
+        run: |
+          echo "Collecting test files..."
 
-      for f in tests/test_*.py; do
-          base=$(basename "$f")          # test_api_login.py
-          stem=${base%.py}               # test_api_login
-          trimmed=${stem#test_}          # api_login
+          arr="[]"
 
-          label=$(echo "$trimmed" \
-            | sed -E 's/_/ /g' \
-            | sed -E 's/(^| )(.)/\1\u\2/g')
+          for f in tests/test_*.py; do
+              base=$(basename "$f")
+              stem=${base%.py}
+              trimmed=${stem#test_}
 
-          arr=$(jq -c \
-            --arg file "$f" \
-            --arg label "$label" \
-            '. + [{"file": $file, "label": $label}]' \
-            <<< "$arr")
-      done
+              label=$(echo "$trimmed" \
+                | sed -E 's/_/ /g' \
+                | sed -E 's/(^| )(.)/\1\u\2/g')
 
-      echo "matrix=$arr" >> "$GITHUB_OUTPUT"
-      echo "Discovered matrix: $arr"
+              arr=$(jq -c \
+                --arg file "$f" \
+                --arg label "$label" \
+                '. + [{"file": $file, "label": $label}]' \
+                <<< "$arr")
+          done
+
+          echo "matrix=$arr" >> "$GITHUB_OUTPUT"
+          echo "Discovered matrix: $arr"
 
   test:
     needs: discover-tests
