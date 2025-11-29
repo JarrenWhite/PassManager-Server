@@ -7,8 +7,30 @@ on:
     branches: main
 
 jobs:
-  test:
+  discover-tests:
     runs-on: ubuntu-latest
+    outputs:
+      test-files: ${{ steps.collect.outputs.tests }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - id: collect
+      run: |
+        # Find all .py test files under tests/
+        files=$(find tests -maxdepth 1 -name "test_*.py" | jq -R -s -c 'split("\n")[:-1]')
+        echo "tests=$files" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: discover-tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        file: ${{ fromJson(needs.discover-tests.outputs.test-files) }}
+
+    name: Test ${{ matrix.file }}
 
     steps:
     - name: Checkout code
@@ -32,6 +54,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests
+    - name: Run tests for this file
       run: |
-        python -m pytest tests/ -v --tb=short
+        python -m pytest ${{ matrix.file }} -v --tb=short
