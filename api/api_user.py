@@ -10,7 +10,7 @@ user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
 
 @user_bp.route('/register', methods=['POST'])
-def user_register():
+def register():
     """Register a new user"""
 
     if request.is_json:
@@ -19,13 +19,13 @@ def user_register():
         data = dict(request.form) or {}
 
     logger.info("Register new user: Called")
-    result, status_code = ServiceUser.user_register(data)
+    result, status_code = ServiceUser.register(data)
     logger.info(f"Register new user: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 
 @user_bp.route('/username', methods=['POST'])
-def user_username():
+def username():
     """Change username"""
 
     if request.is_json:
@@ -34,13 +34,13 @@ def user_username():
         data = dict(request.form) or {}
 
     logger.info("Change username: Called")
-    result, status_code = ServiceUser.user_username(data)
+    result, status_code = ServiceUser.username(data)
     logger.info(f"Change username: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
 
 @user_bp.route('/delete', methods=['POST'])
-def user_delete():
+def delete():
     """Delete user"""
 
     if request.is_json:
@@ -49,7 +49,7 @@ def user_delete():
         data = dict(request.form) or {}
 
     logger.info("Delete user: Called")
-    result, status_code = ServiceUser.user_delete(data)
+    result, status_code = ServiceUser.delete(data)
     logger.info(f"Delete user: Complete with status code: {status_code}")
     return jsonify(result), status_code
 
