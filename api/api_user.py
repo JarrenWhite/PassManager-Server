@@ -20,7 +20,7 @@ def register():
 
     logger.debug("Register: Called")
     result, status_code = ServiceUser.register(data)
-    logger.info(f"Register complete with code: {status_code}")
+    logger.info(f"Register complete: {status_code}")
     return jsonify(result), status_code
 
 
@@ -35,7 +35,7 @@ def username():
 
     logger.debug("Username: Called")
     result, status_code = ServiceUser.username(data)
-    logger.info(f"Username complete with code: {status_code}")
+    logger.info(f"Username complete: {status_code}")
     return jsonify(result), status_code
 
 
@@ -50,7 +50,7 @@ def delete():
 
     logger.debug("Delete: Called")
     result, status_code = ServiceUser.delete(data)
-    logger.info(f"Delete complete with code: {status_code}")
+    logger.info(f"Delete complete: {status_code}")
     return jsonify(result), status_code
 
 
