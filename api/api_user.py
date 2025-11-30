@@ -18,9 +18,9 @@ def register():
     else:
         data = dict(request.form) or {}
 
-    logger.debug("Register new user: Called")
+    logger.debug("Register: Called")
     result, status_code = ServiceUser.register(data)
-    logger.info(f"Register new user: Complete with status code: {status_code}")
+    logger.info(f"Register complete with code: {status_code}")
     return jsonify(result), status_code
 
 
@@ -33,9 +33,9 @@ def username():
     else:
         data = dict(request.form) or {}
 
-    logger.debug("Change username: Called")
+    logger.debug("Username: Called")
     result, status_code = ServiceUser.username(data)
-    logger.info(f"Change username: Complete with status code: {status_code}")
+    logger.info(f"Username complete with code: {status_code}")
     return jsonify(result), status_code
 
 
@@ -48,9 +48,9 @@ def delete():
     else:
         data = dict(request.form) or {}
 
-    logger.debug("Delete user: Called")
+    logger.debug("Delete: Called")
     result, status_code = ServiceUser.delete(data)
-    logger.info(f"Delete user: Complete with status code: {status_code}")
+    logger.info(f"Delete complete with code: {status_code}")
     return jsonify(result), status_code
 
 
