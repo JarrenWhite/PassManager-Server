@@ -41,6 +41,27 @@ class TestRegister():
         assert called["count"] == 1
         assert called["data"] == {"false_json_key": "false_json_data"}
 
+    def test_get_request(self, monkeypatch):
+        """Should fail if GET request used"""
+
+        called = {"count": 0, "data": None}
+        def fake_service_handler(data: Dict[str, Any]):
+            called["count"] += 1
+            called["data"] = data
+            return {"false_key": "false_data"}, 546
+        monkeypatch.setattr(ServiceUser, "register", fake_service_handler)
+
+        response = self.client.get(
+            '/api/user/register',
+            json={"false_json_key": "false_json_data"}
+        )
+
+        assert response.status_code == 405
+        assert not response.is_json
+
+        assert called["count"] == 0
+        assert called["data"] == None
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
