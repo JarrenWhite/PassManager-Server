@@ -41,6 +41,29 @@ class TestRegister():
         assert called["count"] == 1
         assert called["data"] == {"false_json_key": "false_json_data"}
 
+    def test_no_json_content(self, monkeypatch):
+        """Should pass empty dict if no JSON or form data"""
+
+        called = {"count": 0, "data": None}
+
+        def fake_service_handler(data: Dict[str, Any]):
+            called["count"] += 1
+            called["data"] = data
+            return {"false_key": "false_data"}, 200
+
+        monkeypatch.setattr(ServiceUser, "register", fake_service_handler)
+
+        # No json= and no data=
+        response = self.client.post('/api/user/register')
+
+        assert response.status_code == 200
+        assert response.is_json
+        assert response.get_json() == {"false_key": "false_data"}
+
+        # Service should still be called once with empty dict
+        assert called["count"] == 1
+        assert called["data"] == {}
+
     def test_get_request(self, monkeypatch):
         """Should fail if GET request used"""
 
