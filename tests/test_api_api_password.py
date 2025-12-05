@@ -11,7 +11,7 @@ from services.service_password import ServicePassword
 
 
 class TestStart():
-    """Test cases for the User Start API endpoint"""
+    """Test cases for the Password Start API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
@@ -126,7 +126,7 @@ class TestStart():
 
 
 class TestAuth():
-    """Test cases for the User Auth API endpoint"""
+    """Test cases for the Password Auth API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
@@ -241,7 +241,7 @@ class TestAuth():
 
 
 class TestComplete():
-    """Test cases for the User Complete API endpoint"""
+    """Test cases for the Password Complete API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
@@ -356,7 +356,7 @@ class TestComplete():
 
 
 class TestAbort():
-    """Test cases for the User Abort API endpoint"""
+    """Test cases for the Password Abort API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
@@ -471,7 +471,7 @@ class TestAbort():
 
 
 class TestGet():
-    """Test cases for the User Get API endpoint"""
+    """Test cases for the Password Get API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
@@ -586,7 +586,7 @@ class TestGet():
 
 
 class TestUpdate():
-    """Test cases for the User Update API endpoint"""
+    """Test cases for the Password Update API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
