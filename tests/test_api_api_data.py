@@ -11,7 +11,7 @@ from services.service_data import ServiceData
 
 
 class TestCreate():
-    """Test cases for the Password Create API endpoint"""
+    """Test cases for the Data Create API endpoint"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self):
