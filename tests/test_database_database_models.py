@@ -1248,7 +1248,7 @@ class TestDatabaseRelationships():
         assert len(login_sessions) == 0
         secure_data = self.session.query(SecureData).all()
         assert len(secure_data) == 0
-    
+
     def test_auth_ephemeral_cascade_deletion(self):
         """Should delete AuthEphemeral from User when AuthEphemeral deleted"""
         user = User(
