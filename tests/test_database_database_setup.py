@@ -9,7 +9,7 @@ from pathlib import Path
 from sqlalchemy.orm import declarative_base, Session, Mapped, mapped_column
 from sqlalchemy import Integer, inspect
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from database.database_setup import DatabaseSetup
 
