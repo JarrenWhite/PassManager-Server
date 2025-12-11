@@ -7,13 +7,16 @@ class DatabaseConfig:
     _config = None
 
 
+    PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
     @classmethod
     def load(cls, file_path: Optional[Path] = None):
         if cls._config is not None:
             return
 
         if not file_path:
-            file_path = Path(__file__).parent.parent / "config" / "db_config.ini"
+            file_path = Path(__file__).resolve().parents[2] / "config" / "db_config.ini"
 
         parser = ConfigParser()
         read_files = parser.read(file_path)
@@ -38,6 +41,6 @@ class DatabaseConfig:
             return None
 
         try:
-            return Path(value)
+            return cls.PROJECT_ROOT / Path(value)
         except Exception:
             return None
