@@ -16,7 +16,7 @@ class DatabaseConfig:
             return
 
         if not file_path:
-            file_path = Path(__file__).resolve().parents[2] / "config" / "db_config.ini"
+            file_path = Path(__file__).resolve().parents[2] / "config" / "config.ini"
 
         parser = ConfigParser()
         read_files = parser.read(file_path)
@@ -32,11 +32,10 @@ class DatabaseConfig:
         if cls._config is None:
             cls.load()
 
-        section = cls._config.get("paths") # type: ignore
-
-        if section is None:
+        if not cls._config.has_section("paths"): # type: ignore
             return None
-        value = section.get(key).strip()
+
+        value = cls._config.get("paths", key, fallback=None)  # type: ignore
         if not value:
             return None
 
