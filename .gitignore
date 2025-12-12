@@ -3,8 +3,7 @@ venv/
 .venv/
 
 # Output files
-data/
-logs/
+build/
 
 # Python cache files
 __pycache__/

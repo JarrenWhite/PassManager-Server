@@ -4,7 +4,7 @@ import pytest
 from flask import Flask
 from typing import Dict, Any
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from api.api_session import session_bp
 from services.service_session import ServiceSession

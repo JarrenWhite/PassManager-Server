@@ -6,9 +6,9 @@ from contextlib import contextmanager
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.elements import BinaryExpression
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from tests.mock_classes import _MockSession, _MockQuery
+from mock_classes import _MockSession, _MockQuery
 from utils.utils_enums import FailureReason
 from utils.db_utils_user import DBUtilsUser
 from database.database_setup import DatabaseSetup

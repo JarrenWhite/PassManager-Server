@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from database.database_models import Base, User, AuthEphemeral, LoginSession, SecureData
 
@@ -1248,7 +1248,7 @@ class TestDatabaseRelationships():
         assert len(login_sessions) == 0
         secure_data = self.session.query(SecureData).all()
         assert len(secure_data) == 0
-    
+
     def test_auth_ephemeral_cascade_deletion(self):
         """Should delete AuthEphemeral from User when AuthEphemeral deleted"""
         user = User(
