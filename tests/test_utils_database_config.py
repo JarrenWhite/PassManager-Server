@@ -104,6 +104,16 @@ class TestLoad():
         assert called["filepath"].resolve() == Path("test/file/path/config.ini").resolve()
         assert DatabaseConfig._config is parser
 
+    def test_config_ini_missing(self, monkeypatch):
+        """Should raise exception if config file is missing"""
+        def fake_read(filenames, encoding=None):
+            return []
+
+        monkeypatch.setattr(ConfigParser, "read", fake_read)
+
+        with pytest.raises(FileNotFoundError):
+            DatabaseConfig.load(Path("missing.ini"))
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
