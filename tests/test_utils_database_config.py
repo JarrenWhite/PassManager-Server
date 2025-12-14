@@ -33,8 +33,24 @@ class TestLoad():
         config_path = (Path(__file__).resolve().parent / ".." / "config" / "config.ini").resolve()
 
         assert called["count"] == 1
-        assert called["filepath"].resolve() == config_path
+        assert Path(called["filepath"]).resolve() == config_path
 
+    def test_load_given_file(self, monkeypatch):
+        """Should load the given config file if one given"""
+
+        called = {"count": 0, "filepath": None}
+        def fake_read(self, filepath):
+            called["count"] += 1
+            called["filepath"] = filepath
+            return [str(filepath)]
+        monkeypatch.setattr(ConfigParser, "read", fake_read)
+
+        config_path = Path("test/file/path/config.ini")
+
+        DatabaseConfig.load(config_path)
+
+        assert called["count"] == 1
+        assert Path(called["filepath"]).resolve() == config_path.resolve()
 
 
 if __name__ == '__main__':
