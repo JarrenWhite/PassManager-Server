@@ -80,6 +80,30 @@ class TestLoad():
         assert isinstance(DatabaseConfig._config, ConfigParser)
         assert DatabaseConfig._config is created_parsers[0]
 
+    def test_load_called_again(self, monkeypatch):
+        """Should not read the file again on repeated load calls"""
+
+        parser = ConfigParser()
+
+        def fake_config_parser():
+            return parser
+
+        called = {"count": 0, "filepath": None}
+        def fake_read(filepath, encoding=None):
+            called["count"] += 1
+            called["filepath"] = filepath
+            return [str(filepath)]
+
+        monkeypatch.setattr("utils.database_config.ConfigParser", fake_config_parser)
+        monkeypatch.setattr(parser, "read", fake_read)
+
+        DatabaseConfig.load(Path("test/file/path/config.ini"))
+        DatabaseConfig.load(Path("other.ini"))
+
+        assert called["count"] == 1
+        assert called["filepath"].resolve() == Path("test/file/path/config.ini").resolve()
+        assert DatabaseConfig._config is parser
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
