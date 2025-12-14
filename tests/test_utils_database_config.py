@@ -52,6 +52,34 @@ class TestLoad():
         assert called["count"] == 1
         assert Path(called["filepath"]).resolve() == config_path.resolve()
 
+    def test_load_sets_parser_instance(self, monkeypatch):
+        """Should set _config to parser instance"""
+
+        created_parsers = []
+
+        class FakeConfigParser(ConfigParser):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                created_parsers.append(self)
+
+            def read(
+                    self,
+                    filenames,
+                    encoding=None,
+                ):
+                    return [str(filenames)]
+
+        monkeypatch.setattr(
+            "utils.database_config.ConfigParser",
+            FakeConfigParser
+        )
+
+        DatabaseConfig.load(Path("test/file/path/config.ini"))
+
+        assert DatabaseConfig._config is not None
+        assert isinstance(DatabaseConfig._config, ConfigParser)
+        assert DatabaseConfig._config is created_parsers[0]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
