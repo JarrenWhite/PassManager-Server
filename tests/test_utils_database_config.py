@@ -115,5 +115,25 @@ class TestLoad():
             DatabaseConfig.load(Path("missing.ini"))
 
 
+class TestGetPath():
+    """Test the get_path function"""
+
+    def test_returns_correct_path(self, monkeypatch):
+        """Should return the correct path"""
+
+        parser = ConfigParser()
+        parser.add_section("paths")
+        parser.set("paths", "data_dir", "data/files")
+
+        monkeypatch.setattr(DatabaseConfig, "_config", parser)
+
+        result = DatabaseConfig.get_path("data_dir")
+
+        expected = DatabaseConfig.PROJECT_ROOT / Path("data/files")
+
+        assert result == expected
+        assert isinstance(result, Path)
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
