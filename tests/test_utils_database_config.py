@@ -134,6 +134,19 @@ class TestGetPath():
         assert result == expected
         assert isinstance(result, Path)
 
+    def test_no_paths(self, monkeypatch):
+        """Should return none if no 'path' section in config"""
+
+        parser = ConfigParser()
+        parser.add_section("other")
+        parser.set("other", "data_dir", "data/files")
+
+        monkeypatch.setattr(DatabaseConfig, "_config", parser)
+
+        result = DatabaseConfig.get_path("data_dir")
+
+        assert result == None
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
