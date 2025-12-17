@@ -147,6 +147,19 @@ class TestGetPath():
 
         assert result == None
 
+    def test_value_not_found(self, monkeypatch):
+        """Should return none if value not in section"""
+
+        parser = ConfigParser()
+        parser.add_section("paths")
+        parser.set("paths", "other", "data/files")
+
+        monkeypatch.setattr(DatabaseConfig, "_config", parser)
+
+        result = DatabaseConfig.get_path("data_dir")
+
+        assert result == None
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
