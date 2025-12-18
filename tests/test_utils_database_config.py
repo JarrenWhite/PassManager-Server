@@ -180,6 +180,18 @@ class TestGetPath():
         assert called["count"] == 1
         assert result == DatabaseConfig.PROJECT_ROOT / Path("data")
 
+    def test_get_path_empty_value(self, monkeypatch):
+        """Should return none if value is not declared"""
+
+        parser = ConfigParser()
+        parser.add_section("paths")
+        parser.set("paths", "data_dir", "")
+
+        monkeypatch.setattr(DatabaseConfig, "_config", parser)
+
+        result = DatabaseConfig.get_path("data_dir")
+        assert result == None
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
