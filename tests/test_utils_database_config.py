@@ -160,6 +160,26 @@ class TestGetPath():
 
         assert result == None
 
+    def test_get_path_without_config(self, monkeypatch):
+        """Should call 'load' if config is None"""
+
+        called = {"count": 0}
+
+        def fake_load():
+            called["count"] += 1
+            parser = ConfigParser()
+            parser.add_section("paths")
+            parser.set("paths", "data_dir", "data")
+            DatabaseConfig._config = parser
+
+        monkeypatch.setattr(DatabaseConfig, "_config", None)
+        monkeypatch.setattr(DatabaseConfig, "load", fake_load)
+
+        result = DatabaseConfig.get_path("data_dir")
+
+        assert called["count"] == 1
+        assert result == DatabaseConfig.PROJECT_ROOT / Path("data")
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
