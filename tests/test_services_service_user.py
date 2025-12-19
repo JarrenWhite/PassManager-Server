@@ -102,10 +102,9 @@ class TestRegister():
         assert code == 400
 
         assert "success" in response
-        assert "username_hash" in response
+        assert "username_hash" not in response
         assert "errors" in response
         assert response["success"] is False
-        assert response["username_hash"] == "fake_hash"
         assert response["errors"] == [error]
 
     def test_duplicate_username(self, monkeypatch):
@@ -138,10 +137,9 @@ class TestRegister():
         assert code == 409
 
         assert "success" in response
-        assert "username_hash" in response
+        assert "username_hash" not in response
         assert "errors" in response
         assert response["success"] is False
-        assert response["username_hash"] == "fake_hash"
         assert response["errors"] == errors
 
 
