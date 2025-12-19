@@ -5,8 +5,8 @@ logger = getLogger("database")
 
 from sqlalchemy.exc import IntegrityError
 
+from enums import FailureReason
 from database import DatabaseSetup, User
-from .utils_enums import FailureReason
 
 
 class DBUtilsUser():

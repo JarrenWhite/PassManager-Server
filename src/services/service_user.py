@@ -1,6 +1,7 @@
 from typing import Tuple, Dict, Any
 
-from utils import DBUtilsUser, ServiceUtils, FailureReason
+from enums import FailureReason
+from utils import DBUtilsUser, ServiceUtils
 
 
 class ServiceUser():

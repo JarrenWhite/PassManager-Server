@@ -9,7 +9,7 @@ from sqlalchemy.sql.elements import BinaryExpression
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from mock_classes import _MockSession, _MockQuery
-from utils.utils_enums import FailureReason
+from enums.failure_reason import FailureReason
 from utils.db_utils_session import DBUtilsSession
 from utils.db_utils_password import DBUtilsPassword
 from database.database_setup import DatabaseSetup

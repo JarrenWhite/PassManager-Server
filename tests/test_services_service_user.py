@@ -5,8 +5,8 @@ import pytest
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from services.service_user import ServiceUser
+from enums.failure_reason import FailureReason
 from utils.db_utils_user import DBUtilsUser
-from utils.utils_enums import FailureReason
 from utils.service_utils import ServiceUtils
 
 

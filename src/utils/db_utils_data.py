@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 from logging import getLogger
 logger = getLogger("database")
 
-from .utils_enums import FailureReason
+from enums import FailureReason
 from database import DatabaseSetup, SecureData, User
 
 
