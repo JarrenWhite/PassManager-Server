@@ -142,6 +142,41 @@ class TestRegister():
         assert response["success"] is False
         assert response["errors"] == errors
 
+    def test_database_uninitialised(self, monkeypatch):
+        """Should fail with error if database uninitialised"""
+
+        fake_create_calls = []
+        def fake_create(
+            username_hash: str,
+            srp_salt: str,
+            srp_verifier: str,
+            master_key_salt: str
+        ):
+            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            return False, FailureReason.DATABASE_UNINITIALISED
+        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+
+        data = {
+            "username_hash": "fake_hash",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_salt"
+        }
+        response, code = ServiceUser.register(data)
+
+        errors = [{"field": "server", "error_code": "svr00", "error": "Unknown server error"}]
+
+        assert len(fake_create_calls) == 1
+        assert fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")
+
+        assert code == 500
+
+        assert "success" in response
+        assert "username_hash" not in response
+        assert "errors" in response
+        assert response["success"] is False
+        assert response["errors"] == errors
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
