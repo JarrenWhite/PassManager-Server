@@ -589,8 +589,10 @@ These errors can be returned to any possible request.
 These can be returned in response to multiple possible fields.
 
 | Error Code | HTTP Code | Error message     |
-| gnr00      | 400       | {Field} invalid   |
-| gnr01      | 404       | {Field} not found |
+|------------|-----------|-------------------|
+| gnr00      | 400       | <Field> invalid   |
+| gnr01      | 404       | <Field> not found |
+| gnr02      | 409       | <Field> duplicate |
 
 
 ### Limited API Errors
@@ -616,7 +618,7 @@ A HTTP response code is issued with every response. Where multiple possible resp
 | UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | FORBIDDEN           | 403         | User is undergoing a password change.                          |
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
-| USER_EXISTS         | 409         | Username hash already exists in the system.                    |
+| USER_EXISTS         | 409         | Username hash already exists.                                  |
 | PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
 | RATE_LIMIT_EXCEEDED | 429         | Too many requests.                                             |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
