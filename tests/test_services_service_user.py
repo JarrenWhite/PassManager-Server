@@ -40,7 +40,7 @@ class TestRegister():
         assert len(fake_create_calls) == 1
         assert fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")
 
-    def test_generates_correct_response(self, monkeypatch):
+    def test_success_response(self, monkeypatch):
         """Should return correct response and http code"""
 
         fake_create_calls = []
