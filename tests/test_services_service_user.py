@@ -7,6 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 from services.service_user import ServiceUser
 from utils.db_utils_user import DBUtilsUser
 from utils.utils_enums import FailureReason
+from utils.service_utils import ServiceUtils
 
 
 class TestRegister():
@@ -72,6 +73,41 @@ class TestRegister():
         assert response["username_hash"] == "fake_hash"
         assert response["errors"] == []
 
+    def test_sanitise_inputs_fails(self, monkeypatch):
+        """Should fail with error if sanitise input fails"""
+
+        fake_create_calls = []
+        def fake_create(
+            username_hash: str,
+            srp_salt: str,
+            srp_verifier: str,
+            master_key_salt: str
+        ):
+            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            return False, FailureReason.DUPLICATE
+        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+
+        error = {"Sanitising Error", "Sanitising Error Message"}
+        def fake_sanitise_inputs(data, required_keys):
+            return False, error
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
+        data = {
+            "username_hash": "fake_hash"
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(fake_create_calls) == 0
+
+        assert code == 400
+
+        assert "success" in response
+        assert "username_hash" in response
+        assert "errors" in response
+        assert response["success"] is False
+        assert response["username_hash"] == "fake_hash"
+        assert response["errors"] == [error]
+
     def test_duplicate_username(self, monkeypatch):
         """Should fail with error if duplicate username"""
 
@@ -94,7 +130,7 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        errors = [{"field": "username_hash", "error_code": "gnr02", "error": "Username hash already exists"}]
+        errors = [{"field": "username_hash", "error_code": "ltd00", "error": "Username hash already exists"}]
 
         assert len(fake_create_calls) == 1
         assert fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")

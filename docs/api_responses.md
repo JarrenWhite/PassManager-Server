@@ -592,7 +592,6 @@ These can be returned in response to multiple possible fields.
 |------------|-----------|-------------------|
 | gnr00      | 400       | <Field> invalid   |
 | gnr01      | 404       | <Field> not found |
-| gnr02      | 409       | <Field> duplicate |
 
 
 ### Limited API Errors
