@@ -6,6 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 
 from services.service_user import ServiceUser
 from utils.db_utils_user import DBUtilsUser
+from utils.utils_enums import FailureReason
 
 
 class TestRegister():
@@ -62,8 +63,14 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        assert response == {"success": True, "username_hash": "fake_hash", "errors": []}
         assert code == 201
+
+        assert "success" in response
+        assert "username_hash" in response
+        assert "errors" in response
+        assert response["success"] is True
+        assert response["username_hash"] == "fake_hash"
+        assert response["errors"] == []
 
 
 if __name__ == '__main__':
