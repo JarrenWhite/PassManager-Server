@@ -32,6 +32,9 @@ class ServiceUser():
     def username(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
         sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
+        if not sanitised and http_code:
+            return {"success": False, "errors": [error]}, http_code
+
         return {}, 200
 
 
