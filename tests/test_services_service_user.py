@@ -77,6 +77,7 @@ class TestRegister():
 
         assert code == 201
 
+        assert len(response) == 3
         assert "success" in response
         assert "username_hash" in response
         assert "errors" in response
@@ -120,6 +121,7 @@ class TestRegister():
 
         assert code == 400
 
+        assert len(response) == 2
         assert "success" in response
         assert "username_hash" not in response
         assert "errors" in response
@@ -164,6 +166,7 @@ class TestRegister():
 
         assert code == 409
 
+        assert len(response) == 2
         assert "success" in response
         assert "username_hash" not in response
         assert "errors" in response
@@ -219,7 +222,7 @@ class TestUsername():
         self.fake_sanitise_inputs_return = True, {}, 0
 
         data = {
-            "session_id": "abcdef",
+            "session_id": "fake_session_id",
             "request_number": 123456,
             "encrypted_data": "fake_srp_verifier"
         }
@@ -229,6 +232,29 @@ class TestUsername():
         assert "session_id" in self.fake_sanitise_inputs_called
         assert "request_number" in self.fake_sanitise_inputs_called
         assert "encrypted_data" in self.fake_sanitise_inputs_called
+
+    def test_initial_sanitise_inputs_fails(self):
+        """Should return error message if initial sanitise input fails"""
+
+        error = {"Error Key": "Error Message"}
+        self.fake_sanitise_inputs_return = False, error, 456
+
+        data = {
+            "session_id": "fake_session_id",
+            "encrypted_data": "fake_srp_verifier"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert code == 456
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert response["success"] is False
+        assert response["errors"] == [error]
+        assert response == {"success": False, "errors": [error]}
 
 
 if __name__ == '__main__':
