@@ -566,6 +566,7 @@ Notes:
 - Multiple errors may be returned in a single response. Clients should iterate the `errors` array.
 - Error code naming scheme:
   - `rqsXX`: request-level errors that apply to the entire request.
+  - `svrXX`: server-level errors that apply to the application.
   - `gnrXX`: general field errors that can apply to multiple APIs/fields.
   - `ltdXX`: limited API errors that apply to specific endpoints only.
 
@@ -576,7 +577,7 @@ These errors can be returned to any possible request.
 
 | Error Code | Field           | HTTP Code | Error Message                                                |
 |------------|-----------------|-----------|--------------------------------------------------------------|
-| rqs00      | request         | 400       | Incorrect parameters. Required: [<fields>]                   |
+| rqs00      | request         | 400       | Incorrect parameters. Required: [\<fields\>]                 |
 | rqs01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
 | rqs02      | request         | 403       | Password change in progress                                  |
 | rqs03      | request         | 429       | Too many requests                                            |
@@ -588,10 +589,10 @@ These errors can be returned to any possible request.
 
 These can be returned in response to multiple possible fields.
 
-| Error Code | HTTP Code | Error message     |
-|------------|-----------|-------------------|
-| gnr00      | 400       | <Field> invalid   |
-| gnr01      | 404       | <Field> not found |
+| Error Code | HTTP Code | Error message       |
+|------------|-----------|---------------------|
+| gnr00      | 400       | \<Field\> invalid   |
+| gnr01      | 404       | \<Field\> not found |
 
 
 ### Limited API Errors
