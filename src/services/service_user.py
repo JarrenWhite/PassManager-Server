@@ -1,6 +1,6 @@
 from typing import Tuple, Dict, Any
 
-from utils import DBUtilsUser, ServiceUtils
+from utils import DBUtilsUser, ServiceUtils, SessionManager
 from .session_keys import SESSION_KEYS
 
 
@@ -34,6 +34,12 @@ class ServiceUser():
         sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
         if not sanitised and http_code:
             return {"success": False, "errors": [error]}, http_code
+
+        decrypted, values, user_id, http_code = SessionManager.open_session(
+            data["session_id"],
+            data["request_number"],
+            data["encrypted_data"]
+        )
 
         return {}, 200
 
