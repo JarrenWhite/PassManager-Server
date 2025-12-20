@@ -8,11 +8,11 @@ class ServiceUser():
 
     @staticmethod
     def register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
-        keys = {"username_hash", "srp_salt", "srp_verifier", "master_key_salt"}
-        status, error = ServiceUtils.sanitise_inputs(data, keys)
 
-        if not status:
-            return {"success": False, "errors": [error]}, 400
+        keys = {"username_hash", "srp_salt", "srp_verifier", "master_key_salt"}
+        sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, keys)
+        if not sanitised and http_code:
+            return {"success": False, "errors": [error]}, http_code
 
         status, failure_reason = DBUtilsUser.create(
             data["username_hash"],
@@ -21,12 +21,10 @@ class ServiceUser():
             data["master_key_salt"]
         )
 
-        if not status and failure_reason == FailureReason.DUPLICATE:
-            errors = [{"field": "username_hash", "error_code": "ltd00", "error": "Username hash already exists"}]
-            return {"success": False, "errors": errors}, 409
-        elif not status:
-            errors = [{"field": "server", "error_code": "svr00", "error": "Unknown server error"}]
-            return {"success": False, "errors": errors}, 500
+        if not status and failure_reason:
+            error, http_code = ServiceUtils.handle_failure_reason(failure_reason)
+            return {"success": False, "errors": [error]}, http_code
+
         return {"success": True, "username_hash": data["username_hash"], "errors": []}, 201
 
 
