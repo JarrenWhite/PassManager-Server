@@ -260,14 +260,13 @@ class TestUsername():
         assert "errors" in response
         assert response["success"] is False
         assert response["errors"] == [error]
-        assert response == {"success": False, "errors": [error]}
 
     def test_calls_open_session(self):
         """Should call open_session if initial sanitise is successful"""
 
         self.fake_sanitise_inputs_return = True, {}, 0
 
-        self.fake_open_session_return = True, {}, None, None
+        self.fake_open_session_return = True, {}, 123456, None
 
         data = {
             "session_id": "fake_session_id",
@@ -278,6 +277,32 @@ class TestUsername():
 
         assert len(self.fake_open_session_called) == 1
         assert self.fake_open_session_called[0] == ("fake_session_id", 123456, "fake_encrypted_data")
+
+    def test_open_session_fails(self):
+        """Should return errors if open_session fails"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+
+        error = {"Error key": "Error message"}
+        self.fake_open_session_return = False, error, None, 925
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert code == 925
+
+        assert len(response) == 3
+        assert "success" in response
+        assert "session_id" in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert response["success"] is False
+        assert response["session_id"] == "fake_session_id"
+        assert response["errors"] == [error]
 
 
 if __name__ == '__main__':
