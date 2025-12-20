@@ -22,7 +22,7 @@ class ServiceUser():
         )
 
         if not status and failure_reason:
-            error, http_code = ServiceUtils.handle_failure_reason(failure_reason)
+            error, http_code = ServiceUtils.handle_failure(failure_reason)
             return {"success": False, "errors": [error]}, http_code
 
         return {"success": True, "username_hash": data["username_hash"], "errors": []}, 201

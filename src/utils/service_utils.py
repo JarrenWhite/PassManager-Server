@@ -22,7 +22,7 @@ class ServiceUtils():
 
 
     @staticmethod
-    def handle_failure_reason(failure_reason: FailureReason) -> Tuple[Dict[str, Any], int]:
+    def handle_failure(failure_reason: FailureReason) -> Tuple[Dict[str, Any], int]:
         """
         Verify that the
 
