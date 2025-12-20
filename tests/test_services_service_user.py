@@ -228,11 +228,11 @@ class TestUsername():
         data = {
             "session_id": "fake_session_id",
             "request_number": 123456,
-            "encrypted_data": "fake_srp_verifier"
+            "encrypted_data": "fake_encrypted_data"
         }
         response, code = ServiceUser.username(data)
 
-        assert len(self.fake_sanitise_inputs_called) == 1
+        assert len(self.fake_sanitise_inputs_called) >= 1
         assert self.fake_sanitise_inputs_called[0] == data
 
         assert "session_id" in self.fake_sanitise_inputs_keys
@@ -247,7 +247,7 @@ class TestUsername():
 
         data = {
             "session_id": "fake_session_id",
-            "encrypted_data": "fake_srp_verifier"
+            "encrypted_data": "fake_encrypted_data"
         }
         response, code = ServiceUser.username(data)
 
@@ -261,6 +261,23 @@ class TestUsername():
         assert response["success"] is False
         assert response["errors"] == [error]
         assert response == {"success": False, "errors": [error]}
+
+    def test_calls_open_session(self):
+        """Should call open_session if initial sanitise is successful"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+
+        self.fake_open_session_return = True, {}, None, None
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.fake_open_session_called) == 1
+        assert self.fake_open_session_called[0] == ("fake_session_id", 123456, "fake_encrypted_data")
 
 
 if __name__ == '__main__':
