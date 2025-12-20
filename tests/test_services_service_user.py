@@ -73,6 +73,42 @@ class TestRegister():
         assert response["username_hash"] == "fake_hash"
         assert response["errors"] == []
 
+    def test_calls_sanitise_inputs(self, monkeypatch):
+        """Should call sanitise inputs with correct keys"""
+
+        fake_create_calls = []
+        def fake_create(
+            username_hash,
+            srp_salt,
+            srp_verifier,
+            master_key_salt
+        ):
+            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            return True, None
+        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+
+        fake_sanitise_inputs_called = []
+        error = {"Sanitising Error": "Sanitising Error Message"}
+        def fake_sanitise_inputs(data, required_keys):
+            for key in required_keys:
+                fake_sanitise_inputs_called.append(key)
+            return False, error, 400
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
+        data = {
+            "username_hash": "fake_hash",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_salt"
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(fake_sanitise_inputs_called) == 4
+        assert "username_hash" in fake_sanitise_inputs_called
+        assert "srp_salt" in fake_sanitise_inputs_called
+        assert "srp_verifier" in fake_sanitise_inputs_called
+        assert "master_key_salt" in fake_sanitise_inputs_called
+
     def test_sanitise_inputs_fails(self, monkeypatch):
         """Should fail with error if sanitise input fails"""
 
