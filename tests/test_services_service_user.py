@@ -14,22 +14,41 @@ class TestRegister():
     """Test cases for register user"""
 
     @pytest.fixture(autouse=True)
-    def setup_teardown(self):
-        yield
+    def setup_teardown(self, monkeypatch):
 
-    def test_creates_user(self, monkeypatch):
-        """Should call DBUtilsUser to create a user"""
-
-        fake_create_calls = []
+        self.fake_create_calls = []
+        self.fake_create_return = True, None
         def fake_create(
             username_hash,
             srp_salt,
             srp_verifier,
             master_key_salt
         ):
-            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
-            return True, None
+            self.fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            return self.fake_create_return
         monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+
+        self.fake_sanitise_inputs_called = []
+        self.fake_sanitise_inputs_return = False, {}, 0
+        def fake_sanitise_inputs(data, required_keys):
+            for key in required_keys:
+                self.fake_sanitise_inputs_called.append(key)
+            return self.fake_sanitise_inputs_return
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
+        self.fake_handle_failure_calls = []
+        self.fake_handle_failure_return = {}, 0
+        def fake_handle_failure(failure_reason):
+            self.fake_handle_failure_calls.append(failure_reason)
+            return self.fake_handle_failure_return
+        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
+
+        yield
+
+    def test_creates_user(self):
+        """Should call DBUtilsUser to create a user"""
+
+        self.fake_create_return = True, None
 
         data = {
             "username_hash": "fake_hash",
@@ -39,22 +58,13 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        assert len(fake_create_calls) == 1
-        assert fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")
+        assert len(self.fake_create_calls) == 1
+        assert self.fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")
 
-    def test_success_response(self, monkeypatch):
+    def test_success_response(self):
         """Should return correct response and http code"""
 
-        fake_create_calls = []
-        def fake_create(
-            username_hash,
-            srp_salt,
-            srp_verifier,
-            master_key_salt
-        ):
-            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
-            return True, None
-        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+        self.fake_create_return = True, None
 
         data = {
             "username_hash": "fake_hash",
@@ -73,27 +83,10 @@ class TestRegister():
         assert response["username_hash"] == "fake_hash"
         assert response["errors"] == []
 
-    def test_calls_sanitise_inputs(self, monkeypatch):
+    def test_calls_sanitise_inputs(self):
         """Should call sanitise inputs with correct keys"""
 
-        fake_create_calls = []
-        def fake_create(
-            username_hash,
-            srp_salt,
-            srp_verifier,
-            master_key_salt
-        ):
-            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
-            return True, None
-        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
-
-        fake_sanitise_inputs_called = []
-        error = {"Sanitising Error": "Sanitising Error Message"}
-        def fake_sanitise_inputs(data, required_keys):
-            for key in required_keys:
-                fake_sanitise_inputs_called.append(key)
-            return False, error, 400
-        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+        self.fake_create_return = True, None
 
         data = {
             "username_hash": "fake_hash",
@@ -103,37 +96,26 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        assert len(fake_sanitise_inputs_called) == 4
-        assert "username_hash" in fake_sanitise_inputs_called
-        assert "srp_salt" in fake_sanitise_inputs_called
-        assert "srp_verifier" in fake_sanitise_inputs_called
-        assert "master_key_salt" in fake_sanitise_inputs_called
+        assert len(self.fake_sanitise_inputs_called) == 4
+        assert "username_hash" in self.fake_sanitise_inputs_called
+        assert "srp_salt" in self.fake_sanitise_inputs_called
+        assert "srp_verifier" in self.fake_sanitise_inputs_called
+        assert "master_key_salt" in self.fake_sanitise_inputs_called
 
-    def test_sanitise_inputs_fails(self, monkeypatch):
+    def test_sanitise_inputs_fails(self):
         """Should fail with error if sanitise input fails"""
 
-        fake_create_calls = []
-        def fake_create(
-            username_hash,
-            srp_salt,
-            srp_verifier,
-            master_key_salt
-        ):
-            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
-            return False, FailureReason.DUPLICATE
-        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+        self.fake_create_return = False, FailureReason.DUPLICATE
 
         error = {"Sanitising Error": "Sanitising Error Message"}
-        def fake_sanitise_inputs(data, required_keys):
-            return False, error, 400
-        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+        self.fake_sanitise_inputs_return = False, error, 400
 
         data = {
             "username_hash": "fake_hash"
         }
         response, code = ServiceUser.register(data)
 
-        assert len(fake_create_calls) == 0
+        assert len(self.fake_create_calls) == 0
 
         assert code == 400
 
@@ -143,25 +125,12 @@ class TestRegister():
         assert response["success"] is False
         assert response["errors"] == [error]
 
-    def test_handle_failure_not_called(self, monkeypatch):
+    def test_handle_failure_not_called(self):
         """Should not call handle_failure if call is a success"""
 
-        fake_create_calls = []
-        def fake_create(
-            username_hash,
-            srp_salt,
-            srp_verifier,
-            master_key_salt
-        ):
-            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
-            return True, None
-        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+        self.fake_create_return = True, None
 
-        fake_handle_failure_calls = []
-        def fake_handle_failure(failure_reason):
-            fake_handle_failure_calls.append(failure_reason)
-            return {}, 200
-        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
+        self.fake_handle_failure_return = {}, 200
 
         data = {
             "username_hash": "fake_hash",
@@ -171,28 +140,15 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        assert len(fake_handle_failure_calls) == 0
+        assert len(self.fake_handle_failure_calls) == 0
 
-    def test_failure_reason_handled(self, monkeypatch):
+    def test_failure_reason_handled(self):
         """Should call handle_failure and return its response as an error"""
 
-        fake_create_calls = []
-        def fake_create(
-            username_hash,
-            srp_salt,
-            srp_verifier,
-            master_key_salt
-        ):
-            fake_create_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
-            return False, FailureReason.DUPLICATE
-        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+        self.fake_create_return = False, FailureReason.DUPLICATE
 
-        fake_handle_failure_calls = []
         error = {"Failure handle": "Failure handle message"}
-        def fake_handle_failure(failure_reason):
-            fake_handle_failure_calls.append(failure_reason)
-            return error, 409
-        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
+        self.fake_handle_failure_return = error, 409
 
         data = {
             "username_hash": "fake_hash",
@@ -202,8 +158,8 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        assert len(fake_create_calls) == 1
-        assert fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")
+        assert len(self.fake_create_calls) == 1
+        assert self.fake_create_calls[0] == ("fake_hash", "fake_srp_salt", "fake_srp_verifier", "fake_master_salt")
 
         assert code == 409
 
