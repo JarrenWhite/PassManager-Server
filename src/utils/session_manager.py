@@ -11,13 +11,14 @@ class SessionManager():
         session_id: str,
         request_number: int,
         encrypted_data: str
-    ) -> Tuple[bool, Dict[str, Any], Optional[int]]:
+    ) -> Tuple[bool, Dict[str, Any], Optional[int], Optional[int]]:
         """
         Verify that the received keys are correct
 
         Returns:
             (bool)  Returns true if decrypted, false otherwise
             (Dict)  Decrypted values if successful, error message if failed
-            (int)   HTTP status code if sanitisation fails
+            (int)   Internal User ID if successful
+            (int)   HTTP status code if session decoding fails
         """
-        return True, {}, None
+        return True, {}, None, None
