@@ -1,7 +1,7 @@
 from typing import Tuple, Dict, Any
 
-from enums import FailureReason
 from utils import DBUtilsUser, ServiceUtils
+from .session_keys import SESSION_KEYS
 
 
 class ServiceUser():
@@ -30,6 +30,8 @@ class ServiceUser():
 
     @staticmethod
     def username(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
+
+        sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
         return {}, 200
 
 
