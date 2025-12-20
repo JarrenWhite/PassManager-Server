@@ -30,10 +30,11 @@ class TestRegister():
         monkeypatch.setattr(DBUtilsUser, "create", fake_create)
 
         self.fake_sanitise_inputs_called = []
+        self.fake_sanitise_inputs_keys = []
         self.fake_sanitise_inputs_return = False, {}, 0
         def fake_sanitise_inputs(data, required_keys):
-            for key in required_keys:
-                self.fake_sanitise_inputs_called.append(key)
+            self.fake_sanitise_inputs_called.append(data)
+            self.fake_sanitise_inputs_keys = required_keys
             return self.fake_sanitise_inputs_return
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
@@ -98,11 +99,13 @@ class TestRegister():
         }
         response, code = ServiceUser.register(data)
 
-        assert len(self.fake_sanitise_inputs_called) == 4
-        assert "username_hash" in self.fake_sanitise_inputs_called
-        assert "srp_salt" in self.fake_sanitise_inputs_called
-        assert "srp_verifier" in self.fake_sanitise_inputs_called
-        assert "master_key_salt" in self.fake_sanitise_inputs_called
+        assert len(self.fake_sanitise_inputs_called) == 1
+        assert self.fake_sanitise_inputs_called[0] == data
+
+        assert "username_hash" in self.fake_sanitise_inputs_keys
+        assert "srp_salt" in self.fake_sanitise_inputs_keys
+        assert "srp_verifier" in self.fake_sanitise_inputs_keys
+        assert "master_key_salt" in self.fake_sanitise_inputs_keys
 
     def test_sanitise_inputs_fails(self):
         """Should fail with error if sanitise input fails"""
@@ -193,10 +196,11 @@ class TestUsername():
         monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
 
         self.fake_sanitise_inputs_called = []
+        self.fake_sanitise_inputs_keys = []
         self.fake_sanitise_inputs_return = False, {}, 0
         def fake_sanitise_inputs(data, required_keys):
-            for key in required_keys:
-                self.fake_sanitise_inputs_called.append(key)
+            self.fake_sanitise_inputs_called.append(data)
+            self.fake_sanitise_inputs_keys = required_keys
             return self.fake_sanitise_inputs_return
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
@@ -228,10 +232,12 @@ class TestUsername():
         }
         response, code = ServiceUser.username(data)
 
-        assert len(self.fake_sanitise_inputs_called) == 3
-        assert "session_id" in self.fake_sanitise_inputs_called
-        assert "request_number" in self.fake_sanitise_inputs_called
-        assert "encrypted_data" in self.fake_sanitise_inputs_called
+        assert len(self.fake_sanitise_inputs_called) == 1
+        assert self.fake_sanitise_inputs_called[0] == data
+
+        assert "session_id" in self.fake_sanitise_inputs_keys
+        assert "request_number" in self.fake_sanitise_inputs_keys
+        assert "encrypted_data" in self.fake_sanitise_inputs_keys
 
     def test_initial_sanitise_inputs_fails(self):
         """Should return error message if initial sanitise input fails"""
