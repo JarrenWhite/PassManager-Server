@@ -8,6 +8,7 @@ from services.service_user import ServiceUser
 from enums.failure_reason import FailureReason
 from utils.db_utils_user import DBUtilsUser
 from utils.service_utils import ServiceUtils
+from utils.session_manager import SessionManager
 
 
 class TestRegister():
@@ -168,6 +169,66 @@ class TestRegister():
         assert "errors" in response
         assert response["success"] is False
         assert response["errors"] == [error]
+
+
+class TestUsername():
+    """Test cases for change username"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.fake_change_username_calls = []
+        self.fake_change_username_return = True, None
+        def fake_change_username(
+            username_hash,
+            srp_salt,
+            srp_verifier,
+            master_key_salt
+        ):
+            self.fake_change_username_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            return self.fake_change_username_return
+        monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
+
+        self.fake_sanitise_inputs_called = []
+        self.fake_sanitise_inputs_return = False, {}, 0
+        def fake_sanitise_inputs(data, required_keys):
+            for key in required_keys:
+                self.fake_sanitise_inputs_called.append(key)
+            return self.fake_sanitise_inputs_return
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
+        self.fake_handle_failure_calls = []
+        self.fake_handle_failure_return = {}, 0
+        def fake_handle_failure(failure_reason):
+            self.fake_handle_failure_calls.append(failure_reason)
+            return self.fake_handle_failure_return
+        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
+
+        self.fake_open_session_called = []
+        self.fake_open_session_return = True, {}, None, None
+        def fake_open_session(session_id, request_number, encrypted_data):
+            self.fake_open_session_called.append((session_id, request_number, encrypted_data))
+            return self.fake_open_session_return
+        monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
+
+        yield
+
+    def test_sanitise_initial_inputs(self):
+        """Should call sanitise_inputs for session values"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+
+        data = {
+            "session_id": "abcdef",
+            "request_number": 123456,
+            "encrypted_data": "fake_srp_verifier"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.fake_sanitise_inputs_called) == 3
+        assert "session_id" in self.fake_sanitise_inputs_called
+        assert "request_number" in self.fake_sanitise_inputs_called
+        assert "encrypted_data" in self.fake_sanitise_inputs_called
 
 
 if __name__ == '__main__':
