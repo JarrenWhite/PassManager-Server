@@ -45,6 +45,8 @@ class ServiceUser():
 
         keys = {"username", "new_username"}
         sanitised, error, http_code = ServiceUtils.sanitise_inputs(values, keys)
+        if not sanitised and http_code:
+            return {"success": False, "errors": [error]}, http_code
 
         return {}, 200
 
