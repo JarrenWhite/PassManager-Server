@@ -198,14 +198,14 @@ class TestUsername():
 
         self.fake_sanitise_inputs_called = []
         self.fake_sanitise_inputs_keys = []
-        self.fake_sanitise_inputs_return_1 = False, {}, 0
+        self.fake_sanitise_inputs_return = False, {}, 0
         self.fake_sanitise_inputs_return_2 = False, {}, 0
         def fake_sanitise_inputs(data, required_keys):
             self.fake_sanitise_inputs_called.append(data)
             self.fake_sanitise_inputs_keys.append(required_keys)
-            if self.fake_sanitise_inputs_return_1:
-                return_value = self.fake_sanitise_inputs_return_1
-                self.fake_sanitise_inputs_return_1 = None
+            if self.fake_sanitise_inputs_return:
+                return_value = self.fake_sanitise_inputs_return
+                self.fake_sanitise_inputs_return = None
                 return return_value
             return self.fake_sanitise_inputs_return_2
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
@@ -248,7 +248,7 @@ class TestUsername():
         """Should return error message if initial sanitise input fails"""
 
         error = {"Error Key": "Error Message"}
-        self.fake_sanitise_inputs_return_1 = False, error, 456
+        self.fake_sanitise_inputs_return = False, error, 456
 
         data = {
             "session_id": "fake_session_id",
