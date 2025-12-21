@@ -40,9 +40,11 @@ class ServiceUser():
             data["request_number"],
             data["encrypted_data"]
         )
-
         if not decrypted and http_code:
             return {"success": False, "session_id": data["session_id"], "errors": [values]}, http_code
+
+        keys = {"username", "new_username"}
+        sanitised, error, http_code = ServiceUtils.sanitise_inputs(values, keys)
 
         return {}, 200
 
