@@ -187,12 +187,10 @@ class TestUsername():
         self.fake_change_username_calls = []
         self.fake_change_username_return = True, None
         def fake_change_username(
-            username_hash,
-            srp_salt,
-            srp_verifier,
-            master_key_salt
+            user_id,
+            new_username
         ):
-            self.fake_change_username_calls.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            self.fake_change_username_calls.append((user_id, new_username))
             return self.fake_change_username_return
         monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
 
@@ -218,7 +216,7 @@ class TestUsername():
         monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
 
         self.fake_open_session_called = []
-        self.fake_open_session_return = True, {}, None, None
+        self.fake_open_session_return = True, {}, 0, 0
         def fake_open_session(session_id, request_number, encrypted_data):
             self.fake_open_session_called.append((session_id, request_number, encrypted_data))
             return self.fake_open_session_return
@@ -269,6 +267,8 @@ class TestUsername():
     def test_calls_open_session(self):
         """Should call open_session if initial sanitise is successful"""
 
+        self.fake_sanitise_inputs_return = True, {}, 0
+
         self.fake_open_session_return = True, {}, 123456, None
 
         data = {
@@ -283,6 +283,8 @@ class TestUsername():
 
     def test_open_session_fails(self):
         """Should return errors if open_session fails"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
 
         error = {"Error key": "Error message"}
         self.fake_open_session_return = False, error, None, 925
@@ -308,6 +310,8 @@ class TestUsername():
     def test_secondary_sanitise_input(self):
         """Should call sanitise_inputs again with decrypted values"""
 
+        self.fake_sanitise_inputs_return = True, {}, 0
+
         session_data = {"username": "fake_old_username", "new_username": "fake_new_username"}
         self.fake_open_session_return = True, session_data, 123456, None
 
@@ -327,6 +331,8 @@ class TestUsername():
 
     def test_secondary_sanitise_fails(self):
         """Should return error message if secondary sanitise inputs fails"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
 
         error = {"Error key": "Error message"}
         self.fake_sanitise_inputs_return_2 = False, error, 654
@@ -349,6 +355,25 @@ class TestUsername():
         assert "errors" in response
         assert response["success"] is False
         assert response["errors"] == [error]
+
+    def test_calls_change_username(self):
+        """Should call change_username if all previous details correct"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+        self.fake_sanitise_inputs_return_2 = True, {}, 0
+
+        session_data = {"username": "fake_old_username", "new_username": "fake_new_username"}
+        self.fake_open_session_return = True, session_data, 123456, None
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.fake_change_username_calls) == 1
+        assert self.fake_change_username_calls[0] == (123456, "fake_new_username")
 
 
 if __name__ == '__main__':
