@@ -1,4 +1,4 @@
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple
 
 
 # TODO - Placeholder class. Requires completion.
@@ -11,7 +11,7 @@ class SessionManager():
         session_id: str,
         request_number: int,
         encrypted_data: str
-    ) -> Tuple[bool, Dict[str, Any], Optional[int], Optional[int]]:
+    ) -> Tuple[bool, Dict[str, Any], int, int]:
         """
         Verify that the received keys are correct
 
@@ -21,4 +21,4 @@ class SessionManager():
             (int)   Internal User ID if successful
             (int)   HTTP status code if session decoding fails
         """
-        return True, {}, None, None
+        return True, {}, 0, 0

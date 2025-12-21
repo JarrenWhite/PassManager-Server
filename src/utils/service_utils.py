@@ -1,4 +1,4 @@
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple
 
 from enums import FailureReason
 
@@ -9,7 +9,7 @@ class ServiceUtils():
     """Utility functions for managing service calls"""
 
     @staticmethod
-    def sanitise_inputs(data: Dict[str, Any], required_keys: set[str]) -> Tuple[bool, Dict[str, Any], Optional[int]]:
+    def sanitise_inputs(data: Dict[str, Any], required_keys: set[str]) -> Tuple[bool, Dict[str, Any], int]:
         """
         Verify that the received keys are correct
 
@@ -18,7 +18,7 @@ class ServiceUtils():
             (Dict)  Error message if sanitisation fails
             (int)   HTTP status code if sanitisation fails
         """
-        return True, {}, None
+        return True, {}, 0
 
 
     @staticmethod

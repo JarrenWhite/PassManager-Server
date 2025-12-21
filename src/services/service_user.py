@@ -11,7 +11,7 @@ class ServiceUser():
 
         keys = {"username_hash", "srp_salt", "srp_verifier", "master_key_salt"}
         sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, keys)
-        if not sanitised and http_code:
+        if not sanitised:
             return {"success": False, "errors": [error]}, http_code
 
         status, failure_reason = DBUtilsUser.create(
@@ -32,7 +32,7 @@ class ServiceUser():
     def username(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
         sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
-        if not sanitised and http_code:
+        if not sanitised:
             return {"success": False, "errors": [error]}, http_code
 
         decrypted, values, user_id, http_code = SessionManager.open_session(
@@ -40,13 +40,15 @@ class ServiceUser():
             data["request_number"],
             data["encrypted_data"]
         )
-        if not decrypted and http_code:
+        if not decrypted:
             return {"success": False, "session_id": data["session_id"], "errors": [values]}, http_code
 
         keys = {"username", "new_username"}
         sanitised, error, http_code = ServiceUtils.sanitise_inputs(values, keys)
-        if not sanitised and http_code:
+        if not sanitised:
             return {"success": False, "errors": [error]}, http_code
+
+        DBUtilsUser.change_username(user_id, values["new_username"])
 
         return {}, 200
 
