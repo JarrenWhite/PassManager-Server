@@ -34,7 +34,7 @@ class TestRegister():
         self.fake_sanitise_inputs_return = False, {}, 0
         def fake_sanitise_inputs(data, required_keys):
             self.fake_sanitise_inputs_called.append(data)
-            self.fake_sanitise_inputs_keys = required_keys
+            self.fake_sanitise_inputs_keys.append(required_keys)
             return self.fake_sanitise_inputs_return
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
@@ -102,10 +102,11 @@ class TestRegister():
         assert len(self.fake_sanitise_inputs_called) == 1
         assert self.fake_sanitise_inputs_called[0] == data
 
-        assert "username_hash" in self.fake_sanitise_inputs_keys
-        assert "srp_salt" in self.fake_sanitise_inputs_keys
-        assert "srp_verifier" in self.fake_sanitise_inputs_keys
-        assert "master_key_salt" in self.fake_sanitise_inputs_keys
+        assert len(self.fake_sanitise_inputs_keys[0]) == 4
+        assert "username_hash" in self.fake_sanitise_inputs_keys[0]
+        assert "srp_salt" in self.fake_sanitise_inputs_keys[0]
+        assert "srp_verifier" in self.fake_sanitise_inputs_keys[0]
+        assert "master_key_salt" in self.fake_sanitise_inputs_keys[0]
 
     def test_sanitise_inputs_fails(self):
         """Should fail with error if sanitise input fails"""
@@ -200,7 +201,7 @@ class TestUsername():
         self.fake_sanitise_inputs_return = False, {}, 0
         def fake_sanitise_inputs(data, required_keys):
             self.fake_sanitise_inputs_called.append(data)
-            self.fake_sanitise_inputs_keys = required_keys
+            self.fake_sanitise_inputs_keys.append(required_keys)
             return self.fake_sanitise_inputs_return
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
@@ -235,9 +236,10 @@ class TestUsername():
         assert len(self.fake_sanitise_inputs_called) >= 1
         assert self.fake_sanitise_inputs_called[0] == data
 
-        assert "session_id" in self.fake_sanitise_inputs_keys
-        assert "request_number" in self.fake_sanitise_inputs_keys
-        assert "encrypted_data" in self.fake_sanitise_inputs_keys
+        assert len(self.fake_sanitise_inputs_keys[0]) == 3
+        assert "session_id" in self.fake_sanitise_inputs_keys[0]
+        assert "request_number" in self.fake_sanitise_inputs_keys[0]
+        assert "encrypted_data" in self.fake_sanitise_inputs_keys[0]
 
     def test_initial_sanitise_inputs_fails(self):
         """Should return error message if initial sanitise input fails"""
@@ -303,6 +305,28 @@ class TestUsername():
         assert response["success"] is False
         assert response["session_id"] == "fake_session_id"
         assert response["errors"] == [error]
+
+    def test_secondary_sanitise_input(self):
+        """Should call sanitise_inputs again with decrypted values"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+
+        session_data = {"username": "fake_old_username", "new_username": "fake_new_username"}
+        self.fake_open_session_return = True, session_data, 123456, None
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.fake_sanitise_inputs_called) == 2
+        assert self.fake_sanitise_inputs_called[1] == session_data
+
+        assert len(self.fake_sanitise_inputs_keys[1]) == 2
+        assert "username" in self.fake_sanitise_inputs_keys[1]
+        assert "new_username" in self.fake_sanitise_inputs_keys[1]
 
 
 if __name__ == '__main__':
