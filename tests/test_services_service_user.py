@@ -31,7 +31,7 @@ class TestRegister():
 
         self.fake_sanitise_inputs_called = []
         self.fake_sanitise_inputs_keys = []
-        self.fake_sanitise_inputs_return = False, {}, 0
+        self.fake_sanitise_inputs_return = True, {}, 0
         def fake_sanitise_inputs(data, required_keys):
             self.fake_sanitise_inputs_called.append(data)
             self.fake_sanitise_inputs_keys.append(required_keys)
@@ -49,8 +49,6 @@ class TestRegister():
 
     def test_creates_user(self):
         """Should call DBUtilsUser to create a user"""
-
-        self.fake_create_return = True, None
 
         data = {
             "username_hash": "fake_hash",
@@ -196,8 +194,8 @@ class TestUsername():
 
         self.fake_sanitise_inputs_called = []
         self.fake_sanitise_inputs_keys = []
-        self.fake_sanitise_inputs_return = False, {}, 0
-        self.fake_sanitise_inputs_return_2 = False, {}, 0
+        self.fake_sanitise_inputs_return = True, {}, 0
+        self.fake_sanitise_inputs_return_2 = True, {}, 0
         def fake_sanitise_inputs(data, required_keys):
             self.fake_sanitise_inputs_called.append(data)
             self.fake_sanitise_inputs_keys.append(required_keys)
@@ -216,7 +214,7 @@ class TestUsername():
         monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
 
         self.fake_open_session_called = []
-        self.fake_open_session_return = True, {}, 0, 0
+        self.fake_open_session_return = True, {"username": "", "new_username": ""}, 0, 0
         def fake_open_session(session_id, request_number, encrypted_data):
             self.fake_open_session_called.append((session_id, request_number, encrypted_data))
             return self.fake_open_session_return
@@ -226,6 +224,8 @@ class TestUsername():
 
     def test_sanitise_initial_inputs(self):
         """Should call sanitise_inputs for session values"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
 
         data = {
             "session_id": "fake_session_id",
@@ -269,7 +269,8 @@ class TestUsername():
 
         self.fake_sanitise_inputs_return = True, {}, 0
 
-        self.fake_open_session_return = True, {}, 123456, None
+        value = {"username": "", "new_username": ""}
+        self.fake_open_session_return = True, value, 123456, None
 
         data = {
             "session_id": "fake_session_id",
