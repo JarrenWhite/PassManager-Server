@@ -377,5 +377,49 @@ class TestUsername():
         assert self.fake_change_username_calls[0] == (123456, "fake_new_username")
 
 
+class TestDelete():
+    """Test cases for delete user"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.fake_delete_calls = []
+        self.fake_delete_return = True, None
+        def fake_delete(user_id):
+            self.fake_delete_calls.append(user_id)
+            return self.fake_delete_return
+        monkeypatch.setattr(DBUtilsUser, "delete", fake_delete)
+
+        self.fake_sanitise_inputs_called = []
+        self.fake_sanitise_inputs_keys = []
+        self.fake_sanitise_inputs_return = True, {}, 0
+        self.fake_sanitise_inputs_return_2 = True, {}, 0
+        def fake_sanitise_inputs(data, required_keys):
+            self.fake_sanitise_inputs_called.append(data)
+            self.fake_sanitise_inputs_keys.append(required_keys)
+            if self.fake_sanitise_inputs_return:
+                return_value = self.fake_sanitise_inputs_return
+                self.fake_sanitise_inputs_return = None
+                return return_value
+            return self.fake_sanitise_inputs_return_2
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
+        self.fake_handle_failure_calls = []
+        self.fake_handle_failure_return = {}, 0
+        def fake_handle_failure(failure_reason):
+            self.fake_handle_failure_calls.append(failure_reason)
+            return self.fake_handle_failure_return
+        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
+
+        self.fake_open_session_called = []
+        self.fake_open_session_return = True, {"username": "", "new_username": ""}, 0, 0
+        def fake_open_session(session_id, request_number, encrypted_data):
+            self.fake_open_session_called.append((session_id, request_number, encrypted_data))
+            return self.fake_open_session_return
+        monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
+
+        yield
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
