@@ -420,6 +420,26 @@ class TestDelete():
 
         yield
 
+    def test_sanitise_initial_inputs(self):
+        """Should call sanitise_inputs for session values"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(self.fake_sanitise_inputs_called) >= 1
+        assert self.fake_sanitise_inputs_called[0] == data
+
+        assert len(self.fake_sanitise_inputs_keys[0]) == 3
+        assert "session_id" in self.fake_sanitise_inputs_keys[0]
+        assert "request_number" in self.fake_sanitise_inputs_keys[0]
+        assert "encrypted_data" in self.fake_sanitise_inputs_keys[0]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
