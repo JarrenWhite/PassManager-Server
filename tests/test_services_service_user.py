@@ -440,6 +440,28 @@ class TestDelete():
         assert "request_number" in self.fake_sanitise_inputs_keys[0]
         assert "encrypted_data" in self.fake_sanitise_inputs_keys[0]
 
+    def test_initial_sanitise_inputs_fails(self):
+        """Should return error message if initial sanitise input fails"""
+
+        error = {"Error Key": "Error Message"}
+        self.fake_sanitise_inputs_return = False, error, 456
+
+        data = {
+            "session_id": "fake_session_id",
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert code == 456
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert response["success"] is False
+        assert response["errors"] == [error]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
