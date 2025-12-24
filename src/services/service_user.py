@@ -56,6 +56,8 @@ class ServiceUser():
     @staticmethod
     def delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
-        ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
+        sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
+        if not sanitised:
+            return {"success": False, "errors": [error]}, http_code
 
         return {}, 200
