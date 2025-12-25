@@ -65,5 +65,7 @@ class ServiceUser():
             data["request_number"],
             data["encrypted_data"]
         )
+        if not decrypted:
+            return {"success": False, "session_id": data["session_id"], "errors": [values]}, http_code
 
         return {}, 200
