@@ -60,4 +60,10 @@ class ServiceUser():
         if not sanitised:
             return {"success": False, "errors": [error]}, http_code
 
+        decrypted, values, user_id, http_code = SessionManager.open_session(
+            data["session_id"],
+            data["request_number"],
+            data["encrypted_data"]
+        )
+
         return {}, 200
