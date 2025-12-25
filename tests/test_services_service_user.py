@@ -462,6 +462,23 @@ class TestDelete():
         assert response["success"] is False
         assert response["errors"] == [error]
 
+    def test_calls_open_session(self):
+        """Should call open_session if initial sanitise is successful"""
+
+        self.fake_sanitise_inputs_return = True, {}, 0
+
+        value = {"username": ""}
+        self.fake_open_session_return = True, value, 123456, None
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(self.fake_open_session_called) == 1
+        assert self.fake_open_session_called[0] == ("fake_session_id", 123456, "fake_encrypted_data")
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
