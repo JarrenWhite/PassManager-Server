@@ -353,6 +353,49 @@ class TestUsername():
         assert len(self.fake_change_username_calls) == 1
         assert self.fake_change_username_calls[0] == (123456, "fake_new_username")
 
+    def test_handle_failure_not_called(self):
+        """Should not call handle_failure if call is a success"""
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.fake_handle_failure_calls) == 0
+
+    def test_failure_reason_handled(self):
+        """Should call handle_failure and return its response as an error"""
+
+        self.fake_change_username_return = False, FailureReason.NOT_FOUND
+
+        session_data = {"username": "fake_old_username", "new_username": "fake_new_username"}
+        self.fake_open_session_return = True, session_data, 123456, None
+
+        error = {"Failure handle": "Failure handle message"}
+        self.fake_handle_failure_return = error, 409
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123456,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.fake_change_username_calls) == 1
+        assert self.fake_change_username_calls[0] == (123456, "fake_new_username")
+        assert len(self.fake_handle_failure_calls) == 1
+
+        assert code == 409
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "username_hash" not in response
+        assert "errors" in response
+        assert response["success"] is False
+        assert response["errors"] == [error]
+
 
 class TestDelete():
     """Test cases for delete user"""
