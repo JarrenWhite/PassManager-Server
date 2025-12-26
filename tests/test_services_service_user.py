@@ -64,8 +64,6 @@ class TestRegister():
     def test_success_response(self):
         """Should return correct response and http code"""
 
-        self.fake_create_return = True, None
-
         data = {
             "username_hash": "fake_hash",
             "srp_salt": "fake_srp_salt",
@@ -87,8 +85,6 @@ class TestRegister():
     def test_calls_sanitise_inputs(self):
         """Should call sanitise inputs with correct keys"""
 
-        self.fake_create_return = True, None
-
         data = {
             "username_hash": "fake_hash",
             "srp_salt": "fake_srp_salt",
@@ -108,8 +104,6 @@ class TestRegister():
 
     def test_sanitise_inputs_fails(self):
         """Should fail with error if sanitise input fails"""
-
-        self.fake_create_return = False, FailureReason.DUPLICATE
 
         error = {"Sanitising Error": "Sanitising Error Message"}
         self.fake_sanitise_inputs_return = False, error, 400
@@ -132,10 +126,6 @@ class TestRegister():
 
     def test_handle_failure_not_called(self):
         """Should not call handle_failure if call is a success"""
-
-        self.fake_create_return = True, None
-
-        self.fake_handle_failure_return = {}, 200
 
         data = {
             "username_hash": "fake_hash",
@@ -225,8 +215,6 @@ class TestUsername():
     def test_sanitise_initial_inputs(self):
         """Should call sanitise_inputs for session values"""
 
-        self.fake_sanitise_inputs_return = True, {}, 0
-
         data = {
             "session_id": "fake_session_id",
             "request_number": 123456,
@@ -267,8 +255,6 @@ class TestUsername():
     def test_calls_open_session(self):
         """Should call open_session if initial sanitise is successful"""
 
-        self.fake_sanitise_inputs_return = True, {}, 0
-
         value = {"username": "", "new_username": ""}
         self.fake_open_session_return = True, value, 123456, None
 
@@ -284,8 +270,6 @@ class TestUsername():
 
     def test_open_session_fails(self):
         """Should return errors if open_session fails"""
-
-        self.fake_sanitise_inputs_return = True, {}, 0
 
         error = {"Error key": "Error message"}
         self.fake_open_session_return = False, error, None, 925
@@ -311,8 +295,6 @@ class TestUsername():
     def test_secondary_sanitise_input(self):
         """Should call sanitise_inputs again with decrypted values"""
 
-        self.fake_sanitise_inputs_return = True, {}, 0
-
         session_data = {"username": "fake_old_username", "new_username": "fake_new_username"}
         self.fake_open_session_return = True, session_data, 123456, None
 
@@ -332,8 +314,6 @@ class TestUsername():
 
     def test_secondary_sanitise_fails(self):
         """Should return error message if secondary sanitise inputs fails"""
-
-        self.fake_sanitise_inputs_return = True, {}, 0
 
         error = {"Error key": "Error message"}
         self.fake_sanitise_inputs_return_2 = False, error, 654
@@ -359,9 +339,6 @@ class TestUsername():
 
     def test_calls_change_username(self):
         """Should call change_username if all previous details correct"""
-
-        self.fake_sanitise_inputs_return = True, {}, 0
-        self.fake_sanitise_inputs_return_2 = True, {}, 0
 
         session_data = {"username": "fake_old_username", "new_username": "fake_new_username"}
         self.fake_open_session_return = True, session_data, 123456, None
@@ -423,8 +400,6 @@ class TestDelete():
     def test_sanitise_initial_inputs(self):
         """Should call sanitise_inputs for session values"""
 
-        self.fake_sanitise_inputs_return = True, {}, 0
-
         data = {
             "session_id": "fake_session_id",
             "request_number": 123456,
@@ -465,8 +440,6 @@ class TestDelete():
     def test_calls_open_session(self):
         """Should call open_session if initial sanitise is successful"""
 
-        self.fake_sanitise_inputs_return = True, {}, 0
-
         value = {"username": ""}
         self.fake_open_session_return = True, value, 123456, None
 
@@ -482,8 +455,6 @@ class TestDelete():
 
     def test_open_session_fails(self):
         """Should return errors if open_session fails"""
-
-        self.fake_sanitise_inputs_return = True, {}, 0
 
         error = {"Error key": "Error message"}
         self.fake_open_session_return = False, error, None, 925
