@@ -9,6 +9,9 @@ class ServiceUser():
     @staticmethod
     def register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
+        keys = {"new_username", "srp_salt", "srp_verifier", "master_key_salt"}
+        ServiceUtils.sanitise_inputs(data, keys)
+
         return {}, 200
 
 
