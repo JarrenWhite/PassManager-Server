@@ -20,10 +20,15 @@ class TestRegister():
         self.fake_sanitise_inputs_called = []
         self.fake_sanitise_inputs_keys = []
         self.fake_sanitise_inputs_return = True, {}, 0
+        self.fake_sanitise_inputs_return_2 = True, {}, 0
         def fake_sanitise_inputs(data, required_keys):
             self.fake_sanitise_inputs_called.append(data)
             self.fake_sanitise_inputs_keys.append(required_keys)
-            return self.fake_sanitise_inputs_return
+            if self.fake_sanitise_inputs_return:
+                return_value = self.fake_sanitise_inputs_return
+                self.fake_sanitise_inputs_return = None
+                return return_value
+            return self.fake_sanitise_inputs_return_2
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
         self.fake_create_calls = []
@@ -66,6 +71,29 @@ class TestRegister():
         assert "srp_salt" in self.fake_sanitise_inputs_keys[0]
         assert "srp_verifier" in self.fake_sanitise_inputs_keys[0]
         assert "master_key_salt" in self.fake_sanitise_inputs_keys[0]
+
+    def test_value_sanitise_inputs_fails(self):
+        """Should return false if value sanitisation fails"""
+
+        error = {"Error message": "Error string"}
+        self.fake_sanitise_inputs_return = False, error, 456
+
+        data = {
+            "new_username": "",
+            "srp_salt": "",
+            "srp_verifier": "",
+            "master_key_salt": ""
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "username_hash" not in response
+        assert "errors" in response
+        assert code == 456
+
+        assert not response["success"]
+        assert response["errors"] == [error]
 
 
 if __name__ == '__main__':
