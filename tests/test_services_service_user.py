@@ -47,8 +47,8 @@ class TestRegister():
 
         yield
 
-    def test_sanitise_initial_inputs(self):
-        """Should pass initial inputs to be sanitised"""
+    def test_value_sanitise_inputs(self):
+        """Should pass final value inputs to be sanitised"""
 
         data = {
             "new_username": "",
