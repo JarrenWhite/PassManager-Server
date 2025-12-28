@@ -10,7 +10,9 @@ class ServiceUser():
     def register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
         keys = {"new_username", "srp_salt", "srp_verifier", "master_key_salt"}
-        ServiceUtils.sanitise_inputs(data, keys)
+        sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, keys)
+        if not sanitised:
+            return {"success": False, "errors": [error]}, http_code
 
         return {}, 200
 
