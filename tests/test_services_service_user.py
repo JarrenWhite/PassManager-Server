@@ -17,6 +17,15 @@ class TestRegister():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
+        self.fake_sanitise_inputs_called = []
+        self.fake_sanitise_inputs_keys = []
+        self.fake_sanitise_inputs_return = True, {}, 0
+        def fake_sanitise_inputs(data, required_keys):
+            self.fake_sanitise_inputs_called.append(data)
+            self.fake_sanitise_inputs_keys.append(required_keys)
+            return self.fake_sanitise_inputs_return
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
         self.fake_create_calls = []
         self.fake_create_return = True, None
         def fake_create(
@@ -29,15 +38,6 @@ class TestRegister():
             return self.fake_create_return
         monkeypatch.setattr(DBUtilsUser, "create", fake_create)
 
-        self.fake_sanitise_inputs_called = []
-        self.fake_sanitise_inputs_keys = []
-        self.fake_sanitise_inputs_return = True, {}, 0
-        def fake_sanitise_inputs(data, required_keys):
-            self.fake_sanitise_inputs_called.append(data)
-            self.fake_sanitise_inputs_keys.append(required_keys)
-            return self.fake_sanitise_inputs_return
-        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
-
         self.fake_handle_failure_calls = []
         self.fake_handle_failure_return = {}, 0
         def fake_handle_failure(failure_reason):
@@ -46,6 +46,26 @@ class TestRegister():
         monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
 
         yield
+
+    def test_sanitise_initial_inputs(self):
+        """Should pass initial inputs to be sanitised"""
+
+        data = {
+            "new_username": "",
+            "srp_salt": "",
+            "srp_verifier": "",
+            "master_key_salt": ""
+        }
+        ServiceUser.register(data)
+
+        assert len(self.fake_sanitise_inputs_called) == 1
+        assert self.fake_sanitise_inputs_called[0] == data
+
+        assert len(self.fake_sanitise_inputs_keys[0])
+        assert "new_username" in self.fake_sanitise_inputs_keys[0]
+        assert "srp_salt" in self.fake_sanitise_inputs_keys[0]
+        assert "srp_verifier" in self.fake_sanitise_inputs_keys[0]
+        assert "master_key_salt" in self.fake_sanitise_inputs_keys[0]
 
 
 if __name__ == '__main__':
