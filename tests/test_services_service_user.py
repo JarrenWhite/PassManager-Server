@@ -56,12 +56,12 @@ class TestRegister():
         """Should pass final value inputs to be sanitised"""
 
         data = {
-            "new_username": "",
-            "srp_salt": "",
-            "srp_verifier": "",
-            "master_key_salt": ""
+            "new_username": "fake_username",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_key_salt"
         }
-        ServiceUser.register(data)
+        response, code = ServiceUser.register(data)
 
         assert len(self.fake_sanitise_inputs_called) == 1
         assert self.fake_sanitise_inputs_called[0] == data
@@ -79,10 +79,10 @@ class TestRegister():
         self.fake_sanitise_inputs_return = False, error, 456
 
         data = {
-            "new_username": "",
-            "srp_salt": "",
-            "srp_verifier": "",
-            "master_key_salt": ""
+            "new_username": "fake_username",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_key_salt"
         }
         response, code = ServiceUser.register(data)
 
@@ -94,6 +94,20 @@ class TestRegister():
 
         assert not response["success"]
         assert response["errors"] == [error]
+
+    def test_calls_acting_funcion(self):
+        """Should call main acting function"""
+
+        data = {
+            "new_username": "fake_username",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_key_salt"
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(self.fake_create_calls) == 1
+        assert self.fake_create_calls[0] == ("fake_username", "fake_srp_salt", "fake_srp_verifier", "fake_master_key_salt")
 
 
 if __name__ == '__main__':
