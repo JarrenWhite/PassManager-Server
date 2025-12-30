@@ -14,6 +14,13 @@ class ServiceUser():
         if not sanitised:
             return {"success": False, "errors": [error]}, http_code
 
+        DBUtilsUser.create(
+            username_hash= data["new_username"],
+            srp_salt= data["srp_salt"],
+            srp_verifier= data["srp_verifier"],
+            master_key_salt= data["master_key_salt"]
+        )
+
         return {}, 200
 
 
