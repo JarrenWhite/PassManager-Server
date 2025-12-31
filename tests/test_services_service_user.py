@@ -95,7 +95,7 @@ class TestRegister():
         assert not response["success"]
         assert response["errors"] == [error]
 
-    def test_calls_acting_funcion(self):
+    def test_calls_acting_function(self):
         """Should call main acting function"""
 
         data = {
@@ -112,7 +112,7 @@ class TestRegister():
 
 # calls failure reason handler if call fails
 # returns error json
-# doesn't call failure reason handler if call suceeds
+# doesn't call failure reason handler if call succeeds
 # returns success json
 
 
