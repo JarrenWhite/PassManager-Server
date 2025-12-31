@@ -110,5 +110,11 @@ class TestRegister():
         assert self.fake_create_calls[0] == ("fake_username", "fake_srp_salt", "fake_srp_verifier", "fake_master_key_salt")
 
 
+# calls failure reason handler if call fails
+# returns error json
+# doesn't call failure reason handler if call suceeds
+# returns success json
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
