@@ -109,8 +109,23 @@ class TestRegister():
         assert len(self.fake_create_calls) == 1
         assert self.fake_create_calls[0] == ("fake_username", "fake_srp_salt", "fake_srp_verifier", "fake_master_key_salt")
 
+    def test_handle_failure_reason(self):
+        """Should handle failure reason if acting function fails"""
 
-# calls failure reason handler if call fails
+        self.fake_create_return = False, FailureReason.UNKNOWN_EXCEPTION
+
+        data = {
+            "new_username": "fake_username",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_key_salt"
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(self.fake_handle_failure_calls) == 1
+        assert self.fake_handle_failure_calls[0] == FailureReason.UNKNOWN_EXCEPTION
+
+
 # returns error json
 # doesn't call failure reason handler if call succeeds
 # returns success json
