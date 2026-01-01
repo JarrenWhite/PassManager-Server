@@ -23,7 +23,8 @@ class ServiceUser():
 
         if not success:
             assert failure
-            return ServiceUtils.handle_failure(failure)
+            error, http_code = ServiceUtils.handle_failure(failure)
+            return {"success": False, "errors": [error]}, http_code
 
         return {}, 200
 
