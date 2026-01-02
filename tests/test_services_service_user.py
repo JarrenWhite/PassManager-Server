@@ -149,8 +149,8 @@ class TestRegister():
         assert not response["success"]
         assert response["errors"] == [error]
 
-    def test_call_succeeds(self):
-        """Should not handle failure reason if call succeeds"""
+    def test_acting_function_succeeds(self):
+        """Should not handle failure reason if acting function call succeeds"""
 
         data = {
             "new_username": "fake_username",
