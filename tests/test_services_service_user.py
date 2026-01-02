@@ -149,8 +149,20 @@ class TestRegister():
         assert not response["success"]
         assert response["errors"] == [error]
 
+    def test_call_succeeds(self):
+        """Should not handle failure reason if call succeeds"""
 
-# doesn't call failure reason handler if call succeeds
+        data = {
+            "new_username": "fake_username",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_key_salt"
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(self.fake_handle_failure_calls) == 0
+
+
 # returns success json
 
 
