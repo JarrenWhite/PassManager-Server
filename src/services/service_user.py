@@ -26,7 +26,7 @@ class ServiceUser():
             error, http_code = ServiceUtils.handle_failure(failure)
             return {"success": False, "errors": [error]}, http_code
 
-        return {}, 200
+        return {"success": True, "username_hash": data["new_username"]}, 201
 
 
     @staticmethod
