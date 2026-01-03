@@ -73,7 +73,7 @@ class TestRegister():
         assert "master_key_salt" in self.sanitise_inputs_keys[0]
 
     def test_value_sanitise_inputs_fails(self):
-        """Should return false if value sanitisation fails"""
+        """Should return error if value sanitisation fails"""
 
         error = {"Error message": "Error string"}
         self.sanitise_inputs_return = False, error, 456
@@ -205,7 +205,7 @@ class TestUsername():
 
         self.open_session_called = []
         false_session_values = {"username": "", "new_username": ""}
-        self.open_session_return = True, false_session_values, 3, None
+        self.open_session_return = True, false_session_values, 3, 0
         def fake_open_session(session_id, request_number, encrypted_data):
             self.open_session_called.append((session_id, request_number, encrypted_data))
             return self.open_session_return
@@ -232,7 +232,7 @@ class TestUsername():
         assert "encrypted_data" in self.sanitise_inputs_keys[0]
 
     def test_session_sanitise_inputs_fails(self):
-        """Should return false if session sanitisation fails"""
+        """Should return error if session sanitisation fails"""
 
         error = {"Error message": "Error string"}
         self.sanitise_inputs_return = False, error, 456
@@ -246,7 +246,8 @@ class TestUsername():
 
         assert len(response) == 2
         assert "success" in response
-        assert "username_hash" not in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
         assert "errors" in response
         assert code == 456
 
@@ -255,9 +256,6 @@ class TestUsername():
 
     def test_open_session_called(self):
         """Should call to open session"""
-
-        value = {"username": ""}
-        self.open_session_return = True, value, 123456, None
 
         data = {
             "session_id": "fake_session_id",
@@ -268,6 +266,29 @@ class TestUsername():
 
         assert len(self.open_session_called) == 1
         assert self.open_session_called[0] == ("fake_session_id", 123, "fake_encrypted_data")
+
+    def test_open_session_fails(self):
+        """Should return error if open session fails"""
+
+        error = {"Error message": "Error string"}
+        self.open_session_return = False, error, 0, 875
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert code == 875
+
+        assert not response["success"]
+        assert response["errors"] == [error]
 
 
 if __name__ == '__main__':
