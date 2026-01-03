@@ -162,8 +162,25 @@ class TestRegister():
 
         assert len(self.fake_handle_failure_calls) == 0
 
+    def test_returns_successful_message(self):
+        """Should return successful message and code"""
 
-# returns success json
+        data = {
+            "new_username": "fake_username",
+            "srp_salt": "fake_srp_salt",
+            "srp_verifier": "fake_srp_verifier",
+            "master_key_salt": "fake_master_key_salt"
+        }
+        response, code = ServiceUser.register(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "username_hash" in response
+        assert "errors" not in response
+        assert code == 201
+
+        assert response["success"]
+        assert response["username_hash"] == "fake_username"
 
 
 if __name__ == '__main__':
