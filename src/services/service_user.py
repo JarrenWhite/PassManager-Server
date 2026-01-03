@@ -44,6 +44,9 @@ class ServiceUser():
         if not decrypted:
             return {"success": False, "errors": [values]}, http_code
 
+        keys = {"username", "new_username"}
+        sanitised, errors, http_code = ServiceUtils.sanitise_inputs(values, keys)
+
         return {}, 200
 
 
