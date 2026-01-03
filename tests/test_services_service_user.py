@@ -75,8 +75,8 @@ class TestRegister():
     def test_value_sanitise_inputs_fails(self):
         """Should return error if value sanitisation fails"""
 
-        error = {"Error message": "Error string"}
-        self.sanitise_inputs_return = False, error, 456
+        errors = [{"Error message": "Error string"}]
+        self.sanitise_inputs_return = False, errors, 456
 
         data = {
             "new_username": "fake_username",
@@ -93,7 +93,7 @@ class TestRegister():
         assert code == 456
 
         assert not response["success"]
-        assert response["errors"] == [error]
+        assert response["errors"] == errors
 
     def test_calls_acting_function(self):
         """Should call main acting function"""
@@ -128,9 +128,9 @@ class TestRegister():
     def test_returns_handle_failure_error(self):
         """Should return error message from handle failure"""
 
-        error = {"error field": "error message"}
+        errors = [{"error field": "error message"}]
         self.create_return = False, FailureReason.UNKNOWN_EXCEPTION
-        self.handle_failure_return = error, 987
+        self.handle_failure_return = errors, 987
 
         data = {
             "new_username": "fake_username",
@@ -147,7 +147,7 @@ class TestRegister():
         assert code == 987
 
         assert not response["success"]
-        assert response["errors"] == [error]
+        assert response["errors"] == errors
 
     def test_acting_function_succeeds(self):
         """Should not handle failure reason if acting function call succeeds"""
@@ -234,8 +234,8 @@ class TestUsername():
     def test_session_sanitise_inputs_fails(self):
         """Should return error if session sanitisation fails"""
 
-        error = {"Error message": "Error string"}
-        self.sanitise_inputs_return = False, error, 456
+        errors = [{"Error message": "Error string"}]
+        self.sanitise_inputs_return = False, errors, 456
 
         data = {
             "session_id": "fake_session_id",
@@ -252,7 +252,7 @@ class TestUsername():
         assert code == 456
 
         assert not response["success"]
-        assert response["errors"] == [error]
+        assert response["errors"] == errors
 
     def test_open_session_called(self):
         """Should call to open session"""

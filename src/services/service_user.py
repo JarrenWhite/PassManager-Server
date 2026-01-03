@@ -10,9 +10,9 @@ class ServiceUser():
     def register(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
         keys = {"new_username", "srp_salt", "srp_verifier", "master_key_salt"}
-        sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, keys)
+        sanitised, errors, http_code = ServiceUtils.sanitise_inputs(data, keys)
         if not sanitised:
-            return {"success": False, "errors": [error]}, http_code
+            return {"success": False, "errors": errors}, http_code
 
         success, failure = DBUtilsUser.create(
             username_hash= data["new_username"],
@@ -23,8 +23,8 @@ class ServiceUser():
 
         if not success:
             assert failure
-            error, http_code = ServiceUtils.handle_failure(failure)
-            return {"success": False, "errors": [error]}, http_code
+            errors, http_code = ServiceUtils.handle_failure(failure)
+            return {"success": False, "errors": errors}, http_code
 
         return {"success": True, "username_hash": data["new_username"]}, 201
 
@@ -32,9 +32,9 @@ class ServiceUser():
     @staticmethod
     def username(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
-        sanitised, error, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
+        sanitised, errors, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
         if not sanitised:
-            return {"success": False, "errors": [error]}, http_code
+            return {"success": False, "errors": errors}, http_code
 
         decrypted, values, user_id, http_code = SessionManager.open_session(
             data["session_id"],
