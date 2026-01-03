@@ -223,7 +223,7 @@ class TestUsername():
         }
         response, code = ServiceUser.username(data)
 
-        assert len(self.sanitise_inputs_called) == 1
+        assert len(self.sanitise_inputs_called) >= 1
         assert self.sanitise_inputs_called[0] == data
 
         assert len(self.sanitise_inputs_keys[0]) == 3
@@ -289,6 +289,23 @@ class TestUsername():
 
         assert not response["success"]
         assert response["errors"] == [error]
+
+    def test_value_sanitise_inputs(self):
+        """Should pass final value inputs to be sanitised"""
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.sanitise_inputs_called) == 2
+        assert self.sanitise_inputs_called[0] == data
+
+        assert len(self.sanitise_inputs_keys[1]) == 2
+        assert "username" in self.sanitise_inputs_keys[1]
+        assert "new_username" in self.sanitise_inputs_keys[1]
 
 
 if __name__ == '__main__':
