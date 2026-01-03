@@ -223,6 +223,28 @@ class TestUsername():
         assert "request_number" in self.fake_sanitise_inputs_keys[0]
         assert "encrypted_data" in self.fake_sanitise_inputs_keys[0]
 
+    def test_session_sanitise_inputs_fails(self):
+        """Should return false if session sanitisation fails"""
+
+        error = {"Error message": "Error string"}
+        self.fake_sanitise_inputs_return = False, error, 456
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 3,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "username_hash" not in response
+        assert "errors" in response
+        assert code == 456
+
+        assert not response["success"]
+        assert response["errors"] == [error]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
