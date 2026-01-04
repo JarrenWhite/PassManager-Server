@@ -203,6 +203,13 @@ class TestUsername():
             return self.sanitise_inputs_return_2
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
+        self.change_username_called = []
+        self.change_username_return = {}, 0
+        def fake_change_username(user_id, new_username_hash):
+            self.change_username_called.append((user_id, new_username_hash))
+            return self.change_username_return
+        monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
+
         self.open_session_called = []
         false_session_values = {"username": "", "new_username": ""}
         self.open_session_return = True, false_session_values, 3, 0
@@ -329,6 +336,22 @@ class TestUsername():
 
         assert not response["success"]
         assert response["errors"] == errors
+
+    def test_calls_acting_function(self):
+        """Should call main acting function"""
+
+        values = {"username": "fake_username", "new_username": "fake_new_username"}
+        self.open_session_return = True, values, 123456, 0
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.change_username_called) == 1
+        assert self.change_username_called[0] == (123456, "fake_new_username")
 
 
 if __name__ == '__main__':
