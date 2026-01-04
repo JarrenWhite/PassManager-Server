@@ -204,7 +204,7 @@ class TestUsername():
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
         self.change_username_called = []
-        self.change_username_return = {}, 0
+        self.change_username_return = True, None
         def fake_change_username(user_id, new_username_hash):
             self.change_username_called.append((user_id, new_username_hash))
             return self.change_username_return
@@ -217,6 +217,13 @@ class TestUsername():
             self.open_session_called.append((session_id, request_number, encrypted_data))
             return self.open_session_return
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
+
+        self.handle_failure_called = []
+        self.handle_failure_return = {}, 0
+        def fake_handle_failure(failure_reason):
+            self.handle_failure_called.append(failure_reason)
+            return self.handle_failure_return
+        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
 
         yield
 
@@ -352,6 +359,21 @@ class TestUsername():
 
         assert len(self.change_username_called) == 1
         assert self.change_username_called[0] == (123456, "fake_new_username")
+
+    def test_handle_failure_reason(self):
+        """Should handle failure reason if acting function fails"""
+
+        self.change_username_return = False, FailureReason.UNKNOWN_EXCEPTION
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.handle_failure_called) == 1
+        assert self.handle_failure_called[0] == FailureReason.UNKNOWN_EXCEPTION
 
 
 if __name__ == '__main__':
