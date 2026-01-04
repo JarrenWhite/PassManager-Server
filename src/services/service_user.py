@@ -54,6 +54,10 @@ class ServiceUser():
             new_username_hash= values["new_username"]
         )
 
+        if not success:
+            assert failure
+            errors, http_code = ServiceUtils.handle_failure(failure)
+
         return {}, 200
 
 
