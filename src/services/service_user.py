@@ -49,6 +49,11 @@ class ServiceUser():
         if not sanitised:
             return {"success": False, "errors": errors}, http_code
 
+        success, failure = DBUtilsUser.change_username(
+            user_id= user_id,
+            new_username_hash= values["new_username"]
+        )
+
         return {}, 200
 
 
