@@ -225,6 +225,13 @@ class TestUsername():
             return self.handle_failure_return
         monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
 
+        self.seal_session_called = []
+        self.seal_session_return = {}, 200
+        def fake_seal_session(session_id, data):
+            self.seal_session_called.append((session_id, data))
+            return self.seal_session_return
+        monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
+
         yield
 
     def test_session_sanitise_inputs(self):
