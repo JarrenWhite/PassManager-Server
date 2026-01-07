@@ -418,6 +418,22 @@ class TestUsername():
 
         assert len(self.handle_failure_called) == 0
 
+    def test_session_sealed(self):
+        """Should call to seal session"""
+
+        false_session_values = {"username": "fake_username", "new_username": "fake_new_username"}
+        self.open_session_return = True, false_session_values, 3, 0
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(self.seal_session_called) == 1
+        assert self.seal_session_called[0] == ("fake_session_id", {"new_username": "fake_new_username"})
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
