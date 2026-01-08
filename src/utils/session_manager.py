@@ -27,13 +27,14 @@ class SessionManager():
     def seal_session(
         session_id: str,
         unencrypted_data: Dict[str, Any]
-    ) -> Tuple[bool, str, int]:
+    ) -> Tuple[bool, str, Dict[str, Any], int]:
         """
         Docstring for seal_session
 
         Returns:
             (bool)  Returns true if encrypted, false otherwise
-            (Dict)  Encrypted data if successful
+            (str)   Encrypted data if successful
+            (Dict)  Error message if failed
             (int)   HTTP status code if session encrypting fails
         """
-        return True, "", 0
+        return True, "", {}, 0

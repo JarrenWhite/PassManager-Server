@@ -226,7 +226,7 @@ class TestUsername():
         monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
 
         self.seal_session_called = []
-        self.seal_session_return = {}, 200
+        self.seal_session_return = True, "", {}, 200
         def fake_seal_session(session_id, data):
             self.seal_session_called.append((session_id, data))
             return self.seal_session_return
@@ -419,7 +419,7 @@ class TestUsername():
         assert len(self.handle_failure_called) == 0
 
     def test_session_sealed(self):
-        """Should call to seal session"""
+        """Should call to seal session with correct values"""
 
         false_session_values = {"username": "fake_username", "new_username": "fake_new_username"}
         self.open_session_return = True, false_session_values, 3, 0
@@ -433,6 +433,29 @@ class TestUsername():
 
         assert len(self.seal_session_called) == 1
         assert self.seal_session_called[0] == ("fake_session_id", {"new_username": "fake_new_username"})
+
+    def test_session_seal_fails(self):
+        """Should return error message if session seal fails"""
+
+        error = {"Error message": "Error string"}
+        self.seal_session_return = False, "", error, 405
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert code == 405
+
+        assert not response["success"]
+        assert response["errors"] == [error]
 
 
 if __name__ == '__main__':
