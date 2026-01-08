@@ -59,7 +59,11 @@ class ServiceUser():
             errors, http_code = ServiceUtils.handle_failure(failure)
             return {"success": False, "errors": errors}, http_code
 
-        SessionManager.seal_session(data["session_id"], {"new_username": values["new_username"]})
+        success, sealed_data, error, http_code = SessionManager.seal_session(
+            data["session_id"], {"new_username": values["new_username"]}
+        )
+        if not success:
+            return {"success": False, "errors": [error]}, http_code
 
         return {}, 200
 
