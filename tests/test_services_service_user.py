@@ -457,6 +457,30 @@ class TestUsername():
         assert not response["success"]
         assert response["errors"] == [error]
 
+    def test_returns_successful_message(self):
+        """Should return successful message and code"""
+
+        result_value = "fake_sealed_data"
+        self.seal_session_return = True, result_value, {}, 0
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 123,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.username(data)
+
+        assert len(response) == 3
+        assert "success" in response
+        assert "session_id" in response
+        assert "encrypted_data" in response
+        assert "errors" not in response
+        assert code == 200
+
+        assert response["success"]
+        assert response["session_id"] == "fake_session_id"
+        assert response["encrypted_data"] == "fake_sealed_data"
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
