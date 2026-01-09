@@ -65,7 +65,7 @@ class ServiceUser():
         if not success:
             return {"success": False, "errors": [error]}, http_code
 
-        return {}, 200
+        return {"success": True, "session_id": data["session_id"], "encrypted_data": sealed_data}, 200
 
 
     @staticmethod
