@@ -32,17 +32,9 @@ class ServiceUser():
     @staticmethod
     def username(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
-        sanitised, errors, http_code = ServiceUtils.sanitise_inputs(data, SESSION_KEYS)
-        if not sanitised:
-            return {"success": False, "errors": errors}, http_code
-
-        decrypted, values, user_id, http_code = SessionManager.open_session(
-            data["session_id"],
-            data["request_number"],
-            data["encrypted_data"]
-        )
+        decrypted, values, user_id, errors, http_code = ServiceUtils.open_session(data)
         if not decrypted:
-            return {"success": False, "errors": [values]}, http_code
+            return {"success": False, "errors": errors}, http_code
 
         keys = {"username", "new_username"}
         sanitised, errors, http_code = ServiceUtils.sanitise_inputs(values, keys)
