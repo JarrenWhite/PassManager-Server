@@ -488,7 +488,39 @@ class TestDelete():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
+        self.sanitise_inputs_called = []
+        self.sanitise_inputs_keys = []
+        self.sanitise_inputs_return = True, {}, 0
+        self.sanitise_inputs_return_2 = True, {}, 0
+        def fake_sanitise_inputs(data, required_keys):
+            self.sanitise_inputs_called.append(data)
+            self.sanitise_inputs_keys.append(required_keys)
+            if self.sanitise_inputs_return:
+                return_value = self.sanitise_inputs_return
+                self.sanitise_inputs_return = None
+                return return_value
+            return self.sanitise_inputs_return_2
+        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+
         yield
+
+    def test_session_sanitise_inputs(self):
+        """Should pass session values to be sanitised"""
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 3,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(self.sanitise_inputs_called) >= 1
+        assert self.sanitise_inputs_called[0] == data
+
+        assert len(self.sanitise_inputs_keys[0]) == 3
+        assert "session_id" in self.sanitise_inputs_keys[0]
+        assert "request_number" in self.sanitise_inputs_keys[0]
+        assert "encrypted_data" in self.sanitise_inputs_keys[0]
 
 
 if __name__ == '__main__':
