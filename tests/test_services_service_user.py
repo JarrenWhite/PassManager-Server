@@ -482,5 +482,14 @@ class TestUsername():
         assert response["encrypted_data"] == "fake_sealed_data"
 
 
+class TestDelete():
+    """Test classes for delete user"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        yield
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
