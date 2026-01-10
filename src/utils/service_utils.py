@@ -55,7 +55,7 @@ class ServiceUtils():
         if not decrypted:
             return False, {}, 0, [values], http_code
 
-        return True, values, user_id, [{}], 0
+        return True, values, user_id, [], 0
 
 
     @staticmethod

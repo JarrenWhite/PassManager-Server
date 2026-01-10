@@ -24,7 +24,7 @@ class TestOpenSession():
         monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
 
         self.open_session_called = []
-        false_session_values = {"username": "", "new_username": ""}
+        false_session_values = {"data_field": "", "data_field_two": ""}
         self.open_session_return = True, false_session_values, 3, 0
         def fake_open_session(session_id, request_number, encrypted_data):
             self.open_session_called.append((session_id, request_number, encrypted_data))
@@ -101,6 +101,25 @@ class TestOpenSession():
         assert user_id == 0
         assert errors == [expected_errors]
         assert code == 875
+
+    def test_call_is_successful(self):
+        """Should return correct values if all successful"""
+
+        false_session_values = {"data_field": "", "data_field_two": ""}
+        self.open_session_return = True, false_session_values, 123456, 0
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 3,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        success, values, user_id, errors, code = ServiceUtils.open_session(data)
+
+        assert success
+        assert values == false_session_values
+        assert user_id == 123456
+        assert errors == []
+        assert code == 0
 
 
 if __name__ == '__main__':
