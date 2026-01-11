@@ -440,24 +440,18 @@ class TestDelete():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
-        self.sanitise_inputs_called = []
-        self.sanitise_inputs_keys = []
-        self.sanitise_inputs_return = True, {}, 0
-        self.sanitise_inputs_return_2 = True, {}, 0
-        def fake_sanitise_inputs(data, required_keys):
-            self.sanitise_inputs_called.append(data)
-            self.sanitise_inputs_keys.append(required_keys)
-            if self.sanitise_inputs_return:
-                return_value = self.sanitise_inputs_return
-                self.sanitise_inputs_return = None
-                return return_value
-            return self.sanitise_inputs_return_2
-        monkeypatch.setattr(ServiceUtils, "sanitise_inputs", fake_sanitise_inputs)
+        self.open_session_called = []
+        false_session_values = {"username": ""}
+        self.open_session_return = True, false_session_values, 123456, {}, 0
+        def fake_open_session(data):
+            self.open_session_called.append(data)
+            return self.open_session_return
+        monkeypatch.setattr(ServiceUtils, "open_session", fake_open_session)
 
         yield
 
-    def test_session_sanitise_inputs(self):
-        """Should pass session values to be sanitised"""
+    def test_open_session_called(self):
+        """Should call to open session"""
 
         data = {
             "session_id": "fake_session_id",
@@ -466,13 +460,8 @@ class TestDelete():
         }
         response, code = ServiceUser.delete(data)
 
-        assert len(self.sanitise_inputs_called) >= 1
-        assert self.sanitise_inputs_called[0] == data
-
-        assert len(self.sanitise_inputs_keys[0]) == 3
-        assert "session_id" in self.sanitise_inputs_keys[0]
-        assert "request_number" in self.sanitise_inputs_keys[0]
-        assert "encrypted_data" in self.sanitise_inputs_keys[0]
+        assert len(self.open_session_called) == 1
+        assert self.open_session_called[0] == data
 
 
 if __name__ == '__main__':
