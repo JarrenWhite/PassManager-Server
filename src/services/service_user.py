@@ -64,5 +64,7 @@ class ServiceUser():
     def delete(data: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
 
         decrypted, values, user_id, errors, http_code = ServiceUtils.open_session(data)
+        if not decrypted:
+            return {"success": False, "errors": errors}, http_code
 
         return {}, 200

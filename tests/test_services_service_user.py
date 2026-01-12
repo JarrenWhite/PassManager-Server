@@ -463,6 +463,29 @@ class TestDelete():
         assert len(self.open_session_called) == 1
         assert self.open_session_called[0] == data
 
+    def test_open_session_fails(self):
+        """Should return error if open session fails"""
+
+        errors = [{"Error message": "Error string"}]
+        self.open_session_return = False, {}, 0, errors, 875
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 3,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert code == 875
+
+        assert not response["success"]
+        assert response["errors"] == errors
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
