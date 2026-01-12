@@ -455,7 +455,7 @@ class TestDelete():
 
         data = {
             "session_id": "fake_session_id",
-            "request_number": 3,
+            "request_number": 0,
             "encrypted_data": "fake_encrypted_data"
         }
         response, code = ServiceUser.delete(data)
@@ -471,7 +471,7 @@ class TestDelete():
 
         data = {
             "session_id": "fake_session_id",
-            "request_number": 3,
+            "request_number": 0,
             "encrypted_data": "fake_encrypted_data"
         }
         response, code = ServiceUser.delete(data)
