@@ -486,6 +486,35 @@ class TestDelete():
         assert not response["success"]
         assert response["errors"] == errors
 
+    @pytest.mark.parametrize("rq_no", [1, 5, 15])
+    def test_old_session(self, rq_no):
+        """Should fail if request number is not 0"""
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": rq_no,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert code == 400
+
+        assert not response["success"]
+        assert len(response["errors"]) == 1
+
+        error = response["errors"][0]
+        assert "field" in error
+        assert "error_code" in error
+        assert "error" in error
+        assert error["field"] == "request_number"
+        assert error["error_code"] == "ltd01"
+        assert "Request number" and "0" in error["error"]
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
