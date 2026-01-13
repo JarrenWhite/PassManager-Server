@@ -67,4 +67,12 @@ class ServiceUser():
         if not decrypted:
             return {"success": False, "errors": errors}, http_code
 
+        if data["request_number"] != 0:
+            error = {
+                "field": "request_number",
+                "error_code": "ltd01",
+                "error": "Request number must be 0 for this request type"
+            }
+            return {"success": False, "errors": [error]}, 400
+
         return {}, 200
