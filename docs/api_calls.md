@@ -147,7 +147,7 @@ Delete a given user, and all data associated with their account.
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
+| session_id      | string | Yes      | The public ID of the password-change session.    |
 | request_number  | int    | Yes      | The number of this request on the login session. Must be 0 for this request type. |
 | encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
 
@@ -161,7 +161,7 @@ Delete a given user, and all data associated with their account.
 [4 bytes: username length][username bytes]
 ```
 
-> **Note:** The request number for this request type must be 0. This means a new session must be created for user deletion.
+> **Security Note:** Account deletion requires a password-change session. The request number must be 0, meaning a new password-change session must be created specifically for deletion. This ensures the user has recently verified their password before performing this high-risk operation.
 
 **[Response Format](api_responses.md#delete-user-user)**
 

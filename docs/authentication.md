@@ -6,7 +6,8 @@ This document outlines the authentication and password management system for the
 1. [**Authentication Flow**](#authentication-flow)
 2. [**Session Management**](#session-management)
 3. [**Password Change Process**](#password-change-process)
-4. [**Security Implementation**](#security-implementation)
+4. [**High-Risk Operations**](#high-risk-operations)
+5. [**Security Implementation**](#security-implementation)
 
 ---
 
@@ -145,3 +146,56 @@ Two for each data entry, plus one request to complete the change.
 > - New nonces must be generated for each encryption
 > - Old nonces must never be reused
 > - New master key must be used for all re-encryption
+
+---
+
+
+## High-Risk Operations
+
+### Account Deletion
+
+Account deletion is a high-risk, irreversible operation that permanently removes all user data. To ensure maximum security, account deletion enforces strict authentication requirements.
+
+#### Security Requirements
+
+**Password-Change Session Mandatory:**
+- Account deletion **requires** a password-change session (not a regular login session)
+- This ensures the user has recently verified their password before deletion
+- The session must be fresh (request_count == 0)
+
+**API Endpoint:** `POST /api/user/delete`
+
+#### Why Password-Change Sessions?
+
+Password-change sessions provide stronger security guarantees than regular login sessions:
+
+1. **Recent Password Verification:** The user must have entered their password within the last 5 minutes
+2. **Limited Lifetime:** Password-change sessions expire after 5 minutes (vs. 1 hour for regular sessions)
+3. **Limited Scope:** These sessions cannot be used for normal operations, reducing attack surface
+4. **Fresh Session Requirement:** The deletion must be the first request on the session (request_number = 0)
+
+#### Implementation Pattern
+
+```
+1. User initiates password change flow: POST /api/password/start
+2. User completes authentication: POST /api/password/auth
+3. Server creates password-change session
+4. User immediately requests account deletion: POST /api/user/delete
+   - session_id: [password-change session ID]
+   - request_number: 0
+5. Server validates:
+   - Session exists and is valid
+   - Session has password_change flag set to True
+   - request_count == 0 (fresh session)
+6. If all checks pass, account is deleted
+```
+
+#### Error Responses
+
+| Condition | Error Code | HTTP Status | Message |
+|-----------|------------|-------------|---------|
+| Regular session used | `ltd03` | 412 | Account deletion requires a password-change session |
+| Request count != 0 | `ltd01` | 400 | Request number must be 0 for this request type |
+| Session not found | `gnr01` | 404 | session_id not found |
+
+---

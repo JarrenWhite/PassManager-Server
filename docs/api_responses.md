@@ -602,6 +602,7 @@ These errors are specific to certain APIs. Only those APIs can return these erro
 | ltd00      | new_username    | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
 | ltd01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
 | ltd02      | request         | 412       | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
+| ltd03      | session_id      | 412       | [Delete User](#delete-user-user) | Account deletion requires a password-change session              |
 
 
 ### HTTP Status Codes
