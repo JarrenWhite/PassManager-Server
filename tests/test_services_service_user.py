@@ -448,6 +448,13 @@ class TestDelete():
             return self.open_session_return
         monkeypatch.setattr(ServiceUtils, "open_session", fake_open_session)
 
+        self.delete_called = []
+        self.delete_return = True, None
+        def fake_delete(user_id):
+            self.delete_called.append(user_id)
+            return self.delete_return
+        monkeypatch.setattr(DBUtilsUser, "delete", fake_delete)
+
         yield
 
     def test_open_session_called(self):
@@ -514,6 +521,22 @@ class TestDelete():
         assert error["field"] == "request_number"
         assert error["error_code"] == "ltd01"
         assert "Request number" and "0" in error["error"]
+
+    def test_calls_acting_function(self):
+        """Should call main acting function"""
+
+        values = {"username": "fake_username", "new_username": "fake_new_username"}
+        self.open_session_return = True, values, 123456, {}, 0
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 0,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(self.delete_called) == 1
+        assert self.delete_called[0] == 123456
 
 
 if __name__ == '__main__':
