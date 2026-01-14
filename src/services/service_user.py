@@ -75,4 +75,8 @@ class ServiceUser():
             }
             return {"success": False, "errors": [error]}, 400
 
+        success, failure = DBUtilsUser.delete(
+            user_id= user_id
+        )
+
         return {}, 200
