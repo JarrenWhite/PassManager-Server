@@ -79,4 +79,9 @@ class ServiceUser():
             user_id= user_id
         )
 
+        if not success:
+            assert failure
+            errors, http_code = ServiceUtils.handle_failure(failure)
+            return {"success": False, "errors": errors}, http_code
+
         return {}, 200
