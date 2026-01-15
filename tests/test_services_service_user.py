@@ -455,6 +455,13 @@ class TestDelete():
             return self.delete_return
         monkeypatch.setattr(DBUtilsUser, "delete", fake_delete)
 
+        self.handle_failure_called = []
+        self.handle_failure_return = {}, 0
+        def fake_handle_failure(failure_reason):
+            self.handle_failure_called.append(failure_reason)
+            return self.handle_failure_return
+        monkeypatch.setattr(ServiceUtils, "handle_failure", fake_handle_failure)
+
         yield
 
     def test_open_session_called(self):
@@ -525,7 +532,7 @@ class TestDelete():
     def test_calls_acting_function(self):
         """Should call main acting function"""
 
-        values = {"username": "fake_username", "new_username": "fake_new_username"}
+        values = {"username": "fake_username"}
         self.open_session_return = True, values, 123456, {}, 0
 
         data = {
@@ -537,6 +544,21 @@ class TestDelete():
 
         assert len(self.delete_called) == 1
         assert self.delete_called[0] == 123456
+
+    def test_handle_failure_reason(self):
+        """Should handle failure reason if acting function fails"""
+
+        self.delete_return = False, FailureReason.UNKNOWN_EXCEPTION
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 0,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(self.handle_failure_called) == 1
+        assert self.handle_failure_called[0] == FailureReason.UNKNOWN_EXCEPTION
 
 
 if __name__ == '__main__':
