@@ -584,6 +584,18 @@ class TestDelete():
         assert not response["success"]
         assert response["errors"] == errors
 
+    def test_acting_function_succeeds(self):
+        """Should not handle failure reason if acting function call succeeds"""
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 0,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(self.handle_failure_called) == 0
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
