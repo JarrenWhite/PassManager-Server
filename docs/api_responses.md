@@ -62,7 +62,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -89,7 +89,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -119,7 +119,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -152,7 +152,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -185,7 +185,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the password change session.    |
+| session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -212,7 +212,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -239,7 +239,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the password change session.    |
+| session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -272,7 +272,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the password change session.    |
+| session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -340,7 +340,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -367,7 +367,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -397,7 +397,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -426,7 +426,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -455,7 +455,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -484,7 +484,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -517,7 +517,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
-| session_id      | string   | always   | The public ID of the login session.              |
+| session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
 | errors          | [error]  | failure  | json list of each error.                         |
 
@@ -566,6 +566,7 @@ Notes:
 - Multiple errors may be returned in a single response. Clients should iterate the `errors` array.
 - Error code naming scheme:
   - `rqsXX`: request-level errors that apply to the entire request.
+  - `svrXX`: server-level errors that apply to the application.
   - `gnrXX`: general field errors that can apply to multiple APIs/fields.
   - `ltdXX`: limited API errors that apply to specific endpoints only.
 
@@ -576,7 +577,7 @@ These errors can be returned to any possible request.
 
 | Error Code | Field           | HTTP Code | Error Message                                                |
 |------------|-----------------|-----------|--------------------------------------------------------------|
-| rqs00      | request         | 400       | Incorrect parameters. Required: [<fields>]                   |
+| rqs00      | request         | 400       | Incorrect parameters. Required: [\<fields\>]                 |
 | rqs01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
 | rqs02      | request         | 403       | Password change in progress                                  |
 | rqs03      | request         | 429       | Too many requests                                            |
@@ -588,9 +589,10 @@ These errors can be returned to any possible request.
 
 These can be returned in response to multiple possible fields.
 
-| Error Code | HTTP Code | Error message     |
-| gnr00      | 400       | {Field} invalid   |
-| gnr01      | 404       | {Field} not found |
+| Error Code | HTTP Code | Error message       |
+|------------|-----------|---------------------|
+| gnr00      | 400       | \<Field\> invalid   |
+| gnr01      | 404       | \<Field\> not found |
 
 
 ### Limited API Errors
@@ -598,8 +600,8 @@ These can be returned in response to multiple possible fields.
 These errors are specific to certain APIs. Only those APIs can return these errors.
 
 | Error Code | Field           | HTTP Code | APIs | Error Message                                                |
-|------------|-----------------|-----------|-----|--------------------------------------------------------------|
-| ltd00      | new_username    | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
+|------------|-----------------|-----------|------|--------------------------------------------------------------|
+| ltd00      | username_hash   | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
 | ltd01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
 | ltd02      | request         | 412       | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
 
@@ -616,7 +618,7 @@ A HTTP response code is issued with every response. Where multiple possible resp
 | UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
 | FORBIDDEN           | 403         | User is undergoing a password change.                          |
 | NOT_FOUND           | 404         | The requested item could not be found.                         |
-| USER_EXISTS         | 409         | Username hash already exists in the system.                    |
+| USER_EXISTS         | 409         | Username hash already exists.                                  |
 | PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
 | RATE_LIMIT_EXCEEDED | 429         | Too many requests.                                             |
 | INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |

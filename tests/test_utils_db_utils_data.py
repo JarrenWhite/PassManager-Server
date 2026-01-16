@@ -9,7 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 
 from mock_classes import _MockSession, _MockQuery
 from database.database_setup import DatabaseSetup
-from utils.utils_enums import FailureReason
+from enums.failure_reason import FailureReason
 from utils.db_utils_data import DBUtilsData
 from database.database_models import User, SecureData
 

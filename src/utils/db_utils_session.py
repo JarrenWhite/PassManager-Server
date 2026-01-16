@@ -6,8 +6,8 @@ logger = getLogger("database")
 
 from sqlalchemy.orm import Session
 
+from enums import FailureReason
 from database import DatabaseSetup, LoginSession, User
-from .utils_enums import FailureReason
 from .db_utils_password import DBUtilsPassword
 
 
