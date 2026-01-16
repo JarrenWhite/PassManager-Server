@@ -84,4 +84,10 @@ class ServiceUser():
             errors, http_code = ServiceUtils.handle_failure(failure)
             return {"success": False, "errors": errors}, http_code
 
-        return {}, 200
+        success, sealed_data, error, http_code = SessionManager.seal_session(
+            data["session_id"], {"username": values["username"]}
+        )
+        if not success:
+            return {"success": False, "errors": [error]}, http_code
+
+        return {"success": True, "session_id": data["session_id"], "encrypted_data": sealed_data}, 200
