@@ -560,6 +560,30 @@ class TestDelete():
         assert len(self.handle_failure_called) == 1
         assert self.handle_failure_called[0] == FailureReason.UNKNOWN_EXCEPTION
 
+    def test_returns_handle_failure_error(self):
+        """Should return error message from handle failure"""
+
+        errors = [{"error field": "error message"}]
+        self.delete_return = False, FailureReason.UNKNOWN_EXCEPTION
+        self.handle_failure_return = errors, 987
+
+        data = {
+            "session_id": "fake_session_id",
+            "request_number": 0,
+            "encrypted_data": "fake_encrypted_data"
+        }
+        response, code = ServiceUser.delete(data)
+
+        assert len(response) == 2
+        assert "success" in response
+        assert "session_id" not in response
+        assert "encrypted_data" not in response
+        assert "errors" in response
+        assert code == 987
+
+        assert not response["success"]
+        assert response["errors"] == errors
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
