@@ -89,6 +89,7 @@ The tests make use of the pytest framework. As well as being runnable using a py
     ├── test_api_api_user.py
     ├── test_database_database_models.py
     ├── test_database_database_setup.py
+    ├── test_services_service_session.py
     ├── test_services_service_user.py
     ├── test_utils_database_config.py
     ├── test_utils_db_utils_auth.py
