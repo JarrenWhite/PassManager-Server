@@ -42,4 +42,20 @@ Intended to be deployable using small scale infrastructure, without compromising
 ├── src
 │
 └── tests
+    ├── all_tests.py
+    ├── mock_classes.py
+    ├── test_api_api_data.py
+    ├── test_api_api_password.py
+    ├── test_api_api_session.py
+    ├── test_api_api_user.py
+    ├── test_database_database_models.py
+    ├── test_database_database_setup.py
+    ├── test_services_service_user.py
+    ├── test_utils_database_config.py
+    ├── test_utils_db_utils_auth.py
+    ├── test_utils_db_utils_data.py
+    ├── test_utils_db_utils_password.py
+    ├── test_utils_db_utils_session.py
+    ├── test_utils_db_utils_user.py
+    └── test_utils_service_utils.py
 ```
