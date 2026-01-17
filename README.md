@@ -26,20 +26,22 @@ Intended to be deployable using small scale infrastructure, without compromising
 │   └── logging_config.json
 │
 ├── docs
-│   ├── design
-│   │   ├── api_call_lifecycle.md
-│   │   ├── cryptography_utils.md
-│   │   ├── db_utils.md
-│   │   ├── PassManager-Server.pdf
-│   │   └── password_change_lifecycle.md
-│   │
 │   ├── api_calls.md
 │   ├── api_responses.md
 │   ├── authentication.md
 │   ├── cryptographic_implementation.md
-│   └── database_schema.md
+│   ├── database_schema.md
+│   │
+│   └── design
+│       ├── api_call_lifecycle.md
+│       ├── cryptography_utils.md
+│       ├── db_utils.md
+│       ├── PassManager-Server.pdf
+│       └── password_change_lifecycle.md
 │
 ├── src
+│   ├── main.py
+│   │
 │   ├── api
 │   │   ├── api_data.py
 │   │   ├── api_password.py
@@ -62,19 +64,17 @@ Intended to be deployable using small scale infrastructure, without compromising
 │   │   ├── service_session.py
 │   │   └── service_user.py
 │   │
-│   ├── utils
-│   │   ├── __init__.py
-│   │   ├── database_config.py
-│   │   ├── db_utils_auth.py
-│   │   ├── db_utils_data.py
-│   │   ├── db_utils_password.py
-│   │   ├── db_utils_session.py
-│   │   ├── db_utils_user.py
-│   │   ├── logging_setup.py
-│   │   ├── service_utils.py
-│   │   └── session_manager.py
-│   │
-│   └── main.py
+│   └── utils
+│       ├── __init__.py
+│       ├── database_config.py
+│       ├── db_utils_auth.py
+│       ├── db_utils_data.py
+│       ├── db_utils_password.py
+│       ├── db_utils_session.py
+│       ├── db_utils_user.py
+│       ├── logging_setup.py
+│       ├── service_utils.py
+│       └── session_manager.py
 │
 └── tests
     ├── all_tests.py
