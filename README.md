@@ -40,6 +40,41 @@ Intended to be deployable using small scale infrastructure, without compromising
 │   └── database_schema.md
 │
 ├── src
+│   ├── api
+│   │   ├── api_data.py
+│   │   ├── api_password.py
+│   │   ├── api_session.py
+│   │   └── api_user.py
+│   │
+│   ├── database
+│   │   ├── __init__.py
+│   │   ├── database_models.py
+│   │   └── database_setup.py
+│   │
+│   ├── enums
+│   │   ├── __init__.py
+│   │   └── failure_reason.py
+│   │
+│   ├── services
+│   │   ├── __init__.py
+│   │   ├── service_data.py
+│   │   ├── service_password.py
+│   │   ├── service_session.py
+│   │   └── service_user.py
+│   │
+│   ├── utils
+│   │   ├── __init__.py
+│   │   ├── database_config.py
+│   │   ├── db_utils_auth.py
+│   │   ├── db_utils_data.py
+│   │   ├── db_utils_password.py
+│   │   ├── db_utils_session.py
+│   │   ├── db_utils_user.py
+│   │   ├── logging_setup.py
+│   │   ├── service_utils.py
+│   │   └── session_manager.py
+│   │
+│   └── main.py
 │
 └── tests
     ├── all_tests.py
