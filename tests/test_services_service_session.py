@@ -6,6 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 
 from services.service_session import ServiceSession
 from enums.failure_reason import FailureReason
+from utils.db_utils_auth import DBUtilsAuth
 from utils.db_utils_session import DBUtilsSession
 from utils.service_utils import ServiceUtils
 from utils.session_manager import SessionManager
