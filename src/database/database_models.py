@@ -2,7 +2,7 @@ import uuid
 from typing import Optional, List
 from datetime import datetime
 
-from sqlalchemy import String, Integer, DateTime, Boolean, ForeignKey
+from sqlalchemy import String, Integer, DateTime, Boolean, ForeignKey, LargeBinary
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column, relationship
 
 Base = declarative_base()
@@ -12,16 +12,16 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username_hash: Mapped[str] = mapped_column(String, unique=True, index=True)
+    username_hash: Mapped[bytes] = mapped_column(LargeBinary, unique=True, index=True)
 
-    srp_salt: Mapped[str] = mapped_column(String)
-    srp_verifier: Mapped[str] = mapped_column(String)
-    master_key_salt: Mapped[str] = mapped_column(String)
+    srp_salt: Mapped[bytes] = mapped_column(LargeBinary)
+    srp_verifier: Mapped[bytes] = mapped_column(LargeBinary)
+    master_key_salt: Mapped[bytes] = mapped_column(LargeBinary)
     password_change: Mapped[bool] = mapped_column(Boolean)
 
-    new_srp_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    new_srp_verifier: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    new_master_key_salt: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    new_srp_salt: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
+    new_srp_verifier: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
+    new_master_key_salt: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
 
     auth_ephemerals: Mapped[List["AuthEphemeral"]] = relationship("AuthEphemeral", back_populates="user", cascade="all, delete-orphan")
     login_sessions: Mapped[List["LoginSession"]] = relationship("LoginSession", back_populates="user", cascade="all, delete-orphan")
@@ -35,8 +35,8 @@ class AuthEphemeral(Base):
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    eph_private_b: Mapped[str] = mapped_column(String)
-    eph_public_b: Mapped[str] = mapped_column(String)
+    eph_private_b: Mapped[bytes] = mapped_column(LargeBinary)
+    eph_public_b: Mapped[bytes] = mapped_column(LargeBinary)
     expiry_time: Mapped[datetime] = mapped_column(DateTime)
     password_change: Mapped[bool] = mapped_column(Boolean)
 

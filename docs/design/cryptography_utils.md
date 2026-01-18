@@ -6,31 +6,31 @@
 
 ## generate_ephemeral
 In
-srp_verifier: str (v)
+srp_verifier: bytes (v)
 
 Out
-eph_public_b: str (B)
-eph_private_b: str (b)
+eph_public_b: bytes (B)
+eph_private_b: bytes (b)
 
 ## compute_session_key
 In
-eph_val_a: str (A)
-eph_public_b: str (B)
-eph_private_b: str (b)
-srp_verifier: str (v)
+eph_val_a: bytes (A)
+eph_public_b: bytes (B)
+eph_private_b: bytes (b)
+srp_verifier: bytes (v)
 
 Out
-session_key: str (K)
+session_key: bytes (K)
 
 ## verify_proof
 In
-eph_val_a: str (A)
-eph_public_b: str (B)
-session_key: str (K)
-proof_val_m1: str (M1)
+eph_val_a: bytes (A)
+eph_public_b: bytes (B)
+session_key: bytes (K)
+proof_val_m1: bytes (M1)
 
 Out
-server_proof_m2: str (M2)
+server_proof_m2: bytes (M2)
 
 
 ---
@@ -40,22 +40,22 @@ server_proof_m2: str (M2)
 
 ## aes_encrypt
 In
-key: str
-nonce: str
-plaintext: str
-aad: str
+key: bytes
+nonce: bytes
+plaintext: bytes
+aad: bytes
 
 Out
-ciphertext: str
-auth_tag: str
+ciphertext: bytes
+auth_tag: bytes
 
 ## aes_decrypt
 In
-key: str
-nonce: str
-ciphertext: str
-auth_tag: str
-aad: str
+key: bytes
+nonce: bytes
+ciphertext: bytes
+auth_tag: bytes
+aad: bytes
 
 Out
-plaintext: str
+plaintext: bytes

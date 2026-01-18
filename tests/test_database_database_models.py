@@ -31,10 +31,10 @@ class TestDatabaseUserModel():
     def test_can_create_user(self):
         """Should be able to create new user with minimal fields"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -42,14 +42,14 @@ class TestDatabaseUserModel():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
         user = User(
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -64,9 +64,9 @@ class TestDatabaseUserModel():
         assert len(users) == 0
 
         user = User(
-            username_hash="fake_hash",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -81,9 +81,9 @@ class TestDatabaseUserModel():
         assert len(users) == 0
 
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -98,9 +98,9 @@ class TestDatabaseUserModel():
         assert len(users) == 0
 
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
             password_change=False
         )
         self.session.add(user)
@@ -115,10 +115,10 @@ class TestDatabaseUserModel():
         assert len(users) == 0
 
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt'
         )
         self.session.add(user)
 
@@ -134,39 +134,39 @@ class TestDatabaseUserModel():
     def test_can_use_optional_fields(self):
         """Should be able to create new user with optional fields"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
-            new_srp_salt="new_srp_salt",
-            new_srp_verifier="new_srp_verifier",
-            new_master_key_salt="new_master_key_salt"
+            new_srp_salt=b'new_srp_salt',
+            new_srp_verifier=b'new_srp_verifier',
+            new_master_key_salt=b'new_master_key_salt'
         )
         self.session.add(user)
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
     def test_username_uniqueness(self):
         """Should enforce unique usernames"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
         self.session.commit()
 
         user2 = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt_2",
-            srp_verifier="fake_srp_verifier_2",
-            master_key_salt="fake_master_key_salt_2",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt_2',
+            srp_verifier=b'fake_srp_verifier_2',
+            master_key_salt=b'fake_master_key_salt_2',
             password_change=False
         )
         self.session.add(user2)
@@ -184,14 +184,14 @@ class TestDatabaseUserModel():
     def test_all_fields_correct(self):
         """Should store all fields correctly"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
-            new_srp_salt="new_srp_salt",
-            new_srp_verifier="new_srp_verifier",
-            new_master_key_salt="new_master_key_salt"
+            new_srp_salt=b'new_srp_salt',
+            new_srp_verifier=b'new_srp_verifier',
+            new_master_key_salt=b'new_master_key_salt'
         )
         self.session.add(user)
         self.session.commit()
@@ -199,22 +199,22 @@ class TestDatabaseUserModel():
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.id == user.id
-        assert db_user.username_hash == "fake_hash"
-        assert db_user.srp_salt == "fake_srp_salt"
-        assert db_user.srp_verifier == "fake_srp_verifier"
-        assert db_user.master_key_salt == "fake_master_key_salt"
+        assert db_user.username_hash == b'fake_hash'
+        assert db_user.srp_salt == b'fake_srp_salt'
+        assert db_user.srp_verifier == b'fake_srp_verifier'
+        assert db_user.master_key_salt == b'fake_master_key_salt'
         assert db_user.password_change == False
-        assert db_user.new_srp_salt == "new_srp_salt"
-        assert db_user.new_srp_verifier == "new_srp_verifier"
-        assert db_user.new_master_key_salt == "new_master_key_salt"
+        assert db_user.new_srp_salt == b'new_srp_salt'
+        assert db_user.new_srp_verifier == b'new_srp_verifier'
+        assert db_user.new_master_key_salt == b'new_master_key_salt'
 
     def test_can_edit_data(self):
         """Should be possible to adjust all fields"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -223,58 +223,58 @@ class TestDatabaseUserModel():
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.id == user.id
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
-        user.username_hash="new_fake_hash"
-        user.srp_salt="new_fake_srp_salt"
-        user.srp_verifier="new_fake_srp_verifier"
-        user.master_key_salt="new_fake_master_key_salt"
+        user.username_hash=b'new_fake_hash'
+        user.srp_salt=b'new_fake_srp_salt'
+        user.srp_verifier=b'new_fake_srp_verifier'
+        user.master_key_salt=b'new_fake_master_key_salt'
         user.password_change=True
         self.session.commit()
 
-        users = self.session.query(User).filter_by(username_hash="fake_hash").all()
+        users = self.session.query(User).filter_by(username_hash=b'fake_hash').all()
         assert len(users) == 0
 
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.id == user.id
-        assert db_user.username_hash == "new_fake_hash"
-        assert db_user.srp_salt == "new_fake_srp_salt"
-        assert db_user.srp_verifier == "new_fake_srp_verifier"
-        assert db_user.master_key_salt == "new_fake_master_key_salt"
+        assert db_user.username_hash == b'new_fake_hash'
+        assert db_user.srp_salt == b'new_fake_srp_salt'
+        assert db_user.srp_verifier == b'new_fake_srp_verifier'
+        assert db_user.master_key_salt == b'new_fake_master_key_salt'
         assert db_user.password_change == True
 
     def test_can_add_optional_fields_late(self):
         """Should be able to add optional fields at a later point"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
         self.session.commit()
 
-        user.new_srp_salt="new_srp_salt"
-        user.new_srp_verifier="new_srp_verifier"
-        user.new_master_key_salt="new_master_key_salt"
+        user.new_srp_salt=b'new_srp_salt'
+        user.new_srp_verifier=b'new_srp_verifier'
+        user.new_master_key_salt=b'new_master_key_salt'
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
         assert db_user.id == user.id
-        assert db_user.new_srp_salt == "new_srp_salt"
-        assert db_user.new_srp_verifier == "new_srp_verifier"
-        assert db_user.new_master_key_salt == "new_master_key_salt"
+        assert db_user.new_srp_salt == b'new_srp_salt'
+        assert db_user.new_srp_verifier == b'new_srp_verifier'
+        assert db_user.new_master_key_salt == b'new_master_key_salt'
 
     def test_cannot_delete_required_fields(self):
         """Should not be possible to delete required fields"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -317,22 +317,22 @@ class TestDatabaseUserModel():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
-        assert db_user.srp_salt == "fake_srp_salt"
-        assert db_user.srp_verifier == "fake_srp_verifier"
-        assert db_user.master_key_salt == "fake_master_key_salt"
+        assert db_user.username_hash == b'fake_hash'
+        assert db_user.srp_salt == b'fake_srp_salt'
+        assert db_user.srp_verifier == b'fake_srp_verifier'
+        assert db_user.master_key_salt == b'fake_master_key_salt'
 
     def test_can_delete_completed_optional_fields(self):
         """Should be possible to delete optional fields"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
-            new_srp_salt="new_srp_salt",
-            new_srp_verifier="new_srp_verifier",
-            new_master_key_salt="new_master_key_salt"
+            new_srp_salt=b'new_srp_salt',
+            new_srp_verifier=b'new_srp_verifier',
+            new_master_key_salt=b'new_master_key_salt'
         )
         self.session.add(user)
         self.session.commit()
@@ -351,10 +351,10 @@ class TestDatabaseUserModel():
     def test_can_delete_entry(self):
         """Should be possible to delete entry"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -391,8 +391,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -401,7 +401,7 @@ class TestDatabaseAuthEphemeralModel():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
@@ -410,8 +410,8 @@ class TestDatabaseAuthEphemeralModel():
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -429,7 +429,7 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_public_b="fake_eph_public_b",
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -447,7 +447,7 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
+            eph_private_b=b'fake_eph_private_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -465,8 +465,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             password_change=False
         )
         self.session.add(ephemeral)
@@ -483,8 +483,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
         )
         self.session.add(ephemeral)
@@ -503,8 +503,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -521,8 +521,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -531,8 +531,8 @@ class TestDatabaseAuthEphemeralModel():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_private_b == b'fake_eph_private_b'
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
         assert db_ephemeral.user_id == 123456
         assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.public_id == ephemeral.public_id
@@ -543,8 +543,8 @@ class TestDatabaseAuthEphemeralModel():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -958,8 +958,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -1003,10 +1003,10 @@ class TestDatabaseRelationships():
     def test_existing_user_id_functions(self):
         """Should be possible to add models with existing user id"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1014,13 +1014,13 @@ class TestDatabaseRelationships():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=user.id,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -1029,7 +1029,7 @@ class TestDatabaseRelationships():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
 
         last_used = datetime.now()
         login = LoginSession(
@@ -1061,10 +1061,10 @@ class TestDatabaseRelationships():
     def test_user_ephemeral_relationship(self):
         """Should be a relationship between user and all user's auth ephemerals"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1073,8 +1073,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user=user,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -1084,8 +1084,8 @@ class TestDatabaseRelationships():
         expiry2 = datetime.now() + timedelta(hours=2)
         ephemeral2 = AuthEphemeral(
             user=user,
-            eph_private_b="fake_eph_private_b_2",
-            eph_public_b="fake_eph_public_b_2",
+            eph_private_b=b'fake_eph_private_b_2',
+            eph_public_b=b'fake_eph_public_b_2',
             expiry_time=expiry2,
             password_change=False
         )
@@ -1101,10 +1101,10 @@ class TestDatabaseRelationships():
     def test_user_login_relationship(self):
         """Should be a relationship between user and all user's login sessions"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1141,10 +1141,10 @@ class TestDatabaseRelationships():
     def test_user_data_relationship(self):
         """Should be a relationship between user and all user's login sessions"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1175,10 +1175,10 @@ class TestDatabaseRelationships():
     def test_user_cascade_deletion(self):
         """Should delete all LoginSessions, AuthEphemerals and SecureData when User is deleted"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1187,8 +1187,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user=user,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -1216,7 +1216,7 @@ class TestDatabaseRelationships():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
@@ -1224,7 +1224,7 @@ class TestDatabaseRelationships():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
@@ -1252,10 +1252,10 @@ class TestDatabaseRelationships():
     def test_auth_ephemeral_cascade_deletion(self):
         """Should delete AuthEphemeral from User when AuthEphemeral deleted"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1264,8 +1264,8 @@ class TestDatabaseRelationships():
         expiry = datetime.now() + timedelta(hours=1)
         eph = AuthEphemeral(
             user=user,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -1274,11 +1274,11 @@ class TestDatabaseRelationships():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
 
         assert eph in user.auth_ephemerals
 
@@ -1293,10 +1293,10 @@ class TestDatabaseRelationships():
     def test_login_cascade_deletion(self):
         """Should delete LoginSession from User when LoginSession deleted"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1323,7 +1323,7 @@ class TestDatabaseRelationships():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
@@ -1350,10 +1350,10 @@ class TestDatabaseRelationships():
     def test_secure_data_cascade_deletion(self):
         """Should delete SecureData from User when SecureData deleted"""
         user = User(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         self.session.add(user)
@@ -1380,7 +1380,7 @@ class TestDatabaseRelationships():
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
@@ -1421,36 +1421,36 @@ class TestDatabaseModelsUnitTests():
         self.session.close()
         Base.metadata.drop_all(self.engine)
 
-    def test_empty_strings(self):
-        """Should be able to handle empty strings in all models"""
+    def test_empty_values(self):
+        """Should be able to handle empty values in all models"""
         user = User(
-            username_hash="",
-            srp_salt="",
-            srp_verifier="",
-            master_key_salt="",
+            username_hash=b'',
+            srp_salt=b'',
+            srp_verifier=b'',
+            master_key_salt=b'',
             password_change=False,
-            new_srp_salt="",
-            new_srp_verifier="",
-            new_master_key_salt=""
+            new_srp_salt=b'',
+            new_srp_verifier=b'',
+            new_master_key_salt=b''
         )
         self.session.add(user)
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == ""
-        assert db_user.srp_salt == ""
-        assert db_user.srp_verifier == ""
-        assert db_user.master_key_salt == ""
-        assert db_user.new_srp_salt == ""
-        assert db_user.new_srp_verifier == ""
-        assert db_user.new_master_key_salt == ""
+        assert db_user.username_hash == b''
+        assert db_user.srp_salt == b''
+        assert db_user.srp_verifier == b''
+        assert db_user.master_key_salt == b''
+        assert db_user.new_srp_salt == b''
+        assert db_user.new_srp_verifier == b''
+        assert db_user.new_master_key_salt == b''
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="",
-            eph_public_b="",
+            eph_private_b=b'',
+            eph_public_b=b'',
             expiry_time=expiry,
             password_change=True
         )
@@ -1459,13 +1459,13 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_private_b == ""
-        assert db_ephemeral.eph_public_b == ""
+        assert db_ephemeral.eph_private_b == b''
+        assert db_ephemeral.eph_public_b == b''
 
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="",
+            session_key=b'',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -1477,55 +1477,55 @@ class TestDatabaseModelsUnitTests():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == ""
+        assert db_login.session_key == b''
 
         data = SecureData(
             user_id=123456,
-            entry_name="",
-            entry_data="",
-            new_entry_name="",
-            new_entry_data=""
+            entry_name=b'',
+            entry_data=b'',
+            new_entry_name=b'',
+            new_entry_data=b''
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == ""
-        assert db_data.entry_data == ""
-        assert db_data.new_entry_name == ""
-        assert db_data.new_entry_data == ""
+        assert db_data.entry_name == b''
+        assert db_data.entry_data == b''
+        assert db_data.new_entry_name == b''
+        assert db_data.new_entry_data == b''
 
     def test_long_strings(self):
         """Should be able to handle long strings in all models"""
         user = User(
-            username_hash="x"*10000,
-            srp_salt="x"*10000,
-            srp_verifier="x"*10000,
-            master_key_salt="x"*10000,
+            username_hash=b'x'*10000,
+            srp_salt=b'x'*10000,
+            srp_verifier=b'x'*10000,
+            master_key_salt=b'x'*10000,
             password_change=False,
-            new_srp_salt="x"*10000,
-            new_srp_verifier="x"*10000,
-            new_master_key_salt="x"*10000
+            new_srp_salt=b'x'*10000,
+            new_srp_verifier=b'x'*10000,
+            new_master_key_salt=b'x'*10000
         )
         self.session.add(user)
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "x"*10000
-        assert db_user.srp_salt == "x"*10000
-        assert db_user.srp_verifier == "x"*10000
-        assert db_user.master_key_salt == "x"*10000
-        assert db_user.new_srp_salt == "x"*10000
-        assert db_user.new_srp_verifier == "x"*10000
-        assert db_user.new_master_key_salt == "x"*10000
+        assert db_user.username_hash == b'x'*10000
+        assert db_user.srp_salt == b'x'*10000
+        assert db_user.srp_verifier == b'x'*10000
+        assert db_user.master_key_salt == b'x'*10000
+        assert db_user.new_srp_salt == b'x'*10000
+        assert db_user.new_srp_verifier == b'x'*10000
+        assert db_user.new_master_key_salt == b'x'*10000
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="x"*10000,
-            eph_public_b="x"*10000,
+            eph_private_b=b'x'*10000,
+            eph_public_b=b'x'*10000,
             expiry_time=expiry,
             password_change=True
         )
@@ -1534,13 +1534,13 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_private_b == "x"*10000
-        assert db_ephemeral.eph_public_b == "x"*10000
+        assert db_ephemeral.eph_private_b == b'x'*10000
+        assert db_ephemeral.eph_public_b == b'x'*10000
 
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="x"*10000,
+            session_key=b'x'*10000,
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -1552,55 +1552,55 @@ class TestDatabaseModelsUnitTests():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "x"*10000
+        assert db_login.session_key == b'x'*10000
 
         data = SecureData(
             user_id=123456,
-            entry_name="x"*10000,
-            entry_data="x"*10000,
-            new_entry_name="x"*10000,
-            new_entry_data="x"*10000
+            entry_name=b'x'*10000,
+            entry_data=b'x'*10000,
+            new_entry_name=b'x'*10000,
+            new_entry_data=b'x'*10000
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "x"*10000
-        assert db_data.entry_data == "x"*10000
-        assert db_data.new_entry_name == "x"*10000
-        assert db_data.new_entry_data == "x"*10000
+        assert db_data.entry_name == b'x'*10000
+        assert db_data.entry_data == b'x'*10000
+        assert db_data.new_entry_name == b'x'*10000
+        assert db_data.new_entry_data == b'x'*10000
 
     def test_special_characters(self):
         """Should be able to handle special character strings in all models"""
         user = User(
-            username_hash="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            srp_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            srp_verifier="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            master_key_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            username_hash=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            srp_salt=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            srp_verifier=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            master_key_salt=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
             password_change=False,
-            new_srp_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            new_srp_verifier="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            new_master_key_salt="!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+            new_srp_salt=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            new_srp_verifier=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            new_master_key_salt=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
         )
         self.session.add(user)
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_user.srp_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_user.srp_verifier == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_user.master_key_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_user.new_srp_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_user.new_srp_verifier == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_user.new_master_key_salt == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_user.username_hash == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_user.srp_salt == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_user.srp_verifier == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_user.master_key_salt == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_user.new_srp_salt == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_user.new_srp_verifier == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_user.new_master_key_salt == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            eph_public_b="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            eph_private_b=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            eph_public_b=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
             expiry_time=expiry,
             password_change=True
         )
@@ -1609,13 +1609,13 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_public_b == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_ephemeral.eph_private_b == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_ephemeral.eph_public_b == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_ephemeral.eph_private_b == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
 
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
+            session_key=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -1627,55 +1627,55 @@ class TestDatabaseModelsUnitTests():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_login.session_key == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
 
         data = SecureData(
             user_id=123456,
-            entry_name="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            entry_data="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            new_entry_name="!@#$%^&*()_+-=[]{}|;':\",./<>?`~",
-            new_entry_data="!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+            entry_name=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            entry_data=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            new_entry_name=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~',
+            new_entry_data=b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_data.entry_data == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_data.new_entry_name == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
-        assert db_data.new_entry_data == "!@#$%^&*()_+-=[]{}|;':\",./<>?`~"
+        assert db_data.entry_name == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_data.entry_data == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_data.new_entry_name == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
+        assert db_data.new_entry_data == b'!@#$%^&*()_+-=[]{}|;\':\",./<>?`~'
 
-    def test_unicode_characters(self):
-        """Should be able to handle unusual unicode character strings in all models"""
+    def test_other_byte_characters(self):
+        """Should be able to handle other random bytes"""
         user = User(
-            username_hash="测试用户🚀ñáéíóú",
-            srp_salt="测试用户🚀ñáéíóú",
-            srp_verifier="测试用户🚀ñáéíóú",
-            master_key_salt="测试用户🚀ñáéíóú",
+            username_hash=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            srp_salt=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            srp_verifier=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            master_key_salt=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
             password_change=False,
-            new_srp_salt="测试用户🚀ñáéíóú",
-            new_srp_verifier="测试用户🚀ñáéíóú",
-            new_master_key_salt="测试用户🚀ñáéíóú"
+            new_srp_salt=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            new_srp_verifier=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            new_master_key_salt=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
         )
         self.session.add(user)
         self.session.commit()
 
         db_user = self.session.query(User).first()
         assert db_user is not None
-        assert db_user.username_hash == "测试用户🚀ñáéíóú"
-        assert db_user.srp_salt == "测试用户🚀ñáéíóú"
-        assert db_user.srp_verifier == "测试用户🚀ñáéíóú"
-        assert db_user.master_key_salt == "测试用户🚀ñáéíóú"
-        assert db_user.new_srp_salt == "测试用户🚀ñáéíóú"
-        assert db_user.new_srp_verifier == "测试用户🚀ñáéíóú"
-        assert db_user.new_master_key_salt == "测试用户🚀ñáéíóú"
+        assert db_user.username_hash == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_user.srp_salt == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_user.srp_verifier == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_user.master_key_salt == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_user.new_srp_salt == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_user.new_srp_verifier == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_user.new_master_key_salt == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
 
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="测试用户🚀ñáéíóú",
-            eph_public_b="测试用户🚀ñáéíóú",
+            eph_private_b=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            eph_public_b=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
             expiry_time=expiry,
             password_change=True
         )
@@ -1684,13 +1684,13 @@ class TestDatabaseModelsUnitTests():
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
-        assert db_ephemeral.eph_private_b == "测试用户🚀ñáéíóú"
-        assert db_ephemeral.eph_public_b == "测试用户🚀ñáéíóú"
+        assert db_ephemeral.eph_private_b == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_ephemeral.eph_public_b == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
 
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="测试用户🚀ñáéíóú",
+            session_key=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -1702,107 +1702,32 @@ class TestDatabaseModelsUnitTests():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "测试用户🚀ñáéíóú"
+        assert db_login.session_key == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
 
         data = SecureData(
             user_id=123456,
-            entry_name="测试用户🚀ñáéíóú",
-            entry_data="测试用户🚀ñáéíóú",
-            new_entry_name="测试用户🚀ñáéíóú",
-            new_entry_data="测试用户🚀ñáéíóú"
+            entry_name=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            entry_data=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            new_entry_name=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd',
+            new_entry_data=b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "测试用户🚀ñáéíóú"
-        assert db_data.entry_data == "测试用户🚀ñáéíóú"
-        assert db_data.new_entry_name == "测试用户🚀ñáéíóú"
-        assert db_data.new_entry_data == "测试用户🚀ñáéíóú"
-
-    def test_spaces_and_cases(self):
-        """Should be able to correctly handle spaces and case sensitivity in strings in all models"""
-        user = User(
-            username_hash="abcd EFGH",
-            srp_salt="abcd EFGH",
-            srp_verifier="abcd EFGH",
-            master_key_salt="abcd EFGH",
-            password_change=False,
-            new_srp_salt="abcd EFGH",
-            new_srp_verifier="abcd EFGH",
-            new_master_key_salt="abcd EFGH"
-        )
-        self.session.add(user)
-        self.session.commit()
-
-        db_user = self.session.query(User).first()
-        assert db_user is not None
-        assert db_user.username_hash == "abcd EFGH"
-        assert db_user.srp_salt == "abcd EFGH"
-        assert db_user.srp_verifier == "abcd EFGH"
-        assert db_user.master_key_salt == "abcd EFGH"
-        assert db_user.new_srp_salt == "abcd EFGH"
-        assert db_user.new_srp_verifier == "abcd EFGH"
-        assert db_user.new_master_key_salt == "abcd EFGH"
-
-        expiry = datetime.now() + timedelta(hours=1)
-        ephemeral = AuthEphemeral(
-            user_id=123456,
-            eph_private_b="abcd EFGH",
-            eph_public_b="abcd EFGH",
-            expiry_time=expiry,
-            password_change=True
-        )
-        self.session.add(ephemeral)
-        self.session.commit()
-
-        db_ephemeral = self.session.query(AuthEphemeral).first()
-        assert db_ephemeral is not None
-        assert db_ephemeral.eph_private_b == "abcd EFGH"
-        assert db_ephemeral.eph_public_b == "abcd EFGH"
-
-        last_used = datetime.now()
-        login = LoginSession(
-            user_id=123456,
-            session_key="abcd EFGH",
-            request_count=0,
-            last_used=last_used,
-            maximum_requests=5,
-            expiry_time=expiry,
-            password_change=True
-        )
-        self.session.add(login)
-        self.session.commit()
-
-        db_login = self.session.query(LoginSession).first()
-        assert db_login is not None
-        assert db_login.session_key == "abcd EFGH"
-
-        data = SecureData(
-            user_id=123456,
-            entry_name="abcd EFGH",
-            entry_data="abcd EFGH",
-            new_entry_name="abcd EFGH",
-            new_entry_data="abcd EFGH"
-        )
-        self.session.add(data)
-        self.session.commit()
-
-        db_data = self.session.query(SecureData).first()
-        assert db_data is not None
-        assert db_data.entry_name == "abcd EFGH"
-        assert db_data.entry_data == "abcd EFGH"
-        assert db_data.new_entry_name == "abcd EFGH"
-        assert db_data.new_entry_data == "abcd EFGH"
+        assert db_data.entry_name == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_data.entry_data == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_data.new_entry_name == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
+        assert db_data.new_entry_data == b'\x00\x01\x02\x06\x15\x1b\x1f\x7f\x80\x9a\xaf\xff\x10\x03\x04\x19\x7e\x42\x99\xcd'
 
     def test_small_ints(self):
         """Should be able to handle small ints in all models"""
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=0,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1851,8 +1776,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=9223372036854775807,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1901,8 +1826,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.now() + timedelta(hours=1)
         ephemeral = AuthEphemeral(
             user_id=-9223372036854775806,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1951,8 +1876,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.min
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1985,8 +1910,8 @@ class TestDatabaseModelsUnitTests():
         expiry = datetime.max
         ephemeral = AuthEphemeral(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )

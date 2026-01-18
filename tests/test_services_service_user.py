@@ -435,7 +435,7 @@ class TestUsername():
 
 
 class TestDelete():
-    """Test classes for delete user"""
+    """Test cases for delete user"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
