@@ -49,17 +49,17 @@ class DBUtilsAuth():
 
     @staticmethod
     def start(
-        username_hash: str,
-        eph_private_b: str,
-        eph_public_b: str,
+        username_hash: bytes,
+        eph_private_b: bytes,
+        eph_public_b: bytes,
         expiry_time: datetime
-    ) -> Tuple[bool, Optional[FailureReason], str, str]:
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
         """
         Begin auth ephemeral session for the user
 
         Returns:
             (str)   public_id
-            (str)   srp_salt
+            (bytes) srp_salt
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -67,7 +67,7 @@ class DBUtilsAuth():
 
                 if user is None:
                     logger.debug(f"User: {username_hash[-4:]} not found.")
-                    return False, FailureReason.NOT_FOUND, "", ""
+                    return False, FailureReason.NOT_FOUND, "", b''
 
                 auth_ephemeral = AuthEphemeral(
                     user=user,
@@ -83,25 +83,25 @@ class DBUtilsAuth():
                 return True, None, auth_ephemeral.public_id, user.srp_salt
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+            return False, FailureReason.DATABASE_UNINITIALISED, "", b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", b''
 
 
     @staticmethod
     def get_details(
         user_id: int,
         public_id: str
-    ) -> Tuple[bool, Optional[FailureReason], str, int, str, str]:
+    ) -> Tuple[bool, Optional[FailureReason], bytes, int, bytes, bytes]:
         """
         Get the ephemeral details for the given ephemeral id
 
         Returns:
-            (str)   username_hash
+            (bytes) username_hash
             (int)   user_id
-            (str)   eph_private_b
-            (str)   eph_public_b
+            (bytes) eph_private_b
+            (bytes) eph_public_b
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -109,13 +109,13 @@ class DBUtilsAuth():
 
                 if auth_ephemeral is None:
                     logger.debug(f"Auth Ephemeral: {public_id[-4:]} not found.")
-                    return False, FailureReason.NOT_FOUND, "", 0, "", ""
+                    return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
                 if auth_ephemeral.user.id != user_id:
                     logger.debug(f"Auth Ephemeral: {public_id[-4:]} does not belong to user.")
-                    return False, FailureReason.NOT_FOUND, "", 0, "", ""
+                    return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
                     logger.debug(f"Auth Ephemeral: {public_id[-4:]} expired.")
-                    return False, FailureReason.NOT_FOUND, "", 0, "", ""
+                    return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
 
                 return (True, None,
                     auth_ephemeral.user.username_hash,
@@ -125,16 +125,16 @@ class DBUtilsAuth():
                 )
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, "", 0, "", ""
+            return False, FailureReason.DATABASE_UNINITIALISED, b'', 0, b'', b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", 0, "", ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, b'', 0, b'', b''
 
 
     @staticmethod
     def complete(
         public_id: str,
-        session_key: str,
+        session_key: bytes,
         maximum_requests: Optional[int],
         expiry_time: Optional[datetime]
     ) -> Tuple[bool, Optional[FailureReason], str]:
