@@ -37,10 +37,10 @@ class TestStart():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -53,20 +53,20 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash="fake_hash",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            username_hash=b'fake_hash',
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], str)
-        assert isinstance(response[3], str)
+        assert isinstance(response[3], bytes)
         assert response[0] == True
         assert response[1] == None
         assert response[2] == "fake_public_id"
-        assert response[3] == "fake_srp_salt"
+        assert response[3] == b'fake_srp_salt'
 
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 0
@@ -78,8 +78,8 @@ class TestStart():
         db_ephemeral = mock_session._added[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "fake_public_id"
-        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_private_b == b'fake_eph_private_b'
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
         assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.password_change == False
 
@@ -87,7 +87,7 @@ class TestStart():
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert condition.right.value == b'fake_hash'
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -99,9 +99,9 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash="fake_hash",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            username_hash=b'fake_hash',
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
         )
 
@@ -131,9 +131,9 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash="fake_hash",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            username_hash=b'fake_hash',
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
         )
 
@@ -170,9 +170,9 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash="fake_hash",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            username_hash=b'fake_hash',
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
         )
 
@@ -190,7 +190,7 @@ class TestStart():
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
         assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == "fake_hash"
+        assert condition.right.value == b'fake_hash'
 
 
 class TestGetDetails():
@@ -214,10 +214,10 @@ class TestGetDetails():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -226,8 +226,8 @@ class TestGetDetails():
             id=123456,
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -244,16 +244,16 @@ class TestGetDetails():
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
-        assert isinstance(response[2], str)
+        assert isinstance(response[2], bytes)
         assert isinstance(response[3], int)
-        assert isinstance(response[4], str)
-        assert isinstance(response[5], str)
+        assert isinstance(response[4], bytes)
+        assert isinstance(response[5], bytes)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == "fake_hash"
+        assert response[2] == b'fake_hash'
         assert response[3] == 123456
-        assert response[4] == "fake_eph_private_b"
-        assert response[5] == "fake_eph_public_b"
+        assert response[4] == b'fake_eph_private_b'
+        assert response[5] == b'fake_eph_public_b'
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
@@ -378,10 +378,10 @@ class TestGetDetails():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -389,8 +389,8 @@ class TestGetDetails():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -441,10 +441,10 @@ class TestGetDetails():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -452,8 +452,8 @@ class TestGetDetails():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -501,10 +501,10 @@ class TestGetDetails():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -513,8 +513,8 @@ class TestGetDetails():
             id=123456,
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -558,10 +558,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -569,8 +569,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -584,7 +584,7 @@ class TestComplete():
 
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=None,
             expiry_time=None
         )
@@ -611,7 +611,7 @@ class TestComplete():
         assert isinstance(db_session, LoginSession)
         assert db_session.user == fake_user
         assert db_session.public_id == "session_fake_public_id"
-        assert db_session.session_key == "fake_session_key"
+        assert db_session.session_key == b'fake_session_key'
         assert db_session.request_count == 0
         assert db_session.last_used < datetime.now()
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
@@ -643,10 +643,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -654,8 +654,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -670,7 +670,7 @@ class TestComplete():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=99,
             expiry_time=expiry
         )
@@ -696,7 +696,7 @@ class TestComplete():
         assert isinstance(db_session, LoginSession)
         assert db_session.user == fake_user
         assert db_session.public_id == "session_fake_public_id"
-        assert db_session.session_key == "fake_session_key"
+        assert db_session.session_key == b'fake_session_key'
         assert db_session.request_count == 0
         assert db_session.last_used < datetime.now()
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
@@ -721,7 +721,7 @@ class TestComplete():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=99,
             expiry_time=expiry
         )
@@ -753,7 +753,7 @@ class TestComplete():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=99,
             expiry_time=expiry
         )
@@ -792,7 +792,7 @@ class TestComplete():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=99,
             expiry_time=expiry
         )
@@ -831,10 +831,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -842,8 +842,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -857,7 +857,7 @@ class TestComplete():
 
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=None,
             expiry_time=None
         )
@@ -896,10 +896,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -907,8 +907,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -928,7 +928,7 @@ class TestComplete():
 
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=None,
             expiry_time=None
         )
@@ -959,10 +959,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -970,8 +970,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -991,7 +991,7 @@ class TestComplete():
 
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=None,
             expiry_time=None
         )
@@ -1021,10 +1021,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -1032,8 +1032,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1051,7 +1051,7 @@ class TestComplete():
 
         response = DBUtilsAuth.complete(
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             maximum_requests=None,
             expiry_time=None
         )
@@ -1116,24 +1116,24 @@ class TestCleanAll():
         auth_ephemeral_one = AuthEphemeral(
             user_id=1,
             public_id="ephemeral_fake_public_id_one",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
         auth_ephemeral_two = AuthEphemeral(
             user_id=2,
             public_id="ephemeral_fake_public_id_two",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
         auth_ephemeral_three = AuthEphemeral(
             user_id=3,
             public_id="ephemeral_fake_public_id_three",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
@@ -1169,24 +1169,24 @@ class TestCleanAll():
         auth_ephemeral_one = AuthEphemeral(
             user_id=1,
             public_id="ephemeral_fake_public_id_one",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() - timedelta(hours=1),
             password_change=False
         )
         auth_ephemeral_two = AuthEphemeral(
             user_id=2,
             public_id="ephemeral_fake_public_id_two",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() - timedelta(hours=1),
             password_change=False
         )
         auth_ephemeral_three = AuthEphemeral(
             user_id=3,
             public_id="ephemeral_fake_public_id_three",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() - timedelta(hours=1),
             password_change=False
         )
@@ -1226,18 +1226,18 @@ class TestCleanAll():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
         expired_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="expired_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() - timedelta(hours=1),
             password_change=True
         )
@@ -1281,8 +1281,8 @@ class TestCleanAll():
         valid_ephemeral = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=True
         )
@@ -1328,48 +1328,48 @@ class TestCleanAll():
         expired_ephemeral = AuthEphemeral(
             user_id=1,
             public_id="expired_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=now - timedelta(hours=1),
             password_change=False
         )
         valid_ephemeral_one = AuthEphemeral(
             user_id=2,
             public_id="valid_ephemeral_one",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=now + timedelta(hours=1),
             password_change=False
         )
         expired_password_ephemeral = AuthEphemeral(
             user_id=3,
             public_id="expired_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=now - timedelta(hours=1),
             password_change=True
         )
         valid_ephemeral_two = AuthEphemeral(
             user_id=4,
             public_id="valid_ephemeral_two",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=now + timedelta(hours=1),
             password_change=False
         )
         expired_ephemeral_two = AuthEphemeral(
             user_id=5,
             public_id="expired_ephemeral_two",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=now - timedelta(hours=2),
             password_change=False
         )
         expired_password_ephemeral_two = AuthEphemeral(
             user_id=6,
             public_id="expired_password_ephemeral_two",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=now - timedelta(hours=2),
             password_change=True
         )
