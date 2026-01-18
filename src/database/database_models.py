@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username_hash: Mapped[str] = mapped_column(String, unique=True, index=True)
+    username_hash: Mapped[bytes] = mapped_column(LargeBinary, unique=True, index=True)
 
     srp_salt: Mapped[bytes] = mapped_column(LargeBinary)
     srp_verifier: Mapped[bytes] = mapped_column(LargeBinary)
