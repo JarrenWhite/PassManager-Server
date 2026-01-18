@@ -50,7 +50,7 @@ class LoginSession(Base):
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    session_key: Mapped[str] = mapped_column(String, unique=True, index=True)
+    session_key: Mapped[bytes] = mapped_column(LargeBinary, unique=True, index=True)
     request_count: Mapped[int] = mapped_column(Integer)
     last_used: Mapped[datetime] = mapped_column(DateTime)
 
@@ -68,10 +68,10 @@ class SecureData(Base):
     public_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True, default=lambda: uuid.uuid4().hex)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    entry_name: Mapped[str] = mapped_column(String)
-    entry_data: Mapped[str] = mapped_column(String)
+    entry_name: Mapped[bytes] = mapped_column(LargeBinary)
+    entry_data: Mapped[bytes] = mapped_column(LargeBinary)
 
-    new_entry_name: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    new_entry_data: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    new_entry_name: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
+    new_entry_data: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="secure_data")
