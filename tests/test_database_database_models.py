@@ -582,7 +582,7 @@ class TestLoginSessionModel():
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -592,13 +592,13 @@ class TestLoginSessionModel():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
         last_used = datetime.now()
         login = LoginSession(
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -627,7 +627,7 @@ class TestLoginSessionModel():
 
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             last_used=last_used,
             password_change=False
         )
@@ -641,7 +641,7 @@ class TestLoginSessionModel():
 
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             password_change=False
         )
@@ -658,7 +658,7 @@ class TestLoginSessionModel():
 
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used
         )
@@ -679,7 +679,7 @@ class TestLoginSessionModel():
         expiry = datetime.now() + timedelta(hours=1)
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -691,14 +691,14 @@ class TestLoginSessionModel():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
 
     def test_session_key_uniqueness(self):
         """Should enforce unique session key"""
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -709,7 +709,7 @@ class TestLoginSessionModel():
         last_used_2 = datetime.now() + timedelta(hours=-1)
         login2 = LoginSession(
             user_id=1234567,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used_2,
             password_change=False
@@ -731,7 +731,7 @@ class TestLoginSessionModel():
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -750,7 +750,7 @@ class TestLoginSessionModel():
         expiry = datetime.now() + timedelta(hours=1)
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -763,7 +763,7 @@ class TestLoginSessionModel():
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
         assert db_login.user_id == 123456
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
         assert db_login.request_count == 0
         assert db_login.last_used == last_used
         assert db_login.maximum_requests == 5
@@ -776,7 +776,7 @@ class TestLoginSessionModel():
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -814,21 +814,21 @@ class TestSecureDataModel():
         """Should be able to create SecureData with minimal fields"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_name == b'fake_secure_data_name'
 
     def test_all_required_fields_are_required(self):
         """Should require all fields in order to create object"""
         data = SecureData(
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
 
@@ -840,7 +840,7 @@ class TestSecureDataModel():
 
         data = SecureData(
             user_id=123456,
-            entry_data="fake_secure_data_entry"
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
 
@@ -852,7 +852,7 @@ class TestSecureDataModel():
 
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name"
+            entry_name=b'fake_secure_data_name'
         )
         self.session.add(data)
 
@@ -866,24 +866,24 @@ class TestSecureDataModel():
         """Should be able to create new AuthEphemeral with optional fields"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry",
-            new_entry_name="new_fake_secure_data_name",
-            new_entry_data="new_fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry',
+            new_entry_name=b'new_fake_secure_data_name',
+            new_entry_data=b'new_fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_name == b'fake_secure_data_name'
 
     def test_public_id_created(self):
         """Should create a public ID of length 32"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -897,10 +897,10 @@ class TestSecureDataModel():
         """Should store all fields correctly"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry",
-            new_entry_name="new_fake_secure_data_name",
-            new_entry_data="new_fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry',
+            new_entry_name=b'new_fake_secure_data_name',
+            new_entry_data=b'new_fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -908,18 +908,18 @@ class TestSecureDataModel():
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
         assert db_data.user_id == 123456
-        assert db_data.entry_name == "fake_secure_data_name"
-        assert db_data.entry_data == "fake_secure_data_entry"
-        assert db_data.new_entry_name == "new_fake_secure_data_name"
-        assert db_data.new_entry_data == "new_fake_secure_data_entry"
+        assert db_data.entry_name == b'fake_secure_data_name'
+        assert db_data.entry_data == b'fake_secure_data_entry'
+        assert db_data.new_entry_name == b'new_fake_secure_data_name'
+        assert db_data.new_entry_data == b'new_fake_secure_data_entry'
         assert db_data.public_id == data.public_id
 
     def test_can_delete_entry(self):
         """Should be possible to delete entry"""
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -974,7 +974,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now()
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -989,8 +989,8 @@ class TestDatabaseRelationships():
 
         data = SecureData(
             user_id=123456,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
 
@@ -1034,7 +1034,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now()
         login = LoginSession(
             user_id=user.id,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -1044,19 +1044,19 @@ class TestDatabaseRelationships():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
 
         data = SecureData(
             user_id=user.id,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_name == b'fake_secure_data_name'
 
     def test_user_ephemeral_relationship(self):
         """Should be a relationship between user and all user's auth ephemerals"""
@@ -1113,7 +1113,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now()
         login = LoginSession(
             user=user,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -1124,7 +1124,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now() + timedelta(hours=1)
         login2 = LoginSession(
             user=user,
-            session_key="fake_session_key_2",
+            session_key=b'fake_session_key_2',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -1152,16 +1152,16 @@ class TestDatabaseRelationships():
 
         data = SecureData(
             user=user,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
 
         data2 = SecureData(
             user=user,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data2)
         self.session.commit()
@@ -1198,7 +1198,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now()
         login = LoginSession(
             user=user,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -1208,8 +1208,8 @@ class TestDatabaseRelationships():
 
         data = SecureData(
             user=user,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -1220,7 +1220,7 @@ class TestDatabaseRelationships():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
 
         db_ephemeral = self.session.query(AuthEphemeral).first()
         assert db_ephemeral is not None
@@ -1228,7 +1228,7 @@ class TestDatabaseRelationships():
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_name == b'fake_secure_data_name'
 
         assert login in user.login_sessions
         assert ephemeral in user.auth_ephemerals
@@ -1305,7 +1305,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now()
         login = LoginSession(
             user=user,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -1315,8 +1315,8 @@ class TestDatabaseRelationships():
 
         data = SecureData(
             user=user,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -1327,11 +1327,11 @@ class TestDatabaseRelationships():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_name == b'fake_secure_data_name'
 
         assert login in user.login_sessions
         assert data in user.secure_data
@@ -1362,7 +1362,7 @@ class TestDatabaseRelationships():
         last_used = datetime.now()
         login = LoginSession(
             user=user,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             password_change=False
@@ -1372,8 +1372,8 @@ class TestDatabaseRelationships():
 
         data = SecureData(
             user=user,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -1384,11 +1384,11 @@ class TestDatabaseRelationships():
 
         db_login = self.session.query(LoginSession).first()
         assert db_login is not None
-        assert db_login.session_key == "fake_session_key"
+        assert db_login.session_key == b'fake_session_key'
 
         db_data = self.session.query(SecureData).first()
         assert db_data is not None
-        assert db_data.entry_name == "fake_secure_data_name"
+        assert db_data.entry_name == b'fake_secure_data_name'
 
         assert login in user.login_sessions
         assert data in user.secure_data
@@ -1741,7 +1741,7 @@ class TestDatabaseModelsUnitTests():
         last_used = datetime.now()
         login = LoginSession(
             user_id=0,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             maximum_requests=0,
@@ -1759,10 +1759,10 @@ class TestDatabaseModelsUnitTests():
 
         data = SecureData(
             user_id=0,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry",
-            new_entry_name="new_fake_secure_data_name",
-            new_entry_data="new_fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry',
+            new_entry_name=b'new_fake_secure_data_name',
+            new_entry_data=b'new_fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -1791,7 +1791,7 @@ class TestDatabaseModelsUnitTests():
         last_used = datetime.now()
         login = LoginSession(
             user_id=9223372036854775807,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=9223372036854775807,
             last_used=last_used,
             maximum_requests=9223372036854775807,
@@ -1809,10 +1809,10 @@ class TestDatabaseModelsUnitTests():
 
         data = SecureData(
             user_id=9223372036854775807,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry",
-            new_entry_name="new_fake_secure_data_name",
-            new_entry_data="new_fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry',
+            new_entry_name=b'new_fake_secure_data_name',
+            new_entry_data=b'new_fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -1841,7 +1841,7 @@ class TestDatabaseModelsUnitTests():
         last_used = datetime.now()
         login = LoginSession(
             user_id=-9223372036854775806,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=-9223372036854775806,
             last_used=last_used,
             maximum_requests=-9223372036854775806,
@@ -1859,10 +1859,10 @@ class TestDatabaseModelsUnitTests():
 
         data = SecureData(
             user_id=-9223372036854775806,
-            entry_name="fake_secure_data_name",
-            entry_data="fake_secure_data_entry",
-            new_entry_name="new_fake_secure_data_name",
-            new_entry_data="new_fake_secure_data_entry"
+            entry_name=b'fake_secure_data_name',
+            entry_data=b'fake_secure_data_entry',
+            new_entry_name=b'new_fake_secure_data_name',
+            new_entry_data=b'new_fake_secure_data_entry'
         )
         self.session.add(data)
         self.session.commit()
@@ -1891,7 +1891,7 @@ class TestDatabaseModelsUnitTests():
         last_used = datetime.min
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
@@ -1925,7 +1925,7 @@ class TestDatabaseModelsUnitTests():
         last_used = datetime.max
         login = LoginSession(
             user_id=123456,
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=0,
             last_used=last_used,
             maximum_requests=5,
