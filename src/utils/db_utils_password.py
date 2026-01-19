@@ -42,12 +42,12 @@ class DBUtilsPassword():
     @staticmethod
     def start(
         user_id: int,
-        eph_private_b: str,
-        eph_public_b: str,
+        eph_private_b: bytes,
+        eph_public_b: bytes,
         expiry_time: datetime,
-        srp_salt: str,
-        srp_verifier: str,
-        master_key_salt: str
+        srp_salt: bytes,
+        srp_verifier: bytes,
+        master_key_salt: bytes
     ) -> Tuple[bool, Optional[FailureReason], str]:
         """
         Begin password auth ephemeral session for the user
@@ -95,7 +95,7 @@ class DBUtilsPassword():
     def complete(
         user_id: int,
         public_id: str,
-        session_key: str,
+        session_key: bytes,
         expiry: datetime
     ) -> Tuple[bool, Optional[FailureReason], str]:
         """
@@ -237,8 +237,8 @@ class DBUtilsPassword():
     def update(
         user_id: int,
         public_id: str,
-        entry_name: str,
-        entry_data: str
+        entry_name: bytes,
+        entry_data: bytes
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Add new encrypted entries for a secure entry"""
         try:
