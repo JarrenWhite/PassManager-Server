@@ -24,14 +24,14 @@ class TestCleanPasswordChange():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[]
@@ -54,22 +54,22 @@ class TestCleanPasswordChange():
         ephemeral = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=True
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[
                 ephemeral
             ],
@@ -92,38 +92,38 @@ class TestCleanPasswordChange():
         ephemeral_1 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
         ephemeral_2 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
         ephemeral_3 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -147,38 +147,38 @@ class TestCleanPasswordChange():
         ephemeral_1 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
         ephemeral_2 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=True
         )
         ephemeral_3 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -203,7 +203,7 @@ class TestCleanPasswordChange():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -213,14 +213,14 @@ class TestCleanPasswordChange():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -243,7 +243,7 @@ class TestCleanPasswordChange():
         login_session_1 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -253,7 +253,7 @@ class TestCleanPasswordChange():
         login_session_2 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -263,7 +263,7 @@ class TestCleanPasswordChange():
         login_session_3 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -273,14 +273,14 @@ class TestCleanPasswordChange():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -304,7 +304,7 @@ class TestCleanPasswordChange():
         login_session_1 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -314,7 +314,7 @@ class TestCleanPasswordChange():
         login_session_2 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -324,7 +324,7 @@ class TestCleanPasswordChange():
         login_session_3 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -334,14 +334,14 @@ class TestCleanPasswordChange():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -366,22 +366,22 @@ class TestCleanPasswordChange():
         secure_data = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_data'
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -399,8 +399,8 @@ class TestCleanPasswordChange():
         assert secure_data.new_entry_data == None
         assert secure_data.user_id == 123456
         assert secure_data.public_id == "fake_public_id"
-        assert secure_data.entry_name == "fake_entry_name"
-        assert secure_data.entry_data == "fake_entry_data"
+        assert secure_data.entry_name == b'fake_entry_name'
+        assert secure_data.entry_data == b'fake_entry_data'
 
     def test_multiple_secure_data_entries(self):
         """Should remove data from all secure data in a list"""
@@ -409,38 +409,38 @@ class TestCleanPasswordChange():
         secure_data_1 = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_data'
         )
         secure_data_2 = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_data'
         )
         secure_data_3 = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_data'
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -470,22 +470,22 @@ class TestCleanPasswordChange():
         secure_data = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name=None,
             new_entry_data=None
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[],
             secure_data=[
@@ -503,8 +503,8 @@ class TestCleanPasswordChange():
         assert secure_data.new_entry_data == None
         assert secure_data.user_id == 123456
         assert secure_data.public_id == "fake_public_id"
-        assert secure_data.entry_name == "fake_entry_name"
-        assert secure_data.entry_data == "fake_entry_data"
+        assert secure_data.entry_name == b'fake_entry_name'
+        assert secure_data.entry_data == b'fake_entry_data'
 
     def test_mix_of_details(self):
         """Should delete the correct entries, ignoring the rest"""
@@ -513,24 +513,24 @@ class TestCleanPasswordChange():
         ephemeral_1 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
         ephemeral_2 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=True
         )
         ephemeral_3 = AuthEphemeral(
             user_id=1,
             public_id="valid_password_ephemeral",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=datetime.now() + timedelta(hours=1),
             password_change=False
         )
@@ -538,7 +538,7 @@ class TestCleanPasswordChange():
         login_session_1 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -548,7 +548,7 @@ class TestCleanPasswordChange():
         login_session_2 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -558,7 +558,7 @@ class TestCleanPasswordChange():
         login_session_3 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -569,38 +569,38 @@ class TestCleanPasswordChange():
         secure_data_1 = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name=None,
             new_entry_data=None
         )
         secure_data_2 = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_data'
         )
         secure_data_3 = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_data'
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[
                 ephemeral_1,
                 ephemeral_2,
@@ -660,10 +660,10 @@ class TestStart():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -677,12 +677,12 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.start(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
-            srp_salt="new_fake_srp_salt",
-            srp_verifier="new_fake_srp_verifier",
-            master_key_salt="new_fake_master_key_salt"
+            srp_salt=b'new_fake_srp_salt',
+            srp_verifier=b'new_fake_srp_verifier',
+            master_key_salt=b'new_fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -692,12 +692,12 @@ class TestStart():
         assert response[1] == None
 
         assert fake_user.password_change
-        assert fake_user.srp_salt == "fake_srp_salt"
-        assert fake_user.srp_verifier == "fake_srp_verifier"
-        assert fake_user.master_key_salt == "fake_master_key_salt"
-        assert fake_user.new_srp_salt == "new_fake_srp_salt"
-        assert fake_user.new_srp_verifier == "new_fake_srp_verifier"
-        assert fake_user.new_master_key_salt == "new_fake_master_key_salt"
+        assert fake_user.srp_salt == b'fake_srp_salt'
+        assert fake_user.srp_verifier == b'fake_srp_verifier'
+        assert fake_user.master_key_salt == b'fake_master_key_salt'
+        assert fake_user.new_srp_salt == b'new_fake_srp_salt'
+        assert fake_user.new_srp_verifier == b'new_fake_srp_verifier'
+        assert fake_user.new_master_key_salt == b'new_fake_master_key_salt'
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -723,10 +723,10 @@ class TestStart():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -740,12 +740,12 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.start(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
-            srp_salt="new_fake_srp_salt",
-            srp_verifier="new_fake_srp_verifier",
-            master_key_salt="new_fake_master_key_salt"
+            srp_salt=b'new_fake_srp_salt',
+            srp_verifier=b'new_fake_srp_verifier',
+            master_key_salt=b'new_fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -765,8 +765,8 @@ class TestStart():
         db_ephemeral = mock_session._added[0]
         assert isinstance(db_ephemeral, AuthEphemeral)
         assert db_ephemeral.public_id == "fake_public_id"
-        assert db_ephemeral.eph_private_b == "fake_eph_private_b"
-        assert db_ephemeral.eph_public_b == "fake_eph_public_b"
+        assert db_ephemeral.eph_private_b == b'fake_eph_private_b'
+        assert db_ephemeral.eph_public_b == b'fake_eph_public_b'
         assert db_ephemeral.expiry_time == expiry
         assert db_ephemeral.password_change == True
 
@@ -800,12 +800,12 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.start(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
-            srp_salt="new_fake_srp_salt",
-            srp_verifier="new_fake_srp_verifier",
-            master_key_salt="new_fake_master_key_salt"
+            srp_salt=b'new_fake_srp_salt',
+            srp_verifier=b'new_fake_srp_verifier',
+            master_key_salt=b'new_fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -842,10 +842,10 @@ class TestStart():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -857,12 +857,12 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.start(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
-            srp_salt="new_fake_srp_salt",
-            srp_verifier="new_fake_srp_verifier",
-            master_key_salt="new_fake_master_key_salt"
+            srp_salt=b'new_fake_srp_salt',
+            srp_verifier=b'new_fake_srp_verifier',
+            master_key_salt=b'new_fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -892,12 +892,12 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.start(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
-            srp_salt="new_fake_srp_salt",
-            srp_verifier="new_fake_srp_verifier",
-            master_key_salt="new_fake_master_key_salt"
+            srp_salt=b'new_fake_srp_salt',
+            srp_verifier=b'new_fake_srp_verifier',
+            master_key_salt=b'new_fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -927,12 +927,12 @@ class TestStart():
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsPassword.start(
             user_id=123456,
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
-            srp_salt="new_fake_srp_salt",
-            srp_verifier="new_fake_srp_verifier",
-            master_key_salt="new_fake_master_key_salt"
+            srp_salt=b'new_fake_srp_salt',
+            srp_verifier=b'new_fake_srp_verifier',
+            master_key_salt=b'new_fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -967,10 +967,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             secure_data=[]
         )
@@ -979,8 +979,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -995,7 +995,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1021,7 +1021,7 @@ class TestComplete():
         assert isinstance(db_session, LoginSession)
         assert db_session.user == fake_user
         assert db_session.public_id == "session_fake_public_id"
-        assert db_session.session_key == "fake_session_key"
+        assert db_session.session_key == b'fake_session_key'
         assert db_session.request_count == 0
         assert db_session.last_used < datetime.now()
         assert db_session.last_used > datetime.now() - timedelta(seconds=2)
@@ -1054,34 +1054,34 @@ class TestComplete():
         secure_data_1 = SecureData(
             user_id=123456,
             public_id="fake_public_id_1",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_1",
             new_entry_data="new_fake_entry_data_1"
         )
         secure_data_2 = SecureData(
             user_id=123456,
             public_id="fake_public_id_2",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_2",
             new_entry_data="new_fake_entry_data_2"
         )
         secure_data_3 = SecureData(
             user_id=123456,
             public_id="fake_public_id_3",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_3",
             new_entry_data="new_fake_entry_data_3"
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             secure_data=[
                 secure_data_1,
@@ -1094,8 +1094,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1110,7 +1110,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1143,10 +1143,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             secure_data=[]
         )
@@ -1155,8 +1155,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=False
         )
@@ -1171,7 +1171,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1199,10 +1199,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             secure_data=[]
         )
@@ -1211,8 +1211,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1232,7 +1232,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1257,7 +1257,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1289,7 +1289,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1328,7 +1328,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=123456,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1366,10 +1366,10 @@ class TestComplete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             secure_data=[]
         )
@@ -1378,8 +1378,8 @@ class TestComplete():
         fake_ephemeral = AuthEphemeral(
             user=fake_user,
             public_id="ephemeral_fake_public_id",
-            eph_private_b="fake_eph_private_b",
-            eph_public_b="fake_eph_public_b",
+            eph_private_b=b'fake_eph_private_b',
+            eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry,
             password_change=True
         )
@@ -1394,7 +1394,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             user_id=654321,
             public_id="ephemeral_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             expiry=expiry
         )
 
@@ -1428,7 +1428,7 @@ class TestCommit():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1438,14 +1438,14 @@ class TestCommit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -1468,9 +1468,9 @@ class TestCommit():
         assert response[1] == None
 
         assert not fake_user.password_change
-        assert fake_user.srp_salt == "new_fake_srp_salt"
-        assert fake_user.srp_verifier == "new_fake_srp_verifier"
-        assert fake_user.master_key_salt == "new_fake_master_key_salt"
+        assert fake_user.srp_salt == b'new_fake_srp_salt'
+        assert fake_user.srp_verifier == b'new_fake_srp_verifier'
+        assert fake_user.master_key_salt == b'new_fake_master_key_salt'
         assert fake_user.new_srp_salt == None
         assert fake_user.new_srp_verifier == None
         assert fake_user.new_master_key_salt == None
@@ -1500,7 +1500,7 @@ class TestCommit():
         login_session_1 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1510,7 +1510,7 @@ class TestCommit():
         login_session_2 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1520,7 +1520,7 @@ class TestCommit():
         login_session_3 = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1530,14 +1530,14 @@ class TestCommit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session_1,
@@ -1580,7 +1580,7 @@ class TestCommit():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1591,38 +1591,38 @@ class TestCommit():
         secure_data_1 = SecureData(
             user_id=123456,
             public_id="fake_public_id_1",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_1",
             new_entry_data="new_fake_entry_data_1"
         )
         secure_data_2 = SecureData(
             user_id=123456,
             public_id="fake_public_id_2",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_2",
             new_entry_data="new_fake_entry_data_2"
         )
         secure_data_3 = SecureData(
             user_id=123456,
             public_id="fake_public_id_3",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_3",
             new_entry_data="new_fake_entry_data_3"
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -1680,7 +1680,7 @@ class TestCommit():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1691,38 +1691,38 @@ class TestCommit():
         secure_data_1 = SecureData(
             user_id=123456,
             public_id="fake_public_id_1",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_1",
             new_entry_data="new_fake_entry_data_1"
         )
         secure_data_2 = SecureData(
             user_id=123456,
             public_id="fake_public_id_2",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_2",
             new_entry_data="new_fake_entry_data_2"
         )
         secure_data_3 = SecureData(
             user_id=123456,
             public_id="fake_public_id_3",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_3",
             new_entry_data="new_fake_entry_data_3"
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -1768,7 +1768,7 @@ class TestCommit():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1778,14 +1778,14 @@ class TestCommit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
+            new_srp_salt=b'new_fake_srp_salt',
             new_srp_verifier=None,
-            new_master_key_salt="new_fake_master_key_salt",
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -1836,7 +1836,7 @@ class TestCommit():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -1847,38 +1847,38 @@ class TestCommit():
         secure_data_1 = SecureData(
             user_id=123456,
             public_id="fake_public_id_1",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_1",
             new_entry_data="new_fake_entry_data_1"
         )
         secure_data_2 = SecureData(
             user_id=123456,
             public_id="fake_public_id_2",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name=None,
             new_entry_data=None
         )
         secure_data_3 = SecureData(
             user_id=123456,
             public_id="fake_public_id_3",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name="new_fake_entry_name_3",
             new_entry_data="new_fake_entry_data_3"
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -2028,7 +2028,7 @@ class TestAbort():
         login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=datetime.now() - timedelta(hours=1),
             maximum_requests=None,
@@ -2038,14 +2038,14 @@ class TestAbort():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt",
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt',
             auth_ephemerals=[],
             login_sessions=[
                 login_session
@@ -2188,20 +2188,20 @@ class TestUpdate():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt"
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt'
         )
 
         secure_data = SecureData(
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name=None,
             new_entry_data=None,
             user=fake_user
@@ -2215,8 +2215,8 @@ class TestUpdate():
         response = DBUtilsPassword.update(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -2224,10 +2224,10 @@ class TestUpdate():
         assert response[0] == True
         assert response[1] == None
 
-        assert secure_data.entry_name == "fake_entry_name"
-        assert secure_data.entry_data == "fake_entry_data"
-        assert secure_data.new_entry_name == "new_fake_entry_name"
-        assert secure_data.new_entry_data == "new_fake_entry_data"
+        assert secure_data.entry_name == b'fake_entry_name'
+        assert secure_data.entry_data == b'fake_entry_data'
+        assert secure_data.new_entry_name == b'new_fake_entry_name'
+        assert secure_data.new_entry_data == b'new_fake_entry_data'
 
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
@@ -2253,23 +2253,23 @@ class TestUpdate():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt"
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt'
         )
 
         secure_data = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
-            new_entry_name="new_fake_entry_name",
-            new_entry_data="new_fake_entry_name",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
+            new_entry_name=b'new_fake_entry_name',
+            new_entry_data=b'new_fake_entry_name',
             user=fake_user
         )
 
@@ -2287,8 +2287,8 @@ class TestUpdate():
         response = DBUtilsPassword.update(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -2324,8 +2324,8 @@ class TestUpdate():
         response = DBUtilsPassword.update(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -2355,8 +2355,8 @@ class TestUpdate():
         response = DBUtilsPassword.update(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -2386,8 +2386,8 @@ class TestUpdate():
         response = DBUtilsPassword.update(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -2418,20 +2418,20 @@ class TestUpdate():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
-            new_srp_salt="new_fake_srp_salt",
-            new_srp_verifier="new_fake_srp_verifier",
-            new_master_key_salt="new_fake_master_key_salt"
+            new_srp_salt=b'new_fake_srp_salt',
+            new_srp_verifier=b'new_fake_srp_verifier',
+            new_master_key_salt=b'new_fake_master_key_salt'
         )
 
         secure_data = SecureData(
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data",
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data',
             new_entry_name=None,
             new_entry_data=None,
             user=fake_user
@@ -2445,8 +2445,8 @@ class TestUpdate():
         response = DBUtilsPassword.update(
             user_id=654321,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
