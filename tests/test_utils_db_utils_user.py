@@ -35,10 +35,10 @@ class TestCreate():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.create(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -50,10 +50,10 @@ class TestCreate():
         assert len(mock_session._deletes) == 0
         db_user = mock_session._added[0]
         assert isinstance(db_user, User)
-        assert db_user.username_hash == "fake_hash"
-        assert db_user.srp_salt == "fake_srp_salt"
-        assert db_user.srp_verifier == "fake_srp_verifier"
-        assert db_user.master_key_salt == "fake_master_key_salt"
+        assert db_user.username_hash == b'fake_hash'
+        assert db_user.srp_salt == b'fake_srp_salt'
+        assert db_user.srp_verifier == b'fake_srp_verifier'
+        assert db_user.master_key_salt == b'fake_master_key_salt'
         assert db_user.new_srp_salt == None
         assert db_user.new_srp_verifier == None
         assert db_user.new_master_key_salt == None
@@ -71,10 +71,10 @@ class TestCreate():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.create(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -102,10 +102,10 @@ class TestCreate():
         monkeypatch.setattr(DatabaseSetup, "get_db_session", mock_get_db_session)
 
         response = DBUtilsUser.create(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -138,19 +138,19 @@ class TestCreate():
 
         mock_session.add(
             User(
-                username_hash="fake_hash",
-                srp_salt="fake_srp_salt",
-                srp_verifier="fake_srp_verifier",
-                master_key_salt="fake_master_key_salt",
+                username_hash=b'fake_hash',
+                srp_salt=b'fake_srp_salt',
+                srp_verifier=b'fake_srp_verifier',
+                master_key_salt=b'fake_master_key_salt',
                 password_change=False
             )
         )
 
         response = DBUtilsUser.create(
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt"
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt'
         )
 
         assert isinstance(response, tuple)
@@ -185,10 +185,10 @@ class TestChangeUsername():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -199,7 +199,7 @@ class TestChangeUsername():
 
         response = DBUtilsUser.change_username(
             user_id=123456,
-            new_username_hash="new_fake_hash"
+            new_username_hash=b'new_fake_hash'
         )
 
         assert isinstance(response, tuple)
@@ -209,7 +209,7 @@ class TestChangeUsername():
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
-        assert fake_user.username_hash == "new_fake_hash"
+        assert fake_user.username_hash == b'new_fake_hash'
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
@@ -230,7 +230,7 @@ class TestChangeUsername():
 
         response = DBUtilsUser.change_username(
             user_id=123456,
-            new_username_hash="new_fake_hash"
+            new_username_hash=b'new_fake_hash'
         )
 
         assert isinstance(response, tuple)
@@ -259,10 +259,10 @@ class TestChangeUsername():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -273,7 +273,7 @@ class TestChangeUsername():
 
         response = DBUtilsUser.change_username(
             user_id=123456,
-            new_username_hash="new_fake_hash"
+            new_username_hash=b'new_fake_hash'
         )
 
         assert isinstance(response, tuple)
@@ -312,7 +312,7 @@ class TestChangeUsername():
 
         response = DBUtilsUser.change_username(
             user_id=123456,
-            new_username_hash="new_fake_hash"
+            new_username_hash=b'new_fake_hash'
         )
 
         assert isinstance(response, tuple)
@@ -348,7 +348,7 @@ class TestChangeUsername():
 
         response = DBUtilsUser.change_username(
             user_id=123456,
-            new_username_hash="new_fake_hash"
+            new_username_hash=b'new_fake_hash'
         )
 
         assert isinstance(response, tuple)
@@ -385,10 +385,10 @@ class TestChangeUsername():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -399,7 +399,7 @@ class TestChangeUsername():
 
         response = DBUtilsUser.change_username(
             user_id=123456,
-            new_username_hash="new_fake_hash"
+            new_username_hash=b'new_fake_hash'
         )
 
         assert isinstance(response, tuple)
@@ -440,10 +440,10 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
         mock_session.add(fake_user)
@@ -465,7 +465,7 @@ class TestDelete():
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 1
         db_user = mock_session._deletes[0]
-        assert db_user.username_hash == "fake_hash"
+        assert db_user.username_hash == b'fake_hash'
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
         assert mock_session.closed is True
@@ -585,10 +585,10 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
