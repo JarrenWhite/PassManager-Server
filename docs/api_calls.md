@@ -80,17 +80,6 @@ Creates a new user account using a username hash, and the required security info
 
 **[Response Format](api_responses.md#register-user-user)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/user/register \
-    -H "Content-Type: application/json" \
-    -d '{
-        "new_username": "123hashedUsername",
-        "srp_salt": "base64Salt",
-        "srp_verifier": "base64Verifier",
-        "master_key_salt": "base64MasterSalt"
-    }'
-```
 
 ---
 
@@ -124,16 +113,6 @@ Changes a user's username, from one username hash, to another username hash.
 
 **[Response Format](api_responses.md#change-username-user)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/user/username \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -165,16 +144,6 @@ Delete a given user, and all data associated with their account.
 
 **[Response Format](api_responses.md#delete-user-user)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/user/delete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 0,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -188,11 +157,6 @@ Check the health and availability of the User API endpoints. Returns system stat
 **Parameters**
 None required.
 
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/user/health \
-    -H "Content-Type: application/json"
-```
 
 ---
 
@@ -237,16 +201,6 @@ Begins the process of a password change, returning the user's validation details
 
 **[Response Format](api_responses.md#start-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/start \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -286,16 +240,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 
 **[Response Format](api_responses.md#continue-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/auth \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -325,16 +269,6 @@ Complete a password change. If all entries have been completed, the change is co
 
 **[Response Format](api_responses.md#complete-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/complete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -366,16 +300,6 @@ Abort a password change that is in progress. Deletes all details about the new p
 
 **[Response Format](api_responses.md#abort-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/abort \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -407,16 +331,6 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 
 **[Response Format](api_responses.md#get-entry-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/get \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -455,16 +369,6 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 
 **[Response Format](api_responses.md#add-new-encryption-for-entry-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/update \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -478,11 +382,6 @@ Check the health and availability of the Password API endpoints. Returns system 
 **Parameters**
 None required.
 
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/password/health \
-    -H "Content-Type: application/json"
-```
 
 ---
 
@@ -509,14 +408,6 @@ Request the details to create a new login session, including SRP details, master
 
 **[Response Format](api_responses.md#start-auth-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/start \
-    -H "Content-Type: application/json" \
-    -d '{
-        "username": "123hashedUsername"
-    }'
-```
 
 ---
 
@@ -544,19 +435,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 
 **[Response Format](api_responses.md#complete-auth-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/auth \
-    -H "Content-Type: application/json" \
-    -d '{
-        "username": "123hashedUsername",
-        "auth_id": "abc123authId",
-        "eph_val_a": "base64ClientEphemeral",
-        "proof_val_m1": "base64ClientProof",
-        "maximum_requests": 50,
-        "expiry_time": 1800
-    }'
-```
 
 ---
 
@@ -591,16 +469,6 @@ Delete the given auth session from the database, preventing further use.
 
 **[Response Format](api_responses.md#delete-session-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/delete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -633,16 +501,6 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 
 **[Response Format](api_responses.md#clean-sessions-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/clean \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -656,11 +514,6 @@ Check the health and availability of the Session API endpoints. Returns system s
 **Parameters**
 None required.
 
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/session/health \
-    -H "Content-Type: application/json"
-```
 
 ---
 
@@ -699,16 +552,6 @@ Create a new password entry with encrypted name and data, and provide the unique
 
 **[Response Format](api_responses.md#create-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/create \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -749,16 +592,6 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 
 **[Response Format](api_responses.md#edit-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/edit \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -792,16 +625,6 @@ Delete all stored data for a given data entry.
 
 **[Response Format](api_responses.md#delete-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/delete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -833,16 +656,6 @@ Retrieve all data for a given password entry.
 
 **[Response Format](api_responses.md#get-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/get \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -872,16 +685,6 @@ Retrieve a list of the public IDs of all password entries, along with their name
 
 **[Response Format](api_responses.md#get-list-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/list \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -894,9 +697,3 @@ Check the health and availability of the Data API endpoints. Returns system stat
 
 **Parameters**
 None required.
-
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/data/health \
-    -H "Content-Type: application/json"
-```
