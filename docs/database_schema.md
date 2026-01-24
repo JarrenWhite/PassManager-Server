@@ -18,14 +18,14 @@ Store main user information, including SRP authentication data, salts for encryp
 | Column                  | Type      | Constraints                     |
 |-------------------------|-----------|---------------------------------|
 | **id**                  | BIGINT    | **Primary Key**                 |
-| **username_hash**       | BLOB      | **Unique**, **Indexed**         |
-| **srp_salt**            | BLOB      |                                 |
-| **srp_verifier**        | BLOB      |                                 |
-| **master_key_salt**     | BLOB      |                                 |
+| **username_hash**       | BYTES     | **Unique**, **Indexed**         |
+| **srp_salt**            | BYTES     |                                 |
+| **srp_verifier**        | BYTES     |                                 |
+| **master_key_salt**     | BYTES     |                                 |
 | **password_change**     | BOOL      |                                 |
-| **new_srp_salt**        | BLOB      | **nullable**                    |
-| **new_srp_verifier**    | BLOB      | **nullable**                    |
-| **new_master_key_salt** | BLOB      | **nullable**                    |
+| **new_srp_salt**        | BYTES     | **nullable**                    |
+| **new_srp_verifier**    | BYTES     | **nullable**                    |
+| **new_master_key_salt** | BYTES     | **nullable**                    |
 
 ### **Relationships**
 - **AuthEphemeral** -> `AuthEphemeral.user_id` (one-to-many) cascading delete
@@ -59,8 +59,8 @@ Tracks server ephemeral values (B) for each SRP authentication attempt to preven
 |---------------------|-----------|--------------------------------------------------|
 | **id**              | BIGINT    | **Primary Key**, auto-increment                  |
 | **public_id**       | CHAR(36)  | **Indexed**                                      |
-| **eph_private_b**   | CHAR(36)  |                                                  |
-| **eph_public_b**    | BLOB      |                                                  |
+| **eph_private_b**   | BYTES     |                                                  |
+| **eph_public_b**    | BYTES     |                                                  |
 | **user_id**         | BIGINT    | **Foreign Key** → `User.id`                      |
 | **expiry_time**     | TIMESTAMP | When the ephemeral value expires                 |
 | **password_change** | BOOL      |                                                  |
@@ -91,7 +91,7 @@ Tracks user authentication sessions, storing session keys and related data.
 | **id**               | BIGINT    | **Primary Key**, auto-increment           |
 | **public_id**        | CHAR(36)  | **Unique**, **Indexed**                   |
 | **user_id**          | BIGINT    | **Foreign Key** → `User.id`               |
-| **session_key**      | BLOB      |                                           |
+| **session_key**      | BYTES     |                                           |
 | **request_count**    | INT       |                                           |
 | **last_used**        | TIMESTAMP |                                           |
 | **maximum_requests** | INT       | **nullable**                              |
@@ -125,10 +125,10 @@ Stores encrypted password entries, and related nonce and auth_tag for decryption
 | **id**                 | BIGINT    | **Primary Key**, auto-increment           |
 | **public_id**          | CHAR(36)  | **Unique**, **Indexed**                   |
 | **user_id**            | BIGINT    | **Foreign Key** → `User.id`, **Indexed**  |
-| **entry_name**         | BLOB      |                                           |
-| **entry_data**         | BLOB      |                                           |
-| **new_entry_name**     | BLOB      | **nullable**                              |
-| **new_entry_data**     | BLOB      | **nullable**                              |
+| **entry_name**         | BYTES     |                                           |
+| **entry_data**         | BYTES     |                                           |
+| **new_entry_name**     | BYTES     | **nullable**                              |
+| **new_entry_data**     | BYTES     | **nullable**                              |
 
 ### **Relationships**
 - Belongs to **User** → `user_id`
