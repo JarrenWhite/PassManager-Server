@@ -14,10 +14,10 @@ class DBUtilsUser():
 
     @staticmethod
     def create(
-        username_hash: str,
-        srp_salt: str,
-        srp_verifier: str,
-        master_key_salt: str
+        username_hash: bytes,
+        srp_salt: bytes,
+        srp_verifier: bytes,
+        master_key_salt: bytes
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Create a new user and add them to the database"""
         user = User(
@@ -46,7 +46,7 @@ class DBUtilsUser():
     @staticmethod
     def change_username(
         user_id: int,
-        new_username_hash: str
+        new_username_hash: bytes
     ) -> Tuple[bool, Optional[FailureReason]]:
         """Change username for an existing user"""
         try:

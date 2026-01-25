@@ -20,7 +20,7 @@ class DBUtilsData():
         Make a data entry with the given data values
 
         Returns:
-            (str)  The public ID of the created data entry
+            (str)   The public ID of the created data entry
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -55,14 +55,14 @@ class DBUtilsData():
     def edit(
         user_id: int,
         public_id: str,
-        entry_name: Optional[str],
-        entry_data: Optional[str]
+        entry_name: Optional[bytes],
+        entry_data: Optional[bytes]
     ) -> Tuple[bool, Optional[FailureReason]]:
         """
         Adjust a data entry with the given data values, only updating non-null values
 
         Returns:
-            (str)  The public ID of the created data entry
+            (str)   The public ID of the created data entry
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -130,13 +130,13 @@ class DBUtilsData():
         user_id: int,
         public_id: str,
         password_change: bool = False
-    ) -> Tuple[bool, Optional[FailureReason], str, str]:
+    ) -> Tuple[bool, Optional[FailureReason], bytes, bytes]:
         """
         Make a data entry with the given data values
 
         Returns:
-            (str)  The encrypted entry name
-            (str)  The encrypted entry data
+            (bytes) The encrypted entry name
+            (bytes) The encrypted entry data
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -144,35 +144,35 @@ class DBUtilsData():
 
                 if not secure_data:
                     logger.debug(f"Secure Data: {public_id[-4:]} not found.")
-                    return False, FailureReason.NOT_FOUND, "", ""
+                    return False, FailureReason.NOT_FOUND, b'', b''
                 if secure_data.user.id != user_id:
                     logger.debug(f"Secure Data: {public_id[-4:]} does not belong to user.")
-                    return False, FailureReason.NOT_FOUND, "", ""
+                    return False, FailureReason.NOT_FOUND, b'', b''
                 if secure_data.user.password_change and not password_change:
                     logger.debug(f"Secure Data: {secure_data.public_id[-4:]} undergoing password change.")
-                    return False, FailureReason.PASSWORD_CHANGE, "", ""
+                    return False, FailureReason.PASSWORD_CHANGE, b'', b''
 
                 logger.info(f"Secure Data: {public_id[-4:]} requested.")
                 return True, None, secure_data.entry_name, secure_data.entry_data
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, "", ""
+            return False, FailureReason.DATABASE_UNINITIALISED, b'', b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, "", ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, b'', b''
 
 
     @staticmethod
     def get_list(
         user_id: int
-    ) -> Tuple[bool, Optional[FailureReason], dict[str, str]]:
+    ) -> Tuple[bool, Optional[FailureReason], dict[str, bytes]]:
         """
         Make a data entry with the given data values
 
         Returns:
-            dict[str, str]
-                (str)  The encrypted entry public id
-                (str)  The encrypted entry name
+            dict[str, bytes]
+                (str)   The encrypted entry public id
+                (bytes) The encrypted entry name
         """
         try:
             with DatabaseSetup.get_db_session() as session:

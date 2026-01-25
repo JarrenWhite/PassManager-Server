@@ -35,10 +35,10 @@ class TestCreate():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -67,7 +67,7 @@ class TestCreate():
         db_secure_data = mock_session._added[0]
         assert isinstance(db_secure_data, SecureData)
         assert db_secure_data.user.id == 123456
-        assert db_secure_data.user.username_hash == "fake_hash"
+        assert db_secure_data.user.username_hash == b'fake_hash'
         assert db_secure_data.entry_name == "fake_encrypted_entry_name"
         assert db_secure_data.entry_data == "fake_encrypted_entry_data"
 
@@ -197,10 +197,10 @@ class TestCreate():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -245,18 +245,18 @@ class TestEdit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -267,7 +267,7 @@ class TestEdit():
         response = DBUtilsData.edit(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
+            entry_name=b'new_fake_entry_name',
             entry_data=None
         )
 
@@ -288,8 +288,8 @@ class TestEdit():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
-        assert secure_data.entry_name == "new_fake_entry_name"
-        assert secure_data.entry_data == "fake_entry_data"
+        assert secure_data.entry_name == b'new_fake_entry_name'
+        assert secure_data.entry_data == b'fake_entry_data'
 
     def test_change_data(self, monkeypatch):
         """Should correctly change the entry data, without changing the entry name"""
@@ -309,18 +309,18 @@ class TestEdit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -332,7 +332,7 @@ class TestEdit():
             user_id=123456,
             public_id="fake_public_id",
             entry_name=None,
-            entry_data="new_fake_entry_data"
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -352,8 +352,8 @@ class TestEdit():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
-        assert secure_data.entry_name == "fake_entry_name"
-        assert secure_data.entry_data == "new_fake_entry_data"
+        assert secure_data.entry_name == b'fake_entry_name'
+        assert secure_data.entry_data == b'new_fake_entry_data'
 
     def test_change_both_fields(self, monkeypatch):
         """Should correctly change both entry name and entry data"""
@@ -373,18 +373,18 @@ class TestEdit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -395,8 +395,8 @@ class TestEdit():
         response = DBUtilsData.edit(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -416,8 +416,8 @@ class TestEdit():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
-        assert secure_data.entry_name == "new_fake_entry_name"
-        assert secure_data.entry_data == "new_fake_entry_data"
+        assert secure_data.entry_name == b'new_fake_entry_name'
+        assert secure_data.entry_data == b'new_fake_entry_data'
 
     def test_change_neither_field(self, monkeypatch):
         """Should not change either field if neither option populated"""
@@ -437,18 +437,18 @@ class TestEdit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -480,8 +480,8 @@ class TestEdit():
         assert str(condition.left.name) == "public_id"
         assert condition.right.value == "fake_public_id"
 
-        assert secure_data.entry_name == "fake_entry_name"
-        assert secure_data.entry_data == "fake_entry_data"
+        assert secure_data.entry_name == b'fake_entry_name'
+        assert secure_data.entry_data == b'fake_entry_data'
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -601,18 +601,18 @@ class TestEdit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -651,18 +651,18 @@ class TestEdit():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -673,8 +673,8 @@ class TestEdit():
         response = DBUtilsData.edit(
             user_id=654321,
             public_id="fake_public_id",
-            entry_name="new_fake_entry_name",
-            entry_data="new_fake_entry_data"
+            entry_name=b'new_fake_entry_name',
+            entry_data=b'new_fake_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -706,18 +706,18 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -860,18 +860,18 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -908,18 +908,18 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -961,18 +961,18 @@ class TestGetEntry():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -987,12 +987,12 @@ class TestGetEntry():
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
-        assert isinstance(response[2], str)
-        assert isinstance(response[3], str)
+        assert isinstance(response[2], bytes)
+        assert isinstance(response[3], bytes)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == "fake_entry_name"
-        assert response[3] == "fake_entry_data"
+        assert response[2] == b'fake_entry_name'
+        assert response[3] == b'fake_entry_data'
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
@@ -1116,18 +1116,18 @@ class TestGetEntry():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -1164,18 +1164,18 @@ class TestGetEntry():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -1191,12 +1191,12 @@ class TestGetEntry():
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
-        assert isinstance(response[2], str)
-        assert isinstance(response[3], str)
+        assert isinstance(response[2], bytes)
+        assert isinstance(response[3], bytes)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == "fake_entry_name"
-        assert response[3] == "fake_entry_data"
+        assert response[2] == b'fake_entry_name'
+        assert response[3] == b'fake_entry_data'
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
@@ -1226,18 +1226,18 @@ class TestGetEntry():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
         secure_data = SecureData(
             user=fake_user,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         mock_query = _MockQuery([secure_data])
@@ -1278,10 +1278,10 @@ class TestGetList():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             secure_data=[]
         )
@@ -1330,16 +1330,16 @@ class TestGetList():
         secure_data = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             secure_data=[secure_data]
         )
@@ -1360,8 +1360,8 @@ class TestGetList():
         assert response[1] == None
         assert len(response[2]) == 1
         assert "fake_public_id" in response[2]
-        assert isinstance(response[2]["fake_public_id"], str)
-        assert response[2]["fake_public_id"] == "fake_entry_name"
+        assert isinstance(response[2]["fake_public_id"], bytes)
+        assert response[2]["fake_public_id"] == b'fake_entry_name'
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 0
@@ -1421,10 +1421,10 @@ class TestGetList():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             secure_data=[
                 secure_data_one,
@@ -1589,16 +1589,16 @@ class TestGetList():
         secure_data = SecureData(
             user_id=123456,
             public_id="fake_public_id",
-            entry_name="fake_entry_name",
-            entry_data="fake_entry_data"
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             secure_data=[secure_data]
         )

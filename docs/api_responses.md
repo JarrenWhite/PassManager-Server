@@ -63,13 +63,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| new_username    | string | Yes      | Hash of the new username.                        |
+| new_username    | bytes  | Yes      | Hash of the new username.                        |
 
 **Encryption Encoding**
 ```
@@ -90,13 +90,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -120,16 +120,16 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | auth_id         | string   | success  | The public ID of the in progress auth request.               |
-| srp_salt        | string   | success  | The salt used to create the verifier in SRP.                 |
-| eph_public_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
+| srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
+| eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
 
 **Encryption Encoding**
 ```
@@ -153,15 +153,15 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | session_id      | string   | success  | The public ID of the created password session.               |
-| server_proof_m2 | string   | success  | The server's proof of authentication.                        |
+| server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
 | entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
 
 **Encryption Encoding**
@@ -186,13 +186,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 
 **Encryption Encoding**
 ```
@@ -213,13 +213,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 
 **Encryption Encoding**
 ```
@@ -240,16 +240,16 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | string   | Yes      | Encrypted entry name payload.                                |
-| entry_data      | string   | Yes      | Encrypted entry data payload.                                |
+| entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
+| entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
 
 **Encryption Encoding**
 ```
@@ -273,13 +273,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -305,9 +305,9 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.                   |
 | auth_id         | string   | success  | The public ID of the in progress auth request.               |
-| srp_salt        | string   | success  | The salt used to create the verifier in SRP.                 |
-| eph_public_b     | string   | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
-| master_key_salt | string   | success  | The salt used to create the master key.                      |
+| srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
+| eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
+| master_key_salt | bytes    | success  | The salt used to create the master key.                      |
 | errors          | [error]  | failure  | json list of each error.                                     |
 
 **Success Response**
@@ -324,7 +324,7 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.                   |
 | session_id      | string   | success  | The public ID of the created session.                        |
-| server_proof_m2 | string   | success  | The server's proof of authentication.                        |
+| server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
 | errors          | [error]  | failure  | json list of each error.                                     |
 
 **Success Response**
@@ -341,13 +341,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -368,13 +368,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -398,13 +398,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -427,13 +427,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -456,13 +456,13 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -485,16 +485,16 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | string   | Yes      | Encrypted entry name payload.                                |
-| entry_data      | string   | Yes      | Encrypted entry data payload.                                |
+| entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
+| entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
 
 **Encryption Encoding**
 ```
@@ -518,15 +518,15 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
-| encrypted_data  | string   | success  | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | string   | Yes      | Hash of the user's username.                                 |
-| entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
-| entry_names     | [string] | success  | The name payload for all stored data entries.                |
+| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| entry_ids       | [bytes]  | success  | The public IDs of all stored data entries.                   |
+| entry_names     | [bytes]  | success  | The name payload for all stored data entries.                |
 
 **Encryption Encoding**
 ```

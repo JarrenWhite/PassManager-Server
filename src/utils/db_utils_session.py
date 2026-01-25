@@ -56,15 +56,15 @@ class DBUtilsSession():
     @staticmethod
     def get_details(
         public_id: str
-    ) -> Tuple[bool, Optional[FailureReason], int, str, int, str, int, bool]:
+    ) -> Tuple[bool, Optional[FailureReason], int, bytes, int, bytes, int, bool]:
         """
         Get the session details for the given session id
 
         Returns:
             (int)   user_id
-            (str)   username_hash
+            (bytes) username_hash
             (int)   session_id
-            (str)   session_key
+            (bytes) session_key
             (int)   request_count
             (bool)  password_change
         """
@@ -74,10 +74,10 @@ class DBUtilsSession():
 
                 if login_session is None:
                     logger.debug(f"Login Session: {public_id[-4:]} not found.")
-                    return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
+                    return False, FailureReason.NOT_FOUND, 0, b'', 0, b'', 0, False
                 if DBUtilsSession._check_expiry(session, login_session):
                     logger.debug(f"Login Session: {public_id[-4:]} expired.")
-                    return False, FailureReason.NOT_FOUND, 0, "", 0, "", 0, False
+                    return False, FailureReason.NOT_FOUND, 0, b'', 0, b'', 0, False
 
                 logger.debug(f"Login Session: {public_id[-4:]} requested.")
                 return (
@@ -91,21 +91,21 @@ class DBUtilsSession():
                 )
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, 0, "", 0, "", 0, False
+            return False, FailureReason.DATABASE_UNINITIALISED, 0, b'', 0, b'', 0, False
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, 0,"", 0, "", 0, False
+            return False, FailureReason.UNKNOWN_EXCEPTION, 0, b'', 0, b'', 0, False
 
 
     @staticmethod
     def log_use(
         session_id: int
-    ) -> Tuple[bool, Optional[FailureReason], str]:
+    ) -> Tuple[bool, Optional[FailureReason], bytes]:
         """
         Log the use of a login session
 
         Returns:
-            (str)   session_key
+            (bytes) session_key
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -113,10 +113,10 @@ class DBUtilsSession():
 
                 if login_session is None:
                     logger.debug(f"Login Session id: {session_id} not found.")
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, b''
                 if DBUtilsSession._check_expiry(session, login_session):
                     logger.debug(f"Login Session: {login_session.public_id[-4:]} expired.")
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, b''
 
                 login_session.request_count += 1
 
@@ -124,10 +124,10 @@ class DBUtilsSession():
                 return True, None, login_session.session_key
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, ""
+            return False, FailureReason.DATABASE_UNINITIALISED, b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, b''
 
 
     @staticmethod

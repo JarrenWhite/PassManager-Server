@@ -71,26 +71,15 @@ Creates a new user account using a username hash, and the required security info
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| new_username    | string | Yes      | Hash of the new username.                        |
-| srp_salt        | string | Yes      | **Base64-encoded** salt generated for SRP        |
-| srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for SRP      |
-| master_key_salt | string | Yes      | **Base64-encoded** salt generated for master key |
+| new_username    | bytes  | Yes      | Hash of the new username.                        |
+| srp_salt        | bytes  | Yes      | Salt generated for SRP.                          |
+| srp_verifier    | bytes  | Yes      | Verifier derived for SRP.                        |
+| master_key_salt | bytes  | Yes      | Salt generated for master key.                   |
 
 > **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
 
 **[Response Format](api_responses.md#register-user-user)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/user/register \
-    -H "Content-Type: application/json" \
-    -d '{
-        "new_username": "123hashedUsername",
-        "srp_salt": "base64Salt",
-        "srp_verifier": "base64Verifier",
-        "master_key_salt": "base64MasterSalt"
-    }'
-```
 
 ---
 
@@ -106,13 +95,13 @@ Changes a user's username, from one username hash, to another username hash.
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the original username.                   |
-| new_username    | string | Yes      | Hash of the new username.                        |
+| username        | bytes  | Yes      | Hash of the original username.                   |
+| new_username    | bytes  | Yes      | Hash of the new username.                        |
 
 **Encryption Encoding**
 ```
@@ -124,16 +113,6 @@ Changes a user's username, from one username hash, to another username hash.
 
 **[Response Format](api_responses.md#change-username-user)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/user/username \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -149,12 +128,12 @@ Delete a given user, and all data associated with their account.
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. Must be 0 for this request type. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -165,16 +144,6 @@ Delete a given user, and all data associated with their account.
 
 **[Response Format](api_responses.md#delete-user-user)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/user/delete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 0,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -188,11 +157,6 @@ Check the health and availability of the User API endpoints. Returns system stat
 **Parameters**
 None required.
 
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/user/health \
-    -H "Content-Type: application/json"
-```
 
 ---
 
@@ -215,15 +179,15 @@ Begins the process of a password change, returning the user's validation details
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                           |
 |-----------------|--------|----------|-------------------------------------------------------|
-| username        | string | Yes      | Hash of the original username.                        |
-| srp_salt        | string | Yes      | **Base64-encoded** salt generated for new SRP.        |
-| srp_verifier    | string | Yes      | **Base64-encoded** verifier derived for new SRP.      |
-| master_key_salt | string | Yes      | **Base64-encoded** salt generated for new master key. |
+| username        | bytes  | Yes      | Hash of the original username.                        |
+| srp_salt        | bytes  | Yes      | Salt generated for new SRP.                           |
+| srp_verifier    | bytes  | Yes      | Verifier derived for new SRP.                         |
+| master_key_salt | bytes  | Yes      | Salt generated for new master key.                    |
 
 **Encryption Encoding**
 ```
@@ -237,16 +201,6 @@ Begins the process of a password change, returning the user's validation details
 
 **[Response Format](api_responses.md#start-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/start \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -262,15 +216,15 @@ Completes the SRP authentication process by providing client ephemeral value and
 |------------------|--------|----------|------------------------------------------------------|
 | session_id       | string | Yes      | The public ID of the login session.                  |
 | request_number   | int    | Yes      | The number of this request on the login session.     |
-| encrypted_data   | string | Yes      | **Base64-encoded** encrypted payload (see below)     |
+| encrypted_data   | bytes  | Yes      | Encrypted payload. (see below)                       |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                           |
 |-----------------|--------|----------|-------------------------------------------------------|
-| username        | string | Yes      | Hash of the original username.                        |
-| auth_id         | string | Yes      | Public ID of the AuthEphemeral being used.            |
-| eph_val_a       | string | Yes      | **Base64-encoded** client ephemeral value. (A)        |
-| proof_val_m1    | string | Yes      | **Base64-encoded** client proof. (M1)                 |
+| username        | bytes  | Yes      | Hash of the original username.                        |
+| auth_id         | bytes  | Yes      | Public ID of the AuthEphemeral being used.            |
+| eph_val_a       | bytes  | Yes      | Client ephemeral value. (A)                           |
+| proof_val_m1    | bytes  | Yes      | Client proof. (M1)                                    |
 
 **Encryption Encoding**
 ```
@@ -286,16 +240,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 
 **[Response Format](api_responses.md#continue-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/auth \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -311,12 +255,12 @@ Complete a password change. If all entries have been completed, the change is co
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the password change session.    |
 | request_number  | int    | Yes      | The number of this request on the password change session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -325,16 +269,6 @@ Complete a password change. If all entries have been completed, the change is co
 
 **[Response Format](api_responses.md#complete-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/complete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -350,12 +284,12 @@ Abort a password change that is in progress. Deletes all details about the new p
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -366,16 +300,6 @@ Abort a password change that is in progress. Deletes all details about the new p
 
 **[Response Format](api_responses.md#abort-password-change-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/abort \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -391,13 +315,13 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the password change session.    |
 | request_number  | int    | Yes      | The number of this request on the password change session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry.                          |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
 ```
@@ -407,16 +331,6 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 
 **[Response Format](api_responses.md#get-entry-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/get \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -432,15 +346,15 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the password change session.    |
 | request_number  | int    | Yes      | The number of this request on the password change session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry.                          |
-| entry_name      | string | Yes      | The new encrypted entry name payload.            |
-| entry_data      | string | Yes      | The new encrypted entry data payload.            |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
+| entry_name      | bytes  | Yes      | The new encrypted entry name payload.            |
+| entry_data      | bytes  | Yes      | The new encrypted entry data payload.            |
 
 **Encryption Encoding**
 ```
@@ -455,16 +369,6 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 
 **[Response Format](api_responses.md#add-new-encryption-for-entry-password)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/password/update \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -478,11 +382,6 @@ Check the health and availability of the Password API endpoints. Returns system 
 **Parameters**
 None required.
 
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/password/health \
-    -H "Content-Type: application/json"
-```
 
 ---
 
@@ -503,20 +402,12 @@ Request the details to create a new login session, including SRP details, master
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 > **Note:** Auth requests are valid for 180 seconds. Requests not completed within this time will be invalidated.
 
 **[Response Format](api_responses.md#start-auth-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/start \
-    -H "Content-Type: application/json" \
-    -d '{
-        "username": "123hashedUsername"
-    }'
-```
 
 ---
 
@@ -530,10 +421,10 @@ Completes the SRP authentication process by providing client ephemeral value and
 **Parameters**
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
-| username         | string | Yes      | Hash of the user's username.                         |
-| auth_id          | string | Yes      | Public ID of the AuthEphemeral being used.           |
-| eph_val_a        | string | Yes      | **Base64-encoded** client ephemeral value. (A)       |
-| proof_val_m1     | string | Yes      | **Base64-encoded** client proof. (M1)                |
+| username         | bytes  | Yes      | Hash of the user's username.                         |
+| auth_id          | bytes  | Yes      | Public ID of the AuthEphemeral being used.           |
+| eph_val_a        | bytes  | Yes      | Client ephemeral value. (A)                          |
+| proof_val_m1     | bytes  | Yes      | Client proof. (M1)                                   |
 | maximum_requests | int    | No       | Number of requests before the session will expire.   |
 | expiry_time      | int    | No       | Session expiry time in seconds from now.             |
 
@@ -544,19 +435,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 
 **[Response Format](api_responses.md#complete-auth-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/auth \
-    -H "Content-Type: application/json" \
-    -d '{
-        "username": "123hashedUsername",
-        "auth_id": "abc123authId",
-        "eph_val_a": "base64ClientEphemeral",
-        "proof_val_m1": "base64ClientProof",
-        "maximum_requests": 50,
-        "expiry_time": 1800
-    }'
-```
 
 ---
 
@@ -572,13 +450,13 @@ Delete the given auth session from the database, preventing further use.
 |-----------------|--------|----------|---------------------------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session being used to auth this request. |
 | request_number  | int    | Yes      | The number of this request on the login session.                    |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below)                    |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                                      |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| session_id      | string | Yes      | Public ID of the session to be deleted.          |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| session_id      | bytes  | Yes      | Public ID of the session to be deleted.          |
 
 **Encryption Encoding**
 ```
@@ -591,16 +469,6 @@ Delete the given auth session from the database, preventing further use.
 
 **[Response Format](api_responses.md#delete-session-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/delete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -616,12 +484,12 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 |-----------------|--------|----------|---------------------------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session being used to auth this request. |
 | request_number  | int    | Yes      | The number of this request on the login session.                    |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below)                    |
+| encrypted_data  | bytes  | Yes      | Encrypted payload (see below)                                       |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -633,16 +501,6 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 
 **[Response Format](api_responses.md#clean-sessions-session)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/session/clean \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -656,11 +514,6 @@ Check the health and availability of the Session API endpoints. Returns system s
 **Parameters**
 None required.
 
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/session/health \
-    -H "Content-Type: application/json"
-```
 
 ---
 
@@ -681,14 +534,14 @@ Create a new password entry with encrypted name and data, and provide the unique
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| entry_name      | string | Yes      | The new encrypted entry name payload.            |
-| entry_data      | string | Yes      | The new encrypted entry data payload.            |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| entry_name      | bytes  | Yes      | The new encrypted entry name payload.            |
+| entry_data      | bytes  | Yes      | The new encrypted entry data payload.            |
 
 **Encryption Encoding**
 ```
@@ -699,16 +552,6 @@ Create a new password entry with encrypted name and data, and provide the unique
 
 **[Response Format](api_responses.md#create-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/create \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -722,17 +565,17 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
+| session_id      | bytes  | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry.                          |
-| entry_name      | string | No       | The new encrypted entry name payload.            |
-| entry_data      | string | No       | The new encrypted entry data payload.            |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
+| entry_name      | bytes  | No       | The new encrypted entry name payload.            |
+| entry_data      | bytes  | No       | The new encrypted entry data payload.            |
 
 **Encryption Encoding**
 ```
@@ -749,16 +592,6 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 
 **[Response Format](api_responses.md#edit-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/edit \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -774,13 +607,13 @@ Delete all stored data for a given data entry.
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry.                          |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
 ```
@@ -792,16 +625,6 @@ Delete all stored data for a given data entry.
 
 **[Response Format](api_responses.md#delete-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/delete \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -817,13 +640,13 @@ Retrieve all data for a given password entry.
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
-| entry_public_id | string | Yes      | Public ID of the entry.                          |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
+| entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
 ```
@@ -833,16 +656,6 @@ Retrieve all data for a given password entry.
 
 **[Response Format](api_responses.md#get-entry-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/get \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -858,12 +671,12 @@ Retrieve a list of the public IDs of all password entries, along with their name
 |-----------------|--------|----------|--------------------------------------------------|
 | session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | string | Yes      | **Base64-encoded** encrypted payload (see below) |
+| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | string | Yes      | Hash of the user's username.                     |
+| username        | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -872,16 +685,6 @@ Retrieve a list of the public IDs of all password entries, along with their name
 
 **[Response Format](api_responses.md#get-list-data)**
 
-**Example Request**
-```bash
-curl -X POST https://[API_BASE_URL]/api/data/list \
-    -H "Content-Type: application/json" \
-    -d '{
-        "session_id": "abc123sessionId",
-        "request_number": 5,
-        "encrypted_data": "base64EncryptedPayload"
-    }'
-```
 
 ---
 
@@ -894,9 +697,3 @@ Check the health and availability of the Data API endpoints. Returns system stat
 
 **Parameters**
 None required.
-
-**Example Request**
-```bash
-curl -X GET https://[API_BASE_URL]/api/data/health \
-    -H "Content-Type: application/json"
-```

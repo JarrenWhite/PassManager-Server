@@ -2,17 +2,17 @@
 
 ## create
 In
-username_hash: str
-srp_salt: str
-srp_verifier: str
-master_key_salt: str
+username_hash: bytes
+srp_salt: bytes
+srp_verifier: bytes
+master_key_salt: bytes
 
 ## change_username
 > Note: Halt if password change in progress
 
 In
 user_id: int
-new_username_hash: str
+new_username_hash: bytes
 
 ## delete
 > Note: Halt if password change in progress
@@ -31,12 +31,12 @@ user_id: int
 
 In
 user_id: int
-eph_private_b: str
-eph_public_b: str
+eph_private_b: bytes
+eph_public_b: bytes
 expiry_time: datetime
-srp_salt: str
-srp_verifier: str
-master_key_salt: str
+srp_salt: bytes
+srp_verifier: bytes
+master_key_salt: bytes
 
 Out
 public_id: str
@@ -47,7 +47,7 @@ public_id: str
 In
 user_id: int
 public_id: str
-session_key: str
+session_key: bytes
 expiry_time: datetime
 
 Out
@@ -70,8 +70,8 @@ user_id: int
 In
 user_id: int
 public_id: str
-entry_name: str
-entry_data: str
+entry_name: bytes
+entry_data: bytes
 
 ## clean_password_change
 """Remove all partial password change entries, ephemerals and login sessions"""
@@ -87,14 +87,14 @@ user: User
 
 ## start
 In
-username_hash: str
-eph_private_b: str
-eph_public_b: str
+username_hash: bytes
+eph_private_b: bytes
+eph_public_b: bytes
 expiry_time: datetime
 
 Out
 public_id: str
-srp_salt: str
+srp_salt: bytes
 
 ## get_details
 > Note: Risk of Insecure Direct Object Reference
@@ -104,15 +104,15 @@ user_id: int
 public_id: str
 
 Out
-username_hash: str
+username_hash: bytes
 user_id: int
-eph_private_b: str
-eph_public_b: str
+eph_private_b: bytes
+eph_public_b: bytes
 
 ## complete
 In
 public_id: str
-session_key: str
+session_key: bytes
 maximum_requests: int?
 expiry_time: datetime?
 
@@ -138,8 +138,8 @@ auth_ephemeral: AuthEphemeral
 
 In
 user_id: int
-entry_name: str
-entry_data: str
+entry_name: bytes
+entry_data: bytes
 
 Out
 public_id: str
@@ -151,8 +151,8 @@ public_id: str
 In
 user_id: int
 public_id: str
-entry_name: str?
-entry_data: str?
+entry_name: bytes?
+entry_data: bytes?
 
 ## delete
 > Note: Risk of Insecure Direct Object Reference
@@ -171,8 +171,8 @@ user_id: int
 public_id: str
 
 Out
-entry_name: str
-entry_data: str
+entry_name: bytes
+entry_data: bytes
 
 ## get_list
 > Note: Halt if password change in progress
@@ -181,7 +181,7 @@ In
 user_id: int
 
 Out
-{public_id: entry_name}: {str: str}
+{public_id: entry_name}: {str: bytes}
 
 
 ---
@@ -195,9 +195,9 @@ public_id: str
 
 Out
 user_id: int
-username_hash: str
+username_hash: bytes
 session_id: int
-session_key: str
+session_key: bytes
 request_count: int
 password_change: bool
 
@@ -206,7 +206,7 @@ In
 public_id: int
 
 Out
-session_key: str
+session_key: bytes
 
 ## delete
 > Note: Risk of Insecure Direct Object Reference

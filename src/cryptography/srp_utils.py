@@ -21,8 +21,8 @@ class SRPUtils():
 
     @staticmethod
     def compute_session_key(
-        eph_val_A: bytes,
-        eph_public_B: bytes,
+        eph_val_a: bytes,
+        eph_public_b: bytes,
         eph_private_b: bytes,
         srp_verifier_v: bytes
     ) -> bytes:
@@ -37,10 +37,10 @@ class SRPUtils():
 
     @staticmethod
     def verify_proof(
-        eph_val_A: bytes,
-        eph_public_B: bytes,
-        session_key_K: bytes,
-        proof_val_M1: bytes
+        eph_val_a: bytes,
+        eph_public_b: bytes,
+        session_key_k: bytes,
+        proof_val_m1: bytes
     ) -> bytes:
         """
         Verify the proof of a matching session key

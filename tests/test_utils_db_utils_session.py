@@ -37,10 +37,10 @@ class TestGetDetails():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False
         )
 
@@ -49,7 +49,7 @@ class TestGetDetails():
             id=789123,
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -69,17 +69,17 @@ class TestGetDetails():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], int)
-        assert isinstance(response[3], str)
+        assert isinstance(response[3], bytes)
         assert isinstance(response[4], int)
-        assert isinstance(response[5], str)
+        assert isinstance(response[5], bytes)
         assert isinstance(response[6], int)
         assert isinstance(response[7], bool)
         assert response[0] == True
         assert response[1] == None
         assert response[2] == 123456
-        assert response[3] == "fake_hash"
+        assert response[3] == b'fake_hash'
         assert response[4] == 789123
-        assert response[5] == "fake_session_key"
+        assert response[5] == b'fake_session_key'
         assert response[6] == 3
         assert response[7] == False
 
@@ -205,7 +205,7 @@ class TestGetDetails():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=3,
@@ -261,7 +261,7 @@ class TestGetDetails():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -321,7 +321,7 @@ class TestLogUse():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -340,10 +340,10 @@ class TestLogUse():
 
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
-        assert isinstance(response[2], str)
+        assert isinstance(response[2], bytes)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == "fake_session_key"
+        assert response[2] == b'fake_session_key'
         assert fake_login_session.request_count == 4
 
         assert len(mock_query._filters) == 1
@@ -459,10 +459,10 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -471,7 +471,7 @@ class TestDelete():
         fake_login_session = LoginSession(
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -613,10 +613,10 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -625,7 +625,7 @@ class TestDelete():
         fake_login_session = LoginSession(
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -640,7 +640,7 @@ class TestDelete():
 
         response = DBUtilsSession.delete(
             user_id=123456,
-            public_id="fake_session_key"
+            public_id="fake_public_id"
         )
 
         assert isinstance(response, tuple)
@@ -673,7 +673,7 @@ class TestDelete():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=3,
@@ -720,7 +720,7 @@ class TestDelete():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -765,10 +765,10 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -778,7 +778,7 @@ class TestDelete():
         fake_login_session = LoginSession(
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -828,10 +828,10 @@ class TestDelete():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -840,7 +840,7 @@ class TestDelete():
         fake_login_session = LoginSession(
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -890,7 +890,7 @@ class TestCleanUser():
         fake_login_session_one = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_one",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -900,7 +900,7 @@ class TestCleanUser():
         fake_login_session_two = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_two",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -910,7 +910,7 @@ class TestCleanUser():
         fake_login_session_three = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_three",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -920,10 +920,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             login_sessions=[fake_login_session_one, fake_login_session_two, fake_login_session_three],
             auth_ephemerals=[]
@@ -983,7 +983,7 @@ class TestCleanUser():
         fake_login_session_one = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_one",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -993,7 +993,7 @@ class TestCleanUser():
         fake_login_session_two = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_two",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1004,7 +1004,7 @@ class TestCleanUser():
         fake_login_session_three = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_three",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1014,10 +1014,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             login_sessions=[fake_login_session_one, fake_login_session_two, fake_login_session_three],
             auth_ephemerals=[]
@@ -1077,7 +1077,7 @@ class TestCleanUser():
         fake_login_session_one = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_one",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1087,10 +1087,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             login_sessions=[fake_login_session_one],
             auth_ephemerals=[]
@@ -1144,7 +1144,7 @@ class TestCleanUser():
         fake_login_session_one = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_one",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1154,10 +1154,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             login_sessions=[fake_login_session_one],
             auth_ephemerals=[]
@@ -1234,10 +1234,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             login_sessions=[],
             auth_ephemerals=[fake_ephemeral_one, fake_ephemeral_two, fake_ephemeral_three]
@@ -1320,10 +1320,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=False,
             login_sessions=[],
             auth_ephemerals=[fake_ephemeral_one, fake_ephemeral_two, fake_ephemeral_three]
@@ -1390,10 +1390,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             login_sessions=[],
             auth_ephemerals=[fake_ephemeral_one]
@@ -1454,10 +1454,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             login_sessions=[],
             auth_ephemerals=[fake_ephemeral_one]
@@ -1537,7 +1537,7 @@ class TestCleanUser():
         fake_login_session_one = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_one",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1547,7 +1547,7 @@ class TestCleanUser():
         fake_login_session_two = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_two",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1558,7 +1558,7 @@ class TestCleanUser():
         fake_login_session_three = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id_three",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1568,10 +1568,10 @@ class TestCleanUser():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True,
             login_sessions=[fake_login_session_one, fake_login_session_two, fake_login_session_three],
             auth_ephemerals=[fake_ephemeral_one, fake_ephemeral_two, fake_ephemeral_three]
@@ -1766,7 +1766,7 @@ class TestCleanAll():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=3,
@@ -1811,7 +1811,7 @@ class TestCleanAll():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1853,10 +1853,10 @@ class TestCleanAll():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -1865,7 +1865,7 @@ class TestCleanAll():
         fake_login_session = LoginSession(
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=3,
@@ -1911,10 +1911,10 @@ class TestCleanAll():
 
         fake_user = User(
             id=123456,
-            username_hash="fake_hash",
-            srp_salt="fake_srp_salt",
-            srp_verifier="fake_srp_verifier",
-            master_key_salt="fake_master_key_salt",
+            username_hash=b'fake_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
             password_change=True
         )
 
@@ -1923,7 +1923,7 @@ class TestCleanAll():
         fake_login_session = LoginSession(
             user=fake_user,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
@@ -1972,7 +1972,7 @@ class TestCleanAll():
         fake_login_session = LoginSession(
             user_id=123456,
             public_id="session_fake_public_id",
-            session_key="fake_session_key",
+            session_key=b'fake_session_key',
             request_count=3,
             last_used=last_used,
             maximum_requests=None,
