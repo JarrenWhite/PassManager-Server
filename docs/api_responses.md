@@ -46,7 +46,7 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | When     | Description                                |
 |-----------------|----------|----------|--------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful. |
-| username_hash   | string   | success  | Hash of the username that was registered.  |
+| username_hash   | bytes    | success  | Hash of the username that was registered.  |
 | errors          | [error]  | failure  | json list of each error.                   |
 
 **Success Response**
@@ -96,7 +96,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -126,7 +126,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | auth_id         | string   | success  | The public ID of the in progress auth request.               |
 | srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
@@ -159,7 +159,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | session_id      | string   | success  | The public ID of the created password session.               |
 | server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
 | entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
@@ -192,7 +192,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 
 **Encryption Encoding**
 ```
@@ -219,7 +219,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 
 **Encryption Encoding**
 ```
@@ -246,7 +246,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 | entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
@@ -279,7 +279,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -347,7 +347,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -374,7 +374,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -404,7 +404,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -433,7 +433,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -462,7 +462,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
 **Encryption Encoding**
@@ -491,7 +491,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 | entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
@@ -524,7 +524,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Encryption Payload**
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| username        | bytes    | Yes      | Hash of the user's username.                                 |
+| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_ids       | [bytes]  | success  | The public IDs of all stored data entries.                   |
 | entry_names     | [bytes]  | success  | The name payload for all stored data entries.                |
 
