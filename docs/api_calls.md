@@ -100,7 +100,7 @@ Changes a user's username, from one username hash, to another username hash.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the original username.                   |
+| username_hash   | bytes  | Yes      | Hash of the original username.                   |
 | new_username    | bytes  | Yes      | Hash of the new username.                        |
 
 **Encryption Encoding**
@@ -133,7 +133,7 @@ Delete a given user, and all data associated with their account.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -184,7 +184,7 @@ Begins the process of a password change, returning the user's validation details
 **Encryption Payload**
 | Field           | Type   | Required | Description                                           |
 |-----------------|--------|----------|-------------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the original username.                        |
+| username_hash   | bytes  | Yes      | Hash of the original username.                        |
 | srp_salt        | bytes  | Yes      | Salt generated for new SRP.                           |
 | srp_verifier    | bytes  | Yes      | Verifier derived for new SRP.                         |
 | master_key_salt | bytes  | Yes      | Salt generated for new master key.                    |
@@ -221,7 +221,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 **Encryption Payload**
 | Field           | Type   | Required | Description                                           |
 |-----------------|--------|----------|-------------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the original username.                        |
+| username_hash   | bytes  | Yes      | Hash of the original username.                        |
 | auth_id         | bytes  | Yes      | Public ID of the AuthEphemeral being used.            |
 | eph_val_a       | bytes  | Yes      | Client ephemeral value. (A)                           |
 | proof_val_m1    | bytes  | Yes      | Client proof. (M1)                                    |
@@ -260,7 +260,7 @@ Complete a password change. If all entries have been completed, the change is co
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -289,7 +289,7 @@ Abort a password change that is in progress. Deletes all details about the new p
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -320,7 +320,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
@@ -351,7 +351,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 | entry_name      | bytes  | Yes      | The new encrypted entry name payload.            |
 | entry_data      | bytes  | Yes      | The new encrypted entry data payload.            |
@@ -402,7 +402,7 @@ Request the details to create a new login session, including SRP details, master
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 > **Note:** Auth requests are valid for 180 seconds. Requests not completed within this time will be invalidated.
 
@@ -421,7 +421,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 **Parameters**
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
-| username         | bytes  | Yes      | Hash of the user's username.                         |
+| username_hash    | bytes  | Yes      | Hash of the user's username.                         |
 | auth_id          | bytes  | Yes      | Public ID of the AuthEphemeral being used.           |
 | eph_val_a        | bytes  | Yes      | Client ephemeral value. (A)                          |
 | proof_val_m1     | bytes  | Yes      | Client proof. (M1)                                   |
@@ -455,7 +455,7 @@ Delete the given auth session from the database, preventing further use.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | session_id      | bytes  | Yes      | Public ID of the session to be deleted.          |
 
 **Encryption Encoding**
@@ -489,7 +489,7 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
@@ -539,7 +539,7 @@ Create a new password entry with encrypted name and data, and provide the unique
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_name      | bytes  | Yes      | The new encrypted entry name payload.            |
 | entry_data      | bytes  | Yes      | The new encrypted entry data payload.            |
 
@@ -572,7 +572,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 | entry_name      | bytes  | No       | The new encrypted entry name payload.            |
 | entry_data      | bytes  | No       | The new encrypted entry data payload.            |
@@ -612,7 +612,7 @@ Delete all stored data for a given data entry.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
@@ -645,7 +645,7 @@ Retrieve all data for a given password entry.
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
 **Encryption Encoding**
@@ -676,7 +676,7 @@ Retrieve a list of the public IDs of all password entries, along with their name
 **Encryption Payload**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| username        | bytes  | Yes      | Hash of the user's username.                     |
+| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
 **Encryption Encoding**
 ```
