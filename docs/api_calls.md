@@ -103,12 +103,6 @@ Changes a user's username, from one username hash, to another username hash.
 | username_hash   | bytes  | Yes      | Hash of the original username.                   |
 | new_username    | bytes  | Yes      | Hash of the new username.                        |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: new_username length][new_username bytes]
-```
-
 > **Note:** Usernames should be enforced to be an email address, to reduce rainbow attack effectiveness.
 
 **[Response Format](api_responses.md#change-username-user)**
@@ -134,11 +128,6 @@ Delete a given user, and all data associated with their account.
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 > **Note:** The request number for this request type must be 0. This means a new session must be created for user deletion.
 
@@ -189,14 +178,6 @@ Begins the process of a password change, returning the user's validation details
 | srp_verifier    | bytes  | Yes      | Verifier derived for new SRP.                         |
 | master_key_salt | bytes  | Yes      | Salt generated for new master key.                    |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: srp_salt length][srp_salt bytes]
-[4 bytes: srp_verifier length][srp_verifier bytes]
-[4 bytes: master_key_salt length][master_key_salt bytes]
-```
-
 > **Note:** An existing auth session is required in order to start a password change auth session.
 
 **[Response Format](api_responses.md#start-password-change-password)**
@@ -226,14 +207,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 | eph_val_a       | bytes  | Yes      | Client ephemeral value. (A)                           |
 | proof_val_m1    | bytes  | Yes      | Client proof. (M1)                                    |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: auth_id length][auth_id bytes]
-[4 bytes: eph_val_a length][eph_val_a bytes]
-[4 bytes: proof_val_m1 length][proof_val_m1 bytes]
-```
-
 > **Note:** Password changing sessions expire after 5 minutes.
 > **Note:** Password changing sessions have a limited number of requests based on the user's number of password entries. (Enough requests to read and write to each password once, with an additional request to complete the password change.)
 > **Note:** A user can only have one active password changing session.
@@ -262,11 +235,6 @@ Complete a password change. If all entries have been completed, the change is co
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
-
 **[Response Format](api_responses.md#complete-password-change-password)**
 
 
@@ -290,11 +258,6 @@ Abort a password change that is in progress. Deletes all details about the new p
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 > **Note:** This can be done on the password change session, but does not necessarily need to be.
 
@@ -323,12 +286,6 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
-
 **[Response Format](api_responses.md#get-entry-password)**
 
 
@@ -355,14 +312,6 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 | entry_name      | bytes  | Yes      | The new encrypted entry name payload.            |
 | entry_data      | bytes  | Yes      | The new encrypted entry data payload.            |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-[4 bytes: entry_name length][entry_name bytes]
-[4 bytes: entry_data length][entry_data bytes]
-```
 
 > **⚠️ CRITICAL:** The newly encrypted entry name and data must be encrypted using the new master key.
 > **⚠️ CRITICAL:** A new nonce must be generated for each encryption. The old nonce must not be reused.
@@ -458,12 +407,6 @@ Delete the given auth session from the database, preventing further use.
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | session_id      | bytes  | Yes      | Public ID of the session to be deleted.          |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: session_id length][session_id bytes]
-```
-
 > **Note:** The session being deleted does not need to be the one in use.
 > **Note:** Deleting a password change session this way will terminate the password change.
 
@@ -490,11 +433,6 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 > **Note:** The session being used to auth this request will also be deleted.
 > **Note:** Deleting a password change session this way will terminate the password change.
@@ -543,13 +481,6 @@ Create a new password entry with encrypted name and data, and provide the unique
 | entry_name      | bytes  | Yes      | The new encrypted entry name payload.            |
 | entry_data      | bytes  | Yes      | The new encrypted entry data payload.            |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_name length][entry_name bytes]
-[4 bytes: entry_data length][entry_data bytes]
-```
-
 **[Response Format](api_responses.md#create-entry-data)**
 
 
@@ -576,14 +507,6 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 | entry_name      | bytes  | No       | The new encrypted entry name payload.            |
 | entry_data      | bytes  | No       | The new encrypted entry data payload.            |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-[4 bytes: entry_name length][entry_name bytes]
-[4 bytes: entry_data length][entry_data bytes]
-```
 
 > **⚠️ CRITICAL:** A new nonce must be generated for each new encryption. The old nonce must not be reused.
 > **Note:** If `entry_name` is omitted from the payload, the entry name is left unchanged.
@@ -615,12 +538,6 @@ Delete all stored data for a given data entry.
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
-
 > **Note:** A deleted entry is deleted fully. It cannot be recovered.
 
 **[Response Format](api_responses.md#delete-entry-data)**
@@ -648,12 +565,6 @@ Retrieve all data for a given password entry.
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 | entry_public_id | bytes  | Yes      | Public ID of the entry.                          |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
-
 **[Response Format](api_responses.md#get-entry-data)**
 
 
@@ -677,11 +588,6 @@ Retrieve a list of the public IDs of all password entries, along with their name
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 **[Response Format](api_responses.md#get-list-data)**
 
