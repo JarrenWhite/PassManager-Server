@@ -71,11 +71,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|--------|----------|--------------------------------------------------|
 | new_username    | bytes  | Yes      | Hash of the new username.                        |
 
-**Encryption Encoding**
-```
-[4 bytes: new_username length][new_username bytes]
-```
-
 **Success Response**
 200
 
@@ -97,11 +92,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 **Success Response**
 200
@@ -131,14 +121,6 @@ A brief introduction to the possible responses for all defined APIs.
 | srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: auth_id length][auth_id bytes]
-[4 bytes: srp_salt length][srp_salt bytes]
-[4 bytes: eph_public_b length][eph_public_b bytes]
-```
-
 **Success Response**
 201
 
@@ -164,14 +146,6 @@ A brief introduction to the possible responses for all defined APIs.
 | server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
 | entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: session_id length][session_id bytes]
-[4 bytes: server_proof_m2 length][server_proof_m2 bytes]
-[4 bytes: entry_ids length][entry_ids bytes]
-```
-
 **Success Response**
 201
 
@@ -194,11 +168,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
-
 **Success Response**
 200
 
@@ -220,11 +189,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | Required | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 **Success Response**
 200
@@ -251,14 +215,6 @@ A brief introduction to the possible responses for all defined APIs.
 | entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-[4 bytes: entry_name length][entry_name bytes]
-[4 bytes: entry_data length][entry_data bytes]
-```
-
 **Success Response**
 200
 
@@ -281,12 +237,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
 
 **Success Response**
 200
@@ -349,11 +299,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
-
 **Success Response**
 200
 
@@ -375,11 +320,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
 | username_hash   | bytes  | Yes      | Hash of the user's username.                     |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-```
 
 **Success Response**
 200
@@ -407,12 +347,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
-
 **Success Response**
 201
 
@@ -436,12 +370,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
-
 **Success Response**
 200
 
@@ -464,12 +392,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-```
 
 **Success Response**
 200
@@ -496,14 +418,6 @@ A brief introduction to the possible responses for all defined APIs.
 | entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
 
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-[4 bytes: entry_name length][entry_name bytes]
-[4 bytes: entry_data length][entry_data bytes]
-```
-
 **Success Response**
 200
 
@@ -527,14 +441,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
 | entry_ids       | [bytes]  | success  | The public IDs of all stored data entries.                   |
 | entry_names     | [bytes]  | success  | The name payload for all stored data entries.                |
-
-**Encryption Encoding**
-```
-[4 bytes: username length][username bytes]
-[4 bytes: entry_public_id length][entry_public_id bytes]
-[4 bytes: entry_ids length][entry_ids bytes]
-[4 bytes: entry_names length][entry_names bytes]
-```
 
 **Success Response**
 200
