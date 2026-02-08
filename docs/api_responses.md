@@ -67,9 +67,9 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| new_username    | bytes  | Yes      | Hash of the new username.                        |
+| Field           | Type   | Description                                      |
+|-----------------|--------|--------------------------------------------------|
+| new_username    | bytes  | Hash of the new username.                        |
 
 **Success Response**
 200
@@ -89,9 +89,9 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
+| Field           | Type   | Description                                      |
+|-----------------|--------|--------------------------------------------------|
+| username_hash   | bytes  | Hash of the user's username.                     |
 
 **Success Response**
 200
@@ -114,12 +114,12 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| auth_id         | string   | success  | The public ID of the in progress auth request.               |
-| srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
-| eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| auth_id         | string   | The public ID of the in progress auth request.               |
+| srp_salt        | bytes    | The salt used to create the verifier in SRP.                 |
+| eph_public_b    | bytes    | Unique server ephemeral value (B) for this SRP auth attempt. |
 
 **Success Response**
 201
@@ -139,12 +139,12 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| session_id      | string   | success  | The public ID of the created password session.               |
-| server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
-| entry_ids       | [string] | success  | The public IDs of all stored data entries.                   |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| session_id      | string   | The public ID of the created password session.               |
+| server_proof_m2 | bytes    | The server's proof of authentication.                        |
+| entry_ids       | [string] | The public IDs of all stored data entries.                   |
 
 **Success Response**
 201
@@ -164,9 +164,9 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
 
 **Success Response**
 200
@@ -186,9 +186,9 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
 
 **Success Response**
 200
@@ -208,12 +208,12 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
-| entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_public_id | string   | Public ID of the entry.                                      |
+| entry_name      | bytes    | Encrypted entry name payload.                                |
+| entry_data      | bytes    | Encrypted entry data payload.                                |
 
 **Success Response**
 200
@@ -233,10 +233,10 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_public_id | string   | Public ID of the entry.                                      |
 
 **Success Response**
 200
@@ -295,9 +295,9 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
+| Field           | Type   | Description                                      |
+|-----------------|--------|--------------------------------------------------|
+| username_hash   | bytes  | Hash of the user's username.                     |
 
 **Success Response**
 200
@@ -317,9 +317,9 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| username_hash   | bytes  | Yes      | Hash of the user's username.                     |
+| Field           | Type   | Description                                      |
+|-----------------|--------|--------------------------------------------------|
+| username_hash   | bytes  | Hash of the user's username.                     |
 
 **Success Response**
 200
@@ -342,10 +342,10 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_public_id | string   | Public ID of the entry.                                      |
 
 **Success Response**
 201
@@ -365,10 +365,10 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_public_id | string   | Public ID of the entry.                                      |
 
 **Success Response**
 200
@@ -388,10 +388,10 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_public_id | string   | Public ID of the entry.                                      |
 
 **Success Response**
 200
@@ -411,12 +411,12 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_public_id | string   | Yes      | Public ID of the entry.                                      |
-| entry_name      | bytes    | Yes      | Encrypted entry name payload.                                |
-| entry_data      | bytes    | Yes      | Encrypted entry data payload.                                |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_public_id | string   | Public ID of the entry.                                      |
+| entry_name      | bytes    | Encrypted entry name payload.                                |
+| entry_data      | bytes    | Encrypted entry data payload.                                |
 
 **Success Response**
 200
@@ -436,11 +436,11 @@ A brief introduction to the possible responses for all defined APIs.
 | errors          | [error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
-| Field           | Type     | Required | Description                                                  |
-|-----------------|----------|----------|--------------------------------------------------------------|
-| username_hash   | bytes    | Yes      | Hash of the user's username.                                 |
-| entry_ids       | [bytes]  | success  | The public IDs of all stored data entries.                   |
-| entry_names     | [bytes]  | success  | The name payload for all stored data entries.                |
+| Field           | Type     | Description                                                  |
+|-----------------|----------|--------------------------------------------------------------|
+| username_hash   | bytes    | Hash of the user's username.                                 |
+| entry_ids       | [bytes]  | The public IDs of all stored data entries.                   |
+| entry_names     | [bytes]  | The name payload for all stored data entries.                |
 
 **Success Response**
 200
