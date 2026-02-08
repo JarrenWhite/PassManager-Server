@@ -309,7 +309,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | bytes  | Public ID of the entry.                          |
+| entry_public_id | string | Public ID of the entry.                          |
 | entry_name      | bytes  | The new encrypted entry name payload.            |
 | entry_data      | bytes  | The new encrypted entry data payload.            |
 
@@ -371,7 +371,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
 | username_hash    | bytes  | Yes      | Hash of the user's username.                         |
-| auth_id          | bytes  | Yes      | Public ID of the AuthEphemeral being used.           |
+| auth_id          | string | Yes      | Public ID of the AuthEphemeral being used.           |
 | eph_val_a        | bytes  | Yes      | Client ephemeral value. (A)                          |
 | proof_val_m1     | bytes  | Yes      | Client proof. (M1)                                   |
 | maximum_requests | int    | No       | Number of requests before the session will expire.   |
@@ -405,7 +405,7 @@ Delete the given auth session from the database, preventing further use.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| session_id      | bytes  | Public ID of the session to be deleted.          |
+| session_id      | string | Public ID of the session to be deleted.          |
 
 > **Note:** The session being deleted does not need to be the one in use.
 > **Note:** Deleting a password change session this way will terminate the password change.
@@ -496,7 +496,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 **Parameters**
 | Field           | Type   | Required | Description                                      |
 |-----------------|--------|----------|--------------------------------------------------|
-| session_id      | bytes  | Yes      | The public ID of the login session.              |
+| session_id      | string | Yes      | The public ID of the login session.              |
 | request_number  | int    | Yes      | The number of this request on the login session. |
 | encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
@@ -504,7 +504,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | bytes  | Public ID of the entry.                          |
+| entry_public_id | string | Public ID of the entry.                          |
 | entry_name      | bytes  | The new encrypted entry name payload.            |
 | entry_data      | bytes  | The new encrypted entry data payload.            |
 
@@ -536,7 +536,7 @@ Delete all stored data for a given data entry.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | bytes  | Public ID of the entry.                          |
+| entry_public_id | string | Public ID of the entry.                          |
 
 > **Note:** A deleted entry is deleted fully. It cannot be recovered.
 
@@ -563,7 +563,7 @@ Retrieve all data for a given password entry.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | bytes  | Public ID of the entry.                          |
+| entry_public_id | string | Public ID of the entry.                          |
 
 **[Response Format](api_responses.md#get-entry-data)**
 
