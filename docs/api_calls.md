@@ -284,7 +284,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | bytes  | Public ID of the entry.                          |
+| entry_public_id | string | Public ID of the entry.                          |
 
 **[Response Format](api_responses.md#get-entry-password)**
 
