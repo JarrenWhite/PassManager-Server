@@ -49,9 +49,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | success  | Hash of the username that was registered.  |
 | errors          | [error]  | failure  | json list of each error.                   |
 
-**Success Response**
-201
-
 ---
 
 ### Change Username (User)
@@ -71,9 +68,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|--------|--------------------------------------------------|
 | new_username    | bytes  | Hash of the new username.                        |
 
-**Success Response**
-200
-
 ---
 
 ### Delete User (User)
@@ -92,9 +86,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-
-**Success Response**
-200
 
 ---
 
@@ -121,9 +112,6 @@ A brief introduction to the possible responses for all defined APIs.
 | srp_salt        | bytes    | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | Unique server ephemeral value (B) for this SRP auth attempt. |
 
-**Success Response**
-201
-
 ---
 
 ### Continue Password Change (Password)
@@ -146,9 +134,6 @@ A brief introduction to the possible responses for all defined APIs.
 | server_proof_m2 | bytes    | The server's proof of authentication.                        |
 | entry_ids       | [string] | The public IDs of all stored data entries.                   |
 
-**Success Response**
-201
-
 ---
 
 ### Complete Password Change (Password)
@@ -168,9 +153,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
 
-**Success Response**
-200
-
 ---
 
 ### Abort Password Change (Password)
@@ -189,9 +171,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-
-**Success Response**
-200
 
 ---
 
@@ -215,9 +194,6 @@ A brief introduction to the possible responses for all defined APIs.
 | entry_name      | bytes    | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Encrypted entry data payload.                                |
 
-**Success Response**
-200
-
 ---
 
 ### Add New Encryption for Entry (Password)
@@ -238,9 +214,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | entry_public_id | string   | Public ID of the entry.                                      |
 
-**Success Response**
-200
-
 ---
 
 
@@ -260,9 +233,6 @@ A brief introduction to the possible responses for all defined APIs.
 | master_key_salt | bytes    | success  | The salt used to create the master key.                      |
 | errors          | [error]  | failure  | json list of each error.                                     |
 
-**Success Response**
-201
-
 ---
 
 ### Complete Auth (Session)
@@ -276,9 +246,6 @@ A brief introduction to the possible responses for all defined APIs.
 | session_id      | string   | success  | The public ID of the created session.                        |
 | server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
 | errors          | [error]  | failure  | json list of each error.                                     |
-
-**Success Response**
-201
 
 ---
 
@@ -299,9 +266,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
 
-**Success Response**
-200
-
 ---
 
 ### Clean Sessions (Session)
@@ -320,9 +284,6 @@ A brief introduction to the possible responses for all defined APIs.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-
-**Success Response**
-200
 
 ---
 
@@ -347,9 +308,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | entry_public_id | string   | Public ID of the entry.                                      |
 
-**Success Response**
-201
-
 ---
 
 ### Edit Entry (Data)
@@ -370,9 +328,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | entry_public_id | string   | Public ID of the entry.                                      |
 
-**Success Response**
-200
-
 ---
 
 ### Delete Entry (Data)
@@ -392,9 +347,6 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | entry_public_id | string   | Public ID of the entry.                                      |
-
-**Success Response**
-200
 
 ---
 
@@ -418,9 +370,6 @@ A brief introduction to the possible responses for all defined APIs.
 | entry_name      | bytes    | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Encrypted entry data payload.                                |
 
-**Success Response**
-200
-
 ---
 
 ### Get List (Data)
@@ -441,9 +390,6 @@ A brief introduction to the possible responses for all defined APIs.
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | entry_ids       | [bytes]  | The public IDs of all stored data entries.                   |
 | entry_names     | [bytes]  | The name payload for all stored data entries.                |
-
-**Success Response**
-200
 
 ---
 
