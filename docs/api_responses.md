@@ -447,15 +447,15 @@ These can be returned in response to multiple possible fields.
 | gnr01      | 404       | \<Field\> not found |
 
 
-### Limited API Errors
+### Operation Specific Errors
 
 These errors are specific to certain APIs. Only those APIs can return these errors.
 
 | Error Code | Field           | HTTP Code | APIs | Error Message                                                |
 |------------|-----------------|-----------|------|--------------------------------------------------------------|
-| ltd00      | username_hash   | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
-| ltd01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
-| ltd02      | request         | 412       | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
+| opr00      | username_hash   | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
+| opr01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
+| opr02      | request         | 412       | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
 
 
 ### HTTP Status Codes
