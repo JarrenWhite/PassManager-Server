@@ -4,6 +4,7 @@ A brief introduction to the API, its purpose, and how to make API calls.
 ([See API Responses](api_responses.md))
 
 > **API Base URL:** `https://[API_BASE_URL]`
+
 > **TODO:** *Replace `[API_BASE_URL]` with the actual domain when determined*
 
 ## Overview
@@ -208,7 +209,9 @@ Completes the SRP authentication process by providing client ephemeral value and
 | proof_val_m1    | bytes  | Client proof. (M1)                                    |
 
 > **Note:** Password changing sessions expire after 5 minutes.
+
 > **Note:** Password changing sessions have a limited number of requests based on the user's number of password entries. (Enough requests to read and write to each password once, with an additional request to complete the password change.)
+
 > **Note:** A user can only have one active password changing session.
 
 **[Response Format](api_responses.md#continue-password-change-password)**
@@ -314,6 +317,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 | entry_data      | bytes  | The new encrypted entry data payload.            |
 
 > **⚠️ CRITICAL:** The newly encrypted entry name and data must be encrypted using the new master key.
+
 > **⚠️ CRITICAL:** A new nonce must be generated for each encryption. The old nonce must not be reused.
 
 **[Response Format](api_responses.md#add-new-encryption-for-entry-password)**
@@ -378,8 +382,11 @@ Completes the SRP authentication process by providing client ephemeral value and
 | expiry_time      | int    | No       | Session expiry time in seconds from now.             |
 
 > **Note:** If left blank, maximum requests will default to 100, and expiry time will default to 3600.
+
 > **Note:** Maximum requests can be set to unlimited using a value of -1.
+
 > **Note:** Expiry time can be set to unlimited using a value of -1.
+
 > **⚠️ CRITICAL:** Sessions with unlimited requests and time will never naturally expire, and must be manually purged using the [Delete Session](#delete-session-session) or [Clean Sessions](#clean-sessions-session) APIs.
 
 **[Response Format](api_responses.md#complete-auth-session)**
@@ -408,6 +415,7 @@ Delete the given auth session from the database, preventing further use.
 | session_id      | string | Public ID of the session to be deleted.          |
 
 > **Note:** The session being deleted does not need to be the one in use.
+
 > **Note:** Deleting a password change session this way will terminate the password change.
 
 **[Response Format](api_responses.md#delete-session-session)**
@@ -435,6 +443,7 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 | username_hash   | bytes  | Hash of the user's username.                     |
 
 > **Note:** The session being used to auth this request will also be deleted.
+
 > **Note:** Deleting a password change session this way will terminate the password change.
 
 **[Response Format](api_responses.md#clean-sessions-session)**
@@ -509,8 +518,11 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 | entry_data      | bytes  | The new encrypted entry data payload.            |
 
 > **⚠️ CRITICAL:** A new nonce must be generated for each new encryption. The old nonce must not be reused.
+
 > **Note:** If `entry_name` is omitted from the payload, the entry name is left unchanged.
+
 > **Note:** If `entry_data` is omitted from the payload, the entry data is left unchanged.
+
 > **Note:** At least one of `entry_name` or `entry_data` must be provided; otherwise the request is invalid.
 
 **[Response Format](api_responses.md#edit-entry-data)**
