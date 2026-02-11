@@ -3,11 +3,11 @@
 ## Create Password Change Session
 1) Start password change
     - DBUtilsPassword.start
-2) Complete the Auth to get the Session
+2) Complete the Auth to get a Password Session and entry list
     - DBUtilsAuth.get_details
     - DBUtilsPassword.complete
 
-## Edit Secure Data entry
+## Edit Secure Data entries
 1) Get the details of a specific entry
     - DBUtilsData.get_entry
 2) Add new details for the entry
