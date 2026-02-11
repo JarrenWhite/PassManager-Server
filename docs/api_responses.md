@@ -427,35 +427,35 @@ Notes:
 
 These errors can be returned to any possible request.
 
-| Error Code | Field           | HTTP Code | Error Message                                                |
-|------------|-----------------|-----------|--------------------------------------------------------------|
-| RQS00      | request         | 400       | Incorrect parameters. Required: [\<fields\>]                 |
-| RQS01      | request         | 401       | Failed to decrypt payload, invalid session or corrupted data |
-| RQS02      | request         | 403       | Password change in progress                                  |
-| RQS03      | request         | 429       | Too many requests                                            |
-| SVR00      | server          | 500       | Server encountered an unexpected error                       |
-| SVR01      | server          | 503       | Temporary outage/maintenance                                 |
+| Error Code | Field           | Error Message                                                |
+|------------|-----------------|--------------------------------------------------------------|
+| RQS00      | request         | Incorrect parameters. Required: [\<fields\>]                 |
+| RQS01      | request         | Failed to decrypt payload, invalid session or corrupted data |
+| RQS02      | request         | Password change in progress                                  |
+| RQS03      | request         | Too many requests                                            |
+| SVR00      | server          | Server encountered an unexpected error                       |
+| SVR01      | server          | Temporary outage/maintenance                                 |
 
 
 ### General Field Errors
 
 These can be returned in response to multiple possible fields.
 
-| Error Code | HTTP Code | Error message       |
-|------------|-----------|---------------------|
-| GNR00      | 400       | \<Field\> invalid   |
-| GNR01      | 404       | \<Field\> not found |
+| Error Code | Error message       |
+|------------|---------------------|
+| GNR00      | \<Field\> invalid   |
+| GNR01      | \<Field\> not found |
 
 
 ### Operation Specific Errors
 
 These errors are specific to certain APIs. Only those APIs can return these errors.
 
-| Error Code | Field           | HTTP Code | APIs | Error Message                                                |
-|------------|-----------------|-----------|------|--------------------------------------------------------------|
-| OPR00      | username_hash   | 409       | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
-| OPR01      | request_number  | 400       | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
-| OPR02      | request         | 412       | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
+| Error Code | Field           | APIs | Error Message                                                |
+|------------|-----------------|------|--------------------------------------------------------------|
+| OPR00      | username_hash   | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
+| OPR01      | request_number  | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
+| OPR02      | request         | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
 
 
 ### HTTP Status Codes
