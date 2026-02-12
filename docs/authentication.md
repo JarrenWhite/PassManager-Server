@@ -24,8 +24,7 @@ This document outlines the authentication and password management system for the
 5. Server stores username, verifier, and salt
 6. Server → Client: Acknowledge successful user creation
 ```
-
-**API Endpoint:** `POST /api/user/register`
+**RCP Method:** `User.Register`
 
 ### Session Creation Process
 
@@ -48,9 +47,9 @@ This document outlines the authentication and password management system for the
 12. Client verifies server proof M2
 ```
 
-**API Endpoints:**
-- `POST /api/session/start` - Initiate authentication
-- `POST /api/session/auth` - Complete authentication
+**RCP Methods:**
+- `Session.Start` - Initiate authentication
+- `Session.Auth` - Complete authentication
 
 ### Request Authentication Process
 
@@ -109,33 +108,34 @@ Two for each data entry, plus one request to complete the change.
 - **Requirement:** Active login session
 - **Action:** Creates special password change session
 - **Result:** Returns validation details for new credentials
-- **API:** `POST /api/password/start`
+- **RPC Method:** `Password.Start`
 
 #### 2. Continue Password Change
 - **Requirement:** Active login session
 - **Action:** Completes SRP authentication for new credentials
 - **Result:** Returns session details and list of all entry public IDs
-- **API:** `POST /api/password/auth`
+- **RPC Method:** `Password.Auth`
 
 #### 3. Process Entries
 - **Requirement:** Password change session
 - **Action:** Request and update each entry with new encryption
 - **Process:**
-  - Request entry data: `POST /api/password/get`
-  - Update entry encryption: `POST /api/password/update`
+  - Request entry data
+  - Update entry encryption
 - **Constraint:** Must process all entries before completion
+- **RPC Methods:** `Password.Get`, `Password.Update`
 
 #### 4. Complete Password Change
 - **Requirement:** All entries processed & Password change session
 - **Action:** Finalises password change and cleans up
 - **Result:** Old credentials erased, new credentials activated
-- **API:** `POST /api/password/complete`
+- **RPC Method:** `Password.Complete`
 
 #### 5. Abort Password Change (Optional)
 - **Requirement:** Any active session
 - **Action:** Cancels password change process
 - **Result:** All temporary data removed, old credentials preserved
-- **API:** `POST /api/password/abort`
+- **RPC Method:** `Password.Abort`
 
 ### Critical Security Requirements
 
