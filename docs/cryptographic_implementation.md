@@ -58,7 +58,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Authentication Tag:** 16 bytes (128 bits) for integrity verification
 
 > **⚠️ CRITICAL:** Never reuse the same nonce with the same key.
-> **Note:** The AAD information is not encrypted. It is used for integrity protection, and can be viewed by anyone with access to the packet.
+> - **Note:** The AAD information is not encrypted. It is used for integrity protection, and can be viewed by anyone with access to the packet.
 
 ---
 
@@ -98,9 +98,9 @@ The master key is derived from the user password using a Key Derivation Function
 - Salts must be **unique per user** and **never reused**.
 - Salts must be encoded safely (e.g., Base64) when stored or transmitted to the server.
 
-> **⚠️ CRITICAL:** The password input **must never** be logged, cached, or transmitted.
-> **⚠️ CRITICAL:** The master key **must never** be logged, cached, or transmitted.
-> **⚠️ CRITICAL:** A new salt **must** be generated with each user creation. They **must** never be re-used.
+> - **⚠️ CRITICAL:** The password input **must never** be logged, cached, or transmitted.
+> - **⚠️ CRITICAL:** The master key **must never** be logged, cached, or transmitted.
+> - **⚠️ CRITICAL:** A new salt **must** be generated with each user creation. They **must** never be re-used.
 
 ### Reference Implementations
 #### Python
@@ -205,10 +205,10 @@ During user registration, the client must generate an SRP verifier:
 - Verify received M2 matches computed `hash(A || M1 || K)`
 
 ### Critical Security Requirements
-> **⚠️ CRITICAL:** Private values `a` and `b` must be generated using cryptographically secure random number generators.
-> **⚠️ CRITICAL:** Private values `a` and `b` must never be logged, cached, or transmitted.
-> **⚠️ CRITICAL:** Session key `K` must never be logged or transmitted in plaintext.
-> **⚠️ CRITICAL:** All computations must use constant-time operations where possible to prevent timing attacks.
+> - **⚠️ CRITICAL:** Private values `a` and `b` must be generated using cryptographically secure random number generators.
+> - **⚠️ CRITICAL:** Private values `a` and `b` must never be logged, cached, or transmitted.
+> - **⚠️ CRITICAL:** Session key `K` must never be logged or transmitted in plaintext.
+> - **⚠️ CRITICAL:** All computations must use constant-time operations where possible to prevent timing attacks.
 
 ---
 
