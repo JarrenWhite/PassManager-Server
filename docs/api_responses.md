@@ -417,10 +417,10 @@ Example failure response:
 Notes:
 - Multiple errors may be returned in a single response. Clients should iterate the `errors` array.
 - Error code naming scheme:
-  - `rqsXX`: request-level errors that apply to the entire request.
-  - `svrXX`: server-level errors that apply to the application.
-  - `gnrXX`: general field errors that can apply to multiple APIs/fields.
-  - `ltdXX`: limited API errors that apply to specific endpoints only.
+  - `RQSXX`: request-level errors that apply to the entire request.
+  - `SVRXX`: server-level errors that apply to the application.
+  - `GNRXX`: general field errors that can apply to multiple APIs/fields.
+  - `OPRXX`: operation specific errors that apply to limited endpoints only.
 
 
 ### Request Errors
@@ -456,22 +456,3 @@ These errors are specific to certain APIs. Only those APIs can return these erro
 | OPR00      | username_hash   | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
 | OPR01      | request_number  | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
 | OPR02      | request         | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
-
-
-### HTTP Status Codes
-
-A HTTP response code is issued with every response. Where multiple possible response codes are true at once, the highest importance code will be returned.
-
-| Response Code       | HTTP Status | Description                                                    |
-|---------------------|-------------|----------------------------------------------------------------|
-| SUCCESS             | 200         | OK.                                                            |
-| SUCCESS             | 201         | Resource created.                                              |
-| VALIDATION_ERROR    | 400         | Request parameters are invalid or missing.                     |
-| UNAUTHORISED        | 401         | Failed to decrypt payload - invalid session or corrupted data. |
-| FORBIDDEN           | 403         | User is undergoing a password change.                          |
-| NOT_FOUND           | 404         | The requested item could not be found.                         |
-| USER_EXISTS         | 409         | Username hash already exists.                                  |
-| PRECONDITION_FAILED | 412         | The preconditions have not been met to complete this function. |
-| RATE_LIMIT_EXCEEDED | 429         | Too many requests.                                             |
-| INTERNAL_ERROR      | 500         | Server encountered an unexpected error.                        |
-| SERVICE_UNAVAILABLE | 503         | Temporary outage or maintenance.                               |
