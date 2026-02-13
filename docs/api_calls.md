@@ -3,19 +3,18 @@
 A brief introduction to the API, its purpose, and how to make API calls.
 ([See API Responses](api_responses.md))
 
-> **API Base URL:** `https://[API_BASE_URL]`
+> **API Base URL:** `https://[GRPC_URL]`
 
-> **TODO:** *Replace `[API_BASE_URL]` with the actual domain when determined*
+> **TODO:** *Replace `[GRPC_URL]` and `[GRPC_PORT]` with the actual domain when determined*
 
 ## Overview
-1. [**Base URL**](#base-url)
-2. [**API Structure**](#api-structure)
-3. [**User**](#user)
+1. [**gRPC Details**](#grpc-details)
+2. [**User**](#user)
     1. [Register User](#register-user-user)
     2. [Change Username](#change-username-user)
     3. [Delete User](#delete-user-user)
     4. [Health Check](#health-check-user)
-4. [**Password**](#password)
+3. [**Password**](#password)
     1. [Start Password Change](#start-password-change-password)
     2. [Continue Password Change](#continue-password-change-password)
     3. [Complete Password Change](#complete-password-change-password)
@@ -23,13 +22,13 @@ A brief introduction to the API, its purpose, and how to make API calls.
     5. [Get Entry](#get-entry-password)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry-password)
     7. [Health Check](#health-check-password)
-5. [**Session**](#session)
+4. [**Session**](#session)
     1. [Start Auth](#start-auth-session)
     2. [Complete Auth](#complete-auth-session)
     3. [Delete Session](#delete-session-session)
     4. [Clean Sessions](#clean-sessions-session)
     5. [Health Check](#health-check-session)
-6. [**Data**](#data)
+5. [**Data**](#data)
     1. [Create Entry](#create-entry-data)
     2. [Edit Entry](#edit-entry-data)
     3. [Delete Entry](#delete-entry-data)
@@ -40,18 +39,39 @@ A brief introduction to the API, its purpose, and how to make API calls.
 ---
 
 
-## Base URL
-```https://[API_BASE_URL]```
+## gRPC Details
 
----
+All calls to this server are made by RPC. Each RPC method takes a protobuf message as a request and returns a protobuf message in response.
+The protobuf definitions can be found in the [protobuf definitions](https://github.com/JarrenWhite/PassManager-Protobufs) repository.
+This documentation describes the RPC required to invoke each request, as well as the protobuf type of its request message.
+The contents of that request message are further described in the entry's documentation.
+For details of the response message, see ([API Responses](api_responses.md))
 
+### Calling Details
+Host: [GRPC_URL]
+Port: [GRPC_PORT]
+Protocol: HTTP/2
 
-## API Structure
-API endpoints follow the pattern: `/api/{type}/{callName}`
+### Services
+Version: v0
 
-Where:
-- `{type}` can be: `user`, `password`, `session`, `data`
-- `{callName}` is the specific endpoint name
+Services:
+```
+User:      passmanager.user.\<version\>.User
+Password:  passmanager.password.\<version\>.Password
+Session:   passmanager.session.\<version\>.Session
+Data:      passmanager.data.\<version\>.Data
+```
+
+### Secure Messages:
+Many RPC methods require a SecureRequest protobuf message and return a SecureResponse protobuf message.
+These message types can be found in the `passmanager.common.\<version\>` package, within `secure.proto`.
+
+These message types contain an `encrypted_data` field.
+This field is populated with a payload protobuf message, encrypted using a shared session key.
+Each request and response is associated with a specific payload protobuf message.
+For these RPC methods, the message associated with the request is specified in the request's documentation.
+
 
 ---
 
