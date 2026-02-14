@@ -52,7 +52,7 @@ The `failure_data` field contains the Failure protobuf message.
 That message, and its contents, are further defined in the [Errors](#errors) section of this document.
 
 ### Secure Message
-If the message was issued as part of a secured session, the response will be included in a SecureResponse protobuf message `passmanager.common.v0.SecureResponse`. This message will contain a `success` flag, and either `success_data` or `failure_data`, as with any other message. However, if successful, the `success_data` field will contain the fields `session_id` and `encrypted_data`.
+If the message was issued as part of a secured session, the response will be included in a SecureResponse protobuf message `passmanager.common.v#.SecureResponse`. This message will contain a `success` flag, and either `success_data` or `failure_data`, as with any other message. However, if successful, the `success_data` field will contain the fields `session_id` and `encrypted_data`.
 
 `session_id` gives a reference to the session which this message was secured with, to allow the client to find the relevant session key for decryption.
 
@@ -68,7 +68,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#register-user-user)**
 
 **Protobuf Messages**
-`passmanager.user.v0.RegisterResponse`
+`passmanager.user.v#.RegisterResponse`
 
 **Response Fields**
 | Field           | Type     | Description                                |
@@ -82,7 +82,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#change-username-user)**
 
 **Protobuf Messages**
-`passmanager.user.v0.UserUsernameResponse`
+`passmanager.user.v#.UserUsernameResponse`
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -96,7 +96,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#delete-user-user)**
 
 **Protobuf Messages**
-`passmanager.user.v0.UserDeleteResponse`
+`passmanager.user.v#.UserDeleteResponse`
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -113,7 +113,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#start-password-change-password)**
 
 **Protobuf Messages**
-`passmanager.password.v0.PasswordStartResponse`
+`passmanager.password.v#.PasswordStartResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -130,7 +130,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#continue-password-change-password)**
 
 **Protobuf Messages**
-`passmanager.password.v0.PasswordAuthResponse`
+`passmanager.password.v#.PasswordAuthResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -147,7 +147,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#complete-password-change-password)**
 
 **Protobuf Messages**
-`passmanager.password.v0.PasswordCompleteResponse`
+`passmanager.password.v#.PasswordCompleteResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -161,7 +161,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#abort-password-change-password)**
 
 **Protobuf Messages**
-`passmanager.password.v0.PasswordAbortResponse`
+`passmanager.password.v#.PasswordAbortResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -175,7 +175,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#get-entry-password)**
 
 **Protobuf Messages**
-`passmanager.password.v0.PasswordGetResponse`
+`passmanager.password.v#.PasswordGetResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -192,7 +192,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#add-new-encryption-for-entry-password)**
 
 **Protobuf Messages**
-`passmanager.password.v0.PasswordUpdateResponse`
+`passmanager.password.v#.PasswordUpdateResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -210,7 +210,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#start-auth-session)**
 
 **Protobuf Messages**
-`passmanager.session.v0.SessionStartResponse`
+`passmanager.session.v#.SessionStartResponse`
 
 **Response Fields**
 | Field           | Type     | Description                                                  |
@@ -227,7 +227,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#complete-auth-session)**
 
 **Protobuf Messages**
-`passmanager.session.v0.SessionAuthResponse`
+`passmanager.session.v#.SessionAuthResponse`
 
 **Response Fields**
 | Field           | Type     | Description                                                  |
@@ -242,7 +242,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#delete-session-session)**
 
 **Protobuf Messages**
-`passmanager.session.v0.SessionDeleteResponse`
+`passmanager.session.v#.SessionDeleteResponse`
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -256,7 +256,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#clean-sessions-session)**
 
 **Protobuf Messages**
-`passmanager.session.v0.SessionCleanResponse`
+`passmanager.session.v#.SessionCleanResponse`
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -273,7 +273,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#create-entry-data)**
 
 **Protobuf Messages**
-`passmanager.data.v0.DataCreateResponse`
+`passmanager.data.v#.DataCreateResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -288,7 +288,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#edit-entry-data)**
 
 **Protobuf Messages**
-`passmanager.data.v0.DataEditResponse`
+`passmanager.data.v#.DataEditResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -303,7 +303,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#delete-entry-data)**
 
 **Protobuf Messages**
-`passmanager.data.v0.DataDeleteResponse`
+`passmanager.data.v#.DataDeleteResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -318,7 +318,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#get-entry-data)**
 
 **Protobuf Messages**
-`passmanager.data.v0.DataGetResponse`
+`passmanager.data.v#.DataGetResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -335,7 +335,7 @@ Messages which use a secure message response are shown in the documentation by d
 **[Request Format](api_calls.md#get-list-data)**
 
 **Protobuf Messages**
-`passmanager.data.v0.DataGListResponse`
+`passmanager.data.v#.DataGListResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -361,9 +361,9 @@ Each Error protobuf contains a `field`, a `code` and a `description` entry.
 > Note: Multiple errors may be returned in a single response. Clients should iterate through all Errors in the `error_list`.
 
 ### Protobuf Messages
-Failure: `passmanager.common.v0.Failure`
-Error: `passmanager.common.v0.Error`
-ErrorCode: `passmanager.common.v0.ErrorCode`
+Failure: `passmanager.common.v#.Failure`
+Error: `passmanager.common.v#.Error`
+ErrorCode: `passmanager.common.v#.ErrorCode`
 
 
 ### Error Code Scheme:
