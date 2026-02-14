@@ -384,6 +384,11 @@ Each Error protobuf contains a `field`, a `code` and a `description` entry.
 
 > Note: Multiple errors may be returned in a single response. Clients should iterate through all Errors in the `error_list`.
 
+### Protobuf Messages
+Failure: `passmanager.common.v0.Failure`
+Error: `passmanager.common.v0.Error`
+ErrorCode: `passmanager.common.v0.ErrorCode`
+
 
 ### Error Code Scheme:
 - `RQSXX`: Request-level errors that apply to the entire request.
