@@ -398,29 +398,21 @@ A brief introduction to the possible responses for all defined APIs.
 
 ### Error Messages
 
-Error messages are returned in the format:
-{"field": field_name, "error_code": error_code, "error": error_message}
+A failed RPC Method call returns a Failure protobuf message, which contains a list of Error protobuf messages, `error_list`.
+Each Error protobuf contains a `field`, a `code` and a `description` entry.
 
-- The `error_code` is stable and intended for programmatic handling.
-- The `error` message is human-readable and is subject to change. It should be used for logging and debugging only.
+- The `field` relates to the calling field that is at fault. Further described below.
+- The `code` is stable and intended for programmatic handling.
+- The `description` message is human-readable and is subject to change. It should be used for logging and debugging only.
 
-Example failure response:
-```json
-{
-  "success": false,
-  "errors": [
-    { "field": "request", "error_code": "rqs00", "error": "Incorrect parameters. Required: [new_username, srp_salt, srp_verifier, master_key_salt]" }
-  ]
-}
-```
+> Note: Multiple errors may be returned in a single response. Clients should iterate through all Errors in the `error_list`.
 
-Notes:
-- Multiple errors may be returned in a single response. Clients should iterate the `errors` array.
-- Error code naming scheme:
-  - `RQSXX`: request-level errors that apply to the entire request.
-  - `SVRXX`: server-level errors that apply to the application.
-  - `GNRXX`: general field errors that can apply to multiple APIs/fields.
-  - `OPRXX`: operation specific errors that apply to limited endpoints only.
+
+### Error Code Scheme:
+- `RQSXX`: Request-level errors that apply to the entire request.
+- `SVRXX`: Server-level errors that apply to the application.
+- `GNRXX`: General field errors that can apply to multiple APIs/fields.
+- `OPRXX`: Operation specific errors that apply to limited endpoints only.
 
 
 ### Request Errors
@@ -439,7 +431,8 @@ These errors can be returned to any possible request.
 
 ### General Field Errors
 
-These can be returned in response to multiple possible fields.
+These can be returned in response to multiple possible input fields.
+Here, `Field` is defined by the name of protobuf message field.
 
 | Error Code | Error message       |
 |------------|---------------------|
