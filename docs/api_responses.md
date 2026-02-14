@@ -47,7 +47,7 @@ A brief introduction to the possible responses for all defined APIs.
 |-----------------|----------|----------|--------------------------------------------|
 | success         | boolean  | always   | Indicates if the operation was successful. |
 | username_hash   | bytes    | success  | Hash of the username that was registered.  |
-| failure_data    | Failure  | failure  | json list of each error.                   |
+| error_list      | [Error]  | failure  | json list of each error.                   |
 
 ---
 
@@ -61,7 +61,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -80,7 +80,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -102,7 +102,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -124,7 +124,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -146,7 +146,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -165,7 +165,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -184,7 +184,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -206,7 +206,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -231,7 +231,7 @@ A brief introduction to the possible responses for all defined APIs.
 | srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
 | master_key_salt | bytes    | success  | The salt used to create the master key.                      |
-| failure_data    | Failure  | failure  | json list of each error.                                     |
+| error_list      | [Error]  | failure  | json list of each error.                                     |
 
 ---
 
@@ -245,7 +245,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.                   |
 | session_id      | string   | success  | The public ID of the created session.                        |
 | server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
-| failure_data    | Failure  | failure  | json list of each error.                                     |
+| error_list      | [Error]  | failure  | json list of each error.                                     |
 
 ---
 
@@ -259,7 +259,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -278,7 +278,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -300,7 +300,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -320,7 +320,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -340,7 +340,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -360,7 +360,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -382,7 +382,7 @@ A brief introduction to the possible responses for all defined APIs.
 | success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| failure_data    | Failure  | failure  | json list of each error.                         |
+| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
