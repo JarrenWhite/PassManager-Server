@@ -42,11 +42,9 @@ A brief introduction to the possible responses for all defined APIs.
 All response protobuf messages contain a `success` field, which is a bool.
 The bool indicates whether the call was successful, or if it failed.
 
-### Successful Message
 If the call was successful, the `success_data` field will be populated.
 The data contained in the documented `Response Fields` for each of the API Responses is within that `success_data`.
 
-### Failed Message
 If the call fails, the `failure_data` field will be populated.
 The `failure_data` field contains the Failure protobuf message.
 That message, and its contents, are further defined in the [Errors](#errors) section of this document.
