@@ -38,15 +38,27 @@ A brief introduction to the possible responses for all defined APIs.
 
 ## Parsing Responses
 
+### Success Detection
 All response protobuf messages contain a `success` field, which is a bool.
 The bool indicates whether the call was successful, or if it failed.
 
+### Successful Message
 If the call was successful, the `success_data` field will be populated.
 The data contained in the documented `Response Fields` for each of the API Responses is within that `success_data`.
 
+### Failed Message
 If the call fails, the `failure_data` field will be populated.
 The `failure_data` field contains the Failure protobuf message.
 That message, and its contents, are further defined in the [Errors](#errors) section of this document.
+
+### Secure Message
+If the message was issued as part of a secured session, the response will be included in a SecureResponse protobuf message `passmanager.common.v0.SecureResponse`. This message will contain a `success` flag, and either `success_data` or `failure_data`, as with any other message. However, if successful, the `success_data` field will contain the fields `session_id` and `encrypted_data`.
+
+`session_id` gives a reference to the session which this message was secured with, to allow the client to find the relevant session key for decryption.
+
+`encrypted_data` contains a protobuf message which has been encrypted using the shared session key.
+The type of the encrypted message is defined for each response in the documentation below.
+Messages which use a secure message response are shown in the documentation by describing their **Encryption Payload** rather than their **Response Fields**.
 
 
 ## User
@@ -66,12 +78,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#change-username-user)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -82,12 +88,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Delete User (User)
 
 **[Request Format](api_calls.md#delete-user-user)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -103,12 +103,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#start-password-change-password)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
@@ -122,12 +116,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Continue Password Change (Password)
 
 **[Request Format](api_calls.md#continue-password-change-password)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -143,12 +131,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#complete-password-change-password)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the password change session.    |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
@@ -160,12 +142,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#abort-password-change-password)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
@@ -176,12 +152,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Get Entry (Password)
 
 **[Request Format](api_calls.md#get-entry-password)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the password change session.    |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -196,12 +166,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Add New Encryption for Entry (Password)
 
 **[Request Format](api_calls.md#add-new-encryption-for-entry-password)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the password change session.    |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -244,12 +208,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#delete-session-session)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -260,12 +218,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Clean Sessions (Session)
 
 **[Request Format](api_calls.md#clean-sessions-session)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -281,12 +233,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#create-entry-data)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
@@ -298,12 +244,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Edit Entry (Data)
 
 **[Request Format](api_calls.md#edit-entry-data)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -317,12 +257,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 
 **[Request Format](api_calls.md#delete-entry-data)**
 
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
@@ -334,12 +268,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Get Entry (Data)
 
 **[Request Format](api_calls.md#get-entry-data)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -354,12 +282,6 @@ That message, and its contents, are further defined in the [Errors](#errors) sec
 ### Get List (Data)
 
 **[Request Format](api_calls.md#get-list-data)**
-
-**Response Fields**
-| Field           | Type     | Description                                      |
-|-----------------|----------|--------------------------------------------------|
-| session_id      | string   | The public ID of the login session.              |
-| encrypted_data  | bytes    | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
