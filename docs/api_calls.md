@@ -64,14 +64,14 @@ Data:      passmanager.data.\<version\>.Data
 ```
 
 ### Secure Messages:
-Many RPC methods require a SecureRequest protobuf message and return a SecureResponse protobuf message.
-These message types can be found in the `passmanager.common.\<version\>` package, within `secure.proto`.
+If the message needs to be issued as part of a secured session, the message will need to be included in a SecureRequest protobuf message `passmanager.common.\<version\>.SecureRequest`. This message needs to contain fields for `session_id`, `request_number`, and `encrypted_data`.
 
-These message types contain an `encrypted_data` field.
-This field is populated with a payload protobuf message, encrypted using a shared session key.
-Each request and response is associated with a specific payload protobuf message.
-For these RPC methods, the message associated with the request is specified in the request's documentation.
+`session_id` is a reference to the session which this message was secured with, to allow the server to find the relevant session key for decryption.
 
+`encrypted_data` is a protobuf message which is encrypted using the shared session key.
+The type of the encrypted message is defined for each response in the documentation below.
+
+Messages which use a secure message response are shown in the documentation by describing their **Encryption Payload** rather than their **Parameters**.
 
 ---
 
@@ -111,13 +111,6 @@ Creates a new user account using a username hash, and the required security info
 **Description**
 Changes a user's username, from one username hash, to another username hash.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -137,13 +130,6 @@ Changes a user's username, from one username hash, to another username hash.
 
 **Description**
 Delete a given user, and all data associated with their account.
-
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. Must be 0 for this request type. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -184,13 +170,6 @@ Handles the complex multi-step password change process with special security ses
 **Description**
 Begins the process of a password change, returning the user's validation details to create a password change session.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                           |
 |-----------------|--------|-------------------------------------------------------|
@@ -212,13 +191,6 @@ Begins the process of a password change, returning the user's validation details
 
 **Description**
 Completes the SRP authentication process by providing client ephemeral value and proof. Returns password change session details and server proof for verification. Also returns list of all data entry public IDs.
-
-**Parameters**
-| Field            | Type   | Required | Description                                          |
-|------------------|--------|----------|------------------------------------------------------|
-| session_id       | string | Yes      | The public ID of the login session.                  |
-| request_number   | int    | Yes      | The number of this request on the login session.     |
-| encrypted_data   | bytes  | Yes      | Encrypted payload. (see below)                       |
 
 **Encryption Payload**
 | Field           | Type   | Description                                           |
@@ -246,13 +218,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 **Description**
 Complete a password change. If all entries have been completed, the change is confirmed, and the old password details are erased.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
-| request_number  | int    | Yes      | The number of this request on the password change session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -269,13 +234,6 @@ Complete a password change. If all entries have been completed, the change is co
 
 **Description**
 Abort a password change that is in progress. Deletes all details about the new password.
-
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -296,13 +254,6 @@ Abort a password change that is in progress. Deletes all details about the new p
 **Description**
 Request the encrypted name and data for a given data entry, as well as its unique encryption data.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
-| request_number  | int    | Yes      | The number of this request on the password change session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -320,13 +271,6 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 
 **Description**
 Set the encrypted name and data for a given data entry, encrypted with the new master key. Also provide the new unique encryption data.
-
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the password change session.    |
-| request_number  | int    | Yes      | The number of this request on the password change session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -421,13 +365,6 @@ Completes the SRP authentication process by providing client ephemeral value and
 **Description**
 Delete the given auth session from the database, preventing further use.
 
-**Parameters**
-| Field           | Type   | Required | Description                                                         |
-|-----------------|--------|----------|---------------------------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session being used to auth this request. |
-| request_number  | int    | Yes      | The number of this request on the login session.                    |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                                      |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -449,13 +386,6 @@ Delete the given auth session from the database, preventing further use.
 
 **Description**
 Delete all of the user's existing auth sessions from the database, preventing further use.
-
-**Parameters**
-| Field           | Type   | Required | Description                                                         |
-|-----------------|--------|----------|---------------------------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session being used to auth this request. |
-| request_number  | int    | Yes      | The number of this request on the login session.                    |
-| encrypted_data  | bytes  | Yes      | Encrypted payload (see below)                                       |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -496,13 +426,6 @@ Handles encrypted password entry operations including create, read, update, and 
 **Description**
 Create a new password entry with encrypted name and data, and provide the unique encryption data.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -521,13 +444,6 @@ Create a new password entry with encrypted name and data, and provide the unique
 
 **Description**
 Edit the encrypted name and data for a given data entry, and provide the new unique encryption data.
-
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -557,13 +473,6 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 **Description**
 Delete all stored data for a given data entry.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -584,13 +493,6 @@ Delete all stored data for a given data entry.
 **Description**
 Retrieve all data for a given password entry.
 
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
-
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
@@ -608,13 +510,6 @@ Retrieve all data for a given password entry.
 
 **Description**
 Retrieve a list of the public IDs of all password entries, along with their names.
-
-**Parameters**
-| Field           | Type   | Required | Description                                      |
-|-----------------|--------|----------|--------------------------------------------------|
-| session_id      | string | Yes      | The public ID of the login session.              |
-| request_number  | int    | Yes      | The number of this request on the login session. |
-| encrypted_data  | bytes  | Yes      | Encrypted payload. (see below)                   |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
