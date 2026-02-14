@@ -4,29 +4,30 @@ A brief introduction to the possible responses for all defined APIs.
 ([See API Requests](api_calls.md))
 
 ## Overview
-1. [**User**](#user)
+1. [**Parsing Responses**](#parsing-responses)
+2. [**User**](#user)
     1. [Register User](#register-user-user)
     2. [Change Username](#change-username-user)
     3. [Delete User](#delete-user-user)
-2. [**Password**](#password)
+3. [**Password**](#password)
     1. [Start Password Change](#start-password-change-password)
     2. [Continue Password Change](#continue-password-change-password)
     3. [Complete Password Change](#complete-password-change-password)
     4. [Abort Password Change](#abort-password-change-password)
     5. [Get Entry](#get-entry-password)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry-password)
-3. [**Session**](#session)
+4. [**Session**](#session)
     1. [Start Auth](#start-auth-session)
     2. [Complete Auth](#complete-auth-session)
     3. [Delete Session](#delete-session-session)
     4. [Clean Sessions](#clean-sessions-session)
-4. [**Data**](#data)
+5. [**Data**](#data)
     1. [Create Entry](#create-entry-data)
     2. [Edit Entry](#edit-entry-data)
     3. [Delete Entry](#delete-entry-data)
     4. [Get Entry](#get-entry-data)
     5. [Get List](#get-list-data)
-5. [**Errors**](#errors)
+6. [**Errors**](#errors)
     1. [Error Messages](#error-messages)
     2. [Request Errors](#request-errors)
     3. [General Field Errors](#general-field-errors)
@@ -34,6 +35,18 @@ A brief introduction to the possible responses for all defined APIs.
     5. [HTTP Status Codes](#http-status-codes)
 
 ---
+
+## Parsing Responses
+
+All response protobuf messages contain a `success` field, which is a bool.
+The bool indicates whether the call was successful, or if it failed.
+
+If the call was successful, the `success_data` field will be populated.
+The data contained in the documented `Response Fields` for each of the API Responses is within that `success_data`.
+
+If the call fails, the `failure_data` field will be populated.
+The `failure_data` field contains the Failure protobuf message.
+That message, and its contents, are further defined in the [Errors](#errors) section of this document.
 
 
 ## User
@@ -45,9 +58,7 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                |
 |-----------------|----------|----------|--------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful. |
 | username_hash   | bytes    | success  | Hash of the username that was registered.  |
-| error_list      | [Error]  | failure  | json list of each error.                   |
 
 ---
 
@@ -58,10 +69,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -77,10 +86,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -99,10 +106,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -121,10 +126,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -143,10 +146,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -162,10 +163,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -181,10 +180,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -203,10 +200,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the password change session.    |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -226,12 +221,10 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.                   |
 | auth_id         | string   | success  | The public ID of the in progress auth request.               |
 | srp_salt        | bytes    | success  | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | success  | Unique server ephemeral value (B) for this SRP auth attempt. |
 | master_key_salt | bytes    | success  | The salt used to create the master key.                      |
-| error_list      | [Error]  | failure  | json list of each error.                                     |
 
 ---
 
@@ -242,10 +235,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                                  |
 |-----------------|----------|----------|--------------------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.                   |
 | session_id      | string   | success  | The public ID of the created session.                        |
 | server_proof_m2 | bytes    | success  | The server's proof of authentication.                        |
-| error_list      | [Error]  | failure  | json list of each error.                                     |
 
 ---
 
@@ -256,10 +247,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -275,10 +264,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
@@ -297,10 +284,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -317,10 +302,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -337,10 +320,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -357,10 +338,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
@@ -379,10 +358,8 @@ A brief introduction to the possible responses for all defined APIs.
 **Response Fields**
 | Field           | Type     | When     | Description                                      |
 |-----------------|----------|----------|--------------------------------------------------|
-| success         | boolean  | always   | Indicates if the operation was successful.       |
 | session_id      | string   | success  | The public ID of the login session.              |
 | encrypted_data  | bytes    | success  | Encrypted payload. (see below)                   |
-| error_list      | [Error]  | failure  | json list of each error.                         |
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
