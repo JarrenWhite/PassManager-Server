@@ -66,7 +66,7 @@ Messages which use a secure message response are shown in the documentation by d
 
 **[Request Format](api_calls.md#register-user-user)**
 
-**Protobuf Message:** `passmanager.user.\<version\>.RegisterResponse`
+**Protobuf Message:** `passmanager.user.\<version\>.UserRegisterResponse`
 
 **Response Fields**
 | Field           | Type     | Description                                |
@@ -316,7 +316,7 @@ Messages which use a secure message response are shown in the documentation by d
 
 **[Request Format](api_calls.md#get-list-data)**
 
-**Protobuf Message:** `passmanager.data.\<version\>.DataGListResponse`
+**Protobuf Message:** `passmanager.data.\<version\>.DataListResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
