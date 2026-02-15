@@ -83,8 +83,7 @@ Manages user account operations including registration, username changes, and ac
 > **Note:** User operations use regular "Login Sessions" for authentication, except for user registration which requires no authentication.
 
 ### Register User (User)
-**Endpoint**
-`POST /api/user/register`
+**Method:** `passmanager.user.\<version\>.Register`
 
 **Description**
 Creates a new user account using a username hash, and the required security information.
@@ -105,8 +104,7 @@ Creates a new user account using a username hash, and the required security info
 ---
 
 ### Change Username (User)
-**Endpoint**
-`POST /api/user/username`
+**Method:** `passmanager.user.\<version\>.Username`
 
 **Description**
 Changes a user's username, from one username hash, to another username hash.
@@ -125,8 +123,7 @@ Changes a user's username, from one username hash, to another username hash.
 ---
 
 ### Delete User (User)
-**Endpoint**
-`POST /api/user/delete`
+**Method:** `passmanager.user.\<version\>.Delete`
 
 **Description**
 Delete a given user, and all data associated with their account.
@@ -144,8 +141,7 @@ Delete a given user, and all data associated with their account.
 ---
 
 ### Health Check (User)
-**Endpoint**
-`GET /api/user/health`
+**Method:** `passmanager.user.\<version\>.Health`
 
 **Description**
 Check the health and availability of the User API endpoints. Returns system status information.
@@ -164,8 +160,7 @@ Handles the complex multi-step password change process with special security ses
 > **Note:** Password change operations use special "Password Change Sessions" that are distinct from regular login sessions. These sessions have limited lifetime (5 minutes) and limited request counts based on the number of password entries.
 
 ### Start Password Change (Password)
-**Endpoint**
-`POST /api/password/start`
+**Method:** `passmanager.password.\<version\>.Start`
 
 **Description**
 Begins the process of a password change, returning the user's validation details to create a password change session.
@@ -186,8 +181,7 @@ Begins the process of a password change, returning the user's validation details
 ---
 
 ### Continue Password Change (Password)
-**Endpoint**
-`POST /api/password/auth`
+**Method:** `passmanager.password.\<version\>.Auth`
 
 **Description**
 Completes the SRP authentication process by providing client ephemeral value and proof. Returns password change session details and server proof for verification. Also returns list of all data entry public IDs.
@@ -212,8 +206,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 ---
 
 ### Complete Password Change (Password)
-**Endpoint**
-`POST /api/password/complete`
+**Method:** `passmanager.password.\<version\>.Complete`
 
 **Description**
 Complete a password change. If all entries have been completed, the change is confirmed, and the old password details are erased.
@@ -229,8 +222,7 @@ Complete a password change. If all entries have been completed, the change is co
 ---
 
 ### Abort Password Change (Password)
-**Endpoint**
-`POST /api/password/abort`
+**Method:** `passmanager.password.\<version\>.Abort`
 
 **Description**
 Abort a password change that is in progress. Deletes all details about the new password.
@@ -248,8 +240,7 @@ Abort a password change that is in progress. Deletes all details about the new p
 ---
 
 ### Get Entry (Password)
-**Endpoint**
-`POST /api/password/get`
+**Method:** `passmanager.password.\<version\>.Get`
 
 **Description**
 Request the encrypted name and data for a given data entry, as well as its unique encryption data.
@@ -266,8 +257,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 ---
 
 ### Add New Encryption for Entry (Password)
-**Endpoint**
-`POST /api/password/update`
+**Method:** `passmanager.password.\<version\>.Update`
 
 **Description**
 Set the encrypted name and data for a given data entry, encrypted with the new master key. Also provide the new unique encryption data.
@@ -290,8 +280,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 ---
 
 ### Health Check (Password)
-**Endpoint**
-`GET /api/password/health`
+**Method:** `passmanager.password.\<version\>.Health`
 
 **Description**
 Check the health and availability of the Password API endpoints. Returns system status information.
@@ -310,8 +299,7 @@ Manages authentication sessions using SRP protocol for secure login and logout.
 > **Note:** Session endpoints create and manage regular "Login Sessions" that are used for most API operations.
 
 ### Start Auth (Session)
-**Endpoint**
-`POST /api/session/start`
+**Method:** `passmanager.session.\<version\>.Start`
 
 **Description**
 Request the details to create a new login session, including SRP details, master key salt, and server ephemeral value for SRP authentication.
@@ -329,8 +317,7 @@ Request the details to create a new login session, including SRP details, master
 ---
 
 ### Complete Auth (Session)
-**Endpoint**
-`POST /api/session/auth`
+**Method:** `passmanager.session.\<version\>.Auth`
 
 **Description**
 Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification.
@@ -359,8 +346,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 ---
 
 ### Delete Session (Session)
-**Endpoint**
-`POST /api/session/delete`
+**Method:** `passmanager.session.\<version\>.Delete`
 
 **Description**
 Delete the given auth session from the database, preventing further use.
@@ -381,8 +367,7 @@ Delete the given auth session from the database, preventing further use.
 ---
 
 ### Clean Sessions (Session)
-**Endpoint**
-`POST /api/session/clean`
+**Method:** `passmanager.session.\<version\>.Clean`
 
 **Description**
 Delete all of the user's existing auth sessions from the database, preventing further use.
@@ -402,8 +387,7 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 ---
 
 ### Health Check (Session)
-**Endpoint**
-`GET /api/session/health`
+**Method:** `passmanager.session.\<version\>.Health`
 
 **Description**
 Check the health and availability of the Session API endpoints. Returns system status information.
@@ -420,8 +404,7 @@ None required.
 Handles encrypted password entry operations including create, read, update, and delete.
 
 ### Create Entry (Data)
-**Endpoint**
-`POST /api/data/create`
+**Method:** `passmanager.data.\<version\>.Create`
 
 **Description**
 Create a new password entry with encrypted name and data, and provide the unique encryption data.
@@ -439,8 +422,7 @@ Create a new password entry with encrypted name and data, and provide the unique
 ---
 
 ### Edit Entry (Data)
-**Endpoint**
-`POST /api/data/edit`
+**Method:** `passmanager.data.\<version\>.Edit`
 
 **Description**
 Edit the encrypted name and data for a given data entry, and provide the new unique encryption data.
@@ -467,8 +449,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 ---
 
 ### Delete Entry (Data)
-**Endpoint**
-`POST /api/data/delete`
+**Method:** `passmanager.data.\<version\>.Delete`
 
 **Description**
 Delete all stored data for a given data entry.
@@ -487,8 +468,7 @@ Delete all stored data for a given data entry.
 ---
 
 ### Get Entry (Data)
-**Endpoint**
-`POST /api/data/get`
+**Method:** `passmanager.data.\<version\>.Get`
 
 **Description**
 Retrieve all data for a given password entry.
@@ -505,8 +485,7 @@ Retrieve all data for a given password entry.
 ---
 
 ### Get List (Data)
-**Endpoint**
-`POST /api/data/list`
+**Method:** `passmanager.data.\<version\>.List`
 
 **Description**
 Retrieve a list of the public IDs of all password entries, along with their names.
@@ -522,8 +501,7 @@ Retrieve a list of the public IDs of all password entries, along with their name
 ---
 
 ### Health Check (Data)
-**Endpoint**
-`GET /api/data/health`
+**Method:** `passmanager.data.\<version\>.Health`
 
 **Description**
 Check the health and availability of the Data API endpoints. Returns system status information.
