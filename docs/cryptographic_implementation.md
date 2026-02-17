@@ -222,6 +222,7 @@ During user registration, the client must generate an SRP verifier:
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
 ```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
+- **Ciphertext:** Defined per API call
 
 ### Password Names Encryption
 - **Content:** The name for the password entry.
@@ -230,6 +231,7 @@ During user registration, the client must generate an SRP verifier:
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
 ```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
+- **Ciphertext:** `passmanager.common.<version>.EntryName`
 
 ### Password Blob Encryption
 - **Content:** The data for the password entry.
@@ -238,5 +240,6 @@ During user registration, the client must generate an SRP verifier:
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
 ```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
+- **Ciphertext:** `passmanager.common.<version>.EntryData`
 
 > **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be correctly arranged before being sent to the server.

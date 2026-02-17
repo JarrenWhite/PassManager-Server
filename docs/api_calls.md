@@ -57,14 +57,14 @@ Version: v0
 
 Services:
 ```
-User:      passmanager.user.\<version\>.User
-Password:  passmanager.password.\<version\>.Password
-Session:   passmanager.session.\<version\>.Session
-Data:      passmanager.data.\<version\>.Data
+User:      passmanager.user.<version>.User
+Password:  passmanager.password.<version>.Password
+Session:   passmanager.session.<version>.Session
+Data:      passmanager.data.<version>.Data
 ```
 
 ### Secure Messages:
-If the message needs to be issued as part of a secured session, the message will need to be included in a SecureRequest protobuf message `passmanager.common.\<version\>.SecureRequest`. This message needs to contain fields for `session_id`, `request_number`, and `encrypted_data`.
+If the message needs to be issued as part of a secured session, the message will need to be included in a SecureRequest protobuf message `passmanager.common.<version>.SecureRequest`. This message needs to contain fields for `session_id`, `request_number`, and `encrypted_data`.
 
 `session_id` is a reference to the session which this message was secured with, to allow the server to find the relevant session key for decryption.
 
@@ -83,9 +83,9 @@ Manages user account operations including registration, username changes, and ac
 > **Note:** User operations use regular "Login Sessions" for authentication, except for user registration which requires no authentication.
 
 ### Register User (User)
-**Method:** `passmanager.user.\<version\>.Register`
+**Method:** `passmanager.user.<version>.Register`
 
-**Protobuf Message:** `passmanager.session.\<version\>.UserRegisterRequest`
+**Protobuf Message:** `passmanager.session.<version>.UserRegisterRequest`
 
 **Description**
 Creates a new user account using a username hash, and the required security information.
@@ -106,9 +106,9 @@ Creates a new user account using a username hash, and the required security info
 ---
 
 ### Change Username (User)
-**Method:** `passmanager.user.\<version\>.Username`
+**Method:** `passmanager.user.<version>.Username`
 
-**Protobuf Message:** `passmanager.session.\<version\>.UserUsernameRequest`
+**Protobuf Message:** `passmanager.session.<version>.UserUsernameRequest`
 
 **Description**
 Changes a user's username, from one username hash, to another username hash.
@@ -127,9 +127,9 @@ Changes a user's username, from one username hash, to another username hash.
 ---
 
 ### Delete User (User)
-**Method:** `passmanager.user.\<version\>.Delete`
+**Method:** `passmanager.user.<version>.Delete`
 
-**Protobuf Message:** `passmanager.session.\<version\>.UserDeleteRequest`
+**Protobuf Message:** `passmanager.session.<version>.UserDeleteRequest`
 
 **Description**
 Delete a given user, and all data associated with their account.
@@ -147,7 +147,7 @@ Delete a given user, and all data associated with their account.
 ---
 
 ### Health Check (User)
-**Method:** `passmanager.user.\<version\>.Health`
+**Method:** `passmanager.user.<version>.Health`
 
 **Description**
 Check the health and availability of the User API endpoints. Returns system status information.
@@ -166,9 +166,9 @@ Handles the complex multi-step password change process with special security ses
 > **Note:** Password change operations use special "Password Change Sessions" that are distinct from regular login sessions. These sessions have limited lifetime (5 minutes) and limited request counts based on the number of password entries.
 
 ### Start Password Change (Password)
-**Method:** `passmanager.password.\<version\>.Start`
+**Method:** `passmanager.password.<version>.Start`
 
-**Protobuf Message:** `passmanager.session.\<version\>.PasswordStartRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordStartRequest`
 
 **Description**
 Begins the process of a password change, returning the user's validation details to create a password change session.
@@ -189,9 +189,9 @@ Begins the process of a password change, returning the user's validation details
 ---
 
 ### Continue Password Change (Password)
-**Method:** `passmanager.password.\<version\>.Auth`
+**Method:** `passmanager.password.<version>.Auth`
 
-**Protobuf Message:** `passmanager.session.\<version\>.PasswordAuthRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordAuthRequest`
 
 **Description**
 Completes the SRP authentication process by providing client ephemeral value and proof. Returns password change session details and server proof for verification. Also returns list of all data entry public IDs.
@@ -216,9 +216,9 @@ Completes the SRP authentication process by providing client ephemeral value and
 ---
 
 ### Complete Password Change (Password)
-**Method:** `passmanager.password.\<version\>.Complete`
+**Method:** `passmanager.password.<version>.Complete`
 
-**Protobuf Message:** `passmanager.session.\<version\>.PasswordCompleteRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordCompleteRequest`
 
 **Description**
 Complete a password change. If all entries have been completed, the change is confirmed, and the old password details are erased.
@@ -234,9 +234,9 @@ Complete a password change. If all entries have been completed, the change is co
 ---
 
 ### Abort Password Change (Password)
-**Method:** `passmanager.password.\<version\>.Abort`
+**Method:** `passmanager.password.<version>.Abort`
 
-**Protobuf Message:** `passmanager.session.\<version\>.PasswordAbortRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordAbortRequest`
 
 **Description**
 Abort a password change that is in progress. Deletes all details about the new password.
@@ -254,9 +254,9 @@ Abort a password change that is in progress. Deletes all details about the new p
 ---
 
 ### Get Entry (Password)
-**Method:** `passmanager.password.\<version\>.Get`
+**Method:** `passmanager.password.<version>.Get`
 
-**Protobuf Message:** `passmanager.session.\<version\>.PasswordGetRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordGetRequest`
 
 **Description**
 Request the encrypted name and data for a given data entry, as well as its unique encryption data.
@@ -273,9 +273,9 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 ---
 
 ### Add New Encryption for Entry (Password)
-**Method:** `passmanager.password.\<version\>.Update`
+**Method:** `passmanager.password.<version>.Update`
 
-**Protobuf Message:** `passmanager.session.\<version\>.PasswordUpdateRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordUpdateRequest`
 
 **Description**
 Set the encrypted name and data for a given data entry, encrypted with the new master key. Also provide the new unique encryption data.
@@ -298,7 +298,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 ---
 
 ### Health Check (Password)
-**Method:** `passmanager.password.\<version\>.Health`
+**Method:** `passmanager.password.<version>.Health`
 
 **Description**
 Check the health and availability of the Password API endpoints. Returns system status information.
@@ -317,9 +317,9 @@ Manages authentication sessions using SRP protocol for secure login and logout.
 > **Note:** Session endpoints create and manage regular "Login Sessions" that are used for most API operations.
 
 ### Start Auth (Session)
-**Method:** `passmanager.session.\<version\>.Start`
+**Method:** `passmanager.session.<version>.Start`
 
-**Protobuf Message:** `passmanager.session.\<version\>.SessionStartRequest`
+**Protobuf Message:** `passmanager.session.<version>.SessionStartRequest`
 
 **Description**
 Request the details to create a new login session, including SRP details, master key salt, and server ephemeral value for SRP authentication.
@@ -337,9 +337,9 @@ Request the details to create a new login session, including SRP details, master
 ---
 
 ### Complete Auth (Session)
-**Method:** `passmanager.session.\<version\>.Auth`
+**Method:** `passmanager.session.<version>.Auth`
 
-**Protobuf Message:** `passmanager.session.\<version\>.SessionAuthRequest`
+**Protobuf Message:** `passmanager.session.<version>.SessionAuthRequest`
 
 **Description**
 Completes the SRP authentication process by providing client ephemeral value and proof. Returns session details and server proof for verification.
@@ -368,9 +368,9 @@ Completes the SRP authentication process by providing client ephemeral value and
 ---
 
 ### Delete Session (Session)
-**Method:** `passmanager.session.\<version\>.Delete`
+**Method:** `passmanager.session.<version>.Delete`
 
-**Protobuf Message:** `passmanager.session.\<version\>.SessionDeleteRequest`
+**Protobuf Message:** `passmanager.session.<version>.SessionDeleteRequest`
 
 **Description**
 Delete the given auth session from the database, preventing further use.
@@ -391,9 +391,9 @@ Delete the given auth session from the database, preventing further use.
 ---
 
 ### Clean Sessions (Session)
-**Method:** `passmanager.session.\<version\>.Clean`
+**Method:** `passmanager.session.<version>.Clean`
 
-**Protobuf Message:** `passmanager.session.\<version\>.SessionCleanRequest`
+**Protobuf Message:** `passmanager.session.<version>.SessionCleanRequest`
 
 **Description**
 Delete all of the user's existing auth sessions from the database, preventing further use.
@@ -413,7 +413,7 @@ Delete all of the user's existing auth sessions from the database, preventing fu
 ---
 
 ### Health Check (Session)
-**Method:** `passmanager.session.\<version\>.Health`
+**Method:** `passmanager.session.<version>.Health`
 
 **Description**
 Check the health and availability of the Session API endpoints. Returns system status information.
@@ -430,9 +430,9 @@ None required.
 Handles encrypted password entry operations including create, read, update, and delete.
 
 ### Create Entry (Data)
-**Method:** `passmanager.data.\<version\>.Create`
+**Method:** `passmanager.data.<version>.Create`
 
-**Protobuf Message:** `passmanager.data.\<version\>.DataCreateRequest`
+**Protobuf Message:** `passmanager.data.<version>.DataCreateRequest`
 
 **Description**
 Create a new password entry with encrypted name and data, and provide the unique encryption data.
@@ -450,9 +450,9 @@ Create a new password entry with encrypted name and data, and provide the unique
 ---
 
 ### Edit Entry (Data)
-**Method:** `passmanager.data.\<version\>.Edit`
+**Method:** `passmanager.data.<version>.Edit`
 
-**Protobuf Message:** `passmanager.data.\<version\>.DataEditRequest`
+**Protobuf Message:** `passmanager.data.<version>.DataEditRequest`
 
 **Description**
 Edit the encrypted name and data for a given data entry, and provide the new unique encryption data.
@@ -479,9 +479,9 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 ---
 
 ### Delete Entry (Data)
-**Method:** `passmanager.data.\<version\>.Delete`
+**Method:** `passmanager.data.<version>.Delete`
 
-**Protobuf Message:** `passmanager.data.\<version\>.DataDeleteRequest`
+**Protobuf Message:** `passmanager.data.<version>.DataDeleteRequest`
 
 **Description**
 Delete all stored data for a given data entry.
@@ -500,9 +500,9 @@ Delete all stored data for a given data entry.
 ---
 
 ### Get Entry (Data)
-**Method:** `passmanager.data.\<version\>.Get`
+**Method:** `passmanager.data.<version>.Get`
 
-**Protobuf Message:** `passmanager.data.\<version\>.DataGetRequest`
+**Protobuf Message:** `passmanager.data.<version>.DataGetRequest`
 
 **Description**
 Retrieve all data for a given password entry.
@@ -519,9 +519,9 @@ Retrieve all data for a given password entry.
 ---
 
 ### Get List (Data)
-**Method:** `passmanager.data.\<version\>.List`
+**Method:** `passmanager.data.<version>.List`
 
-**Protobuf Message:** `passmanager.data.\<version\>.DataListRequest`
+**Protobuf Message:** `passmanager.data.<version>.DataListRequest`
 
 **Description**
 Retrieve a list of the public IDs of all password entries, along with their names.
@@ -537,7 +537,7 @@ Retrieve a list of the public IDs of all password entries, along with their name
 ---
 
 ### Health Check (Data)
-**Method:** `passmanager.data.\<version\>.Health`
+**Method:** `passmanager.data.<version>.Health`
 
 **Description**
 Check the health and availability of the Data API endpoints. Returns system status information.
