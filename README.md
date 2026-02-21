@@ -12,6 +12,12 @@ Intended to be deployable using small scale infrastructure, without compromising
 5. [API Responses](docs/api_responses.md) - Standard response formats, error codes, and data structures returned by the API
 
 
+## Protobuf & gRPC
+The protobuf and RPC definitions can be found [here](https://github.com/JarrenWhite/PassManager-Protobufs).
+
+These definitions are used for all calls to or from the server.
+
+
 ## Tests
 Each completed implementation file has an associated test file. . Each function is tested within that test file. The test file name is determined by the implementation file's package and filename, following the format `test_[package]_[filename].py`.
 

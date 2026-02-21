@@ -58,7 +58,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Authentication Tag:** 16 bytes (128 bits) for integrity verification
 
 > **⚠️ CRITICAL:** Never reuse the same nonce with the same key.
-> **Note:** The AAD information is not encrypted. It is used for integrity protection, and can be viewed by anyone with access to the packet.
+> - **Note:** The AAD information is not encrypted. It is used for integrity protection, and can be viewed by anyone with access to the packet.
 
 ---
 
@@ -98,9 +98,9 @@ The master key is derived from the user password using a Key Derivation Function
 - Salts must be **unique per user** and **never reused**.
 - Salts must be encoded safely (e.g., Base64) when stored or transmitted to the server.
 
-> **⚠️ CRITICAL:** The password input **must never** be logged, cached, or transmitted.
-> **⚠️ CRITICAL:** The master key **must never** be logged, cached, or transmitted.
-> **⚠️ CRITICAL:** A new salt **must** be generated with each user creation. They **must** never be re-used.
+> - **⚠️ CRITICAL:** The password input **must never** be logged, cached, or transmitted.
+> - **⚠️ CRITICAL:** The master key **must never** be logged, cached, or transmitted.
+> - **⚠️ CRITICAL:** A new salt **must** be generated with each user creation. They **must** never be re-used.
 
 ### Reference Implementations
 #### Python
@@ -205,10 +205,10 @@ During user registration, the client must generate an SRP verifier:
 - Verify received M2 matches computed `hash(A || M1 || K)`
 
 ### Critical Security Requirements
-> **⚠️ CRITICAL:** Private values `a` and `b` must be generated using cryptographically secure random number generators.
-> **⚠️ CRITICAL:** Private values `a` and `b` must never be logged, cached, or transmitted.
-> **⚠️ CRITICAL:** Session key `K` must never be logged or transmitted in plaintext.
-> **⚠️ CRITICAL:** All computations must use constant-time operations where possible to prevent timing attacks.
+> - **⚠️ CRITICAL:** Private values `a` and `b` must be generated using cryptographically secure random number generators.
+> - **⚠️ CRITICAL:** Private values `a` and `b` must never be logged, cached, or transmitted.
+> - **⚠️ CRITICAL:** Session key `K` must never be logged or transmitted in plaintext.
+> - **⚠️ CRITICAL:** All computations must use constant-time operations where possible to prevent timing attacks.
 
 ---
 
@@ -222,6 +222,7 @@ During user registration, the client must generate an SRP verifier:
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
 ```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
+- **Ciphertext:** Defined per API call
 
 ### Password Names Encryption
 - **Content:** The name for the password entry.
@@ -230,6 +231,7 @@ During user registration, the client must generate an SRP verifier:
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
 ```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
+- **Ciphertext:** `passmanager.common.<version>.EntryName`
 
 ### Password Blob Encryption
 - **Content:** The data for the password entry.
@@ -238,48 +240,6 @@ During user registration, the client must generate an SRP verifier:
 - **Server Payload:** `nonce` (12 bytes), `auth_tag` (16 bytes), `ciphertext` (variable)
 - **Server Payload Form:**
 ```[12 bytes: nonce][16 bytes: auth_tag][ciphertext...]```
+- **Ciphertext:** `passmanager.common.<version>.EntryData`
 
 > **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be correctly arranged before being sent to the server.
-
----
-
-
-## Data Encoding
-
-### Encoding Requirements
-- **Byte Order:** Big-endian (network byte order) for all length fields
-- **Length Field:** 4-byte unsigned integer (0 to 4,294,967,295)
-- **Empty Fields:** Length 0, no data bytes
-- **UTF-8 Validation:** All text fields must be valid UTF-8 sequences
-
-### API Requests
-The encoding for the content data of each API request is specified in the API documentation.
-The AAD data is to be encoded as follows:
-```
-[4 bytes: request_number length][request_number bytes]      → Monotonic counter for this session (prevents replay attacks)
-[4 bytes: session_id length][session_id bytes]              → Unique public identifier for the active session
-```
-
-### API Responses
-The encoding for the content data of each API response is specified in the API documentation.
-The AAD data is to be encoded as follows:
-```
-[4 bytes: session_id length][session_id bytes]              → Unique public identifier for the active session
-```
-
-### Password Entry Encoding
-
-The password entries are encoded separately before encryption.
-
-#### Password Entry Name
-```
-[4 bytes: entry_name length][entry_name bytes]              → Name of the password entry
-```
-
-#### Password Entry Data
-```
-[4 bytes: website length][website bytes]                    → Website the entry related to
-[4 bytes: username length][username bytes]                  → Username of the given entry
-[4 bytes: password length][password bytes]                  → Password of the given entry
-[4 bytes: notes length][notes bytes]                        → Any notes for the entry
-```
