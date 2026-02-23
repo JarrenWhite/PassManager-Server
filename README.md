@@ -52,12 +52,6 @@ The tests make use of the pytest framework. As well as being runnable using a py
 ├── src
 │   ├── main.py
 │   │
-│   ├── api
-│   │   ├── api_data.py
-│   │   ├── api_password.py
-│   │   ├── api_session.py
-│   │   └── api_user.py
-│   │
 │   ├── database
 │   │   ├── __init__.py
 │   │   ├── database_models.py
@@ -66,13 +60,6 @@ The tests make use of the pytest framework. As well as being runnable using a py
 │   ├── enums
 │   │   ├── __init__.py
 │   │   └── failure_reason.py
-│   │
-│   ├── services
-│   │   ├── __init__.py
-│   │   ├── service_data.py
-│   │   ├── service_password.py
-│   │   ├── service_session.py
-│   │   └── service_user.py
 │   │
 │   └── utils
 │       ├── __init__.py
@@ -89,19 +76,12 @@ The tests make use of the pytest framework. As well as being runnable using a py
 └── tests
     ├── all_tests.py
     ├── mock_classes.py
-    ├── test_api_api_data.py
-    ├── test_api_api_password.py
-    ├── test_api_api_session.py
-    ├── test_api_api_user.py
     ├── test_database_database_models.py
     ├── test_database_database_setup.py
-    ├── test_services_service_session.py
-    ├── test_services_service_user.py
     ├── test_utils_database_config.py
     ├── test_utils_db_utils_auth.py
     ├── test_utils_db_utils_data.py
     ├── test_utils_db_utils_password.py
     ├── test_utils_db_utils_session.py
-    ├── test_utils_db_utils_user.py
-    └── test_utils_service_utils.py
+    └── test_utils_db_utils_user.py
 ```
