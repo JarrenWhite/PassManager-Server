@@ -1,0 +1,3 @@
+[submodule "PassManager-Protobufs"]
+	path = PassManager-Protobufs
+	url = https://github.com/JarrenWhite/PassManager-Protobufs.git

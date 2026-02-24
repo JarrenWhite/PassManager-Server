@@ -35,6 +35,8 @@ The tests make use of the pytest framework. As well as being runnable using a py
 │   ├── config.ini
 │   └── logging_config.json
 │
+├── PassManager-Protobufs
+│
 ├── docs
 │   ├── api_calls.md
 │   ├── api_responses.md
