@@ -63,6 +63,13 @@ The tests make use of the pytest framework. As well as being runnable using a py
 │   │   ├── __init__.py
 │   │   └── failure_reason.py
 │   │
+│   ├── protos
+│   │   ├── common/
+│   │   ├── data/
+│   │   ├── password/
+│   │   ├── session/
+│   │   └── user/
+│   │
 │   └── utils
 │       ├── __init__.py
 │       ├── database_config.py
