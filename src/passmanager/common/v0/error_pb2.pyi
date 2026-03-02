@@ -58,15 +58,9 @@ Global___ErrorCode: _TypeAlias = ErrorCode  # noqa: Y015
 class HealthRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
-    HEALTH_FIELD_NUMBER: _builtins.int
-    health: _builtins.bool
     def __init__(
         self,
-        *,
-        health: _builtins.bool = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["health", b"health"]  # noqa: Y015
-    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___HealthRequest: _TypeAlias = HealthRequest  # noqa: Y015
 
