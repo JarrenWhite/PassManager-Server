@@ -26,7 +26,7 @@ from passmanager.common.v0 import error_pb2 as passmanager_dot_common_dot_v0_dot
 from passmanager.common.v0 import secure_pb2 as passmanager_dot_common_dot_v0_dot_secure__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n&passmanager/password/v0/password.proto\x12\x17passmanager.password.v0\x1a!passmanager/common/v0/error.proto\x1a\"passmanager/common/v0/secure.proto2\xe7\x04\n\x08Password\x12T\n\x05Start\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12S\n\x04\x41uth\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12W\n\x08\x43omplete\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12T\n\x05\x41\x62ort\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12R\n\x03Get\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12U\n\x06Update\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12V\n\x06Health\x12%.passmanager.common.v0.HealthResponse\x1a%.passmanager.common.v0.HealthResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n&passmanager/password/v0/password.proto\x12\x17passmanager.password.v0\x1a!passmanager/common/v0/error.proto\x1a\"passmanager/common/v0/secure.proto2\xe6\x04\n\x08Password\x12T\n\x05Start\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12S\n\x04\x41uth\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12W\n\x08\x43omplete\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12T\n\x05\x41\x62ort\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12R\n\x03Get\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12U\n\x06Update\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12U\n\x06Health\x12$.passmanager.common.v0.HealthRequest\x1a%.passmanager.common.v0.HealthResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,5 +34,5 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'passmanager.password.v0.pas
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_PASSWORD']._serialized_start=139
-  _globals['_PASSWORD']._serialized_end=754
+  _globals['_PASSWORD']._serialized_end=753
 # @@protoc_insertion_point(module_scope)

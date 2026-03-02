@@ -26,7 +26,7 @@ from passmanager.common.v0 import error_pb2 as passmanager_dot_common_dot_v0_dot
 from passmanager.common.v0 import secure_pb2 as passmanager_dot_common_dot_v0_dot_secure__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1epassmanager/data/v0/data.proto\x12\x13passmanager.data.v0\x1a!passmanager/common/v0/error.proto\x1a\"passmanager/common/v0/secure.proto2\x8a\x04\n\x04\x44\x61ta\x12U\n\x06\x43reate\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12S\n\x04\x45\x64it\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12U\n\x06\x44\x65lete\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12R\n\x03Get\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12S\n\x04List\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12V\n\x06Health\x12%.passmanager.common.v0.HealthResponse\x1a%.passmanager.common.v0.HealthResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1epassmanager/data/v0/data.proto\x12\x13passmanager.data.v0\x1a!passmanager/common/v0/error.proto\x1a\"passmanager/common/v0/secure.proto2\x89\x04\n\x04\x44\x61ta\x12U\n\x06\x43reate\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12S\n\x04\x45\x64it\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12U\n\x06\x44\x65lete\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12R\n\x03Get\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12S\n\x04List\x12$.passmanager.common.v0.SecureRequest\x1a%.passmanager.common.v0.SecureResponse\x12U\n\x06Health\x12$.passmanager.common.v0.HealthRequest\x1a%.passmanager.common.v0.HealthResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,5 +34,5 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'passmanager.data.v0.data_pb
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_DATA']._serialized_start=127
-  _globals['_DATA']._serialized_end=649
+  _globals['_DATA']._serialized_end=648
 # @@protoc_insertion_point(module_scope)

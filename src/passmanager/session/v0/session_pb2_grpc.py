@@ -58,7 +58,7 @@ class SessionStub(object):
                 _registered_method=True)
         self.Health = channel.unary_unary(
                 '/passmanager.session.v0.Session/Health',
-                request_serializer=passmanager_dot_common_dot_v0_dot_error__pb2.HealthResponse.SerializeToString,
+                request_serializer=passmanager_dot_common_dot_v0_dot_error__pb2.HealthRequest.SerializeToString,
                 response_deserializer=passmanager_dot_common_dot_v0_dot_error__pb2.HealthResponse.FromString,
                 _registered_method=True)
 
@@ -121,7 +121,7 @@ def add_SessionServicer_to_server(servicer, server):
             ),
             'Health': grpc.unary_unary_rpc_method_handler(
                     servicer.Health,
-                    request_deserializer=passmanager_dot_common_dot_v0_dot_error__pb2.HealthResponse.FromString,
+                    request_deserializer=passmanager_dot_common_dot_v0_dot_error__pb2.HealthRequest.FromString,
                     response_serializer=passmanager_dot_common_dot_v0_dot_error__pb2.HealthResponse.SerializeToString,
             ),
     }
@@ -258,7 +258,7 @@ class Session(object):
             request,
             target,
             '/passmanager.session.v0.Session/Health',
-            passmanager_dot_common_dot_v0_dot_error__pb2.HealthResponse.SerializeToString,
+            passmanager_dot_common_dot_v0_dot_error__pb2.HealthRequest.SerializeToString,
             passmanager_dot_common_dot_v0_dot_error__pb2.HealthResponse.FromString,
             options,
             channel_credentials,
