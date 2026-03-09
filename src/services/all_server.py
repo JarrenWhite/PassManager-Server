@@ -1,8 +1,9 @@
-import grpc
 from concurrent import futures
 
 from logging import getLogger
 logger = getLogger("api")
+
+import grpc
 
 import passmanager.user.v0.user_pb2_grpc as user_grpc
 import passmanager.password.v0.password_pb2_grpc as password_grpc
