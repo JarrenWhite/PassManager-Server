@@ -1,6 +1,9 @@
 import grpc
 from concurrent import futures
 
+from logging import getLogger
+logger = getLogger("api")
+
 import passmanager.user.v0.user_pb2_grpc as user_grpc
 import passmanager.password.v0.password_pb2_grpc as password_grpc
 import passmanager.session.v0.session_pb2_grpc as session_grpc
@@ -45,4 +48,5 @@ def serve():
     server.add_secure_port("[::]:50051", server_credentials)
     server.start()
 
+    logger.info("Server running on port 50051")
     server.wait_for_termination()
