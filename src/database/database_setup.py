@@ -45,7 +45,7 @@ class DatabaseSetup:
 
         base.metadata.create_all(engine)
         DatabaseSetup._session_maker = sessionmaker(bind=engine)
-        logger.info(f"Database initialised to {str(directory)}")
+        logger.info("Database initialised to %s", {str(directory)})
 
     @staticmethod
     @contextmanager
