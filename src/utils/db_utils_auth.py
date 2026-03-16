@@ -34,7 +34,7 @@ class DBUtilsAuth():
             is_expired = True
 
         if is_expired:
-            logger.debug(f"Auth Ephemeral: {auth_ephemeral.public_id[-4:]} has expired.")
+            logger.debug("Auth Ephemeral: %s has expired.", auth_ephemeral.public_id[-4:])
             if auth_ephemeral.password_change:
                 logger.debug("Password Auth Ephemeral being passed for cleaning.")
                 DBUtilsPassword.clean_password_change(
@@ -66,7 +66,7 @@ class DBUtilsAuth():
                 user = session.query(User).filter(User.username_hash == username_hash).first()
 
                 if user is None:
-                    logger.debug(f"User: {username_hash[-4:]} not found.")
+                    logger.debug("User: %s not found.", username_hash[-4:])
                     return False, FailureReason.NOT_FOUND, "", b''
 
                 auth_ephemeral = AuthEphemeral(
@@ -79,7 +79,7 @@ class DBUtilsAuth():
                 session.add(auth_ephemeral)
                 session.flush()
 
-                logger.info(f"Auth Ephemeral: {auth_ephemeral.public_id[-4:]} created.")
+                logger.info("Auth Ephemeral: %s created.", auth_ephemeral.public_id[-4:])
                 return True, None, auth_ephemeral.public_id, user.srp_salt
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -108,13 +108,13 @@ class DBUtilsAuth():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} not found.")
+                    logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
                 if auth_ephemeral.user.id != user_id:
-                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} does not belong to user.")
+                    logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
-                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} expired.")
+                    logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
 
                 return (True, None,
@@ -149,13 +149,13 @@ class DBUtilsAuth():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} not found.")
+                    logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, ""
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
-                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} expired.")
+                    logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, ""
                 if auth_ephemeral.password_change:
-                    logger.debug(f"Auth Ephemeral: {public_id[-4:]} is password change type.")
+                    logger.debug("Auth Ephemeral: %s is password change type.", public_id[-4:])
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 login_session = LoginSession(
@@ -171,7 +171,7 @@ class DBUtilsAuth():
                 session.flush()
                 session.delete(auth_ephemeral)
 
-                logger.info(f"Login Session: {login_session.public_id[-4:]} created.")
+                logger.info("Login Session: %s created.", login_session.public_id[-4:])
                 return True, None, login_session.public_id
         except RuntimeError:
             logger.warning("Database uninitialised.")
