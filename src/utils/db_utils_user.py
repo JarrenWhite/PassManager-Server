@@ -33,7 +33,7 @@ class DBUtilsUser():
                 session.add(user)
                 return True, None
         except IntegrityError:
-            logger.info(f"Username Hash {username_hash[-4:]} already exists.")
+            logger.info("Username Hash %s already exists.", username_hash[-4:])
             return False, FailureReason.DUPLICATE
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -54,10 +54,10 @@ class DBUtilsUser():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug(f"User id: {user_id} not found.")
+                    logger.debug("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
-                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
                     return False, FailureReason.PASSWORD_CHANGE
 
                 user.username_hash = new_username_hash
@@ -83,10 +83,10 @@ class DBUtilsUser():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug(f"User id: {user_id} not found.")
+                    logger.debug("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND
                 if user.password_change:
-                    logger.debug(f"User: {user.username_hash[-4:]} undergoing password change.")
+                    logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(user)
