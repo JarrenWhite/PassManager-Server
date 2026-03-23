@@ -1,2 +1,2 @@
 from .failure_reason import FailureReason
-from .server_error import ServerError
+from .service_error import ServiceError

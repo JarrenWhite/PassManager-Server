@@ -6,7 +6,7 @@ from passmanager.common.v0.error_pb2 import (
 )
 
 
-class ServerError(Enum):
+class ServiceError(Enum):
 
     def __init__(self, error_code: int, description: str):
         self.error_code = error_code
