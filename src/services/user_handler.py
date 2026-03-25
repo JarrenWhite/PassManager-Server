@@ -9,6 +9,8 @@ from passmanager.user.v0.user_payloads_pb2 import (
     UserDeleteResponse
 )
 
+from utils import ServiceUtils
+
 
 # TODO - Placeholder class. Requires completion.
 
@@ -16,11 +18,15 @@ class UserHandler():
 
     @staticmethod
     def register(request: UserRegisterRequest) -> UserRegisterResponse:
+        ServiceUtils.sanitise_username(request.new_username)
+
         return UserRegisterResponse()
+
 
     @staticmethod
     def username(request: UserUsernameRequest) -> UserUsernameResponse:
         return UserUsernameResponse()
+
 
     @staticmethod
     def delete(request: UserDeleteRequest) -> UserDeleteResponse:
