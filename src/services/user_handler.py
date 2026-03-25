@@ -19,6 +19,7 @@ class UserHandler():
     @staticmethod
     def register(request: UserRegisterRequest) -> UserRegisterResponse:
         ServiceUtils.sanitise_username(request.new_username)
+        ServiceUtils.sanitise_srp_salt(request.srp_salt)
 
         return UserRegisterResponse()
 
