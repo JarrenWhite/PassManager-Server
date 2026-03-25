@@ -20,6 +20,7 @@ class UserHandler():
     def register(request: UserRegisterRequest) -> UserRegisterResponse:
         ServiceUtils.sanitise_username(request.new_username)
         ServiceUtils.sanitise_srp_salt(request.srp_salt)
+        ServiceUtils.sanitise_srp_verifier(request.srp_verifier)
 
         return UserRegisterResponse()
 
