@@ -11,6 +11,7 @@ from passmanager.user.v0.user_pb2 import (
 
 from services.user_handler import UserHandler
 from utils.service_utils import ServiceUtils
+from enums.service_error import ServiceError
 
 
 class TestRegister:
@@ -20,28 +21,28 @@ class TestRegister:
     def setup_teardown(self, monkeypatch):
 
         self.sanitise_username_called = []
-        self.sanitise_username_response = True, None
+        self.sanitise_username_response = None
         def fake_sanitise_username(input):
             self.sanitise_username_called.append(input)
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
         self.sanitise_srp_salt_called = []
-        self.sanitise_srp_salt_response = True, None
+        self.sanitise_srp_salt_response = None
         def fake_sanitise_srp_salt(input):
             self.sanitise_srp_salt_called.append(input)
             return self.sanitise_srp_salt_response
         monkeypatch.setattr(ServiceUtils, "sanitise_srp_salt", fake_sanitise_srp_salt)
 
         self.sanitise_srp_verifier_called = []
-        self.sanitise_srp_verifier_response = True, None
+        self.sanitise_srp_verifier_response = None
         def fake_sanitise_srp_verifier(input):
             self.sanitise_srp_verifier_called.append(input)
             return self.sanitise_srp_verifier_response
         monkeypatch.setattr(ServiceUtils, "sanitise_srp_verifier", fake_sanitise_srp_verifier)
 
         self.sanitise_master_key_salt_called = []
-        self.sanitise_master_key_salt_response = True, None
+        self.sanitise_master_key_salt_response = None
         def fake_sanitise_master_key_salt(input):
             self.sanitise_master_key_salt_called.append(input)
             return self.sanitise_master_key_salt_response
