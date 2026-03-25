@@ -33,6 +33,13 @@ class TestRegister:
             return self.sanitise_srp_salt_response
         monkeypatch.setattr(ServiceUtils, "sanitise_srp_salt", fake_sanitise_srp_salt)
 
+        self.sanitise_srp_verifier_called = []
+        self.sanitise_srp_verifier_response = True, None
+        def fake_sanitise_srp_verifier(input):
+            self.sanitise_srp_verifier_called.append(input)
+            return self.sanitise_srp_verifier_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_srp_verifier", fake_sanitise_srp_salt)
+
         yield
 
     def test_calls_sanitise_username(self):
@@ -64,6 +71,21 @@ class TestRegister:
 
         assert len(self.sanitise_srp_salt_called) == 1
         assert self.sanitise_srp_salt_called[0] == b'fake_srp_salt'
+
+    def test_calls_sanitise_srp_verifier(self):
+        """Should call sanitise srp verifier"""
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert len(self.sanitise_srp_verifier_called) == 1
+        assert self.sanitise_srp_verifier_called[0] == b'fake_srp_verifier'
 
 
 if __name__ == '__main__':
