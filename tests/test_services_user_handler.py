@@ -95,7 +95,7 @@ class TestRegister:
         assert self.sanitise_srp_verifier_called[0] == b'fake_srp_verifier'
 
     def test_calls_sanitise_master_key_salt(self):
-        """Should call sanitise master_key_salt"""
+        """Should call sanitise master key salt"""
 
         request = UserRegisterRequest(
             new_username=b'fake_username',
