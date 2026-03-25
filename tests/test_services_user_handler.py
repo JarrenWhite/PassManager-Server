@@ -38,7 +38,7 @@ class TestRegister:
         def fake_sanitise_srp_verifier(input):
             self.sanitise_srp_verifier_called.append(input)
             return self.sanitise_srp_verifier_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_srp_verifier", fake_sanitise_srp_salt)
+        monkeypatch.setattr(ServiceUtils, "sanitise_srp_verifier", fake_sanitise_srp_verifier)
 
         yield
 
