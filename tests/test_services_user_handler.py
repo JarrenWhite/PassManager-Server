@@ -8,6 +8,9 @@ from passmanager.user.v0.user_pb2 import (
     UserRegisterRequest,
     UserRegisterResponse
 )
+from passmanager.common.v0.error_pb2 import (
+    ErrorCode
+)
 
 from services.user_handler import UserHandler
 from utils.service_utils import ServiceUtils
@@ -109,6 +112,37 @@ class TestRegister:
 
         assert len(self.sanitise_master_key_salt_called) == 1
         assert self.sanitise_master_key_salt_called[0] == b'fake_master_key_salt'
+
+    @pytest.mark.parametrize(
+        "failing_sanitiser, field",
+        [
+            ("sanitise_username",           "new_username"),
+            ("sanitise_srp_salt",           "srp_salt"),
+            ("sanitise_srp_verifier",       "srp_verifier"),
+            ("sanitise_master_key_salt",    "master_key_salt"),
+        ]
+    )
+    def test_sanitising_failure_fetches_error(self, failing_sanitiser, field):
+        """Should fetch error if each sanitation fails"""
+
+        setattr(self, f"{failing_sanitiser}_response", ServiceError.FIELD_INVALID)
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == ErrorCode.GNR00
+        assert error.description == ServiceError.FIELD_INVALID.description
 
 
 if __name__ == '__main__':
