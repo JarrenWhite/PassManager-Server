@@ -122,8 +122,8 @@ class TestRegister:
             ("sanitise_master_key_salt",    "master_key_salt"),
         ]
     )
-    def test_sanitising_failure_fetches_error(self, failing_sanitiser, field):
-        """Should fetch error if each sanitation fails"""
+    def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
+        """Should fetch invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", ServiceError.FIELD_INVALID)
 
@@ -143,6 +143,37 @@ class TestRegister:
         assert error.field == field
         assert error.code == ErrorCode.GNR00
         assert error.description == ServiceError.FIELD_INVALID.description
+
+    @pytest.mark.parametrize(
+        "failing_sanitiser, field",
+        [
+            ("sanitise_username",           "new_username"),
+            ("sanitise_srp_salt",           "srp_salt"),
+            ("sanitise_srp_verifier",       "srp_verifier"),
+            ("sanitise_master_key_salt",    "master_key_salt"),
+        ]
+    )
+    def test_each_sanitising_missing_failure(self, failing_sanitiser, field):
+        """Should fetch missing error for each sanitation fail"""
+
+        setattr(self, f"{failing_sanitiser}_response", ServiceError.FIELD_MISSING)
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == ErrorCode.GNR01
+        assert error.description == ServiceError.FIELD_MISSING.description
 
 
 if __name__ == '__main__':
