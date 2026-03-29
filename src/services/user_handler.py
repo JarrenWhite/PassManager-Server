@@ -16,7 +16,7 @@ from passmanager.common.v0.error_pb2 import (
     Failure
 )
 
-from utils import ServiceUtils, DBUtilsUser
+from utils import ServiceUtils, SessionManager, DBUtilsUser
 
 
 # TODO - Placeholder class. Requires completion.
@@ -84,6 +84,9 @@ class UserHandler():
 
     @staticmethod
     def username(request: SecureRequest) -> SecureResponse:
+        # Open secure session
+        SessionManager.open_session(request)
+
         return SecureResponse()
 
 
