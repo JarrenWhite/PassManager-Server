@@ -4,9 +4,14 @@ import pytest
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
+from google.protobuf.message import DecodeError
 from passmanager.user.v0.user_pb2 import (
     UserRegisterRequest,
     UserRegisterResponse
+)
+from passmanager.user.v0.user_payloads_pb2 import (
+    UserUsernameRequest,
+    UserUsernameResponse
 )
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
@@ -285,6 +290,17 @@ class TestUsername:
             return self.open_session_response
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
+        self.from_string_called = []
+        self.from_string_response = UserUsernameRequest()
+        self.from_string_exception = False
+        def fake_from_string(data):
+            self.from_string_called.append(data)
+            if self.from_string_exception:
+                raise DecodeError("invalid bytes")
+            else:
+                return self.from_string_response
+        monkeypatch.setattr(UserUsernameRequest, "FromString", fake_from_string)
+
         yield
 
     def test_calls_open_session(self):
@@ -321,7 +337,23 @@ class TestUsername:
         error = response.failure_data.error_list[0]
         assert error.field == "request"
         assert error.code == ErrorCode.RQS01
-        assert error.description == FailureReason.INVALID.description
+        assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_to_convert_to_proto(self):
+        """Should attempt to convert returned bytes to protobuf"""
+
+        self.from_string_response = UserUsernameRequest()
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert len(self.from_string_called) == 1
+        assert self.from_string_called[0] == b'fake_decrypted_bytes'
 
 
 if __name__ == '__main__':
