@@ -314,6 +314,13 @@ class TestUsername:
             return None
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
+        self.change_username_called = []
+        self.change_username_response = True, None
+        def fake_change_username(username_hash, new_username):
+            self.change_username_called.append((username_hash, new_username))
+            return self.change_username_response
+        monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
+
         yield
 
     def test_calls_open_session(self):
@@ -486,6 +493,28 @@ class TestUsername:
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
         assert "new_username" in fields
+
+    def test_calls_change_username(self):
+        """Should call the user change username function"""
+
+        self.open_session_response = UserUsernameRequest(
+            username_hash=b'fake_username_hash',
+            new_username=b'fake_new_username',
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert len(self.change_username_called) == 1
+
+        change_username = self.change_username_called[0]
+        assert change_username[0] == b'fake_username_hash'
+        assert change_username[1] == b'fake_new_username'
 
 
 if __name__ == '__main__':
