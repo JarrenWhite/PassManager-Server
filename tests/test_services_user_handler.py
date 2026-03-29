@@ -14,6 +14,7 @@ from passmanager.common.v0.error_pb2 import (
 
 from services.user_handler import UserHandler
 from utils.service_utils import ServiceUtils
+from utils.db_utils_user import DBUtilsUser
 from enums.service_error import ServiceError
 
 
@@ -50,6 +51,13 @@ class TestRegister:
             self.sanitise_master_key_salt_called.append(input)
             return self.sanitise_master_key_salt_response
         monkeypatch.setattr(ServiceUtils, "sanitise_master_key_salt", fake_sanitise_master_key_salt)
+
+        self.create_called = []
+        self.create_response = True, None
+        def fake_create(username_hash, srp_salt, srp_verifier, master_key_salt):
+            self.create_called.append((username_hash, srp_salt, srp_verifier, master_key_salt))
+            return self.create_response
+        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
 
         yield
 
@@ -200,6 +208,26 @@ class TestRegister:
         assert "srp_salt" in fields
         assert "srp_verifier" in fields
         assert "master_key_salt" in fields
+
+    def test_calls_create(self):
+        """Should call the user create function"""
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert len(self.create_called) == 1
+
+        create = self.create_called[0]
+        assert create[0] == b'fake_username'
+        assert create[1] == b'fake_srp_salt'
+        assert create[2] == b'fake_srp_verifier'
+        assert create[3] == b'fake_master_key_salt'
 
 
 if __name__ == '__main__':
