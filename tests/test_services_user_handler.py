@@ -510,7 +510,7 @@ class TestUsername:
             (FailureReason.UNSPECIFIED,         "unknown"),
             (FailureReason.UNKNOWN_EXCEPTION,   "server"),
             (FailureReason.USER_EXISTS,         "username"),
-            (FailureReason.NOT_FOUND,           "new_username")
+            (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
     def test_returns_error_change_username_call_fails(self, failure_reason, field):
