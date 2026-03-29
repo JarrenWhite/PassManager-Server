@@ -403,6 +403,22 @@ class TestUsername:
         assert len(self.sanitise_username_called) >= 1
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
+    def test_calls_sanitise_username_for_new(self):
+        """Should call sanitise username for new username"""
+
+        self.from_string_response.new_username = b'fake_new_username'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert len(self.sanitise_username_called) == 2
+        assert self.sanitise_username_called[0] == b'fake_new_username'
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
