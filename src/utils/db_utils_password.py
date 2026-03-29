@@ -254,7 +254,7 @@ class DBUtilsPassword():
                 if secure_data.new_entry_name or secure_data.new_entry_data:
                     logger.debug("Secure Data: %s has already been updated.", public_id[-4:])
                     DBUtilsPassword.clean_password_change(session, secure_data.user)
-                    return False, FailureReason.DUPLICATE
+                    return False, FailureReason.ENTRY_UPDATED
 
                 secure_data.new_entry_name = entry_name
                 secure_data.new_entry_data = entry_data
