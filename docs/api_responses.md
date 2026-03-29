@@ -388,5 +388,6 @@ These errors are specific to certain APIs. Only those APIs can return these erro
 | Error Code | Field           | APIs | Error Message                                                |
 |------------|-----------------|------|--------------------------------------------------------------|
 | OPR00      | username_hash   | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
-| OPR01      | request_number  | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
-| OPR02      | request         | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
+| OPR01      | request_number  | [Delete User](#delete-user-user) | Request number must be 0 for this request type |
+| OPR02      | request         | [Complete Password Change](#complete-password-change-password) | Password change is not complete |
+| OPR03      | request         | [Add New Encryption for Entry](#add-new-encryption-for-entry-password) | Secure entry has already been updated |
