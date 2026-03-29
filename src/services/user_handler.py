@@ -1,3 +1,4 @@
+from google.protobuf.message import DecodeError
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
     SecureResponse
@@ -17,6 +18,7 @@ from passmanager.common.v0.error_pb2 import (
 )
 
 from utils import ServiceUtils, SessionManager, DBUtilsUser
+from enums import FailureReason
 
 
 # TODO - Placeholder class. Requires completion.
@@ -83,11 +85,11 @@ class UserHandler():
 
 
     @staticmethod
-    def username(request: SecureRequest) -> SecureResponse:
+    def username(secure_request: SecureRequest) -> SecureResponse:
         error_list = []
 
         # Open secure session
-        status, bytes, failure_reason = SessionManager.open_session(request)
+        status, decrypted_bytes, failure_reason = SessionManager.open_session(secure_request)
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -100,9 +102,24 @@ class UserHandler():
                 failure_data=failure
             )
 
+        # Convert to Protobuf Message
+        try:
+            request = UserUsernameRequest.FromString(decrypted_bytes)
+        except DecodeError:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
         return SecureResponse()
 
 
     @staticmethod
-    def delete(request: SecureRequest) -> SecureResponse:
+    def delete(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
