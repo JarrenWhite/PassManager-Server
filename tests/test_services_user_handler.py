@@ -210,24 +210,6 @@ class TestRegister:
         assert create[2] == b'fake_srp_verifier'
         assert create[3] == b'fake_master_key_salt'
 
-    def test_create_call_fails(self):
-        """Should fail if user create function fails"""
-
-        self.create_response = False, FailureReason.INVALID
-
-        request = UserRegisterRequest(
-            new_username=b'fake_username',
-            srp_salt=b'fake_srp_salt',
-            srp_verifier=b'fake_srp_verifier',
-            master_key_salt=b'fake_master_key_salt',
-        )
-
-        response = UserHandler.register(request)
-
-        assert isinstance(response, UserRegisterResponse)
-        assert not response.success
-        assert len(response.failure_data.error_list) == 1
-
     @pytest.mark.parametrize(
         "failure_reason, field",
         [
@@ -521,6 +503,37 @@ class TestUsername:
         change_username = self.change_username_called[0]
         assert change_username[0] == user_id
         assert change_username[1] == b'fake_new_username'
+
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "new_username")
+        ]
+    )
+    def test_returns_error_change_username_call_fails(self, failure_reason, field):
+        """Should return correct error if user change username function fails"""
+
+        self.change_username_response = False, failure_reason
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
 
 
 if __name__ == '__main__':
