@@ -12,7 +12,7 @@ from passmanager.common.v0.error_pb2 import (
     Failure
 )
 
-from utils import ServiceUtils
+from utils import ServiceUtils, DBUtilsUser
 
 
 # TODO - Placeholder class. Requires completion.
@@ -46,6 +46,14 @@ class UserHandler():
                 success=False,
                 failure_data=failure
             )
+
+        # Call Util function
+        DBUtilsUser.create(
+            username_hash=request.new_username,
+            srp_salt=request.srp_salt,
+            srp_verifier=request.srp_verifier,
+            master_key_salt=request.master_key_salt
+        )
 
         # Fake temporary return
         success_data = UserRegisterResponse.Success(
