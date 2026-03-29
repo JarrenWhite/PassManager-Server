@@ -68,9 +68,9 @@ class UserHandler():
                 failure_data=failure
             )
 
-        # Fake temporary return
+        # Successful Return
         success_data = UserRegisterResponse.Success(
-            username_hash=b''
+            username_hash=request.new_username
         )
         return UserRegisterResponse(
             success=True,
