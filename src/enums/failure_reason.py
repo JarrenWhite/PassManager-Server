@@ -39,8 +39,7 @@ class FailureReason(Enum):
     USER_EXISTS                 = (ErrorCode.OPR00,     "username", "")
     REQUEST_NUMBER              = (ErrorCode.OPR01,     "request",  "")
     INCOMPLETE                  = (ErrorCode.OPR02,     "request",  "")
-    # TODO - Update 'ENTRY_UPDATED' Error Code
-    ENTRY_UPDATED               = (ErrorCode.OPR02,     "server",   "")
+    ENTRY_UPDATED               = (ErrorCode.OPR03,     "server",   "")
 
     NOT_FOUND                   = (ErrorCode.GNR00,     None,       "")
     INVALID                     = (ErrorCode.GNR01,     None,       "")

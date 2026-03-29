@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!passmanager/common/v0/error.proto\x12\x15passmanager.common.v0\"\x0f\n\rHealthRequest\" \n\x0eHealthResponse\x12\x0e\n\x06health\x18\x01 \x01(\x08\";\n\x07\x46\x61ilure\x12\x30\n\nerror_list\x18\x01 \x03(\x0b\x32\x1c.passmanager.common.v0.Error\"[\n\x05\x45rror\x12\r\n\x05\x66ield\x18\x01 \x01(\t\x12.\n\x04\x63ode\x18\x02 \x01(\x0e\x32 .passmanager.common.v0.ErrorCode\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t*\x95\x01\n\tErrorCode\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\t\n\x05RQS00\x10\n\x12\t\n\x05RQS01\x10\x0b\x12\t\n\x05RQS02\x10\x0c\x12\t\n\x05RQS03\x10\r\x12\t\n\x05SVR00\x10\x14\x12\t\n\x05SVR01\x10\x15\x12\t\n\x05GNR00\x10\x1e\x12\t\n\x05GNR01\x10\x1f\x12\t\n\x05OPR00\x10(\x12\t\n\x05OPR01\x10)\x12\t\n\x05OPR02\x10*b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!passmanager/common/v0/error.proto\x12\x15passmanager.common.v0\"\x0f\n\rHealthRequest\" \n\x0eHealthResponse\x12\x0e\n\x06health\x18\x01 \x01(\x08\";\n\x07\x46\x61ilure\x12\x30\n\nerror_list\x18\x01 \x03(\x0b\x32\x1c.passmanager.common.v0.Error\"[\n\x05\x45rror\x12\r\n\x05\x66ield\x18\x01 \x01(\t\x12.\n\x04\x63ode\x18\x02 \x01(\x0e\x32 .passmanager.common.v0.ErrorCode\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t*\xa0\x01\n\tErrorCode\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\t\n\x05RQS00\x10\n\x12\t\n\x05RQS01\x10\x0b\x12\t\n\x05RQS02\x10\x0c\x12\t\n\x05RQS03\x10\r\x12\t\n\x05SVR00\x10\x14\x12\t\n\x05SVR01\x10\x15\x12\t\n\x05GNR00\x10\x1e\x12\t\n\x05GNR01\x10\x1f\x12\t\n\x05OPR00\x10(\x12\t\n\x05OPR01\x10)\x12\t\n\x05OPR02\x10*\x12\t\n\x05OPR03\x10+b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,7 +32,7 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'passmanager.common.v0.error
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_ERRORCODE']._serialized_start=266
-  _globals['_ERRORCODE']._serialized_end=415
+  _globals['_ERRORCODE']._serialized_end=426
   _globals['_HEALTHREQUEST']._serialized_start=60
   _globals['_HEALTHREQUEST']._serialized_end=75
   _globals['_HEALTHRESPONSE']._serialized_start=77
