@@ -56,6 +56,7 @@ class UserHandler():
         )
         if not status:
             assert failure_reason
+            error_list.append(failure_reason.error_proto("new_username"))
 
             failure = Failure(
                 error_list=error_list
