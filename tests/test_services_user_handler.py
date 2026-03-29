@@ -284,7 +284,7 @@ class TestUsername:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', None
+        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
         def fake_open_session(request):
             self.open_session_called.append(request)
             return self.open_session_response
@@ -316,8 +316,8 @@ class TestUsername:
 
         self.change_username_called = []
         self.change_username_response = True, None
-        def fake_change_username(username_hash, new_username):
-            self.change_username_called.append((username_hash, new_username))
+        def fake_change_username(user_id, new_username_hash):
+            self.change_username_called.append((user_id, new_username_hash))
             return self.change_username_response
         monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
 
@@ -340,7 +340,7 @@ class TestUsername:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', FailureReason.DECRYPTION
+        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -494,13 +494,19 @@ class TestUsername:
         assert "username_hash" in fields
         assert "new_username" in fields
 
-    def test_calls_change_username(self):
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            0,
+            15,
+            350
+        ]
+    )
+    def test_calls_change_username(self, user_id):
         """Should call the user change username function"""
 
-        self.open_session_response = UserUsernameRequest(
-            username_hash=b'fake_username_hash',
-            new_username=b'fake_new_username',
-        )
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.new_username = b'fake_new_username'
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -513,7 +519,7 @@ class TestUsername:
         assert len(self.change_username_called) == 1
 
         change_username = self.change_username_called[0]
-        assert change_username[0] == b'fake_username_hash'
+        assert change_username[0] == user_id
         assert change_username[1] == b'fake_new_username'
 
 
