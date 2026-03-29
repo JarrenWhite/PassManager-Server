@@ -15,3 +15,7 @@ class SessionManager():
     @staticmethod
     def open_session(request: SecureRequest) -> Tuple[bool, bytes, Optional[FailureReason]]:
         return True, b'', None
+
+    @staticmethod
+    def seal_session(response: bytes) -> Tuple[bool, Optional[SecureResponse], Optional[FailureReason]]:
+        return True, None, None
