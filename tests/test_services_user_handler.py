@@ -246,6 +246,21 @@ class TestRegister:
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
 
+    def test_successful_completion(self):
+        """Should return successful result"""
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert response.success
+        assert response.success_data.username_hash == b'fake_username'
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
