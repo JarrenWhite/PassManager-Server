@@ -169,6 +169,7 @@ class TestRegister:
 
         response = UserHandler.register(request)
 
+        assert isinstance(response, UserRegisterResponse)
         assert not response.success
         assert len(response.failure_data.error_list) == 4
 
@@ -212,6 +213,7 @@ class TestRegister:
 
         response = UserHandler.register(request)
 
+        assert isinstance(response, UserRegisterResponse)
         assert not response.success
         assert len(response.failure_data.error_list) == 1
 
@@ -238,6 +240,7 @@ class TestRegister:
 
         response = UserHandler.register(request)
 
+        assert isinstance(response, UserRegisterResponse)
         assert not response.success
         assert len(response.failure_data.error_list) == 1
 
@@ -258,6 +261,7 @@ class TestRegister:
 
         response = UserHandler.register(request)
 
+        assert isinstance(response, UserRegisterResponse)
         assert response.success
         assert response.success_data.username_hash == b'fake_username'
 
