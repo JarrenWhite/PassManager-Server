@@ -15,7 +15,6 @@ from passmanager.common.v0.error_pb2 import (
 from services.user_handler import UserHandler
 from utils.service_utils import ServiceUtils
 from utils.db_utils_user import DBUtilsUser
-from enums.service_error import ServiceError
 from enums.failure_reason import FailureReason
 
 
@@ -59,13 +58,6 @@ class TestRegister:
             self.create_called.append((username_hash, srp_salt, srp_verifier, master_key_salt))
             return self.create_response
         monkeypatch.setattr(DBUtilsUser, "create", fake_create)
-
-        self.handle_failure_reason_called = []
-        self.handle_failure_reason_response = ServiceError.UNSPECIFIED
-        def fake_handle_failure_reason(failure_reason):
-            self.handle_failure_reason_called.append(failure_reason)
-            return self.handle_failure_reason_response
-        monkeypatch.setattr(ServiceUtils, "handle_failure_reason", fake_handle_failure_reason)
 
         yield
 
@@ -141,7 +133,7 @@ class TestRegister:
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
         """Should fetch invalid error for each sanitation fail"""
 
-        setattr(self, f"{failing_sanitiser}_response", ServiceError.FIELD_INVALID)
+        setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = UserRegisterRequest(
             new_username=b'fake_username',
@@ -158,46 +150,15 @@ class TestRegister:
         error = response.failure_data.error_list[0]
         assert error.field == field
         assert error.code == ErrorCode.GNR00
-        assert error.description == ServiceError.FIELD_INVALID.description
-
-    @pytest.mark.parametrize(
-        "failing_sanitiser, field",
-        [
-            ("sanitise_username",           "new_username"),
-            ("sanitise_srp_salt",           "srp_salt"),
-            ("sanitise_srp_verifier",       "srp_verifier"),
-            ("sanitise_master_key_salt",    "master_key_salt"),
-        ]
-    )
-    def test_each_sanitising_missing_failure(self, failing_sanitiser, field):
-        """Should fetch missing error for each sanitation fail"""
-
-        setattr(self, f"{failing_sanitiser}_response", ServiceError.FIELD_MISSING)
-
-        request = UserRegisterRequest(
-            new_username=b'fake_username',
-            srp_salt=b'fake_srp_salt',
-            srp_verifier=b'fake_srp_verifier',
-            master_key_salt=b'fake_master_key_salt',
-        )
-
-        response = UserHandler.register(request)
-
-        assert not response.success
-        assert len(response.failure_data.error_list) == 1
-
-        error = response.failure_data.error_list[0]
-        assert error.field == field
-        assert error.code == ErrorCode.GNR01
-        assert error.description == ServiceError.FIELD_MISSING.description
+        assert error.description == FailureReason.INVALID.description
 
     def test_all_sanitising_functions_fail(self):
         """Should fetch all missing errors if all sanitising fails"""
 
-        self.sanitise_username_response = ServiceError.FIELD_MISSING
-        self.sanitise_srp_salt_response = ServiceError.FIELD_MISSING
-        self.sanitise_srp_verifier_response = ServiceError.FIELD_MISSING
-        self.sanitise_master_key_salt_response = ServiceError.FIELD_MISSING
+        self.sanitise_username_response = FailureReason.INVALID
+        self.sanitise_srp_salt_response = FailureReason.INVALID
+        self.sanitise_srp_verifier_response = FailureReason.INVALID
+        self.sanitise_master_key_salt_response = FailureReason.INVALID
 
         request = UserRegisterRequest(
             new_username=b'fake_username',
@@ -240,7 +201,7 @@ class TestRegister:
     def test_create_call_fails(self):
         """Should fail if user create function fails"""
 
-        self.create_response = False, FailureReason.DUPLICATE
+        self.create_response = False, FailureReason.UNSPECIFIED
 
         request = UserRegisterRequest(
             new_username=b'fake_username',
@@ -252,23 +213,6 @@ class TestRegister:
         response = UserHandler.register(request)
 
         assert not response.success
-
-    def test_handle_failure_reason(self):
-        """Should call handle failure reason, if create call fails"""
-
-        self.create_response = False, FailureReason.DUPLICATE
-
-        request = UserRegisterRequest(
-            new_username=b'fake_username',
-            srp_salt=b'fake_srp_salt',
-            srp_verifier=b'fake_srp_verifier',
-            master_key_salt=b'fake_master_key_salt',
-        )
-
-        response = UserHandler.register(request)
-
-        assert len(self.handle_failure_reason_called) == 1
-        assert self.handle_failure_reason_called[0] == FailureReason.DUPLICATE
 
 
 if __name__ == '__main__':
