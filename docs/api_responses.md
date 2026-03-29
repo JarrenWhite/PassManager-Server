@@ -377,8 +377,8 @@ Here, `Field` is defined by the name of protobuf message field.
 
 | Error Code | Error message       |
 |------------|---------------------|
-| GNR00      | \<Field\> invalid   |
-| GNR01      | \<Field\> not found |
+| GNR00      | Field invalid       |
+| GNR01      | Field not found     |
 
 
 ### Operation Specific Errors
