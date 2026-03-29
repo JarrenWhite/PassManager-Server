@@ -54,6 +54,8 @@ class UserHandler():
             srp_verifier=request.srp_verifier,
             master_key_salt=request.master_key_salt
         )
+
+        # Return error
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto("new_username"))
