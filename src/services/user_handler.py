@@ -55,6 +55,9 @@ class UserHandler():
             master_key_salt=request.master_key_salt
         )
         if not status:
+            assert failure_reason
+            ServiceUtils.handle_failure_reason(failure_reason)
+
             failure = Failure(
                 error_list=error_list
             )
