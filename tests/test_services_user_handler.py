@@ -466,6 +466,27 @@ class TestUsername:
         assert error.code == ErrorCode.GNR00
         assert error.description == FailureReason.INVALID.description
 
+    def test_all_sanitising_functions_fail(self):
+        """Should fetch all missing errors if all sanitising fails"""
+
+        self.sanitise_username_responses = [FailureReason.INVALID, FailureReason.INVALID]
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 2
+
+        fields = [error.field for error in response.failure_data.error_list]
+        assert "username_hash" in fields
+        assert "new_username" in fields
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
