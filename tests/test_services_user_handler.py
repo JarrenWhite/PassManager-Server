@@ -16,6 +16,7 @@ from services.user_handler import UserHandler
 from utils.service_utils import ServiceUtils
 from utils.db_utils_user import DBUtilsUser
 from enums.service_error import ServiceError
+from enums.failure_reason import FailureReason
 
 
 class TestRegister:
@@ -228,6 +229,22 @@ class TestRegister:
         assert create[1] == b'fake_srp_salt'
         assert create[2] == b'fake_srp_verifier'
         assert create[3] == b'fake_master_key_salt'
+
+    def test_create_call_fails(self):
+        """Should fail if user create function fails"""
+
+        self.create_response = False, FailureReason.DUPLICATE
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert not response.success
 
 
 if __name__ == '__main__':
