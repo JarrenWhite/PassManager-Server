@@ -41,5 +41,5 @@ class FailureReason(Enum):
     INCOMPLETE              = (ErrorCode.OPR02,     "request",  "")
     ENTRY_UPDATED           = (ErrorCode.OPR03,     "server",   "")
 
-    NOT_FOUND               = (ErrorCode.GNR00,     None,       "")
-    INVALID                 = (ErrorCode.GNR01,     None,       "")
+    INVALID                 = (ErrorCode.GNR00,     None,       "")
+    NOT_FOUND               = (ErrorCode.GNR01,     None,       "")
