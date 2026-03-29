@@ -84,8 +84,21 @@ class UserHandler():
 
     @staticmethod
     def username(request: SecureRequest) -> SecureResponse:
+        error_list = []
+
         # Open secure session
-        SessionManager.open_session(request)
+        status, bytes, failure_reason = SessionManager.open_session(request)
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
         return SecureResponse()
 

@@ -14,7 +14,7 @@ class FailureReason(Enum):
         self.field = field
         self.description = description
 
-    def error_proto(self, field: Optional[str]) -> Error:
+    def error_proto(self, field: Optional[str] = None) -> Error:
         """
         Create an error protobuf based on the
 
