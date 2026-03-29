@@ -303,6 +303,13 @@ class TestUsername:
             return self.change_username_response
         monkeypatch.setattr(DBUtilsUser, "change_username", fake_change_username)
 
+        self.serialize_to_string_called = []
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+        def fake_serialize_to_string(input):
+            self.serialize_to_string_called.append(input)
+            return self.serialize_to_string_response
+        monkeypatch.setattr(UserUsernameResponse, "SerializeToString", fake_serialize_to_string)
+
         yield
 
     def test_calls_open_session(self):
@@ -534,6 +541,25 @@ class TestUsername:
         assert error.field == field
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
+
+    def test_calls_convert_to_proto(self):
+        """Should convert protobuf to bytes"""
+
+        self.from_string_response.new_username = b'fake_new_username'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert len(self.serialize_to_string_called) == 1
+
+        serialize_to_string = self.serialize_to_string_called[0]
+        assert isinstance(serialize_to_string, UserUsernameResponse)
+        assert serialize_to_string.new_username == b'fake_new_username'
 
 
 if __name__ == '__main__':
