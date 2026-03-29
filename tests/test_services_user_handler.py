@@ -137,7 +137,7 @@ class TestRegister:
             ("sanitise_username",           "new_username"),
             ("sanitise_srp_salt",           "srp_salt"),
             ("sanitise_srp_verifier",       "srp_verifier"),
-            ("sanitise_master_key_salt",    "master_key_salt"),
+            ("sanitise_master_key_salt",    "master_key_salt")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -305,10 +305,13 @@ class TestUsername:
         monkeypatch.setattr(UserUsernameRequest, "FromString", fake_from_string)
 
         self.sanitise_username_called = []
-        self.sanitise_username_response = None
+        self.sanitise_username_responses = []
         def fake_sanitise_username(input):
+            idx = len(self.sanitise_username_called)
             self.sanitise_username_called.append(input)
-            return self.sanitise_username_response
+            if idx < len(self.sanitise_username_responses):
+                return self.sanitise_username_responses[idx]
+            return None
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
         yield
@@ -417,7 +420,30 @@ class TestUsername:
         response = UserHandler.username(request)
 
         assert len(self.sanitise_username_called) == 2
-        assert self.sanitise_username_called[0] == b'fake_new_username'
+        assert self.sanitise_username_called[1] == b'fake_new_username'
+
+    def test_existing_username_fails(self):
+        """Should fail if existing username is not sanitary"""
+
+        self.sanitise_username_responses = [FailureReason.INVALID]
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "username_hash"
+        assert error.code == ErrorCode.GNR00
+        assert error.description == FailureReason.INVALID.description
+
 
 
 if __name__ == '__main__':
