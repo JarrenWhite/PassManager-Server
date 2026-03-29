@@ -201,7 +201,7 @@ class TestRegister:
     def test_create_call_fails(self):
         """Should fail if user create function fails"""
 
-        self.create_response = False, FailureReason.UNSPECIFIED
+        self.create_response = False, FailureReason.INVALID
 
         request = UserRegisterRequest(
             new_username=b'fake_username',
@@ -213,6 +213,38 @@ class TestRegister:
         response = UserHandler.register(request)
 
         assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "new_username")
+        ]
+    )
+    def test_returns_error_create_call_fails(self, failure_reason, field):
+        """Should return correct error if user create function fails"""
+
+        self.create_response = False, failure_reason
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
 
 
 if __name__ == '__main__':
