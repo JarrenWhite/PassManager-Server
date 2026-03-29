@@ -60,6 +60,13 @@ class TestRegister:
             return self.create_response
         monkeypatch.setattr(DBUtilsUser, "create", fake_create)
 
+        self.handle_failure_reason_called = []
+        self.handle_failure_reason_response = ServiceError.UNSPECIFIED
+        def fake_handle_failure_reason(failure_reason):
+            self.handle_failure_reason_called.append(failure_reason)
+            return self.handle_failure_reason_response
+        monkeypatch.setattr(ServiceUtils, "handle_failure_reason", fake_handle_failure_reason)
+
         yield
 
     def test_calls_sanitise_username(self):
@@ -245,6 +252,23 @@ class TestRegister:
         response = UserHandler.register(request)
 
         assert not response.success
+
+    def test_handle_failure_reason(self):
+        """Should call handle failure reason, if create call fails"""
+
+        self.create_response = False, FailureReason.DUPLICATE
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert len(self.handle_failure_reason_called) == 1
+        assert self.handle_failure_reason_called[0] == FailureReason.DUPLICATE
 
 
 if __name__ == '__main__':

@@ -8,8 +8,7 @@ class ServiceUtils():
 
     @staticmethod
     def handle_failure_reason(
-        failure_reason: FailureReason,
-        field: Optional[str]
+        failure_reason: FailureReason
     ) -> ServiceError:
         return ServiceError.UNSPECIFIED
 
