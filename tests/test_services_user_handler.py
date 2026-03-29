@@ -175,6 +175,32 @@ class TestRegister:
         assert error.code == ErrorCode.GNR01
         assert error.description == ServiceError.FIELD_MISSING.description
 
+    def test_all_sanitising_functions_fail(self):
+        """Should fetch all missing errors if all sanitising fails"""
+
+        self.sanitise_username_response = ServiceError.FIELD_MISSING
+        self.sanitise_srp_salt_response = ServiceError.FIELD_MISSING
+        self.sanitise_srp_verifier_response = ServiceError.FIELD_MISSING
+        self.sanitise_master_key_salt_response = ServiceError.FIELD_MISSING
+
+        request = UserRegisterRequest(
+            new_username=b'fake_username',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier',
+            master_key_salt=b'fake_master_key_salt',
+        )
+
+        response = UserHandler.register(request)
+
+        assert not response.success
+        assert len(response.failure_data.error_list) == 4
+
+        fields = [error.field for error in response.failure_data.error_list]
+        assert "new_username" in fields
+        assert "srp_salt" in fields
+        assert "srp_verifier" in fields
+        assert "master_key_salt" in fields
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
