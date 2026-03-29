@@ -48,12 +48,20 @@ class UserHandler():
             )
 
         # Call Util function
-        DBUtilsUser.create(
+        status, failure = DBUtilsUser.create(
             username_hash=request.new_username,
             srp_salt=request.srp_salt,
             srp_verifier=request.srp_verifier,
             master_key_salt=request.master_key_salt
         )
+        if not status:
+            failure = Failure(
+                error_list=error_list
+            )
+            return UserRegisterResponse(
+                success=False,
+                failure_data=failure
+            )
 
         # Fake temporary return
         success_data = UserRegisterResponse.Success(
