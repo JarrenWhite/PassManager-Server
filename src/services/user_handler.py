@@ -1,3 +1,7 @@
+from passmanager.common.v0.secure_pb2 import (
+    SecureRequest,
+    SecureResponse
+)
 from passmanager.user.v0.user_pb2 import (
     UserRegisterRequest,
     UserRegisterResponse
@@ -79,10 +83,10 @@ class UserHandler():
 
 
     @staticmethod
-    def username(request: UserUsernameRequest) -> UserUsernameResponse:
-        return UserUsernameResponse()
+    def username(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
 
     @staticmethod
-    def delete(request: UserDeleteRequest) -> UserDeleteResponse:
-        return UserDeleteResponse()
+    def delete(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
