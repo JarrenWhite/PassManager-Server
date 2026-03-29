@@ -37,6 +37,7 @@ class _ErrorCodeEnumTypeWrapper(_enum_type_wrapper._EnumTypeWrapper[_ErrorCode.V
     OPR00: _ErrorCode.ValueType  # 40
     OPR01: _ErrorCode.ValueType  # 41
     OPR02: _ErrorCode.ValueType  # 42
+    OPR03: _ErrorCode.ValueType  # 43
 
 class ErrorCode(_ErrorCode, metaclass=_ErrorCodeEnumTypeWrapper): ...
 
@@ -52,6 +53,7 @@ GNR01: ErrorCode.ValueType  # 31
 OPR00: ErrorCode.ValueType  # 40
 OPR01: ErrorCode.ValueType  # 41
 OPR02: ErrorCode.ValueType  # 42
+OPR03: ErrorCode.ValueType  # 43
 Global___ErrorCode: _TypeAlias = ErrorCode  # noqa: Y015
 
 @_typing.final
