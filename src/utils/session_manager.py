@@ -17,5 +17,5 @@ class SessionManager():
         return True, b'', None
 
     @staticmethod
-    def seal_session(response: bytes) -> Tuple[bool, Optional[SecureResponse], Optional[FailureReason]]:
-        return True, None, None
+    def seal_session(response: bytes) -> SecureResponse:
+        return SecureResponse()
