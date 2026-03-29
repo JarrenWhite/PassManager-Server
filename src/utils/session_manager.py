@@ -8,6 +8,8 @@ from passmanager.common.v0.secure_pb2 import (
 from enums import FailureReason
 
 
+# TODO - Placeholder class. Requires completion.
+
 class SessionManager():
 
     @staticmethod
