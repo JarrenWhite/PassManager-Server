@@ -157,7 +157,7 @@ class TestCreate():
         assert isinstance(response[0], bool)
         assert isinstance(response[1], FailureReason)
         assert response[0] == False
-        assert response[1] == FailureReason.DUPLICATE
+        assert response[1] == FailureReason.USER_EXISTS
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 1
@@ -280,7 +280,7 @@ class TestChangeUsername():
         assert isinstance(response[0], bool)
         assert isinstance(response[1], FailureReason)
         assert response[0] == False
-        assert response[1] == FailureReason.DUPLICATE
+        assert response[1] == FailureReason.USER_EXISTS
 
         assert mock_session.commits == 1
         assert mock_session.rollbacks == 1

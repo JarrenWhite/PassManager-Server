@@ -377,8 +377,8 @@ Here, `Field` is defined by the name of protobuf message field.
 
 | Error Code | Error message       |
 |------------|---------------------|
-| GNR00      | \<Field\> invalid   |
-| GNR01      | \<Field\> not found |
+| GNR00      | Field invalid       |
+| GNR01      | Field not found     |
 
 
 ### Operation Specific Errors
@@ -387,6 +387,7 @@ These errors are specific to certain APIs. Only those APIs can return these erro
 
 | Error Code | Field           | APIs | Error Message                                                |
 |------------|-----------------|------|--------------------------------------------------------------|
-| OPR00      | username_hash   | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
-| OPR01      | request_number  | [Delete User](#delete-user-user) | Request number must be 0 for this request type                   |
-| OPR02      | request         | [Complete Password Change](#complete-password-change-password) | Password change is not complete                     |
+| OPR00      | username        | [Register User](#register-user-user) [Change Username](#change-username-user) | New username already exists |
+| OPR01      | request         | [Delete User](#delete-user-user) | Request number must be 0 for this request type |
+| OPR02      | request         | [Complete Password Change](#complete-password-change-password) | Password change is not complete |
+| OPR03      | request         | [Add New Encryption for Entry](#add-new-encryption-for-entry-password) | Secure entry has already been updated |

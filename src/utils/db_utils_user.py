@@ -34,7 +34,7 @@ class DBUtilsUser():
                 return True, None
         except IntegrityError:
             logger.info("Username Hash %s already exists.", username_hash[-4:])
-            return False, FailureReason.DUPLICATE
+            return False, FailureReason.USER_EXISTS
         except RuntimeError:
             logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED
@@ -64,7 +64,7 @@ class DBUtilsUser():
 
                 return True, None
         except IntegrityError:
-            return False, FailureReason.DUPLICATE
+            return False, FailureReason.USER_EXISTS
         except RuntimeError:
             logger.warning("Database uninitialised.")
             return False, FailureReason.DATABASE_UNINITIALISED

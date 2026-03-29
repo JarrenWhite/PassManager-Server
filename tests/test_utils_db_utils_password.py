@@ -2295,7 +2295,7 @@ class TestUpdate():
         assert isinstance(response[0], bool)
         assert isinstance(response[1], FailureReason)
         assert response[0] == False
-        assert response[1] == FailureReason.DUPLICATE
+        assert response[1] == FailureReason.ENTRY_UPDATED
 
         assert called["cleaned"] == True
         assert called["user"] == fake_user
