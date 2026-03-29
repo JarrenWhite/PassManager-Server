@@ -444,6 +444,27 @@ class TestUsername:
         assert error.code == ErrorCode.GNR00
         assert error.description == FailureReason.INVALID.description
 
+    def test_new_username_fails(self):
+        """Should fail if new username is not sanitary"""
+
+        self.sanitise_username_responses = [None, FailureReason.INVALID]
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "new_username"
+        assert error.code == ErrorCode.GNR00
+        assert error.description == FailureReason.INVALID.description
 
 
 if __name__ == '__main__':
