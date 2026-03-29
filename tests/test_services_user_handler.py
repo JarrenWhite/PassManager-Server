@@ -422,7 +422,7 @@ class TestUsername:
         assert len(self.sanitise_username_called) == 2
         assert self.sanitise_username_called[1] == b'fake_new_username'
 
-    def test_existing_username_fails(self):
+    def test_sanitise_existing_username_fails(self):
         """Should fail if existing username is not sanitary"""
 
         self.sanitise_username_responses = [FailureReason.INVALID]
@@ -444,7 +444,7 @@ class TestUsername:
         assert error.code == ErrorCode.GNR00
         assert error.description == FailureReason.INVALID.description
 
-    def test_new_username_fails(self):
+    def test_sanitise_new_username_fails(self):
         """Should fail if new username is not sanitary"""
 
         self.sanitise_username_responses = [None, FailureReason.INVALID]
