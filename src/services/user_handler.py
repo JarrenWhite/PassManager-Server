@@ -89,7 +89,7 @@ class UserHandler():
         error_list = []
 
         # Open secure session
-        status, decrypted_bytes, failure_reason = SessionManager.open_session(secure_request)
+        status, decrypted_bytes, user_id, failure_reason = SessionManager.open_session(secure_request)
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -133,6 +133,12 @@ class UserHandler():
                 success=False,
                 failure_data=failure
             )
+
+        # Call Util function
+        status, failure_reason = DBUtilsUser.change_username(
+            user_id=user_id,
+            new_username_hash=request.new_username
+        )
 
         return SecureResponse()
 
