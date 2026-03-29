@@ -1,9 +1,17 @@
 from typing import Optional
 
-from enums import ServiceError
+from enums import ServiceError, FailureReason
 
 
 class ServiceUtils():
+
+
+    @staticmethod
+    def handle_failure_reason(
+        failure_reason: FailureReason,
+        field: Optional[str]
+    ) -> ServiceError:
+        return ServiceError.UNSPECIFIED
 
 
     @staticmethod

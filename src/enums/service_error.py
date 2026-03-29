@@ -19,5 +19,7 @@ class ServiceError(Enum):
             description=self.description
         )
 
+    UNSPECIFIED         = (ErrorCode.UNSPECIFIED, "Unspecified Error")
+
     FIELD_INVALID       = (ErrorCode.GNR00,   "Field is invalid")
     FIELD_MISSING       = (ErrorCode.GNR01,   "Field is missing")

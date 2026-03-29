@@ -48,7 +48,7 @@ class UserHandler():
             )
 
         # Call Util function
-        status, failure = DBUtilsUser.create(
+        status, failure_reason = DBUtilsUser.create(
             username_hash=request.new_username,
             srp_salt=request.srp_salt,
             srp_verifier=request.srp_verifier,
