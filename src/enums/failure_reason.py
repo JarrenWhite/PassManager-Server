@@ -15,7 +15,7 @@ class FailureReason(Enum):
         self.description = description
 
     def error_proto(self, field: Optional[str]) -> Error:
-        use_field = field if field is not None else self.field
+        use_field = self.field if self.field is not None else field
 
         if use_field is None:
             use_field = "unknown"
