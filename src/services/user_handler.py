@@ -153,8 +153,11 @@ class UserHandler():
                 failure_data=failure
             )
 
-
-        return SecureResponse()
+        # Successful Return
+        response = UserUsernameResponse(
+            new_username=request.new_username
+        )
+        response.SerializeToString()
 
 
     @staticmethod
