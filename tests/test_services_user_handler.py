@@ -18,6 +18,7 @@ from passmanager.common.v0.secure_pb2 import (
     SecureResponse
 )
 from passmanager.common.v0.error_pb2 import (
+    Failure,
     ErrorCode
 )
 
@@ -589,6 +590,65 @@ class TestUsername:
 
         assert len(self.seal_session_called) == 1
         assert self.seal_session_called[0] == b'fake_serialized_bytes'
+
+    @pytest.mark.parametrize(
+        "secure_response",
+        [
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="",
+                    encrypted_data=b''
+                )
+            ),
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="fake_session_id",
+                    encrypted_data=b'fake_encrypted_data'
+                )
+            ),
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="abc123",
+                    encrypted_data=b'987zyx'
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.PASSWORD_CHANGE.error_proto()]
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.INCOMPLETE.error_proto()]
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.NOT_FOUND.error_proto()]
+                )
+            )
+        ]
+    )
+    def test_sealed_session_returned(self, secure_response):
+        """Should return result of sealed session"""
+
+        self.seal_session_response = secure_response
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert response == secure_response
 
 
 if __name__ == '__main__':
