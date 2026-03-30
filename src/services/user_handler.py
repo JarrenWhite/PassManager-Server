@@ -162,4 +162,22 @@ class UserHandler():
 
     @staticmethod
     def delete(secure_request: SecureRequest) -> SecureResponse:
+        error_list = []
+
+        # Open secure session
+        status, decrypted_bytes, user_id, failure_reason = SessionManager.open_session(secure_request)
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
+
         return SecureResponse()
