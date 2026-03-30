@@ -157,7 +157,7 @@ class UserHandler():
         response = UserUsernameResponse(
             new_username=request.new_username
         )
-        response.SerializeToString()
+        return SessionManager.seal_session(response.SerializeToString())
 
 
     @staticmethod
