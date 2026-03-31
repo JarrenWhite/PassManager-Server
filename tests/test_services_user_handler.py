@@ -11,7 +11,9 @@ from passmanager.user.v0.user_pb2 import (
 )
 from passmanager.user.v0.user_payloads_pb2 import (
     UserUsernameRequest,
-    UserUsernameResponse
+    UserUsernameResponse,
+    UserDeleteRequest,
+    UserDeleteResponse
 )
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
@@ -664,6 +666,19 @@ class TestDelete():
             return self.open_session_response
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
+        self.from_string_called = []
+        self.from_string_response = UserDeleteRequest(
+            username_hash=b'fake_username_hash'
+        )
+        self.from_string_exception = False
+        def fake_from_string(data):
+            self.from_string_called.append(data)
+            if self.from_string_exception:
+                raise DecodeError("invalid bytes")
+            else:
+                return self.from_string_response
+        monkeypatch.setattr(UserDeleteRequest, "FromString", fake_from_string)
+
         yield
 
     def test_calls_open_session(self):
@@ -701,6 +716,22 @@ class TestDelete():
         assert error.field == "request"
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_to_convert_to_proto(self):
+        """Should attempt to convert returned bytes to protobuf"""
+
+        self.from_string_response = UserUsernameRequest()
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert len(self.from_string_called) == 1
+        assert self.from_string_called[0] == b'fake_decrypted_bytes'
 
 
 if __name__ == '__main__':
