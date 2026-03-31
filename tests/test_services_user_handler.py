@@ -78,7 +78,7 @@ class TestRegister:
         """Should call sanitise username"""
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -87,13 +87,13 @@ class TestRegister:
         response = UserHandler.register(request)
 
         assert len(self.sanitise_username_called) == 1
-        assert self.sanitise_username_called[0] == b'fake_username'
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
 
     def test_calls_sanitise_srp_salt(self):
         """Should call sanitise srp salt"""
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -108,7 +108,7 @@ class TestRegister:
         """Should call sanitise srp verifier"""
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -123,7 +123,7 @@ class TestRegister:
         """Should call sanitise master key salt"""
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -149,7 +149,7 @@ class TestRegister:
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -175,7 +175,7 @@ class TestRegister:
         self.sanitise_master_key_salt_response = FailureReason.INVALID
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -197,7 +197,7 @@ class TestRegister:
         """Should call the user create function"""
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -208,7 +208,7 @@ class TestRegister:
         assert len(self.create_called) == 1
 
         create = self.create_called[0]
-        assert create[0] == b'fake_username'
+        assert create[0] == b'fake_username_hash'
         assert create[1] == b'fake_srp_salt'
         assert create[2] == b'fake_srp_verifier'
         assert create[3] == b'fake_master_key_salt'
@@ -228,7 +228,7 @@ class TestRegister:
         self.create_response = False, failure_reason
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -249,7 +249,7 @@ class TestRegister:
         """Should return successful result"""
 
         request = UserRegisterRequest(
-            new_username=b'fake_username',
+            new_username=b'fake_username_hash',
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier',
             master_key_salt=b'fake_master_key_salt',
@@ -259,7 +259,7 @@ class TestRegister:
 
         assert isinstance(response, UserRegisterResponse)
         assert response.success
-        assert response.success_data.username_hash == b'fake_username'
+        assert response.success_data.username_hash == b'fake_username_hash'
 
 
 class TestUsername:
@@ -679,6 +679,13 @@ class TestDelete():
                 return self.from_string_response
         monkeypatch.setattr(UserDeleteRequest, "FromString", fake_from_string)
 
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
         yield
 
     def test_calls_open_session(self):
@@ -754,6 +761,20 @@ class TestDelete():
         assert error.field == "request"
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
 
 
 if __name__ == '__main__':
