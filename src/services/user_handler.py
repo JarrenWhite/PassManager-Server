@@ -232,6 +232,8 @@ class UserHandler():
                 failure_data=failure
             )
 
-
-
-        return SecureResponse()
+        # Successful Return
+        response = UserDeleteResponse(
+            username_hash=request.username_hash
+        )
+        return SessionManager.seal_session(response.SerializeToString())
