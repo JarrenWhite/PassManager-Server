@@ -828,6 +828,37 @@ class TestDelete():
         assert len(self.delete_called) == 1
         assert self.delete_called[0] == user_id
 
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "unknown")
+        ]
+    )
+    def test_returns_error_delete_call_fails(self, failure_reason, field):
+        """Should return correct error if user delete function fails"""
+
+        self.delete_response = False, failure_reason
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
