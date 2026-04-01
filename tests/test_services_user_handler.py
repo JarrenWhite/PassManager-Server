@@ -686,6 +686,13 @@ class TestDelete():
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
+        self.delete_called = []
+        self.delete_response = True, None
+        def fake_delete(user_id):
+            self.delete_called.append(user_id)
+            return self.delete_response
+        monkeypatch.setattr(DBUtilsUser, "delete", fake_delete)
+
         yield
 
     def test_calls_open_session(self):
@@ -795,6 +802,31 @@ class TestDelete():
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
+
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            0,
+            15,
+            350
+        ]
+    )
+    def test_calls_delete(self, user_id):
+        """Should call the user delete function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert len(self.delete_called) == 1
+        assert self.delete_called[0] == user_id
 
 
 if __name__ == '__main__':
