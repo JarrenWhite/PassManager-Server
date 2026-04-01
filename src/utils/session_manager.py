@@ -13,7 +13,11 @@ from enums import FailureReason
 class SessionManager():
 
     @staticmethod
-    def open_session(request: SecureRequest) -> Tuple[bool, bytes, int, Optional[FailureReason]]:
+    def open_session(
+        request: SecureRequest,
+        password_session: bool = False,
+        first_request: bool = False
+    ) -> Tuple[bool, bytes, int, Optional[FailureReason]]:
         return True, b'', 0, None
 
     @staticmethod

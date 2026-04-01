@@ -89,7 +89,10 @@ class UserHandler():
         error_list = []
 
         # Open secure session
-        status, decrypted_bytes, user_id, failure_reason = SessionManager.open_session(secure_request)
+        open_session = SessionManager.open_session(
+            request=secure_request
+        )
+        status, decrypted_bytes, user_id, failure_reason = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -165,7 +168,11 @@ class UserHandler():
         error_list = []
 
         # Open secure session
-        status, decrypted_bytes, user_id, failure_reason = SessionManager.open_session(secure_request)
+        open_session = SessionManager.open_session(
+            request=secure_request,
+            first_request=True
+        )
+        status, decrypted_bytes, user_id, failure_reason = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -206,8 +213,6 @@ class UserHandler():
                 success=False,
                 failure_data=failure
             )
-
-        # TODO - Check Request number is 0
 
         # Call Util function
         status, failure_reason = DBUtilsUser.delete(

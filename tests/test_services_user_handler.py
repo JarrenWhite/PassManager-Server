@@ -270,8 +270,8 @@ class TestUsername:
 
         self.open_session_called = []
         self.open_session_response = True, b'fake_decrypted_bytes', 0, None
-        def fake_open_session(request):
-            self.open_session_called.append(request)
+        def fake_open_session(request, password_session = False, first_request = False):
+            self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
@@ -340,7 +340,7 @@ class TestUsername:
         response = UserHandler.username(request)
 
         assert len(self.open_session_called) == 1
-        assert self.open_session_called[0] == request
+        assert self.open_session_called[0] == (request, False, False)
 
     def test_open_session_fails(self):
         """Should return error if open session fails"""
@@ -661,8 +661,8 @@ class TestDelete():
 
         self.open_session_called = []
         self.open_session_response = True, b'fake_decrypted_bytes', 0, None
-        def fake_open_session(request):
-            self.open_session_called.append(request)
+        def fake_open_session(request, password_session = False, first_request = False):
+            self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
@@ -707,7 +707,7 @@ class TestDelete():
         response = UserHandler.delete(request)
 
         assert len(self.open_session_called) == 1
-        assert self.open_session_called[0] == request
+        assert self.open_session_called[0] == (request, False, True)
 
     def test_open_session_fails(self):
         """Should return error if open session fails"""
