@@ -207,6 +207,13 @@ class UserHandler():
                 failure_data=failure
             )
 
+        # TODO - Check Request number is 0
+
+        # Call Util function
+        status, failure_reason = DBUtilsUser.delete(
+            user_id=user_id
+        )
+
 
 
         return SecureResponse()
