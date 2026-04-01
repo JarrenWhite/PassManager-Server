@@ -700,6 +700,19 @@ class TestDelete():
             return self.serialize_to_string_response
         monkeypatch.setattr(UserDeleteResponse, "SerializeToString", fake_serialize_to_string)
 
+        self.seal_session_called = []
+        self.seal_session_response = SecureResponse(
+            success=True,
+            success_data=SecureResponse.Success(
+                session_id="fake_session_id",
+                encrypted_data=b'fake_encrypted_data'
+            )
+        )
+        def fake_seal_session(response):
+            self.seal_session_called.append(response)
+            return self.seal_session_response
+        monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
+
         yield
 
     def test_calls_open_session(self):
@@ -884,6 +897,65 @@ class TestDelete():
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, UserDeleteResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
+
+    @pytest.mark.parametrize(
+        "secure_response",
+        [
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="",
+                    encrypted_data=b''
+                )
+            ),
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="fake_session_id",
+                    encrypted_data=b'fake_encrypted_data'
+                )
+            ),
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="abc123",
+                    encrypted_data=b'987zyx'
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.PASSWORD_CHANGE.error_proto()]
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.INCOMPLETE.error_proto()]
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.NOT_FOUND.error_proto()]
+                )
+            )
+        ]
+    )
+    def test_sealed_session_returned(self, secure_response):
+        """Should return result of sealed session"""
+
+        self.seal_session_response = secure_response
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert response == secure_response
 
 
 if __name__ == '__main__':
