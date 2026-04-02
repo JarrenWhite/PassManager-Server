@@ -14,8 +14,14 @@ class FailureReason(Enum):
         self.field = field
         self.description = description
 
-    def error_proto(self, field: Optional[str]) -> Error:
-        use_field = field if field is not None else self.field
+    def error_proto(self, field: Optional[str] = None) -> Error:
+        """
+        Create an error protobuf based on the
+
+        Args:
+            field (str): Field used if special case met
+        """
+        use_field = self.field if self.field is not None else field
 
         if use_field is None:
             use_field = "unknown"
@@ -26,20 +32,20 @@ class FailureReason(Enum):
             description=self.description
         )
 
-    UNSPECIFIED                 = (ErrorCode.UNSPECIFIED,   "unknown",  "Unknown error encountered")
+    UNSPECIFIED             = (ErrorCode.UNSPECIFIED,   "unknown",  "Unknown error encountered")
 
-    PARAMETERS                  = (ErrorCode.RQS00,     "request",  "")
-    DECRYPTION                  = (ErrorCode.RQS01,     "request",  "")
-    PASSWORD_CHANGE             = (ErrorCode.RQS02,     "request",  "")
-    TOO_MANY                    = (ErrorCode.RQS03,     "request",  "")
+    PARAMETERS              = (ErrorCode.RQS00,     "request",  "")
+    DECRYPTION              = (ErrorCode.RQS01,     "request",  "")
+    PASSWORD_CHANGE         = (ErrorCode.RQS02,     "request",  "")
+    TOO_MANY                = (ErrorCode.RQS03,     "request",  "")
 
-    UNKNOWN_EXCEPTION           = (ErrorCode.SVR00,     "server",   "")
-    DATABASE_UNINITIALISED      = (ErrorCode.SVR01,     "server",   "")
+    UNKNOWN_EXCEPTION       = (ErrorCode.SVR00,     "server",   "")
+    DATABASE_UNINITIALISED  = (ErrorCode.SVR01,     "server",   "")
 
-    USER_EXISTS                 = (ErrorCode.OPR00,     "username", "")
-    REQUEST_NUMBER              = (ErrorCode.OPR01,     "request",  "")
-    INCOMPLETE                  = (ErrorCode.OPR02,     "request",  "")
-    ENTRY_UPDATED               = (ErrorCode.OPR03,     "server",   "")
+    USER_EXISTS             = (ErrorCode.OPR00,     "username", "")
+    REQUEST_NUMBER          = (ErrorCode.OPR01,     "request",  "")
+    INCOMPLETE              = (ErrorCode.OPR02,     "request",  "")
+    ENTRY_UPDATED           = (ErrorCode.OPR03,     "server",   "")
 
-    NOT_FOUND                   = (ErrorCode.GNR00,     None,       "")
-    INVALID                     = (ErrorCode.GNR01,     None,       "")
+    INVALID                 = (ErrorCode.GNR00,     None,       "")
+    NOT_FOUND               = (ErrorCode.GNR01,     None,       "")
