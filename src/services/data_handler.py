@@ -1,3 +1,8 @@
+from google.protobuf.message import DecodeError
+from passmanager.common.v0.secure_pb2 import (
+    SecureRequest,
+    SecureResponse
+)
 from passmanager.data.v0.data_payloads_pb2 import (
     DataCreateRequest,
     DataCreateResponse,
@@ -17,21 +22,21 @@ from passmanager.data.v0.data_payloads_pb2 import (
 class DataHandler:
 
     @staticmethod
-    def create(request: DataCreateRequest) -> DataCreateResponse:
-        return DataCreateResponse()
+    def create(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def edit(request: DataEditRequest) -> DataEditResponse:
-        return DataEditResponse()
+    def edit(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def delete(request: DataDeleteRequest) -> DataDeleteResponse:
-        return DataDeleteResponse()
+    def delete(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def get(request: DataGetRequest) -> DataGetResponse:
-        return DataGetResponse()
+    def get(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def list(request: DataListRequest) -> DataListResponse:
-        return DataListResponse()
+    def list(request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
