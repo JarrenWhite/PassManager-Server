@@ -792,6 +792,8 @@ class TestDelete():
     def test_calls_sanitise_username(self):
         """Should call sanitise username"""
 
+        self.from_string_response.username_hash = b'fake_username_hash'
+
         request = SecureRequest(
             session_id="fake_session_id",
             request_number=0,
