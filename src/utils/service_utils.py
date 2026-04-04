@@ -32,3 +32,17 @@ class ServiceUtils():
         input: bytes
     ) -> Optional[FailureReason]:
         return None
+
+
+    @staticmethod
+    def sanitise_entry_name(
+        input: bytes
+    ) -> Optional[FailureReason]:
+        return None
+
+
+    @staticmethod
+    def sanitise_entry_data(
+        input: bytes
+    ) -> Optional[FailureReason]:
+        return None
