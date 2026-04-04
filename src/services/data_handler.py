@@ -16,27 +16,39 @@ from passmanager.data.v0.data_payloads_pb2 import (
     DataListResponse
 )
 
+from utils import ServiceUtils, SessionManager, DBUtilsData
+from enums import FailureReason
+
 
 # TODO - Placeholder class. Requires completion.
 
 class DataHandler:
 
     @staticmethod
-    def create(request: SecureRequest) -> SecureResponse:
+    def create(secure_request: SecureRequest) -> SecureResponse:
+        error_list = []
+
+        # Open secure session
+        open_session = SessionManager.open_session(
+            request=secure_request,
+            password_session=True,
+            first_request=True
+        )
+
         return SecureResponse()
 
     @staticmethod
-    def edit(request: SecureRequest) -> SecureResponse:
+    def edit(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
 
     @staticmethod
-    def delete(request: SecureRequest) -> SecureResponse:
+    def delete(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
 
     @staticmethod
-    def get(request: SecureRequest) -> SecureResponse:
+    def get(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
 
     @staticmethod
-    def list(request: SecureRequest) -> SecureResponse:
+    def list(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
