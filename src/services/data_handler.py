@@ -15,6 +15,9 @@ from passmanager.data.v0.data_payloads_pb2 import (
     DataListRequest,
     DataListResponse
 )
+from passmanager.common.v0.error_pb2 import (
+    Failure
+)
 
 from utils import ServiceUtils, SessionManager, DBUtilsData
 from enums import FailureReason
@@ -34,6 +37,18 @@ class DataHandler:
             password_session=True,
             first_request=True
         )
+        status, decrypted_bytes, user_id, failure_reason = open_session
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
         return SecureResponse()
 
