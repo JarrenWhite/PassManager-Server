@@ -113,6 +113,28 @@ class TestCreate:
         assert len(self.from_string_called) == 1
         assert self.from_string_called[0] == b'fake_decrypted_bytes'
 
+    def test_convert_to_proto_fails(self):
+        """Should fail if conversion to proto raises exception"""
+
+        self.from_string_exception = True
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.create(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
