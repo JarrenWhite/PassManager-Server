@@ -50,6 +50,20 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Convert to Protobuf Message
+        try:
+            request = DataCreateRequest.FromString(decrypted_bytes)
+        except DecodeError:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         return SecureResponse()
 
     @staticmethod
