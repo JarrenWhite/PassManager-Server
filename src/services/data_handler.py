@@ -71,6 +71,9 @@ class DataHandler:
         status = ServiceUtils.sanitise_entry_name(request.entry_name)
         if status:
             error_list.append(status.error_proto("entry_name"))
+        status = ServiceUtils.sanitise_entry_data(request.entry_data)
+        if status:
+            error_list.append(status.error_proto("entry_data"))
 
 
         return SecureResponse()
