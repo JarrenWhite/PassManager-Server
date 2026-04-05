@@ -48,7 +48,9 @@ class TestCreate:
 
         self.from_string_called = []
         self.from_string_response = DataCreateRequest(
-            username_hash=b'fake_username_hash'
+            username_hash=b'fake_username_hash',
+            entry_name=b'fake_entry_name',
+            entry_data=b'fake_entry_data'
         )
         self.from_string_exception = False
         def fake_from_string(data):
@@ -168,7 +170,7 @@ class TestCreate:
     def test_calls_sanitise_entry_name(self):
         """Should call sanitise entry name"""
 
-        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.entry_name = b'fake_entry_name'
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -178,8 +180,8 @@ class TestCreate:
 
         response = DataHandler.create(request)
 
-        assert len(self.sanitise_username_called) == 1
-        assert self.sanitise_username_called[0] == b'fake_username_hash'
+        assert len(self.sanitise_entry_name_called) == 1
+        assert self.sanitise_entry_name_called[0] == b'fake_entry_name'
 
 
 if __name__ == '__main__':
