@@ -75,6 +75,13 @@ class TestCreate:
             return self.sanitise_entry_name_response
         monkeypatch.setattr(ServiceUtils, "sanitise_entry_name", fake_sanitise_entry_name)
 
+        self.sanitise_entry_data_called = []
+        self.sanitise_entry_data_response = None
+        def fake_sanitise_entry_data(input):
+            self.sanitise_entry_data_called.append(input)
+            return self.sanitise_entry_data_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_entry_data", fake_sanitise_entry_data)
+
         yield
 
     def test_calls_open_session(self):
@@ -182,6 +189,22 @@ class TestCreate:
 
         assert len(self.sanitise_entry_name_called) == 1
         assert self.sanitise_entry_name_called[0] == b'fake_entry_name'
+
+    def test_calls_sanitise_entry_data(self):
+        """Should call sanitise entry data"""
+
+        self.from_string_response.entry_data = b'fake_entry_data'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.create(request)
+
+        assert len(self.sanitise_entry_data_called) == 1
+        assert self.sanitise_entry_data_called[0] == b'fake_entry_data'
 
 
 if __name__ == '__main__':
