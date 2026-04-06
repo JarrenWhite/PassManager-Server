@@ -206,6 +206,36 @@ class TestCreate:
         assert len(self.sanitise_entry_data_called) == 1
         assert self.sanitise_entry_data_called[0] == b'fake_entry_data'
 
+    @pytest.mark.parametrize(
+        "failing_sanitiser, field",
+        [
+            ("sanitise_username",           "username_hash"),
+            ("sanitise_entry_name",         "entry_name"),
+            ("sanitise_entry_data",         "entry_data")
+        ]
+    )
+    def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
+        """Should fetch invalid error for each sanitation fail"""
+
+        setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.create(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == ErrorCode.GNR00
+        assert error.description == FailureReason.INVALID.description
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
