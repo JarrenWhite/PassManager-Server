@@ -51,8 +51,8 @@ class TestCreate():
 
         response = DBUtilsData.create(
             user_id=123456,
-            entry_name="fake_encrypted_entry_name",
-            entry_data="fake_encrypted_entry_data"
+            entry_name=b'fake_encrypted_entry_name',
+            entry_data=b'fake_encrypted_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -68,8 +68,8 @@ class TestCreate():
         assert isinstance(db_secure_data, SecureData)
         assert db_secure_data.user.id == 123456
         assert db_secure_data.user.username_hash == b'fake_hash'
-        assert db_secure_data.entry_name == "fake_encrypted_entry_name"
-        assert db_secure_data.entry_data == "fake_encrypted_entry_data"
+        assert db_secure_data.entry_name == b'fake_encrypted_entry_name'
+        assert db_secure_data.entry_data == b'fake_encrypted_entry_data'
 
         assert mock_session.commits == 1
         assert mock_session.flushes == 1
@@ -92,8 +92,8 @@ class TestCreate():
 
         response = DBUtilsData.create(
             user_id=123456,
-            entry_name="fake_encrypted_entry_name",
-            entry_data="fake_encrypted_entry_data"
+            entry_name=b'fake_encrypted_entry_name',
+            entry_data=b'fake_encrypted_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -122,8 +122,8 @@ class TestCreate():
 
         response = DBUtilsData.create(
             user_id=123456,
-            entry_name="fake_encrypted_entry_name",
-            entry_data="fake_encrypted_entry_data"
+            entry_name=b'fake_encrypted_entry_name',
+            entry_data=b'fake_encrypted_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -159,8 +159,8 @@ class TestCreate():
 
         response = DBUtilsData.create(
             user_id=123456,
-            entry_name="fake_encrypted_entry_name",
-            entry_data="fake_encrypted_entry_data"
+            entry_name=b'fake_encrypted_entry_name',
+            entry_data=b'fake_encrypted_entry_data'
         )
 
         assert isinstance(response, tuple)
@@ -213,8 +213,8 @@ class TestCreate():
 
         response = DBUtilsData.create(
             user_id=123456,
-            entry_name="fake_encrypted_entry_name",
-            entry_data="fake_encrypted_entry_data"
+            entry_name=b'fake_encrypted_entry_name',
+            entry_data=b'fake_encrypted_entry_data'
         )
 
         assert isinstance(response, tuple)
