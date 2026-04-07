@@ -13,8 +13,8 @@ class DBUtilsData():
     @staticmethod
     def create(
         user_id: int,
-        entry_name: str,
-        entry_data: str
+        entry_name: bytes,
+        entry_data: bytes
     ) -> Tuple[bool, Optional[FailureReason], str]:
         """
         Make a data entry with the given data values
