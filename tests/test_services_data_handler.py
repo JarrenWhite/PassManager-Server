@@ -82,6 +82,13 @@ class TestCreate:
             return self.sanitise_entry_data_response
         monkeypatch.setattr(ServiceUtils, "sanitise_entry_data", fake_sanitise_entry_data)
 
+        self.create_called = []
+        self.create_response = True, None, "fake_public_id"
+        def fake_create(user_id):
+            self.create_called.append(user_id)
+            return self.create_response
+        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+
         yield
 
     def test_calls_open_session(self):
@@ -259,6 +266,35 @@ class TestCreate:
         assert "username_hash" in fields
         assert "entry_name" in fields
         assert "entry_data" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, entry_name, entry_data",
+        [
+            (0,     b'abc',     b'def'),
+            (15,    b'',        b''),
+            (350,   b'qcd'*100, b'ghi'*300)
+        ]
+    )
+    def test_calls_create(self, user_id, entry_name, entry_data):
+        """Should call the data create function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.create(request)
+
+        assert len(self.create_called) == 1
+
+        create = self.create_called[0]
+        assert create[0] == user_id
+        assert create[1] == entry_name
+        assert create[2] == entry_data
 
 
 if __name__ == '__main__':
