@@ -28,7 +28,7 @@ from passmanager.common.v0.error_pb2 import (
 
 from services.data_handler import DataHandler
 from utils.service_utils import ServiceUtils
-from utils.db_utils_user import DBUtilsUser
+from utils.db_utils_data import DBUtilsData
 from utils.session_manager import SessionManager
 from enums.failure_reason import FailureReason
 
@@ -84,10 +84,10 @@ class TestCreate:
 
         self.create_called = []
         self.create_response = True, None, "fake_public_id"
-        def fake_create(user_id):
-            self.create_called.append(user_id)
+        def fake_create(user_id, entry_name, entry_data):
+            self.create_called.append((user_id, entry_name, entry_data))
             return self.create_response
-        monkeypatch.setattr(DBUtilsUser, "create", fake_create)
+        monkeypatch.setattr(DBUtilsData, "create", fake_create)
 
         yield
 
@@ -280,6 +280,8 @@ class TestCreate:
 
         self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
         self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.entry_name = entry_name
+        self.from_string_response.entry_data = entry_data
 
         request = SecureRequest(
             session_id="fake_session_id",
