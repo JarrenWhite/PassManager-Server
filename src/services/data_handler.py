@@ -150,6 +150,21 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Sanitise Inputs
+        status = ServiceUtils.sanitise_username(request.username_hash)
+        if status:
+            error_list.append(status.error_proto("username_hash"))
+        status = ServiceUtils.sanitise_entry_public_id(request.entry_public_id)
+        if status:
+            error_list.append(status.error_proto("entry_public_id"))
+        status = ServiceUtils.sanitise_entry_name(request.entry_name)
+        if status:
+            error_list.append(status.error_proto("entry_data"))
+        status = ServiceUtils.sanitise_entry_data(request.entry_data)
+        if status:
+            error_list.append(status.error_proto("entry_data"))
+
+
 
         return SecureResponse()
 
