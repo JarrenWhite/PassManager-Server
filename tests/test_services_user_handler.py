@@ -900,6 +900,22 @@ class TestDelete():
         assert isinstance(serialize_to_string, UserDeleteResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
 
+    def test_calls_seal_session(self):
+        """Should call to seal session"""
+
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert len(self.seal_session_called) == 1
+        assert self.seal_session_called[0] == b'fake_serialized_bytes'
+
     @pytest.mark.parametrize(
         "secure_response",
         [
