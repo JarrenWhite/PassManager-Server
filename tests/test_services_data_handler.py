@@ -96,6 +96,19 @@ class TestCreate:
             return self.serialize_to_string_response
         monkeypatch.setattr(DataCreateResponse, "SerializeToString", fake_serialize_to_string)
 
+        self.seal_session_called = []
+        self.seal_session_response = SecureResponse(
+            success=True,
+            success_data=SecureResponse.Success(
+                session_id="fake_session_id",
+                encrypted_data=b'fake_encrypted_data'
+            )
+        )
+        def fake_seal_session(response):
+            self.seal_session_called.append(response)
+            return self.seal_session_response
+        monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
+
         yield
 
     def test_calls_open_session(self):
@@ -356,6 +369,22 @@ class TestCreate:
         assert isinstance(serialize_to_string, DataCreateResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.entry_public_id == "fake_public_id"
+
+    def test_calls_seal_session(self):
+        """Should call to seal session"""
+
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.create(request)
+
+        assert len(self.seal_session_called) == 1
+        assert self.seal_session_called[0] == b'fake_serialized_bytes'
 
 
 if __name__ == '__main__':
