@@ -115,6 +115,16 @@ class DataHandler:
 
     @staticmethod
     def edit(secure_request: SecureRequest) -> SecureResponse:
+        error_list = []
+
+        # Open secure session
+        open_session = SessionManager.open_session(
+            request=secure_request,
+            password_session=True,
+            first_request=True
+        )
+
+
         return SecureResponse()
 
     @staticmethod
