@@ -105,8 +105,13 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Successful Return
+        response = DataCreateResponse(
+            username_hash=request.username_hash,
+            entry_public_id=public_id
+        )
+        return SessionManager.seal_session(response.SerializeToString())
 
-        return SecureResponse()
 
     @staticmethod
     def edit(secure_request: SecureRequest) -> SecureResponse:
