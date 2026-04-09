@@ -157,13 +157,14 @@ class DataHandler:
         status = ServiceUtils.sanitise_entry_public_id(request.entry_public_id)
         if status:
             error_list.append(status.error_proto("entry_public_id"))
-        status = ServiceUtils.sanitise_entry_name(request.entry_name)
-        if status:
-            error_list.append(status.error_proto("entry_data"))
-        status = ServiceUtils.sanitise_entry_data(request.entry_data)
-        if status:
-            error_list.append(status.error_proto("entry_data"))
-
+        if request.HasField("entry_name"):
+            status = ServiceUtils.sanitise_entry_name(request.entry_name)
+            if status:
+                error_list.append(status.error_proto("entry_data"))
+        if request.HasField("entry_data"):
+            status = ServiceUtils.sanitise_entry_data(request.entry_data)
+            if status:
+                error_list.append(status.error_proto("entry_data"))
 
 
         return SecureResponse()
