@@ -643,6 +643,40 @@ class TestEdit:
         assert len(self.sanitise_entry_data_called) == 1
         assert self.sanitise_entry_data_called[0] == b'fake_entry_data'
 
+    def test_entry_name_none(self):
+        """Should pass gracefully if entry name is empty"""
+
+        self.from_string_response.ClearField("entry_name")
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert len(self.sanitise_entry_name_called) == 0
+
+    def test_entry_data_none(self):
+        """Should pass gracefully if entry data is empty"""
+
+        self.from_string_response.ClearField("entry_data")
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert len(self.sanitise_entry_data_called) == 0
+
+
+
+
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
