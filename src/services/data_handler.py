@@ -197,10 +197,13 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Successful Return
+        response = DataEditResponse(
+            username_hash=request.username_hash,
+            entry_public_id=request.entry_public_id
+        )
+        return SessionManager.seal_session(response.SerializeToString())
 
-
-
-        return SecureResponse()
 
     @staticmethod
     def delete(secure_request: SecureRequest) -> SecureResponse:
