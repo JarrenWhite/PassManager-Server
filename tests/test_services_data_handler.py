@@ -503,6 +503,13 @@ class TestEdit:
             return self.sanitise_entry_data_response
         monkeypatch.setattr(ServiceUtils, "sanitise_entry_data", fake_sanitise_entry_data)
 
+        self.edit_called = []
+        self.edit_response = True, None
+        def fake_edit(user_id, public_id, entry_name, entry_data):
+            self.edit_called.append((user_id, public_id, entry_name, entry_data))
+            return self.edit_response
+        monkeypatch.setattr(DBUtilsData, "edit", fake_edit)
+
         yield
 
     def test_calls_open_session(self):
@@ -729,6 +736,39 @@ class TestEdit:
         assert "entry_public_id" in fields
         assert "entry_name" in fields
         assert "entry_data" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, entry_public_id, entry_name, entry_data",
+        [
+            (0,     "abc",  b'abc',     b'def'),
+            (15,    "",     b'',        b''),
+            (350,   "123"*8,b'qcd'*100, b'ghi'*300)
+        ]
+    )
+    def test_calls_edit(self, user_id, entry_public_id, entry_name, entry_data):
+        """Should call the data edit function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.entry_public_id = entry_public_id
+        self.from_string_response.entry_name = entry_name
+        self.from_string_response.entry_data = entry_data
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert len(self.edit_called) == 1
+
+        create = self.edit_called[0]
+        assert create[0] == user_id
+        assert create[1] == entry_public_id
+        assert create[2] == entry_name
+        assert create[3] == entry_data
 
 
 if __name__ == '__main__':
