@@ -184,6 +184,21 @@ class DataHandler:
             entry_data=request.entry_data
         )
 
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
+
 
         return SecureResponse()
 
