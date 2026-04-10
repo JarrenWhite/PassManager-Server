@@ -176,6 +176,14 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        status, failure_reason = DBUtilsData.edit(
+            user_id=user_id,
+            public_id=request.entry_public_id,
+            entry_name=request.entry_name,
+            entry_data=request.entry_data
+        )
+
 
         return SecureResponse()
 
