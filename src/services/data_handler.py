@@ -33,9 +33,7 @@ class DataHandler:
 
         # Open secure session
         open_session = SessionManager.open_session(
-            request=secure_request,
-            password_session=True,
-            first_request=True
+            request=secure_request
         )
         status, decrypted_bytes, user_id, failure_reason = open_session
         if not status:
@@ -119,9 +117,7 @@ class DataHandler:
 
         # Open secure session
         open_session = SessionManager.open_session(
-            request=secure_request,
-            password_session=True,
-            first_request=True
+            request=secure_request
         )
         status, decrypted_bytes, user_id, failure_reason = open_session
         if not status:

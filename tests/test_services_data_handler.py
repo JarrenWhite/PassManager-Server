@@ -123,7 +123,7 @@ class TestCreate:
         response = DataHandler.create(request)
 
         assert len(self.open_session_called) == 1
-        assert self.open_session_called[0] == (request, True, True)
+        assert self.open_session_called[0] == (request, False, False)
 
     def test_open_session_fails(self):
         """Should return error if open session fails"""
@@ -544,7 +544,7 @@ class TestEdit:
         response = DataHandler.edit(request)
 
         assert len(self.open_session_called) == 1
-        assert self.open_session_called[0] == (request, True, True)
+        assert self.open_session_called[0] == (request, False, False)
 
     def test_open_session_fails(self):
         """Should return error if open session fails"""
