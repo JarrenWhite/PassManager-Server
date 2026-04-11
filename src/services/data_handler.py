@@ -176,8 +176,8 @@ class DataHandler:
         status, failure_reason = DBUtilsData.edit(
             user_id=user_id,
             public_id=request.entry_public_id,
-            entry_name=request.entry_name,
-            entry_data=request.entry_data
+            entry_name=request.entry_name if request.HasField("entry_name") else None,
+            entry_data=request.entry_data if request.HasField("entry_data") else None
         )
 
         # Return error
