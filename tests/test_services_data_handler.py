@@ -959,6 +959,13 @@ class TestDelete:
             return self.sanitise_entry_public_id_response
         monkeypatch.setattr(ServiceUtils, "sanitise_entry_public_id", fake_sanitise_entry_public_id)
 
+        self.delete_called = []
+        self.delete_response = True, None
+        def fake_delete(user_id, public_id):
+            self.delete_called.append((user_id, public_id))
+            return self.delete_response
+        monkeypatch.setattr(DBUtilsData, "delete", fake_delete)
+
         yield
 
     def test_calls_open_session(self):
@@ -1117,6 +1124,35 @@ class TestDelete:
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
         assert "entry_public_id" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, entry_public_id",
+        [
+            (0,     "abc"),
+            (15,    ""),
+            (350,   "123"*8)
+        ]
+    )
+    def test_calls_delete(self, user_id, entry_public_id):
+        """Should call the data delete function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.entry_public_id = entry_public_id
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.delete(request)
+
+        assert len(self.delete_called) == 1
+
+        create = self.delete_called[0]
+        assert create[0] == user_id
+        assert create[1] == entry_public_id
 
 
 if __name__ == '__main__':
