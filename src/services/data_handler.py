@@ -254,6 +254,12 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        status, failure_reason = DBUtilsData.delete(
+            user_id=user_id,
+            public_id=request.entry_public_id
+        )
+
 
 
         return SecureResponse()
