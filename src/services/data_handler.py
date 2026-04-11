@@ -292,6 +292,14 @@ class DataHandler:
 
     @staticmethod
     def get(secure_request: SecureRequest) -> SecureResponse:
+        error_list = []
+
+        # Open secure session
+        open_session = SessionManager.open_session(
+            request=secure_request
+        )
+
+
         return SecureResponse()
 
 
