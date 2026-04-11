@@ -108,7 +108,10 @@ class DataHandler:
             username_hash=request.username_hash,
             entry_public_id=public_id
         )
-        return SessionManager.seal_session(response.SerializeToString())
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod
@@ -198,7 +201,10 @@ class DataHandler:
             username_hash=request.username_hash,
             entry_public_id=request.entry_public_id
         )
-        return SessionManager.seal_session(response.SerializeToString())
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod
@@ -278,7 +284,10 @@ class DataHandler:
             username_hash=request.username_hash,
             entry_public_id=request.entry_public_id
         )
-        return SessionManager.seal_session(response.SerializeToString())
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod

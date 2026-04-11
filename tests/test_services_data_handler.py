@@ -104,8 +104,8 @@ class TestCreate:
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(response):
-            self.seal_session_called.append(response)
+        def fake_seal_session(session_id, response):
+            self.seal_session_called.append((session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
@@ -384,7 +384,10 @@ class TestCreate:
         response = DataHandler.create(request)
 
         assert len(self.seal_session_called) == 1
-        assert self.seal_session_called[0] == b'fake_serialized_bytes'
+
+        sealed = self.seal_session_called[0]
+        assert sealed[0] == "fake_session_id"
+        assert sealed[1] == b'fake_serialized_bytes'
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -525,8 +528,8 @@ class TestEdit:
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(response):
-            self.seal_session_called.append(response)
+        def fake_seal_session(session_id, response):
+            self.seal_session_called.append((session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
@@ -826,7 +829,10 @@ class TestEdit:
         response = DataHandler.edit(request)
 
         assert len(self.seal_session_called) == 1
-        assert self.seal_session_called[0] == b'fake_serialized_bytes'
+
+        sealed = self.seal_session_called[0]
+        assert sealed[0] == "fake_session_id"
+        assert sealed[1] == b'fake_serialized_bytes'
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -1035,8 +1041,8 @@ class TestDelete:
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(response):
-            self.seal_session_called.append(response)
+        def fake_seal_session(session_id, response):
+            self.seal_session_called.append((session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
@@ -1294,7 +1300,10 @@ class TestDelete:
         response = DataHandler.delete(request)
 
         assert len(self.seal_session_called) == 1
-        assert self.seal_session_called[0] == b'fake_serialized_bytes'
+
+        sealed = self.seal_session_called[0]
+        assert sealed[0] == "fake_session_id"
+        assert sealed[1] == b'fake_serialized_bytes'
 
     @pytest.mark.parametrize(
         "secure_response",

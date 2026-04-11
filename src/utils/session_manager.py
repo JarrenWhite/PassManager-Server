@@ -21,5 +21,8 @@ class SessionManager():
         return True, b'', 0, None
 
     @staticmethod
-    def seal_session(response: bytes) -> SecureResponse:
+    def seal_session(
+        session_id: str,
+        response: bytes
+    ) -> SecureResponse:
         return SecureResponse()
