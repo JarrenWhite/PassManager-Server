@@ -670,36 +670,6 @@ class TestEdit:
         assert len(self.sanitise_entry_data_called) == 1
         assert self.sanitise_entry_data_called[0] == b'fake_entry_data'
 
-    def test_entry_name_none(self):
-        """Should pass gracefully if entry name is empty"""
-
-        self.from_string_response.ClearField("entry_name")
-
-        request = SecureRequest(
-            session_id="fake_session_id",
-            request_number=0,
-            encrypted_data=b'fake_encryption_data'
-        )
-
-        response = DataHandler.edit(request)
-
-        assert len(self.sanitise_entry_name_called) == 0
-
-    def test_entry_data_none(self):
-        """Should pass gracefully if entry data is empty"""
-
-        self.from_string_response.ClearField("entry_data")
-
-        request = SecureRequest(
-            session_id="fake_session_id",
-            request_number=0,
-            encrypted_data=b'fake_encryption_data'
-        )
-
-        response = DataHandler.edit(request)
-
-        assert len(self.sanitise_entry_data_called) == 0
-
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
@@ -916,6 +886,90 @@ class TestEdit:
         response = DataHandler.edit(request)
 
         assert response == secure_response
+
+    def test_entry_name_none_sanitised(self):
+        """Should pass sanitisation gracefully if entry name is empty"""
+
+        self.from_string_response.ClearField("entry_name")
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert len(self.sanitise_entry_name_called) == 0
+
+    def test_entry_data_none_sanitised(self):
+        """Should pass sanitisation gracefully if entry data is empty"""
+
+        self.from_string_response.ClearField("entry_data")
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert len(self.sanitise_entry_data_called) == 0
+
+    def test_entry_name_none_handled(self):
+        """Should pass the none entry name to edit function"""
+
+        self.from_string_response.ClearField("entry_name")
+        self.from_string_response.entry_data = b'fake_entry_data'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert self.edit_called[0][2] == None
+        assert self.edit_called[0][3] == b'fake_entry_data'
+
+    def test_entry_data_none_handled(self):
+        """Should pass the none entry data to edit function"""
+
+        self.from_string_response.entry_name = b'fake_entry_name'
+        self.from_string_response.ClearField("entry_data")
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert self.edit_called[0][2] == b'fake_entry_name'
+        assert self.edit_called[0][3] == None
+
+    def test_all_entries_none(self):
+        """Should correctly handle both entry fields being none"""
+
+        self.from_string_response.ClearField("entry_name")
+        self.from_string_response.ClearField("entry_data")
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert len(self.edit_called) == 1
+
+        edit = self.edit_called[0]
+        assert edit[2] == None
+        assert edit[3] == None
 
 
 class TestDelete:
