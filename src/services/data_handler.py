@@ -260,6 +260,19 @@ class DataHandler:
             public_id=request.entry_public_id
         )
 
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
 
 
         return SecureResponse()
