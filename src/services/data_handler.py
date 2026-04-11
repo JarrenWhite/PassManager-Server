@@ -273,9 +273,12 @@ class DataHandler:
                 failure_data=failure
             )
 
-
-
-        return SecureResponse()
+        # Successful Return
+        response = DataDeleteResponse(
+            username_hash=request.username_hash,
+            entry_public_id=request.entry_public_id
+        )
+        return SessionManager.seal_session(response.SerializeToString())
 
 
     @staticmethod
