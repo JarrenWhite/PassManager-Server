@@ -333,6 +333,16 @@ class DataHandler:
         if status:
             error_list.append(status.error_proto("entry_public_id"))
 
+        # Return Errors
+        if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
 
         return SecureResponse()
 
