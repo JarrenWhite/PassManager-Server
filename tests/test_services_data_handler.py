@@ -1406,6 +1406,13 @@ class TestGet:
             return self.sanitise_entry_public_id_response
         monkeypatch.setattr(ServiceUtils, "sanitise_entry_public_id", fake_sanitise_entry_public_id)
 
+        self.get_entry_called = []
+        self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
+        def fake_get_entry(user_id, public_id):
+            self.get_entry_called.append((user_id, public_id))
+            return self.get_entry_response
+        monkeypatch.setattr(DBUtilsData, "get_entry", fake_get_entry)
+
         yield
 
     def test_calls_open_session(self):
@@ -1564,6 +1571,66 @@ class TestGet:
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
         assert "entry_public_id" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, entry_public_id",
+        [
+            (0,     "abc"),
+            (15,    ""),
+            (350,   "123"*8)
+        ]
+    )
+    def test_calls_get_entry(self, user_id, entry_public_id):
+        """Should call the data get entry function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.entry_public_id = entry_public_id
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.get(request)
+
+        assert len(self.get_entry_called) == 1
+
+        create = self.get_entry_called[0]
+        assert create[0] == user_id
+        assert create[1] == entry_public_id
+
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "unknown")
+        ]
+    )
+    def test_returns_error_get_call_fails(self, failure_reason, field):
+        """Should return correct error if data get function fails"""
+
+        self.get_entry_response = False, failure_reason, b'', b''
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.get(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
 
 
 if __name__ == '__main__':
