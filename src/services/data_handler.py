@@ -343,6 +343,25 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        status, failure_reason, entry_name, entry_data = DBUtilsData.get_entry(
+            user_id=user_id,
+            public_id=request.entry_public_id
+        )
+
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
 
         return SecureResponse()
 
