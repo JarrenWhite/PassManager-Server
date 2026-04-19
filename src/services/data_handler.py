@@ -362,8 +362,17 @@ class DataHandler:
                 failure_data=failure
             )
 
-
-        return SecureResponse()
+        # Successful Return
+        response = DataGetResponse(
+            username_hash=request.username_hash,
+            entry_public_id=request.entry_public_id,
+            entry_name=entry_name,
+            entry_data=entry_data
+        )
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod
