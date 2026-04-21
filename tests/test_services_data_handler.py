@@ -1769,6 +1769,19 @@ class TestList:
             return self.open_session_response
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
+        self.from_string_called = []
+        self.from_string_response = DataListRequest(
+            username_hash=b'fake_username_hash'
+        )
+        self.from_string_exception = False
+        def fake_from_string(data):
+            self.from_string_called.append(data)
+            if self.from_string_exception:
+                raise DecodeError("invalid bytes")
+            else:
+                return self.from_string_response
+        monkeypatch.setattr(DataListRequest, "FromString", fake_from_string)
+
         yield
 
     def test_calls_open_session(self):
@@ -1789,6 +1802,44 @@ class TestList:
         """Should return error if open session fails"""
 
         self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.list(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_to_convert_to_proto(self):
+        """Should attempt to convert returned bytes to protobuf"""
+
+        self.from_string_response = DataListRequest()
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.list(request)
+
+        assert len(self.from_string_called) == 1
+        assert self.from_string_called[0] == b'fake_decrypted_bytes'
+
+    def test_convert_to_proto_fails(self):
+        """Should fail if conversion to proto raises exception"""
+
+        self.from_string_exception = True
 
         request = SecureRequest(
             session_id="fake_session_id",
