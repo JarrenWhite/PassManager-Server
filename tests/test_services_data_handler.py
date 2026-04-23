@@ -1789,6 +1789,13 @@ class TestList:
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
+        self.get_list_called = []
+        self.get_list_response = True, None, []
+        def fake_get_list(user_id):
+            self.get_list_called.append(user_id)
+            return self.get_list_response
+        monkeypatch.setattr(DBUtilsData, "get_list", fake_get_list)
+
         yield
 
     def test_calls_open_session(self):
@@ -1931,6 +1938,64 @@ class TestList:
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
 
+
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            0,
+            15,
+            350
+        ]
+    )
+    def test_calls_get_list(self, user_id):
+        """Should call the data get list function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.list(request)
+
+        assert len(self.get_list_called) == 1
+
+        create = self.get_list_called[0]
+        assert create == user_id
+
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "unknown")
+        ]
+    )
+    def test_returns_error_list_call_fails(self, failure_reason, field):
+        """Should return correct error if data list function fails"""
+
+        self.get_list_response = False, failure_reason, []
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.list(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
 
 
 if __name__ == '__main__':
