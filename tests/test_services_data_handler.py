@@ -1888,7 +1888,6 @@ class TestList:
         assert len(self.sanitise_username_called) == 1
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
-
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
@@ -1937,7 +1936,6 @@ class TestList:
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
-
 
     @pytest.mark.parametrize(
         "user_id",
