@@ -443,6 +443,18 @@ class DataHandler:
                 failure_data=failure
             )
 
-
-
-        return SecureResponse()
+        # Successful Return
+        response = DataListResponse(
+            username_hash=request.username_hash,
+            entry_details=[
+                DataListResponse.EntryDetails(
+                    entry_public_id=entry_public_id,
+                    entry_name=entry_name
+                )
+                for entry_public_id, entry_name in entry_list.items()
+            ]
+        )
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
