@@ -1790,11 +1790,18 @@ class TestList:
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
         self.get_list_called = []
-        self.get_list_response = True, None, []
+        self.get_list_response = True, None, {}
         def fake_get_list(user_id):
             self.get_list_called.append(user_id)
             return self.get_list_response
         monkeypatch.setattr(DBUtilsData, "get_list", fake_get_list)
+
+        self.serialize_to_string_called = []
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+        def fake_serialize_to_string(input):
+            self.serialize_to_string_called.append(input)
+            return self.serialize_to_string_response
+        monkeypatch.setattr(DataListResponse, "SerializeToString", fake_serialize_to_string)
 
         yield
 
@@ -1994,6 +2001,32 @@ class TestList:
         assert error.field == field
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
+
+    def test_calls_convert_to_proto(self):
+        """Should convert protobuf to bytes"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        result_list = {"a": b'1', "b": b'2', "c": b'3'}
+        self.get_list_response = True, None, result_list
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.list(request)
+
+        assert len(self.serialize_to_string_called) == 1
+
+        serialize_to_string = self.serialize_to_string_called[0]
+        assert isinstance(serialize_to_string, DataListResponse)
+        assert serialize_to_string.username_hash == b'fake_username_hash'
+
+        entry_details = serialize_to_string.entry_details
+        assert len(entry_details) == len(result_list)
+        assert {e.entry_public_id: e.entry_name for e in entry_details} == result_list
 
 
 if __name__ == '__main__':
