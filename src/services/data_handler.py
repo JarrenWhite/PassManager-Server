@@ -23,8 +23,6 @@ from utils import ServiceUtils, SessionManager, DBUtilsData
 from enums import FailureReason
 
 
-# TODO - Placeholder class. Requires completion.
-
 class DataHandler:
 
     @staticmethod
