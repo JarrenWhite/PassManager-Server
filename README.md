@@ -31,66 +31,23 @@ The tests make use of the pytest framework. As well as being runnable using a py
 ├── README.md
 ├── requirements.txt
 │
-├── config
+├── config/
 │   ├── config.ini
 │   └── logging_config.json
 │
-├── PassManager-Protobufs
+├── PassManager-Protobufs/
 │
-├── docs
-│   ├── api_calls.md
-│   ├── api_responses.md
-│   ├── authentication.md
-│   ├── cryptographic_implementation.md
-│   ├── database_schema.md
-│   │
-│   └── design
-│       ├── api_call_lifecycle.md
-│       ├── cryptography_utils.md
-│       ├── db_utils.md
-│       ├── PassManager-Server.pdf
-│       └── password_change_lifecycle.md
+├── docs/
 │
-├── src
+├── src/
 │   ├── main.py
 │   │
-│   ├── database
-│   │   ├── __init__.py
-│   │   ├── database_models.py
-│   │   └── database_setup.py
-│   │
-│   ├── enums
-│   │   ├── __init__.py
-│   │   └── failure_reason.py
-│   │
-│   ├── protos
-│   │   ├── common/
-│   │   ├── data/
-│   │   ├── password/
-│   │   ├── session/
-│   │   └── user/
-│   │
-│   └── utils
-│       ├── __init__.py
-│       ├── database_config.py
-│       ├── db_utils_auth.py
-│       ├── db_utils_data.py
-│       ├── db_utils_password.py
-│       ├── db_utils_session.py
-│       ├── db_utils_user.py
-│       ├── logging_setup.py
-│       ├── service_utils.py
-│       └── session_manager.py
+│   ├── cryptography/
+│   ├── database/
+│   ├── enums/
+│   ├── passmanager/
+│   ├── services/
+│   └── utils/
 │
-└── tests
-    ├── all_tests.py
-    ├── mock_classes.py
-    ├── test_database_database_models.py
-    ├── test_database_database_setup.py
-    ├── test_utils_database_config.py
-    ├── test_utils_db_utils_auth.py
-    ├── test_utils_db_utils_data.py
-    ├── test_utils_db_utils_password.py
-    ├── test_utils_db_utils_session.py
-    └── test_utils_db_utils_user.py
+└── tests/
 ```
