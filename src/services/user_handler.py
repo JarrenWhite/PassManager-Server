@@ -160,7 +160,10 @@ class UserHandler():
         response = UserUsernameResponse(
             new_username=request.new_username
         )
-        return SessionManager.seal_session(response.SerializeToString())
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod
@@ -237,4 +240,7 @@ class UserHandler():
         response = UserDeleteResponse(
             username_hash=request.username_hash
         )
-        return SessionManager.seal_session(response.SerializeToString())
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )

@@ -215,22 +215,35 @@ Global___DataListRequest: _TypeAlias = DataListRequest  # noqa: Y015
 class DataListResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
+    @_typing.final
+    class EntryDetails(_message.Message):
+        DESCRIPTOR: _descriptor.Descriptor
+
+        ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+        ENTRY_NAME_FIELD_NUMBER: _builtins.int
+        entry_public_id: _builtins.str
+        entry_name: _builtins.bytes
+        def __init__(
+            self,
+            *,
+            entry_public_id: _builtins.str = ...,
+            entry_name: _builtins.bytes = ...,
+        ) -> None: ...
+        _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_name", b"entry_name", "entry_public_id", b"entry_public_id"]  # noqa: Y015
+        def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_NAME_FIELD_NUMBER: _builtins.int
-    ENTRY_DATA_FIELD_NUMBER: _builtins.int
+    ENTRY_DETAILS_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
     @_builtins.property
-    def entry_name(self) -> _containers.RepeatedScalarFieldContainer[_builtins.bytes]: ...
-    @_builtins.property
-    def entry_data(self) -> _containers.RepeatedScalarFieldContainer[_builtins.bytes]: ...
+    def entry_details(self) -> _containers.RepeatedCompositeFieldContainer[Global___DataListResponse.EntryDetails]: ...
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_name: _abc.Iterable[_builtins.bytes] | None = ...,
-        entry_data: _abc.Iterable[_builtins.bytes] | None = ...,
+        entry_details: _abc.Iterable[Global___DataListResponse.EntryDetails] | None = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_details", b"entry_details", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataListResponse: _TypeAlias = DataListResponse  # noqa: Y015

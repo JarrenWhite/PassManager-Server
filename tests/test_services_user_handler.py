@@ -321,8 +321,8 @@ class TestUsername:
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(response):
-            self.seal_session_called.append(response)
+        def fake_seal_session(session_id, response):
+            self.seal_session_called.append((session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
@@ -591,7 +591,10 @@ class TestUsername:
         response = UserHandler.username(request)
 
         assert len(self.seal_session_called) == 1
-        assert self.seal_session_called[0] == b'fake_serialized_bytes'
+
+        sealed = self.seal_session_called[0]
+        assert sealed[0] == "fake_session_id"
+        assert sealed[1] == b'fake_serialized_bytes'
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -708,8 +711,8 @@ class TestDelete():
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(response):
-            self.seal_session_called.append(response)
+        def fake_seal_session(session_id, response):
+            self.seal_session_called.append((session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
@@ -791,6 +794,8 @@ class TestDelete():
 
     def test_calls_sanitise_username(self):
         """Should call sanitise username"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -897,6 +902,25 @@ class TestDelete():
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, UserDeleteResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
+
+    def test_calls_seal_session(self):
+        """Should call to seal session"""
+
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert len(self.seal_session_called) == 1
+
+        sealed = self.seal_session_called[0]
+        assert sealed[0] == "fake_session_id"
+        assert sealed[1] == b'fake_serialized_bytes'
 
     @pytest.mark.parametrize(
         "secure_response",
