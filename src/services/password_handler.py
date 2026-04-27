@@ -1,3 +1,8 @@
+from google.protobuf.message import DecodeError
+from passmanager.common.v0.secure_pb2 import (
+    SecureRequest,
+    SecureResponse
+)
 from passmanager.password.v0.password_payloads_pb2 import (
     PasswordStartRequest,
     PasswordStartResponse,
@@ -12,6 +17,12 @@ from passmanager.password.v0.password_payloads_pb2 import (
     PasswordUpdateRequest,
     PasswordUpdateResponse
 )
+from passmanager.common.v0.error_pb2 import (
+    Failure
+)
+
+from utils import ServiceUtils, SessionManager, DBUtilsPassword
+from enums import FailureReason
 
 
 # TODO - Placeholder class. Requires completion.
@@ -19,25 +30,25 @@ from passmanager.password.v0.password_payloads_pb2 import (
 class PasswordHandler():
 
     @staticmethod
-    def start(request: PasswordStartRequest) -> PasswordStartResponse:
-        return PasswordStartResponse()
+    def start(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def auth(request: PasswordAuthRequest) -> PasswordAuthResponse:
-        return PasswordAuthResponse()
+    def auth(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def complete(request: PasswordCompleteRequest) -> PasswordCompleteResponse:
-        return PasswordCompleteResponse()
+    def complete(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def abort(request: PasswordAbortRequest) -> PasswordAbortResponse:
-        return PasswordAbortResponse()
+    def abort(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def get(request: PasswordGetRequest) -> PasswordGetResponse:
-        return PasswordGetResponse()
+    def get(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def update(request: PasswordUpdateRequest) -> PasswordUpdateResponse:
-        return PasswordUpdateResponse()
+    def update(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
