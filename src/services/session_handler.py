@@ -1,3 +1,8 @@
+from google.protobuf.message import DecodeError
+from passmanager.common.v0.secure_pb2 import (
+    SecureRequest,
+    SecureResponse
+)
 from passmanager.session.v0.session_pb2 import (
     SessionStartRequest,
     SessionStartResponse,
@@ -10,6 +15,12 @@ from passmanager.session.v0.session_payloads_pb2 import (
     SessionCleanRequest,
     SessionCleanResponse
 )
+from passmanager.common.v0.error_pb2 import (
+    Failure
+)
+
+from utils import ServiceUtils, SessionManager, DBUtilsSession
+from enums import FailureReason
 
 
 # TODO - Placeholder class. Requires completion.
@@ -25,9 +36,9 @@ class SessionHandler:
         return SessionAuthResponse()
 
     @staticmethod
-    def delete(request: SessionDeleteRequest) -> SessionDeleteResponse:
-        return SessionDeleteResponse()
+    def delete(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
 
     @staticmethod
-    def clean(request: SessionCleanRequest) -> SessionCleanResponse:
-        return SessionCleanResponse()
+    def clean(secure_request: SecureRequest) -> SecureResponse:
+        return SecureResponse()
