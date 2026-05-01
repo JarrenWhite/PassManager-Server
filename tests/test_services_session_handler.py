@@ -39,7 +39,26 @@ class TestStart():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
         yield
+
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        request = SessionStartRequest(
+            username_hash=b'fake_username_hash'
+        )
+
+        response = SessionHandler.start(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
 
 
 if __name__ == '__main__':
