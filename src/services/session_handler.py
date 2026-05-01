@@ -29,15 +29,25 @@ class SessionHandler:
 
     @staticmethod
     def start(request: SessionStartRequest) -> SessionStartResponse:
+        error_list = []
+
+        # Sanitise Inputs
+        status = ServiceUtils.sanitise_username(request.username_hash)
+        if status:
+            error_list.append(status.error_proto("username_hash"))
+
         return SessionStartResponse()
+
 
     @staticmethod
     def auth(request: SessionAuthRequest) -> SessionAuthResponse:
         return SessionAuthResponse()
 
+
     @staticmethod
     def delete(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
+
 
     @staticmethod
     def clean(secure_request: SecureRequest) -> SecureResponse:
