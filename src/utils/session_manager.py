@@ -26,8 +26,8 @@ class SessionManager():
         proof_val_m1: bytes,
         maximum_requests: int,
         expiry_time: int
-    ) -> Tuple[bool, bytes, Optional[FailureReason]]:
-        return True, b'', None
+    ) -> Tuple[bool, Optional[FailureReason], bytes]:
+        return True, None, b''
 
     @staticmethod
     def open_session(
