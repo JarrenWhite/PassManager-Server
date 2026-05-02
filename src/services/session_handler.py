@@ -46,6 +46,11 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        status, failure_reason = SessionManager.start_new_session(
+            username_hash=request.username_hash
+        )
+
 
         return SessionStartResponse()
 
