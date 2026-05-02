@@ -36,6 +36,17 @@ class SessionHandler:
         if status:
             error_list.append(status.error_proto("username_hash"))
 
+        # Return errors
+        if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SessionStartResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
         return SessionStartResponse()
 
 
