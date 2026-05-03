@@ -51,6 +51,19 @@ class SessionHandler:
             username_hash=request.username_hash
         )
 
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto("new_username"))
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SessionStartResponse(
+                success=False,
+                failure_data=failure
+            )
+
 
         return SessionStartResponse()
 
