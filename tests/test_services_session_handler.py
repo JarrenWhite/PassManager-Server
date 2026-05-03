@@ -128,6 +128,35 @@ class TestStart():
         start = self.start_new_session_called[0]
         assert start == b'fake_username_hash'
 
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "new_username")
+        ]
+    )
+    def test_returns_error_start_new_session_call_fails(self, failure_reason, field):
+        """Should return correct error if start new session function fails"""
+
+        self.start_new_session_response = False, failure_reason
+
+        request = SessionStartRequest(
+            username_hash=b'fake_username_hash'
+        )
+
+        response = SessionHandler.start(request)
+
+        assert isinstance(response, SessionStartResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
