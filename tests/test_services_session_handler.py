@@ -47,7 +47,14 @@ class TestStart():
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
         self.start_new_session_called = []
-        self.start_new_session_response = True, None
+        self.start_new_session_response = (
+            True,
+            None,
+            "fake_auth_id",
+            b'fake_srp_salt',
+            b'fake_eph_public_b',
+            b'fake_master_key_salt'
+        )
         def fake_start_new_session(username_hash):
             self.start_new_session_called.append(username_hash)
             return self.start_new_session_response
@@ -140,7 +147,7 @@ class TestStart():
     def test_returns_error_start_new_session_call_fails(self, failure_reason, field):
         """Should return correct error if start new session function fails"""
 
-        self.start_new_session_response = False, failure_reason
+        self.start_new_session_response = False, failure_reason, "", b'', b'', b''
 
         request = SessionStartRequest(
             username_hash=b'fake_username_hash'

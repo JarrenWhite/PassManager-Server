@@ -47,9 +47,10 @@ class SessionHandler:
             )
 
         # Call Util function
-        status, failure_reason = SessionManager.start_new_session(
+        result = SessionManager.start_new_session(
             username_hash=request.username_hash
         )
+        status, failure_reason, auth_id, srp_salt, eph_public_b, master_key_salt = result
 
         # Return error
         if not status:

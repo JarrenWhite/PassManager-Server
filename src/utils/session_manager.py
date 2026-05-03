@@ -15,8 +15,8 @@ class SessionManager():
     @staticmethod
     def start_new_session(
         username_hash: bytes
-    ) -> Tuple[bool, Optional[FailureReason]]:
-        return True, None
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes, bytes, bytes]:
+        return True, None, "", b'', b'', b''
 
     @staticmethod
     def auth_new_session(
