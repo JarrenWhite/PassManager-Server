@@ -65,8 +65,17 @@ class SessionHandler:
                 failure_data=failure
             )
 
-
-        return SessionStartResponse()
+        # Successful Return
+        success_data = SessionStartResponse.Success(
+            auth_id=auth_id,
+            srp_salt=srp_salt,
+            eph_public_b=eph_public_b,
+            master_key_salt=master_key_salt
+        )
+        return SessionStartResponse(
+            success=True,
+            success_data=success_data
+        )
 
 
     @staticmethod
