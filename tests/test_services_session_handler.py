@@ -192,5 +192,38 @@ class TestStart():
         assert response_data.master_key_salt == b'fake_master_key_salt'
 
 
+class TestAuth():
+    """Test cases for session auth function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
+        yield
+
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            auth_id="fake_auth_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_ml',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
