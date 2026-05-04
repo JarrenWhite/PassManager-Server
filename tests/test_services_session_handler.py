@@ -164,6 +164,33 @@ class TestStart():
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
 
+    def test_successful_completion(self):
+        """Should return successful result"""
+
+        self.start_new_session_response = (
+            True,
+            None,
+            "fake_auth_id",
+            b'fake_srp_salt',
+            b'fake_eph_public_b',
+            b'fake_master_key_salt'
+        )
+
+        request = SessionStartRequest(
+            username_hash=b'fake_username_hash'
+        )
+
+        response = SessionHandler.start(request)
+
+        assert isinstance(response, SessionStartResponse)
+        assert response.success
+
+        response_data = response.success_data
+        assert response_data.auth_id == "fake_auth_id"
+        assert response_data.srp_salt == b'fake_srp_salt'
+        assert response_data.eph_public_b == b'fake_eph_public_b'
+        assert response_data.master_key_salt == b'fake_master_key_salt'
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
