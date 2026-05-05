@@ -45,16 +45,16 @@ class DataCreateResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataCreateResponse: _TypeAlias = DataCreateResponse  # noqa: Y015
@@ -64,24 +64,24 @@ class DataEditRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     ENTRY_NAME_FIELD_NUMBER: _builtins.int
     ENTRY_DATA_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     entry_name: _builtins.bytes
     entry_data: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         entry_name: _builtins.bytes | None = ...,
         entry_data: _builtins.bytes | None = ...,
     ) -> None: ...
     _HasFieldArgType: _TypeAlias = _typing.Literal["_entry_data", b"_entry_data", "_entry_name", b"_entry_name", "entry_data", b"entry_data", "entry_name", b"entry_name"]  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["_entry_data", b"_entry_data", "_entry_name", b"_entry_name", "entry_data", b"entry_data", "entry_name", b"entry_name", "entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["_entry_data", b"_entry_data", "_entry_name", b"_entry_name", "entry_data", b"entry_data", "entry_name", b"entry_name", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     _WhichOneofReturnType__entry_data: _TypeAlias = _typing.Literal["entry_data"]  # noqa: Y015
     _WhichOneofArgType__entry_data: _TypeAlias = _typing.Literal["_entry_data", b"_entry_data"]  # noqa: Y015
@@ -99,16 +99,16 @@ class DataEditResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataEditResponse: _TypeAlias = DataEditResponse  # noqa: Y015
@@ -118,16 +118,16 @@ class DataDeleteRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataDeleteRequest: _TypeAlias = DataDeleteRequest  # noqa: Y015
@@ -137,16 +137,16 @@ class DataDeleteResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataDeleteResponse: _TypeAlias = DataDeleteResponse  # noqa: Y015
@@ -156,16 +156,16 @@ class DataGetRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataGetRequest: _TypeAlias = DataGetRequest  # noqa: Y015
@@ -175,22 +175,22 @@ class DataGetResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     ENTRY_NAME_FIELD_NUMBER: _builtins.int
     ENTRY_DATA_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     entry_name: _builtins.bytes
     entry_data: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         entry_name: _builtins.bytes = ...,
         entry_data: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___DataGetResponse: _TypeAlias = DataGetResponse  # noqa: Y015
@@ -219,17 +219,17 @@ class DataListResponse(_message.Message):
     class EntryDetails(_message.Message):
         DESCRIPTOR: _descriptor.Descriptor
 
-        ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+        PUBLIC_ID_FIELD_NUMBER: _builtins.int
         ENTRY_NAME_FIELD_NUMBER: _builtins.int
-        entry_public_id: _builtins.str
+        public_id: _builtins.str
         entry_name: _builtins.bytes
         def __init__(
             self,
             *,
-            entry_public_id: _builtins.str = ...,
+            public_id: _builtins.str = ...,
             entry_name: _builtins.bytes = ...,
         ) -> None: ...
-        _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_name", b"entry_name", "entry_public_id", b"entry_public_id"]  # noqa: Y015
+        _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_name", b"entry_name", "public_id", b"public_id"]  # noqa: Y015
         def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int

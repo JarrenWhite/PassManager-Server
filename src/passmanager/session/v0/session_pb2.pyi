@@ -41,23 +41,23 @@ class SessionStartResponse(_message.Message):
     class Success(_message.Message):
         DESCRIPTOR: _descriptor.Descriptor
 
-        AUTH_ID_FIELD_NUMBER: _builtins.int
+        PUBLIC_ID_FIELD_NUMBER: _builtins.int
         SRP_SALT_FIELD_NUMBER: _builtins.int
         EPH_PUBLIC_B_FIELD_NUMBER: _builtins.int
         MASTER_KEY_SALT_FIELD_NUMBER: _builtins.int
-        auth_id: _builtins.str
+        public_id: _builtins.str
         srp_salt: _builtins.bytes
         eph_public_b: _builtins.bytes
         master_key_salt: _builtins.bytes
         def __init__(
             self,
             *,
-            auth_id: _builtins.str = ...,
+            public_id: _builtins.str = ...,
             srp_salt: _builtins.bytes = ...,
             eph_public_b: _builtins.bytes = ...,
             master_key_salt: _builtins.bytes = ...,
         ) -> None: ...
-        _ClearFieldArgType: _TypeAlias = _typing.Literal["auth_id", b"auth_id", "eph_public_b", b"eph_public_b", "master_key_salt", b"master_key_salt", "srp_salt", b"srp_salt"]  # noqa: Y015
+        _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_public_b", b"eph_public_b", "master_key_salt", b"master_key_salt", "public_id", b"public_id", "srp_salt", b"srp_salt"]  # noqa: Y015
         def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
     SUCCESS_FIELD_NUMBER: _builtins.int
@@ -90,13 +90,13 @@ class SessionAuthRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    AUTH_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     EPH_VAL_A_FIELD_NUMBER: _builtins.int
     PROOF_VAL_M1_FIELD_NUMBER: _builtins.int
     MAXIMUM_REQUESTS_FIELD_NUMBER: _builtins.int
     EXPIRY_TIME_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    auth_id: _builtins.str
+    public_id: _builtins.str
     eph_val_a: _builtins.bytes
     proof_val_m1: _builtins.bytes
     maximum_requests: _builtins.int
@@ -105,13 +105,13 @@ class SessionAuthRequest(_message.Message):
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        auth_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         eph_val_a: _builtins.bytes = ...,
         proof_val_m1: _builtins.bytes = ...,
         maximum_requests: _builtins.int = ...,
         expiry_time: _builtins.int = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["auth_id", b"auth_id", "eph_val_a", b"eph_val_a", "expiry_time", b"expiry_time", "maximum_requests", b"maximum_requests", "proof_val_m1", b"proof_val_m1", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_val_a", b"eph_val_a", "expiry_time", b"expiry_time", "maximum_requests", b"maximum_requests", "proof_val_m1", b"proof_val_m1", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___SessionAuthRequest: _TypeAlias = SessionAuthRequest  # noqa: Y015

@@ -49,7 +49,7 @@ class ServiceUtils():
 
 
     @staticmethod
-    def sanitise_entry_public_id(
+    def sanitise_public_id(
         input: str
     ) -> Optional[FailureReason]:
         return None

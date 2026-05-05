@@ -50,7 +50,7 @@ class TestStart():
         self.start_new_session_response = (
             True,
             None,
-            "fake_auth_id",
+            "fake_public_id",
             b'fake_srp_salt',
             b'fake_eph_public_b',
             b'fake_master_key_salt'
@@ -170,7 +170,7 @@ class TestStart():
         self.start_new_session_response = (
             True,
             None,
-            "fake_auth_id",
+            "fake_public_id",
             b'fake_srp_salt',
             b'fake_eph_public_b',
             b'fake_master_key_salt'
@@ -186,7 +186,7 @@ class TestStart():
         assert response.success
 
         response_data = response.success_data
-        assert response_data.auth_id == "fake_auth_id"
+        assert response_data.public_id == "fake_public_id"
         assert response_data.srp_salt == b'fake_srp_salt'
         assert response_data.eph_public_b == b'fake_eph_public_b'
         assert response_data.master_key_salt == b'fake_master_key_salt'
@@ -212,7 +212,7 @@ class TestAuth():
 
         request = SessionAuthRequest(
             username_hash=b'fake_username_hash',
-            auth_id="fake_auth_id",
+            public_id="fake_public_id",
             eph_val_a=b'fake_eph_val_a',
             proof_val_m1=b'fake_proof_val_ml',
             maximum_requests=5,

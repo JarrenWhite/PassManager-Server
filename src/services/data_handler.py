@@ -104,7 +104,7 @@ class DataHandler:
         # Successful Return
         response = DataCreateResponse(
             username_hash=request.username_hash,
-            entry_public_id=public_id
+            public_id=public_id
         )
         return SessionManager.seal_session(
             session_id=secure_request.session_id,
@@ -151,9 +151,9 @@ class DataHandler:
         status = ServiceUtils.sanitise_username(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
-        status = ServiceUtils.sanitise_entry_public_id(request.entry_public_id)
+        status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
-            error_list.append(status.error_proto("entry_public_id"))
+            error_list.append(status.error_proto("public_id"))
         if request.HasField("entry_name"):
             status = ServiceUtils.sanitise_entry_name(request.entry_name)
             if status:
@@ -176,7 +176,7 @@ class DataHandler:
         # Call Util function
         status, failure_reason = DBUtilsData.edit(
             user_id=user_id,
-            public_id=request.entry_public_id,
+            public_id=request.public_id,
             entry_name=request.entry_name if request.HasField("entry_name") else None,
             entry_data=request.entry_data if request.HasField("entry_data") else None
         )
@@ -197,7 +197,7 @@ class DataHandler:
         # Successful Return
         response = DataEditResponse(
             username_hash=request.username_hash,
-            entry_public_id=request.entry_public_id
+            public_id=request.public_id
         )
         return SessionManager.seal_session(
             session_id=secure_request.session_id,
@@ -244,9 +244,9 @@ class DataHandler:
         status = ServiceUtils.sanitise_username(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
-        status = ServiceUtils.sanitise_entry_public_id(request.entry_public_id)
+        status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
-            error_list.append(status.error_proto("entry_public_id"))
+            error_list.append(status.error_proto("public_id"))
 
         # Return Errors
         if len(error_list) > 0:
@@ -261,7 +261,7 @@ class DataHandler:
         # Call Util function
         status, failure_reason = DBUtilsData.delete(
             user_id=user_id,
-            public_id=request.entry_public_id
+            public_id=request.public_id
         )
 
         # Return error
@@ -280,7 +280,7 @@ class DataHandler:
         # Successful Return
         response = DataDeleteResponse(
             username_hash=request.username_hash,
-            entry_public_id=request.entry_public_id
+            public_id=request.public_id
         )
         return SessionManager.seal_session(
             session_id=secure_request.session_id,
@@ -327,9 +327,9 @@ class DataHandler:
         status = ServiceUtils.sanitise_username(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
-        status = ServiceUtils.sanitise_entry_public_id(request.entry_public_id)
+        status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
-            error_list.append(status.error_proto("entry_public_id"))
+            error_list.append(status.error_proto("public_id"))
 
         # Return Errors
         if len(error_list) > 0:
@@ -344,7 +344,7 @@ class DataHandler:
         # Call Util function
         status, failure_reason, entry_name, entry_data = DBUtilsData.get_entry(
             user_id=user_id,
-            public_id=request.entry_public_id
+            public_id=request.public_id
         )
 
         # Return error
@@ -363,7 +363,7 @@ class DataHandler:
         # Successful Return
         response = DataGetResponse(
             username_hash=request.username_hash,
-            entry_public_id=request.entry_public_id,
+            public_id=request.public_id,
             entry_name=entry_name,
             entry_data=entry_data
         )
@@ -446,10 +446,10 @@ class DataHandler:
             username_hash=request.username_hash,
             entry_details=[
                 DataListResponse.EntryDetails(
-                    entry_public_id=entry_public_id,
+                    public_id=public_id,
                     entry_name=entry_name
                 )
-                for entry_public_id, entry_name in entry_list.items()
+                for public_id, entry_name in entry_list.items()
             ]
         )
         return SessionManager.seal_session(

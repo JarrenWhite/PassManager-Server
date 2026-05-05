@@ -48,22 +48,22 @@ class PasswordStartResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    AUTH_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     SRP_SALT_FIELD_NUMBER: _builtins.int
     EPH_PUBLIC_B_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    auth_id: _builtins.str
+    public_id: _builtins.str
     srp_salt: _builtins.bytes
     eph_public_b: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        auth_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         srp_salt: _builtins.bytes = ...,
         eph_public_b: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["auth_id", b"auth_id", "eph_public_b", b"eph_public_b", "srp_salt", b"srp_salt", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_public_b", b"eph_public_b", "public_id", b"public_id", "srp_salt", b"srp_salt", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordStartResponse: _TypeAlias = PasswordStartResponse  # noqa: Y015
@@ -73,22 +73,22 @@ class PasswordAuthRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    AUTH_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     EPH_VAL_A_FIELD_NUMBER: _builtins.int
     PROOF_VAL_M1_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    auth_id: _builtins.str
+    public_id: _builtins.str
     eph_val_a: _builtins.bytes
     proof_val_m1: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        auth_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         eph_val_a: _builtins.bytes = ...,
         proof_val_m1: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["auth_id", b"auth_id", "eph_val_a", b"eph_val_a", "proof_val_m1", b"proof_val_m1", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_val_a", b"eph_val_a", "proof_val_m1", b"proof_val_m1", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordAuthRequest: _TypeAlias = PasswordAuthRequest  # noqa: Y015
@@ -100,21 +100,21 @@ class PasswordAuthResponse(_message.Message):
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
     SESSION_ID_FIELD_NUMBER: _builtins.int
     SERVER_PROOF_M2_FIELD_NUMBER: _builtins.int
-    ENTRY_IDS_FIELD_NUMBER: _builtins.int
+    PUBLIC_IDS_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
     session_id: _builtins.str
     server_proof_m2: _builtins.bytes
     @_builtins.property
-    def entry_ids(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]: ...
+    def public_ids(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]: ...
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
         session_id: _builtins.str = ...,
         server_proof_m2: _builtins.bytes = ...,
-        entry_ids: _abc.Iterable[_builtins.str] | None = ...,
+        public_ids: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_ids", b"entry_ids", "server_proof_m2", b"server_proof_m2", "session_id", b"session_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_ids", b"public_ids", "server_proof_m2", b"server_proof_m2", "session_id", b"session_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordAuthResponse: _TypeAlias = PasswordAuthResponse  # noqa: Y015
@@ -188,16 +188,16 @@ class PasswordGetRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordGetRequest: _TypeAlias = PasswordGetRequest  # noqa: Y015
@@ -207,22 +207,22 @@ class PasswordGetResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     ENTRY_NAME_FIELD_NUMBER: _builtins.int
     ENTRY_DATA_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     entry_name: _builtins.bytes
     entry_data: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         entry_name: _builtins.bytes = ...,
         entry_data: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordGetResponse: _TypeAlias = PasswordGetResponse  # noqa: Y015
@@ -232,22 +232,22 @@ class PasswordUpdateRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     ENTRY_NAME_FIELD_NUMBER: _builtins.int
     ENTRY_DATA_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     entry_name: _builtins.bytes
     entry_data: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         entry_name: _builtins.bytes = ...,
         entry_data: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_data", b"entry_data", "entry_name", b"entry_name", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordUpdateRequest: _TypeAlias = PasswordUpdateRequest  # noqa: Y015
@@ -257,16 +257,16 @@ class PasswordUpdateResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    ENTRY_PUBLIC_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    entry_public_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        entry_public_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["entry_public_id", b"entry_public_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordUpdateResponse: _TypeAlias = PasswordUpdateResponse  # noqa: Y015

@@ -21,7 +21,7 @@ class SessionManager():
     @staticmethod
     def auth_new_session(
         username_hash: bytes,
-        auth_id: str,
+        public_id: str,
         eph_val_a: bytes,
         proof_val_m1: bytes,
         maximum_requests: int,
