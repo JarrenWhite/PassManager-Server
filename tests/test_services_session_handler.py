@@ -205,6 +205,13 @@ class TestAuth():
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
+
         yield
 
     def test_calls_sanitise_username(self):
@@ -223,6 +230,23 @@ class TestAuth():
 
         assert len(self.sanitise_username_called) == 1
         assert self.sanitise_username_called[0] == b'fake_username_hash'
+
+    def test_calls_sanitise_public_id(self):
+        """Should call sanitise public id"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_ml',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == "fake_public_id"
 
 
 if __name__ == '__main__':
