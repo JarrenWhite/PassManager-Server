@@ -626,7 +626,7 @@ class TestEdit:
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
     def test_calls_sanitise_public_id(self):
-        """Should call sanitise entry public id"""
+        """Should call sanitise public id"""
 
         self.from_string_response.public_id = "fake_public_id"
 
@@ -1139,7 +1139,7 @@ class TestDelete:
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
     def test_calls_sanitise_public_id(self):
-        """Should call sanitise entry public id"""
+        """Should call sanitise public id"""
 
         self.from_string_response.public_id = "fake_public_id"
 
@@ -1526,7 +1526,7 @@ class TestGet:
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
     def test_calls_sanitise_public_id(self):
-        """Should call sanitise entry public id"""
+        """Should call sanitise public id"""
 
         self.from_string_response.public_id = "fake_public_id"
 
