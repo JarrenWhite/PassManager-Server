@@ -5,7 +5,6 @@ from enums import FailureReason
 
 class ServiceUtils():
 
-
     @staticmethod
     def sanitise_username(
         input: bytes
@@ -53,3 +52,31 @@ class ServiceUtils():
         input: str
     ) -> Optional[FailureReason]:
         return None
+
+
+    @staticmethod
+    def sanitise_eph_val_a(
+        input: bytes
+    )-> Optional[FailureReason]:
+      return None
+
+
+    @staticmethod
+    def sanitise_proof_val_m1(
+        input: bytes
+    )-> Optional[FailureReason]:
+      return None
+
+
+    @staticmethod
+    def sanitise_maximum_requests(
+        input: int
+    )-> Optional[FailureReason]:
+      return None
+
+
+    @staticmethod
+    def sanitise_expiry_time(
+        input: int
+    )-> Optional[FailureReason]:
+      return None
