@@ -89,7 +89,18 @@ class SessionHandler:
         status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
             error_list.append(status.error_proto("public_id"))
-
+        status = ServiceUtils.sanitise_eph_val_a(request.eph_val_a)
+        if status:
+            error_list.append(status.error_proto("eph_val_a"))
+        status = ServiceUtils.sanitise_proof_val_m1(request.proof_val_m1)
+        if status:
+            error_list.append(status.error_proto("proof_val_m1"))
+        status = ServiceUtils.sanitise_maximum_requests(request.maximum_requests)
+        if status:
+            error_list.append(status.error_proto("maximum_requests"))
+        status = ServiceUtils.sanitise_expiry_time(request.expiry_time)
+        if status:
+            error_list.append(status.error_proto("expiry_time"))
 
 
         return SessionAuthResponse()
