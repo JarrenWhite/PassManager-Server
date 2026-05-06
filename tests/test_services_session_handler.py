@@ -212,6 +212,34 @@ class TestAuth():
             return self.sanitise_public_id_response
         monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
 
+        self.sanitise_eph_val_a_called = []
+        self.sanitise_eph_val_a_response = None
+        def fake_sanitise_eph_val_a(input):
+            self.sanitise_eph_val_a_called.append(input)
+            return self.sanitise_eph_val_a_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_eph_val_a", fake_sanitise_eph_val_a)
+
+        self.sanitise_proof_val_m1_called = []
+        self.sanitise_proof_val_m1_response = None
+        def fake_sanitise_proof_val_m1(input):
+            self.sanitise_proof_val_m1_called.append(input)
+            return self.sanitise_proof_val_m1_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_proof_val_m1", fake_sanitise_proof_val_m1)
+
+        self.sanitise_maximum_requests_called = []
+        self.sanitise_maximum_requests_response = None
+        def fake_sanitise_maximum_requests(input):
+            self.sanitise_maximum_requests_called.append(input)
+            return self.sanitise_maximum_requests_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_maximum_requests", fake_sanitise_maximum_requests)
+
+        self.sanitise_expiry_time_called = []
+        self.sanitise_expiry_time_response = None
+        def fake_sanitise_expiry_time(input):
+            self.sanitise_expiry_time_called.append(input)
+            return self.sanitise_expiry_time_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_expiry_time", fake_sanitise_expiry_time)
+
         yield
 
     def test_calls_sanitise_username(self):
@@ -221,7 +249,7 @@ class TestAuth():
             username_hash=b'fake_username_hash',
             public_id="fake_public_id",
             eph_val_a=b'fake_eph_val_a',
-            proof_val_m1=b'fake_proof_val_ml',
+            proof_val_m1=b'fake_proof_val_m1',
             maximum_requests=5,
             expiry_time=8
         )
@@ -238,7 +266,7 @@ class TestAuth():
             username_hash=b'fake_username_hash',
             public_id="fake_public_id",
             eph_val_a=b'fake_eph_val_a',
-            proof_val_m1=b'fake_proof_val_ml',
+            proof_val_m1=b'fake_proof_val_m1',
             maximum_requests=5,
             expiry_time=8
         )
@@ -247,6 +275,74 @@ class TestAuth():
 
         assert len(self.sanitise_public_id_called) == 1
         assert self.sanitise_public_id_called[0] == "fake_public_id"
+
+    def test_calls_sanitise_eph_val_a(self):
+        """Should call sanitise eph val a"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.sanitise_eph_val_a_called) == 1
+        assert self.sanitise_eph_val_a_called[0] == b'fake_eph_val_a'
+
+    def test_calls_sanitise_proof_val_m1(self):
+        """Should call sanitise proof val m1"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.sanitise_proof_val_m1_called) == 1
+        assert self.sanitise_proof_val_m1_called[0] == b'fake_proof_val_m1'
+
+    def test_calls_sanitise_maximum_requests(self):
+        """Should call sanitise maximum requests"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.sanitise_maximum_requests_called) == 1
+        assert self.sanitise_maximum_requests_called[0] == 5
+
+    def test_calls_sanitise_expiry_time(self):
+        """Should call sanitise expiry time"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.sanitise_expiry_time_called) == 1
+        assert self.sanitise_expiry_time_called[0] == 8
 
 
 if __name__ == '__main__':
