@@ -102,6 +102,17 @@ class SessionHandler:
         if status:
             error_list.append(status.error_proto("expiry_time"))
 
+        # Return errors
+        if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SessionAuthResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
 
         return SessionAuthResponse()
 
