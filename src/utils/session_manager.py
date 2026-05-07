@@ -26,7 +26,7 @@ class SessionManager():
         proof_val_m1: bytes,
         maximum_requests: int,
         expiry_time: int
-    ) -> Tuple[bool, Optional[FailureReason], string, bytes]:
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
         return True, None, "", b''
 
     @staticmethod
