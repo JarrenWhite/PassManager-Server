@@ -237,6 +237,27 @@ class TestAuth():
             return self.sanitise_expiry_time_response
         monkeypatch.setattr(ServiceUtils, "sanitise_expiry_time", fake_sanitise_expiry_time)
 
+        self.auth_new_session_called = []
+        self.auth_new_session_response = True, None, "fake_public_session_id", b'fake_server_proof'
+        def fake_auth_new_session(
+                username_hash: bytes,
+                public_id: str,
+                eph_val_a: bytes,
+                proof_val_m1: bytes,
+                maximum_requests: int,
+                expiry_time: int
+            ):
+            self.auth_new_session_called.append((
+                username_hash,
+                public_id,
+                eph_val_a,
+                proof_val_m1,
+                maximum_requests,
+                expiry_time
+            ))
+            return self.auth_new_session_response
+        monkeypatch.setattr(SessionManager, "auth_new_session", fake_auth_new_session)
+
         yield
 
     def test_calls_sanitise_username(self):
@@ -402,6 +423,30 @@ class TestAuth():
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
+
+    def test_calls_auth_new_session(self):
+        """Should call the auth new session function"""
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert len(self.auth_new_session_called) == 1
+
+        auth = self.auth_new_session_called[0]
+        assert auth[0] == b'fake_username_hash'
+        assert auth[1] == "fake_public_id"
+        assert auth[2] == b'fake_eph_val_a'
+        assert auth[3] == b'fake_proof_val_m1'
+        assert auth[4] == 5
+        assert auth[5] == 8
 
 
 if __name__ == '__main__':
