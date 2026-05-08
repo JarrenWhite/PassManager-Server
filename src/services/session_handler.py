@@ -123,6 +123,18 @@ class SessionHandler:
         )
         status, failure_reason, session_public_id, server_proof_val = result
 
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto("new_username"))
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SessionAuthResponse(
+                success=False,
+                failure_data=failure
+            )
 
 
         return SessionAuthResponse()
