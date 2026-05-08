@@ -448,6 +448,40 @@ class TestAuth():
         assert auth[4] == 5
         assert auth[5] == 8
 
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "new_username")
+        ]
+    )
+    def test_returns_error_auth_new_session_call_fails(self, failure_reason, field):
+        """Should return correct error if auth new session function fails"""
+
+        self.auth_new_session_response = False, failure_reason, "", b''
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert isinstance(response, SessionAuthResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
