@@ -112,6 +112,17 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        result = SessionManager.auth_new_session(
+            username_hash=request.username_hash,
+            public_id=request.public_id,
+            eph_val_a=request.eph_val_a,
+            proof_val_m1=request.proof_val_m1,
+            maximum_requests=request.maximum_requests,
+            expiry_time=request.expiry_time
+        )
+        status, failure_reason, session_public_id, server_proof_val = result
+
 
 
         return SessionAuthResponse()
