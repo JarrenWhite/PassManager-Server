@@ -136,8 +136,15 @@ class SessionHandler:
                 failure_data=failure
             )
 
-
-        return SessionAuthResponse()
+        # Successful Return
+        success_data = SessionAuthResponse.Success(
+            session_id=session_public_id,
+            server_proof=server_proof_val
+        )
+        return SessionAuthResponse(
+            success=True,
+            success_data=success_data
+        )
 
 
     @staticmethod
