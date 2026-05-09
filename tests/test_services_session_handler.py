@@ -482,6 +482,29 @@ class TestAuth():
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
 
+    def test_successful_completion(self):
+        """Should return successful result"""
+
+        self.auth_new_session_response = True, None, "fake_public_session_id", b'fake_server_proof'
+
+        request = SessionAuthRequest(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_m1',
+            maximum_requests=5,
+            expiry_time=8
+        )
+
+        response = SessionHandler.auth(request)
+
+        assert isinstance(response, SessionAuthResponse)
+        assert response.success
+
+        response_data = response.success_data
+        assert response_data.session_id == "fake_public_session_id"
+        assert response_data.server_proof == b'fake_server_proof'
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
