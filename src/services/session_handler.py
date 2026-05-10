@@ -158,6 +158,17 @@ class SessionHandler:
             first_request=True
         )
         status, decrypted_bytes, user_id, failure_reason = open_session
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
 
 
