@@ -757,7 +757,7 @@ class TestDelete():
     def test_calls_to_convert_to_proto(self):
         """Should attempt to convert returned bytes to protobuf"""
 
-        self.from_string_response = UserUsernameRequest()
+        self.from_string_response = UserDeleteRequest()
 
         request = SecureRequest(
             session_id="fake_session_id",
