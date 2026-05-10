@@ -149,6 +149,18 @@ class SessionHandler:
 
     @staticmethod
     def delete(secure_request: SecureRequest) -> SecureResponse:
+        error_list = []
+
+        # Open secure session
+        open_session = SessionManager.open_session(
+            request=secure_request,
+            password_session=True,
+            first_request=True
+        )
+        status, decrypted_bytes, user_id, failure_reason = open_session
+
+
+
         return SecureResponse()
 
 
