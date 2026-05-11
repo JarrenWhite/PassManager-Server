@@ -533,6 +533,20 @@ class TestDelete():
                 return self.from_string_response
         monkeypatch.setattr(SessionDeleteRequest, "FromString", fake_from_string)
 
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
+
         yield
 
     def test_calls_open_session(self):
@@ -608,6 +622,38 @@ class TestDelete():
         assert error.field == "request"
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = SessionHandler.delete(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
+
+    def test_calls_sanitise_public_id(self):
+        """Should call sanitise public id"""
+
+        self.from_string_response.session_id = "fake_public_session_id"
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = SessionHandler.delete(request)
+
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == "fake_public_session_id"
 
 
 if __name__ == '__main__':
