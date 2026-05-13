@@ -202,6 +202,12 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        status, failure_reason = DBUtilsSession.delete(
+            user_id=user_id,
+            public_id=request.session_id
+        )
+
 
 
         return SecureResponse()
