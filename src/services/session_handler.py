@@ -231,4 +231,25 @@ class SessionHandler:
 
     @staticmethod
     def clean(secure_request: SecureRequest) -> SecureResponse:
+        error_list = []
+
+        # Open secure session
+        open_session = SessionManager.open_session(
+            request=secure_request
+        )
+        status, decrypted_bytes, user_id, failure_reason = open_session
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
+
         return SecureResponse()
