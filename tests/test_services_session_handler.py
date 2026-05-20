@@ -742,7 +742,7 @@ class TestDelete():
         ]
     )
     def test_calls_delete(self, user_id, session_id):
-        """Should call the user delete function"""
+        """Should call the session delete function"""
 
         self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -923,6 +923,13 @@ class TestClean():
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
+        self.clean_user_called = []
+        self.clean_user_response = True, None
+        def fake_clean_user(user_id):
+            self.clean_user_called.append(user_id)
+            return self.clean_user_response
+        monkeypatch.setattr(DBUtilsSession, "clean_user", fake_clean_user)
+
         yield
 
     def test_calls_open_session(self):
@@ -1063,6 +1070,32 @@ class TestClean():
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
+
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            0,
+            15,
+            350
+        ]
+    )
+    def test_calls_clean(self, user_id):
+        """Should call the session clean_user function"""
+
+        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = SessionHandler.clean(request)
+
+        assert len(self.clean_user_called) == 1
+        clean_user = self.clean_user_called
+        assert clean_user[0] == user_id
 
 
 if __name__ == '__main__':
