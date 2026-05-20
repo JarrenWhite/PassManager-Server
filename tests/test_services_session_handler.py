@@ -935,7 +935,7 @@ class TestClean():
         def fake_serialize_to_string(input):
             self.serialize_to_string_called.append(input)
             return self.serialize_to_string_response
-        monkeypatch.setattr(SessionDeleteResponse, "SerializeToString", fake_serialize_to_string)
+        monkeypatch.setattr(SessionCleanResponse, "SerializeToString", fake_serialize_to_string)
 
         self.seal_session_called = []
         self.seal_session_response = SecureResponse(
@@ -1164,7 +1164,7 @@ class TestClean():
         assert len(self.serialize_to_string_called) == 1
 
         serialize_to_string = self.serialize_to_string_called[0]
-        assert isinstance(serialize_to_string, SessionDeleteResponse)
+        assert isinstance(serialize_to_string, SessionCleanResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
 
     def test_calls_seal_session(self):

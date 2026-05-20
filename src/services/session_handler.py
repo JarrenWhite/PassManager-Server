@@ -23,8 +23,6 @@ from utils import ServiceUtils, SessionManager, DBUtilsSession
 from enums import FailureReason
 
 
-# TODO - Placeholder class. Requires completion.
-
 class SessionHandler:
 
     @staticmethod
@@ -298,7 +296,7 @@ class SessionHandler:
             )
 
         # Successful Return
-        response = SessionDeleteResponse(
+        response = SessionCleanResponse(
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
