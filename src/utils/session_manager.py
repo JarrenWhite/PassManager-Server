@@ -50,7 +50,7 @@ class SessionManager():
         request: SecureRequest,
         password_session: bool = False,
         first_request: bool = False
-    ) -> Tuple[bool, bytes, int, Optional[FailureReason]]:
+    ) -> Tuple[bool, Optional[FailureReason], bytes, int]:
         """
         Decrypt a message sent in a secure request
 
@@ -58,7 +58,7 @@ class SessionManager():
             (bytes) Decrypted Bytes
             (int)   User ID
         """
-        return True, b'', 0, None
+        return True, None, b'', 0
 
     @staticmethod
     def seal_session(

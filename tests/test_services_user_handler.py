@@ -269,7 +269,7 @@ class TestUsername:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -345,7 +345,7 @@ class TestUsername:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -510,7 +510,7 @@ class TestUsername:
     def test_calls_change_username(self, user_id):
         """Should call the user change username function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.new_username = b'fake_new_username'
 
         request = SecureRequest(
@@ -663,7 +663,7 @@ class TestDelete():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -735,7 +735,7 @@ class TestDelete():
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -839,7 +839,7 @@ class TestDelete():
     def test_calls_delete(self, user_id):
         """Should call the user delete function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(

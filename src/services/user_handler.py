@@ -92,7 +92,7 @@ class UserHandler():
             password_session=True,
             first_request=True
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -176,7 +176,7 @@ class UserHandler():
             password_session=True,
             first_request=True
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())

@@ -40,7 +40,7 @@ class TestCreate:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -128,7 +128,7 @@ class TestCreate:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -298,7 +298,7 @@ class TestCreate:
     def test_calls_create(self, user_id, entry_name, entry_data):
         """Should call the data create function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.entry_name = entry_name
         self.from_string_response.entry_data = entry_data
@@ -456,7 +456,7 @@ class TestEdit:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -552,7 +552,7 @@ class TestEdit:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -741,7 +741,7 @@ class TestEdit:
     def test_calls_edit(self, user_id, public_id, entry_name, entry_data):
         """Should call the data edit function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
         self.from_string_response.entry_name = entry_name
@@ -985,7 +985,7 @@ class TestDelete:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1065,7 +1065,7 @@ class TestDelete:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1216,7 +1216,7 @@ class TestDelete:
     def test_calls_delete(self, user_id, public_id):
         """Should call the data delete function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
@@ -1372,7 +1372,7 @@ class TestGet:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1452,7 +1452,7 @@ class TestGet:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1603,7 +1603,7 @@ class TestGet:
     def test_calls_get_entry(self, user_id, public_id):
         """Should call the data get entry function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
@@ -1763,7 +1763,7 @@ class TestList:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1835,7 +1835,7 @@ class TestList:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1968,7 +1968,7 @@ class TestList:
     def test_calls_get_list(self, user_id):
         """Should call the data get list function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(

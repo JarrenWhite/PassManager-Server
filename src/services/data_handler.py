@@ -33,7 +33,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -120,7 +120,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -213,7 +213,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -296,7 +296,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -381,7 +381,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
