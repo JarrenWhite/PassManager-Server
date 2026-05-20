@@ -279,6 +279,11 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Call Util function
+        status, failure_reason = DBUtilsSession.clean_user(
+            user_id=user_id
+        )
+
 
 
         return SecureResponse()
