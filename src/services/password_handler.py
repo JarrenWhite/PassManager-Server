@@ -33,21 +33,26 @@ class PasswordHandler():
     def start(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
 
+
     @staticmethod
     def auth(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
+
 
     @staticmethod
     def complete(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
 
+
     @staticmethod
     def abort(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
 
+
     @staticmethod
     def get(secure_request: SecureRequest) -> SecureResponse:
         return SecureResponse()
+
 
     @staticmethod
     def update(secure_request: SecureRequest) -> SecureResponse:
