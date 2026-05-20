@@ -114,7 +114,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| auth_id         | string   | The public ID of the in progress auth request.               |
+| public_id       | string   | The public ID of the in progress auth request.               |
 | srp_salt        | bytes    | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | Unique server ephemeral value (B) for this SRP auth attempt. |
 
@@ -132,7 +132,7 @@ Messages which use a secure message response are shown in the documentation by d
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | session_id      | string   | The public ID of the created password session.               |
 | server_proof_m2 | bytes    | The server's proof of authentication.                        |
-| entry_ids       | [string] | The public IDs of all stored data entries.                   |
+| public_ids      | [string] | The public IDs of all stored data entries.                   |
 
 ---
 
@@ -172,7 +172,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_public_id | string   | Public ID of the entry.                                      |
+| public_id       | string   | Public ID of the entry.                                      |
 | entry_name      | bytes    | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Encrypted entry data payload.                                |
 
@@ -188,7 +188,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_public_id | string   | Public ID of the entry.                                      |
+| public_id       | string   | Public ID of the entry.                                      |
 
 ---
 
@@ -204,7 +204,7 @@ Messages which use a secure message response are shown in the documentation by d
 **Response Fields**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
-| auth_id         | string   | The public ID of the in progress auth request.               |
+| public_id       | string   | The public ID of the in progress auth request.               |
 | srp_salt        | bytes    | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | Unique server ephemeral value (B) for this SRP auth attempt. |
 | master_key_salt | bytes    | The salt used to create the master key.                      |
@@ -264,7 +264,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_public_id | string   | Public ID of the entry.                                      |
+| public_id       | string   | Public ID of the entry.                                      |
 
 ---
 
@@ -278,7 +278,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_public_id | string   | Public ID of the entry.                                      |
+| public_id       | string   | Public ID of the entry.                                      |
 
 ---
 
@@ -292,7 +292,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_public_id | string   | Public ID of the entry.                                      |
+| public_id       | string   | Public ID of the entry.                                      |
 
 ---
 
@@ -306,7 +306,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_public_id | string   | Public ID of the entry.                                      |
+| public_id       | string   | Public ID of the entry.                                      |
 | entry_name      | bytes    | Encrypted entry name payload.                                |
 | entry_data      | bytes    | Encrypted entry data payload.                                |
 
@@ -322,7 +322,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| entry_ids       | [bytes]  | The public IDs of all stored data entries.                   |
+| public_ids      | [bytes]  | The public IDs of all stored data entries.                   |
 | entry_names     | [bytes]  | The name payload for all stored data entries.                |
 
 ---
