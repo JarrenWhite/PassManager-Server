@@ -5,9 +5,6 @@ import pytest
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from google.protobuf.message import DecodeError
-from passmanager.user.v0.user_pb2 import (
-    
-)
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
     SecureResponse
