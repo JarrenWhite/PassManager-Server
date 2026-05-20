@@ -296,7 +296,7 @@ class SessionHandler:
             )
 
         # Successful Return
-        response = SessionDeleteResponse(
+        response = SessionCleanResponse(
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
