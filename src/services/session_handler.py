@@ -23,8 +23,6 @@ from utils import ServiceUtils, SessionManager, DBUtilsSession
 from enums import FailureReason
 
 
-# TODO - Placeholder class. Requires completion.
-
 class SessionHandler:
 
     @staticmethod
