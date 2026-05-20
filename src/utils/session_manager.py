@@ -16,6 +16,15 @@ class SessionManager():
     def start_new_session(
         username_hash: bytes
     ) -> Tuple[bool, Optional[FailureReason], str, bytes, bytes, bytes]:
+        """
+        Start the process to create a new auth session
+
+        Returns:
+            (str)   Public ID
+            (bytes) SRP Salt
+            (bytes) Ephemeral Public ID
+            (bytes) Master Key Salt
+        """
         return True, None, "", b'', b'', b''
 
     @staticmethod
@@ -27,6 +36,13 @@ class SessionManager():
         maximum_requests: int,
         expiry_time: int
     ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
+        """
+        Authenticate and create a session
+
+        Returns:
+            (str)   Session Public ID
+            (bytes) Server Proof (M2)
+        """
         return True, None, "", b''
 
     @staticmethod
@@ -35,6 +51,13 @@ class SessionManager():
         password_session: bool = False,
         first_request: bool = False
     ) -> Tuple[bool, bytes, int, Optional[FailureReason]]:
+        """
+        Decrypt a message sent in a secure request
+
+        Returns:
+            (bytes) Decrypted Bytes
+            (int)   User ID
+        """
         return True, b'', 0, None
 
     @staticmethod
@@ -42,4 +65,10 @@ class SessionManager():
         session_id: str,
         response: bytes
     ) -> SecureResponse:
+        """
+        Encrypt a message into a secure response
+
+        Returns:
+            (SecureResponse)    Secured response
+        """
         return SecureResponse()

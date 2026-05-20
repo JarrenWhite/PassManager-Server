@@ -119,7 +119,7 @@ class SessionHandler:
             maximum_requests=request.maximum_requests,
             expiry_time=request.expiry_time
         )
-        status, failure_reason, session_public_id, server_proof_val = result
+        status, failure_reason, session_public_id, server_proof_m2 = result
 
         # Return error
         if not status:
@@ -137,7 +137,7 @@ class SessionHandler:
         # Successful Return
         success_data = SessionAuthResponse.Success(
             session_id=session_public_id,
-            server_proof=server_proof_val
+            server_proof=server_proof_m2
         )
         return SessionAuthResponse(
             success=True,
