@@ -200,7 +200,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 | Field           | Type   | Description                                           |
 |-----------------|--------|-------------------------------------------------------|
 | username_hash   | bytes  | Hash of the original username.                        |
-| auth_id         | string | Public ID of the AuthEphemeral being used.            |
+| public_id       | string | Public ID of the AuthEphemeral being used.            |
 | eph_val_a       | bytes  | Client ephemeral value. (A)                           |
 | proof_val_m1    | bytes  | Client proof. (M1)                                    |
 
@@ -265,7 +265,7 @@ Request the encrypted name and data for a given data entry, as well as its uniqu
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | string | Public ID of the entry.                          |
+| public_id       | string | Public ID of the entry.                          |
 
 **[Response Format](api_responses.md#get-entry-password)**
 
@@ -284,7 +284,7 @@ Set the encrypted name and data for a given data entry, encrypted with the new m
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | string | Public ID of the entry.                          |
+| public_id       | string | Public ID of the entry.                          |
 | entry_name      | bytes  | The new encrypted entry name payload.            |
 | entry_data      | bytes  | The new encrypted entry data payload.            |
 
@@ -348,7 +348,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 | Field            | Type   | Required | Description                                          |
 |------------------|--------|----------|------------------------------------------------------|
 | username_hash    | bytes  | Yes      | Hash of the user's username.                         |
-| auth_id          | string | Yes      | Public ID of the AuthEphemeral being used.           |
+| public_id        | string | Yes      | Public ID of the AuthEphemeral being used.           |
 | eph_val_a        | bytes  | Yes      | Client ephemeral value. (A)                          |
 | proof_val_m1     | bytes  | Yes      | Client proof. (M1)                                   |
 | maximum_requests | int    | No       | Number of requests before the session will expire.   |
@@ -461,7 +461,7 @@ Edit the encrypted name and data for a given data entry, and provide the new uni
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | string | Public ID of the entry.                          |
+| public_id       | string | Public ID of the entry.                          |
 | entry_name      | bytes  | The new encrypted entry name payload.            |
 | entry_data      | bytes  | The new encrypted entry data payload.            |
 
@@ -490,7 +490,7 @@ Delete all stored data for a given data entry.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | string | Public ID of the entry.                          |
+| public_id       | string | Public ID of the entry.                          |
 
 > **Note:** A deleted entry is deleted fully. It cannot be recovered.
 
@@ -511,7 +511,7 @@ Retrieve all data for a given password entry.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| entry_public_id | string | Public ID of the entry.                          |
+| public_id       | string | Public ID of the entry.                          |
 
 **[Response Format](api_responses.md#get-entry-data)**
 

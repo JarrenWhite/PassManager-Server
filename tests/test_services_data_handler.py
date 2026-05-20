@@ -368,7 +368,7 @@ class TestCreate:
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, DataCreateResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
-        assert serialize_to_string.entry_public_id == "fake_public_id"
+        assert serialize_to_string.public_id == "fake_public_id"
 
     def test_calls_seal_session(self):
         """Should call to seal session"""
@@ -465,7 +465,7 @@ class TestEdit:
         self.from_string_called = []
         self.from_string_response = DataEditRequest(
             username_hash=b'fake_username_hash',
-            entry_public_id="fake_entry_public_id",
+            public_id="fake_public_id",
             entry_name=b'fake_entry_name',
             entry_data=b'fake_entry_data'
         )
@@ -485,12 +485,12 @@ class TestEdit:
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
-        self.sanitise_entry_public_id_called = []
-        self.sanitise_entry_public_id_response = None
-        def fake_sanitise_entry_public_id(input):
-            self.sanitise_entry_public_id_called.append(input)
-            return self.sanitise_entry_public_id_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_entry_public_id", fake_sanitise_entry_public_id)
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
 
         self.sanitise_entry_name_called = []
         self.sanitise_entry_name_response = None
@@ -625,10 +625,10 @@ class TestEdit:
         assert len(self.sanitise_username_called) == 1
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
-    def test_calls_sanitise_entry_public_id(self):
-        """Should call sanitise entry public id"""
+    def test_calls_sanitise_public_id(self):
+        """Should call sanitise public id"""
 
-        self.from_string_response.entry_public_id = "fake_entry_public_id"
+        self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -638,8 +638,8 @@ class TestEdit:
 
         response = DataHandler.edit(request)
 
-        assert len(self.sanitise_entry_public_id_called) == 1
-        assert self.sanitise_entry_public_id_called[0] == "fake_entry_public_id"
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == "fake_public_id"
 
     def test_calls_sanitise_entry_name(self):
         """Should call sanitise entry name"""
@@ -677,7 +677,7 @@ class TestEdit:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_entry_public_id",    "entry_public_id"),
+            ("sanitise_public_id",    "public_id"),
             ("sanitise_entry_name",         "entry_name"),
             ("sanitise_entry_data",         "entry_data")
         ]
@@ -708,7 +708,7 @@ class TestEdit:
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_entry_public_id_response = FailureReason.INVALID
+        self.sanitise_public_id_response = FailureReason.INVALID
         self.sanitise_entry_name_response = FailureReason.INVALID
         self.sanitise_entry_data_response = FailureReason.INVALID
 
@@ -726,24 +726,24 @@ class TestEdit:
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
-        assert "entry_public_id" in fields
+        assert "public_id" in fields
         assert "entry_name" in fields
         assert "entry_data" in fields
 
     @pytest.mark.parametrize(
-        "user_id, entry_public_id, entry_name, entry_data",
+        "user_id, public_id, entry_name, entry_data",
         [
             (0,     "abc",  b'abc',     b'def'),
             (15,    "",     b'',        b''),
             (350,   "123"*8,b'qcd'*100, b'ghi'*300)
         ]
     )
-    def test_calls_edit(self, user_id, entry_public_id, entry_name, entry_data):
+    def test_calls_edit(self, user_id, public_id, entry_name, entry_data):
         """Should call the data edit function"""
 
         self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.from_string_response.entry_public_id = entry_public_id
+        self.from_string_response.public_id = public_id
         self.from_string_response.entry_name = entry_name
         self.from_string_response.entry_data = entry_data
 
@@ -759,7 +759,7 @@ class TestEdit:
 
         create = self.edit_called[0]
         assert create[0] == user_id
-        assert create[1] == entry_public_id
+        assert create[1] == public_id
         assert create[2] == entry_name
         assert create[3] == entry_data
 
@@ -798,7 +798,7 @@ class TestEdit:
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.from_string_response.entry_public_id = "fake_entry_public_id"
+        self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -813,7 +813,7 @@ class TestEdit:
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, DataEditResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
-        assert serialize_to_string.entry_public_id == "fake_entry_public_id"
+        assert serialize_to_string.public_id == "fake_public_id"
 
     def test_calls_seal_session(self):
         """Should call to seal session"""
@@ -994,7 +994,7 @@ class TestDelete:
         self.from_string_called = []
         self.from_string_response = DataDeleteRequest(
             username_hash=b'fake_username_hash',
-            entry_public_id="fake_entry_public_id"
+            public_id="fake_public_id"
         )
         self.from_string_exception = False
         def fake_from_string(data):
@@ -1012,12 +1012,12 @@ class TestDelete:
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
-        self.sanitise_entry_public_id_called = []
-        self.sanitise_entry_public_id_response = None
-        def fake_sanitise_entry_public_id(input):
-            self.sanitise_entry_public_id_called.append(input)
-            return self.sanitise_entry_public_id_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_entry_public_id", fake_sanitise_entry_public_id)
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
 
         self.delete_called = []
         self.delete_response = True, None
@@ -1138,10 +1138,10 @@ class TestDelete:
         assert len(self.sanitise_username_called) == 1
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
-    def test_calls_sanitise_entry_public_id(self):
-        """Should call sanitise entry public id"""
+    def test_calls_sanitise_public_id(self):
+        """Should call sanitise public id"""
 
-        self.from_string_response.entry_public_id = "fake_entry_public_id"
+        self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1151,14 +1151,14 @@ class TestDelete:
 
         response = DataHandler.delete(request)
 
-        assert len(self.sanitise_entry_public_id_called) == 1
-        assert self.sanitise_entry_public_id_called[0] == "fake_entry_public_id"
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == "fake_public_id"
 
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_entry_public_id",    "entry_public_id")
+            ("sanitise_public_id",    "public_id")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -1187,7 +1187,7 @@ class TestDelete:
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_entry_public_id_response = FailureReason.INVALID
+        self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1203,22 +1203,22 @@ class TestDelete:
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
-        assert "entry_public_id" in fields
+        assert "public_id" in fields
 
     @pytest.mark.parametrize(
-        "user_id, entry_public_id",
+        "user_id, public_id",
         [
             (0,     "abc"),
             (15,    ""),
             (350,   "123"*8)
         ]
     )
-    def test_calls_delete(self, user_id, entry_public_id):
+    def test_calls_delete(self, user_id, public_id):
         """Should call the data delete function"""
 
         self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.from_string_response.entry_public_id = entry_public_id
+        self.from_string_response.public_id = public_id
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1232,7 +1232,7 @@ class TestDelete:
 
         create = self.delete_called[0]
         assert create[0] == user_id
-        assert create[1] == entry_public_id
+        assert create[1] == public_id
 
     @pytest.mark.parametrize(
         "failure_reason, field",
@@ -1269,7 +1269,7 @@ class TestDelete:
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.from_string_response.entry_public_id = "fake_entry_public_id"
+        self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1284,7 +1284,7 @@ class TestDelete:
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, DataDeleteResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
-        assert serialize_to_string.entry_public_id == "fake_entry_public_id"
+        assert serialize_to_string.public_id == "fake_public_id"
 
     def test_calls_seal_session(self):
         """Should call to seal session"""
@@ -1381,7 +1381,7 @@ class TestGet:
         self.from_string_called = []
         self.from_string_response = DataGetRequest(
             username_hash=b'fake_username_hash',
-            entry_public_id="fake_entry_public_id"
+            public_id="fake_public_id"
         )
         self.from_string_exception = False
         def fake_from_string(data):
@@ -1399,12 +1399,12 @@ class TestGet:
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
-        self.sanitise_entry_public_id_called = []
-        self.sanitise_entry_public_id_response = None
-        def fake_sanitise_entry_public_id(input):
-            self.sanitise_entry_public_id_called.append(input)
-            return self.sanitise_entry_public_id_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_entry_public_id", fake_sanitise_entry_public_id)
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
 
         self.get_entry_called = []
         self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
@@ -1525,10 +1525,10 @@ class TestGet:
         assert len(self.sanitise_username_called) == 1
         assert self.sanitise_username_called[0] == b'fake_username_hash'
 
-    def test_calls_sanitise_entry_public_id(self):
-        """Should call sanitise entry public id"""
+    def test_calls_sanitise_public_id(self):
+        """Should call sanitise public id"""
 
-        self.from_string_response.entry_public_id = "fake_entry_public_id"
+        self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1538,14 +1538,14 @@ class TestGet:
 
         response = DataHandler.get(request)
 
-        assert len(self.sanitise_entry_public_id_called) == 1
-        assert self.sanitise_entry_public_id_called[0] == "fake_entry_public_id"
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == "fake_public_id"
 
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_entry_public_id",    "entry_public_id")
+            ("sanitise_public_id",    "public_id")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -1574,7 +1574,7 @@ class TestGet:
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_entry_public_id_response = FailureReason.INVALID
+        self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1590,22 +1590,22 @@ class TestGet:
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
-        assert "entry_public_id" in fields
+        assert "public_id" in fields
 
     @pytest.mark.parametrize(
-        "user_id, entry_public_id",
+        "user_id, public_id",
         [
             (0,     "abc"),
             (15,    ""),
             (350,   "123"*8)
         ]
     )
-    def test_calls_get_entry(self, user_id, entry_public_id):
+    def test_calls_get_entry(self, user_id, public_id):
         """Should call the data get entry function"""
 
         self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.from_string_response.entry_public_id = entry_public_id
+        self.from_string_response.public_id = public_id
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1619,7 +1619,7 @@ class TestGet:
 
         create = self.get_entry_called[0]
         assert create[0] == user_id
-        assert create[1] == entry_public_id
+        assert create[1] == public_id
 
     @pytest.mark.parametrize(
         "failure_reason, field",
@@ -1656,7 +1656,7 @@ class TestGet:
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.from_string_response.entry_public_id = "fake_entry_public_id"
+        self.from_string_response.public_id = "fake_public_id"
 
         self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
 
@@ -1673,7 +1673,7 @@ class TestGet:
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, DataGetResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
-        assert serialize_to_string.entry_public_id == "fake_entry_public_id"
+        assert serialize_to_string.public_id == "fake_public_id"
         assert serialize_to_string.entry_name == b'fake_entry_name'
         assert serialize_to_string.entry_data == b'fake_entry_data'
 
@@ -1940,7 +1940,7 @@ class TestList:
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_entry_public_id_response = FailureReason.INVALID
+        self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -2039,7 +2039,7 @@ class TestList:
 
         entry_details = serialize_to_string.entry_details
         assert len(entry_details) == len(result_list)
-        assert {e.entry_public_id: e.entry_name for e in entry_details} == result_list
+        assert {e.public_id: e.entry_name for e in entry_details} == result_list
 
     def test_calls_seal_session(self):
         """Should call to seal session"""

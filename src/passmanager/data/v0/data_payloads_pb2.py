@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\'passmanager/data/v0/data_payloads.proto\x12\x13passmanager.data.v0\"R\n\x11\x44\x61taCreateRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x12\n\nentry_name\x18\x02 \x01(\x0c\x12\x12\n\nentry_data\x18\x03 \x01(\x0c\"D\n\x12\x44\x61taCreateResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\"\x91\x01\n\x0f\x44\x61taEditRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\x12\x17\n\nentry_name\x18\x03 \x01(\x0cH\x00\x88\x01\x01\x12\x17\n\nentry_data\x18\x04 \x01(\x0cH\x01\x88\x01\x01\x42\r\n\x0b_entry_nameB\r\n\x0b_entry_data\"B\n\x10\x44\x61taEditResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\"C\n\x11\x44\x61taDeleteRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\"D\n\x12\x44\x61taDeleteResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\"@\n\x0e\x44\x61taGetRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\"i\n\x0f\x44\x61taGetResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x17\n\x0f\x65ntry_public_id\x18\x02 \x01(\t\x12\x12\n\nentry_name\x18\x03 \x01(\x0c\x12\x12\n\nentry_data\x18\x04 \x01(\x0c\"(\n\x0f\x44\x61taListRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"\xb1\x01\n\x10\x44\x61taListResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12I\n\rentry_details\x18\x02 \x03(\x0b\x32\x32.passmanager.data.v0.DataListResponse.EntryDetails\x1a;\n\x0c\x45ntryDetails\x12\x17\n\x0f\x65ntry_public_id\x18\x01 \x01(\t\x12\x12\n\nentry_name\x18\x02 \x01(\x0c\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\'passmanager/data/v0/data_payloads.proto\x12\x13passmanager.data.v0\"R\n\x11\x44\x61taCreateRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x12\n\nentry_name\x18\x02 \x01(\x0c\x12\x12\n\nentry_data\x18\x03 \x01(\x0c\">\n\x12\x44\x61taCreateResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\"\x8b\x01\n\x0f\x44\x61taEditRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x17\n\nentry_name\x18\x03 \x01(\x0cH\x00\x88\x01\x01\x12\x17\n\nentry_data\x18\x04 \x01(\x0cH\x01\x88\x01\x01\x42\r\n\x0b_entry_nameB\r\n\x0b_entry_data\"<\n\x10\x44\x61taEditResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\"=\n\x11\x44\x61taDeleteRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\">\n\x12\x44\x61taDeleteResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\":\n\x0e\x44\x61taGetRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\"c\n\x0f\x44\x61taGetResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x12\n\nentry_name\x18\x03 \x01(\x0c\x12\x12\n\nentry_data\x18\x04 \x01(\x0c\"(\n\x0f\x44\x61taListRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"\xab\x01\n\x10\x44\x61taListResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12I\n\rentry_details\x18\x02 \x03(\x0b\x32\x32.passmanager.data.v0.DataListResponse.EntryDetails\x1a\x35\n\x0c\x45ntryDetails\x12\x11\n\tpublic_id\x18\x01 \x01(\t\x12\x12\n\nentry_name\x18\x02 \x01(\x0c\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,23 +34,23 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_DATACREATEREQUEST']._serialized_start=64
   _globals['_DATACREATEREQUEST']._serialized_end=146
   _globals['_DATACREATERESPONSE']._serialized_start=148
-  _globals['_DATACREATERESPONSE']._serialized_end=216
-  _globals['_DATAEDITREQUEST']._serialized_start=219
-  _globals['_DATAEDITREQUEST']._serialized_end=364
-  _globals['_DATAEDITRESPONSE']._serialized_start=366
-  _globals['_DATAEDITRESPONSE']._serialized_end=432
-  _globals['_DATADELETEREQUEST']._serialized_start=434
-  _globals['_DATADELETEREQUEST']._serialized_end=501
-  _globals['_DATADELETERESPONSE']._serialized_start=503
-  _globals['_DATADELETERESPONSE']._serialized_end=571
-  _globals['_DATAGETREQUEST']._serialized_start=573
-  _globals['_DATAGETREQUEST']._serialized_end=637
-  _globals['_DATAGETRESPONSE']._serialized_start=639
-  _globals['_DATAGETRESPONSE']._serialized_end=744
-  _globals['_DATALISTREQUEST']._serialized_start=746
-  _globals['_DATALISTREQUEST']._serialized_end=786
-  _globals['_DATALISTRESPONSE']._serialized_start=789
-  _globals['_DATALISTRESPONSE']._serialized_end=966
-  _globals['_DATALISTRESPONSE_ENTRYDETAILS']._serialized_start=907
-  _globals['_DATALISTRESPONSE_ENTRYDETAILS']._serialized_end=966
+  _globals['_DATACREATERESPONSE']._serialized_end=210
+  _globals['_DATAEDITREQUEST']._serialized_start=213
+  _globals['_DATAEDITREQUEST']._serialized_end=352
+  _globals['_DATAEDITRESPONSE']._serialized_start=354
+  _globals['_DATAEDITRESPONSE']._serialized_end=414
+  _globals['_DATADELETEREQUEST']._serialized_start=416
+  _globals['_DATADELETEREQUEST']._serialized_end=477
+  _globals['_DATADELETERESPONSE']._serialized_start=479
+  _globals['_DATADELETERESPONSE']._serialized_end=541
+  _globals['_DATAGETREQUEST']._serialized_start=543
+  _globals['_DATAGETREQUEST']._serialized_end=601
+  _globals['_DATAGETRESPONSE']._serialized_start=603
+  _globals['_DATAGETRESPONSE']._serialized_end=702
+  _globals['_DATALISTREQUEST']._serialized_start=704
+  _globals['_DATALISTREQUEST']._serialized_end=744
+  _globals['_DATALISTRESPONSE']._serialized_start=747
+  _globals['_DATALISTRESPONSE']._serialized_end=918
+  _globals['_DATALISTRESPONSE_ENTRYDETAILS']._serialized_start=865
+  _globals['_DATALISTRESPONSE_ENTRYDETAILS']._serialized_end=918
 # @@protoc_insertion_point(module_scope)
