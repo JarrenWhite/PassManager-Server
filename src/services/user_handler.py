@@ -89,7 +89,6 @@ class UserHandler():
         # Open secure session
         open_session = SessionManager.open_session(
             request=secure_request,
-            password_session=True,
             first_request=True
         )
         status, failure_reason, decrypted_bytes, user_id = open_session
@@ -173,7 +172,6 @@ class UserHandler():
         # Open secure session
         open_session = SessionManager.open_session(
             request=secure_request,
-            password_session=True,
             first_request=True
         )
         status, failure_reason, decrypted_bytes, user_id = open_session
