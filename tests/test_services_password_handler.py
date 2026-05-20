@@ -50,7 +50,10 @@ class TestStart():
 
         self.from_string_called = []
         self.from_string_response = PasswordStartRequest(
-            username_hash=b'fake_username_hash'
+            username_hash=b'fake_username_hash',
+            srp_salt = b'fake_srp_salt',
+            srp_verifier = b'fake_srp_verifier',
+            master_key_salt = b'fake_master_key_salt'
         )
         self.from_string_exception = False
         def fake_from_string(data):
@@ -60,6 +63,34 @@ class TestStart():
             else:
                 return self.from_string_response
         monkeypatch.setattr(PasswordStartRequest, "FromString", fake_from_string)
+
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
+        self.sanitise_srp_salt_called = []
+        self.sanitise_srp_salt_response = None
+        def fake_sanitise_srp_salt(input):
+            self.sanitise_srp_salt_called.append(input)
+            return self.sanitise_srp_salt_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_srp_salt", fake_sanitise_srp_salt)
+
+        self.sanitise_srp_verifier_called = []
+        self.sanitise_srp_verifier_response = None
+        def fake_sanitise_srp_verifier(input):
+            self.sanitise_srp_verifier_called.append(input)
+            return self.sanitise_srp_verifier_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_srp_verifier", fake_sanitise_srp_verifier)
+
+        self.sanitise_master_key_salt_called = []
+        self.sanitise_master_key_salt_response = None
+        def fake_sanitise_master_key_salt(input):
+            self.sanitise_master_key_salt_called.append(input)
+            return self.sanitise_master_key_salt_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_master_key_salt", fake_sanitise_master_key_salt)
 
         yield
 
@@ -136,6 +167,71 @@ class TestStart():
         assert error.field == "request"
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
+
+    def test_calls_sanitise_srp_salt(self):
+        """Should call sanitise srp salt"""
+
+        self.from_string_response.srp_salt = b'fake_srp_salt'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert len(self.sanitise_srp_salt_called) == 1
+        assert self.sanitise_srp_salt_called[0] == b'fake_srp_salt'
+
+    def test_calls_sanitise_srp_verifier(self):
+        """Should call sanitise srp verifier"""
+
+        self.from_string_response.srp_verifier = b'fake_srp_verifier'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert len(self.sanitise_srp_verifier_called) == 1
+        assert self.sanitise_srp_verifier_called[0] == b'fake_srp_verifier'
+
+    def test_calls_sanitise_master_key_salt(self):
+        """Should call sanitise master key salt"""
+
+        self.from_string_response.master_key_salt = b'fake_master_key_salt'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert len(self.sanitise_master_key_salt_called) == 1
+        assert self.sanitise_master_key_salt_called[0] == b'fake_master_key_salt'
+
 
 
 
