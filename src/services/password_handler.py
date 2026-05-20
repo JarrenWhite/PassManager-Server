@@ -64,6 +64,20 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Sanitise Inputs
+        status = ServiceUtils.sanitise_username(request.username_hash)
+        if status:
+            error_list.append(status.error_proto("username_hash"))
+        status = ServiceUtils.sanitise_srp_salt(request.srp_salt)
+        if status:
+            error_list.append(status.error_proto("srp_salt"))
+        status = ServiceUtils.sanitise_srp_verifier(request.srp_verifier)
+        if status:
+            error_list.append(status.error_proto("srp_verifier"))
+        status = ServiceUtils.sanitise_master_key_salt(request.master_key_salt)
+        if status:
+            error_list.append(status.error_proto("master_key_salt"))
+
 
 
         return SecureResponse()
