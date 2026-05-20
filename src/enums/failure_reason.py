@@ -16,7 +16,7 @@ class FailureReason(Enum):
 
     def error_proto(self, field: Optional[str] = None) -> Error:
         """
-        Create an error protobuf based on the
+        Create an error protobuf based on the error type
 
         Args:
             field (str): Field used if special case met
