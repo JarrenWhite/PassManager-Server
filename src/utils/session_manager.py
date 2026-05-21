@@ -47,7 +47,7 @@ class SessionManager():
 
     @staticmethod
     def start_password_session(
-        username_hash: bytes,
+        user_id: int,
         srp_salt: bytes,
         srp_verifier: bytes,
         master_key_salt: bytes
@@ -65,7 +65,7 @@ class SessionManager():
 
     @staticmethod
     def auth_password_session(
-        username_hash: bytes,
+        user_id: int,
         public_id: str,
         eph_val_a: bytes,
         proof_val_m1: bytes
