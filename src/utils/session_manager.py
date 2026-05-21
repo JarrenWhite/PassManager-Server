@@ -46,6 +46,40 @@ class SessionManager():
         return True, None, "", b''
 
     @staticmethod
+    def start_password_session(
+        username_hash: bytes,
+        srp_salt: bytes,
+        srp_verifier: bytes,
+        master_key_salt: bytes
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes, bytes, bytes]:
+        """
+        Start the process to create a new password session
+
+        Returns:
+            (str)   Public ID
+            (bytes) SRP Salt
+            (bytes) Ephemeral Public ID
+            (bytes) Master Key Salt
+        """
+        return True, None, "", b'', b'', b''
+
+    @staticmethod
+    def auth_password_session(
+        username_hash: bytes,
+        public_id: str,
+        eph_val_a: bytes,
+        proof_val_m1: bytes
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
+        """
+        Authenticate and create a password session
+
+        Returns:
+            (str)   Session Public ID
+            (bytes) Server Proof (M2)
+        """
+        return True, None, "", b''
+
+    @staticmethod
     def open_session(
         request: SecureRequest,
         password_session: bool = False,
