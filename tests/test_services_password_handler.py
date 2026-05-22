@@ -304,8 +304,8 @@ class TestStart():
             (350,   b'123'*8,   b'qcd'*100, b'ghi'*300)
         ]
     )
-    def test_calls_start_password_session(self, user_id, srp_salt, srp_verifier, master_key_salt):
-        """Should call the start password session function"""
+    def test_calls_util(self, user_id, srp_salt, srp_verifier, master_key_salt):
+        """Should call the util function"""
 
         self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -337,8 +337,8 @@ class TestStart():
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_start_password_session_call_fails(self, failure_reason, field):
-        """Should return correct error if data edit function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.start_password_session_response = False, failure_reason, "", b'', b'', b''
 

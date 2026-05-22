@@ -193,8 +193,8 @@ class TestRegister:
         assert "srp_verifier" in fields
         assert "master_key_salt" in fields
 
-    def test_calls_create(self):
-        """Should call the user create function"""
+    def test_calls_util(self):
+        """Should call the util function"""
 
         request = UserRegisterRequest(
             new_username=b'fake_username_hash',
@@ -222,8 +222,8 @@ class TestRegister:
             (FailureReason.NOT_FOUND,           "new_username")
         ]
     )
-    def test_returns_error_create_call_fails(self, failure_reason, field):
-        """Should return correct error if user create function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.create_response = False, failure_reason
 
@@ -507,8 +507,8 @@ class TestUsername:
             350
         ]
     )
-    def test_calls_change_username(self, user_id):
-        """Should call the user change username function"""
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
 
         self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.new_username = b'fake_new_username'
@@ -536,8 +536,8 @@ class TestUsername:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_change_username_call_fails(self, failure_reason, field):
-        """Should return correct error if user change username function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.change_username_response = False, failure_reason
 
@@ -836,8 +836,8 @@ class TestDelete():
             350
         ]
     )
-    def test_calls_delete(self, user_id):
-        """Should call the user delete function"""
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
 
         self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -862,8 +862,8 @@ class TestDelete():
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_delete_call_fails(self, failure_reason, field):
-        """Should return correct error if user delete function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.delete_response = False, failure_reason
 

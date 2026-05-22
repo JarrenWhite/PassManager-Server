@@ -118,8 +118,8 @@ class TestStart():
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
 
-    def test_calls_start_new_session(self):
-        """Should call the start new session function"""
+    def test_calls_util(self):
+        """Should call the util function"""
 
         request = SessionStartRequest(
             username_hash=b'fake_username_hash'
@@ -141,8 +141,8 @@ class TestStart():
             (FailureReason.NOT_FOUND,           "new_username")
         ]
     )
-    def test_returns_error_start_new_session_call_fails(self, failure_reason, field):
-        """Should return correct error if start new session function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.start_new_session_response = False, failure_reason, "", b'', b'', b''
 
@@ -424,8 +424,8 @@ class TestAuth():
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
 
-    def test_calls_auth_new_session(self):
-        """Should call the auth new session function"""
+    def test_calls_util(self):
+        """Should call the util function"""
 
         request = SessionAuthRequest(
             username_hash=b'fake_username_hash',
@@ -457,8 +457,8 @@ class TestAuth():
             (FailureReason.NOT_FOUND,           "new_username")
         ]
     )
-    def test_returns_error_auth_new_session_call_fails(self, failure_reason, field):
-        """Should return correct error if auth new session function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.auth_new_session_response = False, failure_reason, "", b''
 
@@ -741,8 +741,8 @@ class TestDelete():
             (350,   "123")
         ]
     )
-    def test_calls_delete(self, user_id, session_id):
-        """Should call the session delete function"""
+    def test_calls_util(self, user_id, session_id):
+        """Should call the util function"""
 
         self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -770,8 +770,8 @@ class TestDelete():
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_delete_call_fails(self, failure_reason, field):
-        """Should return correct error if session delete function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.delete_response = False, failure_reason
 
@@ -1098,8 +1098,8 @@ class TestClean():
             350
         ]
     )
-    def test_calls_clean(self, user_id):
-        """Should call the session clean_user function"""
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
 
         self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -1125,8 +1125,8 @@ class TestClean():
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_clean_call_fails(self, failure_reason, field):
-        """Should return correct error if session clean_user function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.clean_user_response = False, failure_reason
 
