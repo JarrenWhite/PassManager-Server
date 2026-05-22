@@ -95,7 +95,7 @@ class PasswordHandler():
             srp_verifier=request.srp_verifier,
             master_key_salt=request.master_key_salt
         )
-        status, failure_reason, public_id, srp_salt, public_ephemeral, master_key_salt = result
+        status, failure_reason, public_id, srp_salt, public_ephemeral_b = result
 
         # Return error
         if not status:
@@ -110,10 +110,17 @@ class PasswordHandler():
                 failure_data=failure
             )
 
-
-
-
-        return SecureResponse()
+        # Successful Return
+        response = PasswordStartResponse(
+            username_hash=request.username_hash,
+            public_id=public_id,
+            srp_salt=srp_salt,
+            eph_public_b=public_ephemeral_b
+        )
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod

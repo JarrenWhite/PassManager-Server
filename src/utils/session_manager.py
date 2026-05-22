@@ -51,7 +51,7 @@ class SessionManager():
         srp_salt: bytes,
         srp_verifier: bytes,
         master_key_salt: bytes
-    ) -> Tuple[bool, Optional[FailureReason], str, bytes, bytes, bytes]:
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes, bytes]:
         """
         Start the process to create a new password session
 
@@ -59,9 +59,8 @@ class SessionManager():
             (str)   Public ID
             (bytes) SRP Salt
             (bytes) Public Ephemeral (b)
-            (bytes) Master Key Salt
         """
-        return True, None, "", b'', b'', b''
+        return True, None, "", b'', b''
 
     @staticmethod
     def auth_password_session(
