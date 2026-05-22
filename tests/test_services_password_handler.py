@@ -328,6 +328,37 @@ class TestStart():
         assert start_password_session[2] == srp_verifier
         assert start_password_session[3] == master_key_salt
 
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "unknown")
+        ]
+    )
+    def test_returns_error_start_password_session_call_fails(self, failure_reason, field):
+        """Should return correct error if data edit function fails"""
+
+        self.start_password_session_response = False, failure_reason, "", b'', b'', b''
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
+
 
 
 if __name__ == '__main__':
