@@ -92,6 +92,13 @@ class TestStart():
             return self.sanitise_master_key_salt_response
         monkeypatch.setattr(ServiceUtils, "sanitise_master_key_salt", fake_sanitise_master_key_salt)
 
+        self.start_password_session_called = []
+        self.start_password_session_response = True, None, "fake_public_id", b'fake_srp_salt', b'fake_srp_verifier', b'fake_master_key_salt'
+        def fake_start_password_session(user_id, srp_salt, srp_verifier, master_key_salt):
+            self.start_password_session_called.append((user_id, srp_salt, srp_verifier, master_key_salt))
+            return self.start_password_session_response
+        monkeypatch.setattr(SessionManager, "start_password_session", fake_start_password_session)
+
         yield
 
     def test_calls_open_session(self):
@@ -288,6 +295,38 @@ class TestStart():
         assert "srp_salt" in fields
         assert "srp_verifier" in fields
         assert "master_key_salt" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, srp_salt, srp_verifier, master_key_salt",
+        [
+            (0,     b'abc',     b'def',     b'ghi'),
+            (15,    b'',        b'',        b''),
+            (350,   b'123'*8,   b'qcd'*100, b'ghi'*300)
+        ]
+    )
+    def test_calls_start_password_session(self, user_id, srp_salt, srp_verifier, master_key_salt):
+        """Should call the start password session function"""
+
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.srp_salt = srp_salt
+        self.from_string_response.srp_verifier = srp_verifier
+        self.from_string_response.master_key_salt = master_key_salt
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert len(self.start_password_session_called) == 1
+        start_password_session = self.start_password_session_called[0]
+        assert start_password_session[0] == user_id
+        assert start_password_session[1] == srp_salt
+        assert start_password_session[2] == srp_verifier
+        assert start_password_session[3] == master_key_salt
 
 
 
