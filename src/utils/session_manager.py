@@ -58,7 +58,7 @@ class SessionManager():
         Returns:
             (str)   Public ID
             (bytes) SRP Salt
-            (bytes) Ephemeral Public ID
+            (bytes) Public Ephemeral (b)
             (bytes) Master Key Salt
         """
         return True, None, "", b'', b'', b''

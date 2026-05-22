@@ -88,6 +88,15 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Call Util function
+        result = SessionManager.start_password_session(
+            user_id=user_id,
+            srp_salt=request.srp_salt,
+            srp_verifier=request.srp_verifier,
+            master_key_salt=request.master_key_salt
+        )
+        status, failure_reason, public_id, srp_salt, public_ephemeral, master_key_salt = result
+
 
 
         return SecureResponse()
