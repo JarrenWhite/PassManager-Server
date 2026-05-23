@@ -510,6 +510,27 @@ class TestAuth():
         assert len(self.open_session_called) == 1
         assert self.open_session_called[0] == (request, False, False)
 
+    def test_open_session_fails(self):
+        """Should return error if open session fails"""
+
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
 
 
 
