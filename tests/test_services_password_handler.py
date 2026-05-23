@@ -481,5 +481,37 @@ class TestStart():
         assert response == secure_response
 
 
+class TestAuth():
+    """Test cases for password auth function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.open_session_called = []
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
+        def fake_open_session(request, password_session = False, first_request = False):
+            self.open_session_called.append((request, password_session, first_request))
+            return self.open_session_response
+        monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
+
+        yield
+
+    def test_calls_open_session(self):
+        """Should pass secure request to be opened"""
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.open_session_called) == 1
+        assert self.open_session_called[0] == (request, False, False)
+
+
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
