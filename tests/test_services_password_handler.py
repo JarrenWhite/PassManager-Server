@@ -495,11 +495,11 @@ class TestAuth():
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
         self.from_string_called = []
-        self.from_string_response = PasswordStartRequest(
+        self.from_string_response = PasswordAuthRequest(
             username_hash=b'fake_username_hash',
-            srp_salt = b'fake_srp_salt',
-            srp_verifier = b'fake_srp_verifier',
-            master_key_salt = b'fake_master_key_salt'
+            public_id="fake_public_id",
+            eph_val_a = b'fake_eph_val_a',
+            proof_val_m1 = b'fake_val_m1'
         )
         self.from_string_exception = False
         def fake_from_string(data):
@@ -509,6 +509,34 @@ class TestAuth():
             else:
                 return self.from_string_response
         monkeypatch.setattr(PasswordAuthRequest, "FromString", fake_from_string)
+
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
+
+        self.sanitise_eph_val_a_called = []
+        self.sanitise_eph_val_a_response = None
+        def fake_sanitise_eph_val_a(input):
+            self.sanitise_eph_val_a_called.append(input)
+            return self.sanitise_eph_val_a_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_eph_val_a", fake_sanitise_eph_val_a)
+
+        self.sanitise_proof_val_m1_called = []
+        self.sanitise_proof_val_m1_response = None
+        def fake_sanitise_proof_val_m1(input):
+            self.sanitise_proof_val_m1_called.append(input)
+            return self.sanitise_proof_val_m1_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_proof_val_m1", fake_sanitise_proof_val_m1)
 
         yield
 
@@ -586,6 +614,69 @@ class TestAuth():
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
 
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
+
+    def test_calls_sanitise_public_id(self):
+        """Should call sanitise public id"""
+
+        self.from_string_response.public_id = "fake_public_id"
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == "fake_public_id"
+
+    def test_calls_sanitise_eph_val_a(self):
+        """Should call sanitise eph val a"""
+
+        self.from_string_response.eph_val_a = b'fake_eph_val_a'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.sanitise_eph_val_a_called) == 1
+        assert self.sanitise_eph_val_a_called[0] == b'fake_eph_val_a'
+
+    def test_calls_sanitise_proof_val_m1(self):
+        """Should call sanitise proof val m1"""
+
+        self.from_string_response.proof_val_m1 = b'fake_proof_val_m1'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.sanitise_proof_val_m1_called) == 1
+        assert self.sanitise_proof_val_m1_called[0] == b'fake_proof_val_m1'
 
 
 if __name__ == '__main__':
