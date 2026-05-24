@@ -678,6 +678,63 @@ class TestAuth():
         assert len(self.sanitise_proof_val_m1_called) == 1
         assert self.sanitise_proof_val_m1_called[0] == b'fake_proof_val_m1'
 
+    @pytest.mark.parametrize(
+        "failing_sanitiser, field",
+        [
+            ("sanitise_username",           "username_hash"),
+            ("sanitise_public_id",          "public_id"),
+            ("sanitise_eph_val_a",          "eph_val_a"),
+            ("sanitise_proof_val_m1",       "proof_val_m1")
+        ]
+    )
+    def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
+        """Should fetch invalid error for each sanitation fail"""
+
+        setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == ErrorCode.GNR00
+        assert error.description == FailureReason.INVALID.description
+
+    def test_all_sanitising_functions_fail(self):
+        """Should fetch all missing errors if all sanitising fails"""
+
+        self.sanitise_username_response = FailureReason.INVALID
+        self.sanitise_public_id_response = FailureReason.INVALID
+        self.sanitise_eph_val_a_response = FailureReason.INVALID
+        self.sanitise_proof_val_m1_response = FailureReason.INVALID
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 4
+
+        fields = [error.field for error in response.failure_data.error_list]
+        assert "username_hash" in fields
+        assert "public_id" in fields
+        assert "eph_val_a" in fields
+        assert "proof_val_m1" in fields
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
