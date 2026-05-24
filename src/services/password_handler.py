@@ -158,6 +158,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Sanitise Inputs
+        status = ServiceUtils.sanitise_username(request.username_hash)
+        if status:
+            error_list.append(status.error_proto("username_hash"))
+        status = ServiceUtils.sanitise_public_id(request.public_id)
+        if status:
+            error_list.append(status.error_proto("public_id"))
+        status = ServiceUtils.sanitise_eph_val_a(request.eph_val_a)
+        if status:
+            error_list.append(status.error_proto("eph_val_a"))
+        status = ServiceUtils.sanitise_proof_val_m1(request.proof_val_m1)
+
 
 
         return SecureResponse()
