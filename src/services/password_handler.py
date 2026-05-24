@@ -169,6 +169,18 @@ class PasswordHandler():
         if status:
             error_list.append(status.error_proto("eph_val_a"))
         status = ServiceUtils.sanitise_proof_val_m1(request.proof_val_m1)
+        if status:
+            error_list.append(status.error_proto("proof_val_m1"))
+
+        # Return errors
+        if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
 
 
