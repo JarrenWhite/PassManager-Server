@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
@@ -68,15 +68,16 @@ class SessionManager():
         public_id: str,
         eph_val_a: bytes,
         proof_val_m1: bytes
-    ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes, List[str]]:
         """
         Authenticate and create a password session
 
         Returns:
             (str)   Session Public ID
             (bytes) Server Proof (M2)
+            ([str]) Entry Public IDs
         """
-        return True, None, "", b''
+        return True, None, "", b'', []
 
     @staticmethod
     def open_session(

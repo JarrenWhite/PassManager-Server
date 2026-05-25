@@ -539,7 +539,7 @@ class TestAuth():
         monkeypatch.setattr(ServiceUtils, "sanitise_proof_val_m1", fake_sanitise_proof_val_m1)
 
         self.auth_password_session_called = []
-        self.auth_password_session_response = True, None, "fake_public_id", b'fake_server_proof_m2'
+        self.auth_password_session_response = True, None, "fake_public_id", b'fake_server_proof_m2', []
         def fake_auth_password_session(user_id, public_id, eph_val_a, proof_val_m1):
             self.auth_password_session_called.append((user_id, public_id, eph_val_a, proof_val_m1))
             return self.auth_password_session_response
@@ -786,7 +786,7 @@ class TestAuth():
     def test_returns_error_util_call_fails(self, failure_reason, field):
         """Should return correct error if util function fails"""
 
-        self.auth_password_session_response = False, failure_reason, "", b''
+        self.auth_password_session_response = False, failure_reason, "", b'', []
 
         request = SecureRequest(
             session_id="fake_session_id",

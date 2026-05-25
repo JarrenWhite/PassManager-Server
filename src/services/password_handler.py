@@ -189,7 +189,7 @@ class PasswordHandler():
             eph_val_a=request.eph_val_a,
             proof_val_m1=request.proof_val_m1
         )
-        status, failure_reason, session_public_id, server_proof_m2 = result
+        status, failure_reason, session_id, server_proof_m2, public_ids = result
 
         # Return error
         if not status:
