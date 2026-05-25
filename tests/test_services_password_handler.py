@@ -786,7 +786,7 @@ class TestAuth():
     def test_returns_error_util_call_fails(self, failure_reason, field):
         """Should return correct error if util function fails"""
 
-        self.start_password_session_response = False, failure_reason, "", b'', b''
+        self.auth_password_session_response = False, failure_reason, "", b''
 
         request = SecureRequest(
             session_id="fake_session_id",
