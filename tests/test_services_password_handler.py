@@ -538,6 +538,13 @@ class TestAuth():
             return self.sanitise_proof_val_m1_response
         monkeypatch.setattr(ServiceUtils, "sanitise_proof_val_m1", fake_sanitise_proof_val_m1)
 
+        self.auth_password_session_called = []
+        self.auth_password_session_response = True, None, "fake_public_id", b'fake_server_proof_m2'
+        def fake_auth_password_session(user_id, public_id, eph_val_a, proof_val_m1):
+            self.auth_password_session_called.append((user_id, public_id, eph_val_a, proof_val_m1))
+            return self.auth_password_session_response
+        monkeypatch.setattr(SessionManager, "auth_password_session", fake_auth_password_session)
+
         yield
 
     def test_calls_open_session(self):
@@ -734,6 +741,69 @@ class TestAuth():
         assert "public_id" in fields
         assert "eph_val_a" in fields
         assert "proof_val_m1" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, public_id, eph_val_a, proof_val_m1",
+        [
+            (0,     "abc",      b'def',     b'ghi'),
+            (15,    "",         b'',        b''),
+            (350,   "123"*8,    b'qcd'*100, b'ghi'*300)
+        ]
+    )
+    def test_calls_util(self, user_id, public_id, eph_val_a, proof_val_m1):
+        """Should call the util function"""
+
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.public_id = public_id
+        self.from_string_response.eph_val_a = eph_val_a
+        self.from_string_response.proof_val_m1 = proof_val_m1
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.auth_password_session_called) == 1
+        auth_password_session = self.auth_password_session_called[0]
+        assert auth_password_session[0] == user_id
+        assert auth_password_session[1] == public_id
+        assert auth_password_session[2] == eph_val_a
+        assert auth_password_session[3] == proof_val_m1
+
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.UNSPECIFIED,         "unknown"),
+            (FailureReason.UNKNOWN_EXCEPTION,   "server"),
+            (FailureReason.USER_EXISTS,         "username"),
+            (FailureReason.NOT_FOUND,           "unknown")
+        ]
+    )
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
+
+        self.start_password_session_response = False, failure_reason, "", b'', b''
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
 
 
 if __name__ == '__main__':
