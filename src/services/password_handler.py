@@ -182,6 +182,28 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Call Util function
+        result = SessionManager.auth_password_session(
+            user_id=user_id,
+            public_id=request.public_id,
+            eph_val_a=request.eph_val_a,
+            proof_val_m1=request.proof_val_m1
+        )
+        status, failure_reason, session_public_id, server_proof_m2 = result
+
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
 
 
         return SecureResponse()
