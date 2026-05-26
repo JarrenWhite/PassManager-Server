@@ -545,6 +545,26 @@ class TestAuth():
             return self.auth_password_session_response
         monkeypatch.setattr(SessionManager, "auth_password_session", fake_auth_password_session)
 
+        self.serialize_to_string_called = []
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+        def fake_serialize_to_string(input):
+            self.serialize_to_string_called.append(input)
+            return self.serialize_to_string_response
+        monkeypatch.setattr(PasswordAuthResponse, "SerializeToString", fake_serialize_to_string)
+
+        self.seal_session_called = []
+        self.seal_session_response = SecureResponse(
+            success=True,
+            success_data=SecureResponse.Success(
+                session_id="fake_session_id",
+                encrypted_data=b'fake_encrypted_data'
+            )
+        )
+        def fake_seal_session(session_id, response):
+            self.seal_session_called.append((session_id, response))
+            return self.seal_session_response
+        monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
+
         yield
 
     def test_calls_open_session(self):
@@ -804,6 +824,110 @@ class TestAuth():
         assert error.field == field
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
+
+    def test_calls_convert_to_proto(self):
+        """Should convert protobuf to bytes"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+        public_ids = ["", "123", "abc", "1a2b"*30]
+        self.auth_password_session_response = True, None, "fake_public_id", b'fake_server_proof_m2', public_ids
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.serialize_to_string_called) == 1
+
+        serialize_to_string = self.serialize_to_string_called[0]
+        assert isinstance(serialize_to_string, PasswordAuthResponse)
+        assert serialize_to_string.username_hash == b'fake_username_hash'
+        assert serialize_to_string.session_id == "fake_public_id"
+        assert serialize_to_string.server_proof_m2 == b'fake_server_proof_m2'
+
+        for id in public_ids:
+            assert id in serialize_to_string.public_ids
+
+    def test_calls_seal_session(self):
+        """Should call to seal session"""
+
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert len(self.seal_session_called) == 1
+
+        sealed = self.seal_session_called[0]
+        assert sealed[0] == "fake_session_id"
+        assert sealed[1] == b'fake_serialized_bytes'
+
+    @pytest.mark.parametrize(
+        "secure_response",
+        [
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="",
+                    encrypted_data=b''
+                )
+            ),
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="fake_session_id",
+                    encrypted_data=b'fake_encrypted_data'
+                )
+            ),
+            SecureResponse(
+                success=True,
+                success_data=SecureResponse.Success(
+                    session_id="abc123",
+                    encrypted_data=b'987zyx'
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.PASSWORD_CHANGE.error_proto()]
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.INCOMPLETE.error_proto()]
+                )
+            ),
+            SecureResponse(
+                success=False,
+                failure_data=Failure(
+                    error_list=[FailureReason.NOT_FOUND.error_proto()]
+                )
+            )
+        ]
+    )
+    def test_sealed_session_returned(self, secure_response):
+        """Should return result of sealed session"""
+
+        self.seal_session_response = secure_response
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert response == secure_response
 
 
 if __name__ == '__main__':
