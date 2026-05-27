@@ -204,9 +204,17 @@ class PasswordHandler():
                 failure_data=failure
             )
 
-
-
-        return SecureResponse()
+        # Successful Return
+        response = PasswordAuthResponse(
+            username_hash=request.username_hash,
+            session_id=session_id,
+            server_proof_m2=server_proof_m2,
+            public_ids=public_ids
+        )
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
 
 
     @staticmethod
