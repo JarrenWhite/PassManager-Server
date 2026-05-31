@@ -956,6 +956,13 @@ class TestComplete():
                 return self.from_string_response
         monkeypatch.setattr(PasswordCompleteRequest, "FromString", fake_from_string)
 
+        self.sanitise_username_called = []
+        self.sanitise_username_response = None
+        def fake_sanitise_username(input):
+            self.sanitise_username_called.append(input)
+            return self.sanitise_username_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+
     def test_calls_open_session(self):
         """Should pass secure request to be opened"""
 
@@ -1029,6 +1036,22 @@ class TestComplete():
         assert error.field == "request"
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
+
+    def test_calls_sanitise_username(self):
+        """Should call sanitise username"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.complete(request)
+
+        assert len(self.sanitise_username_called) == 1
+        assert self.sanitise_username_called[0] == b'fake_username_hash'
 
 
 if __name__ == '__main__':
