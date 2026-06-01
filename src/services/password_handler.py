@@ -267,6 +267,12 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Call Util function
+        result = DBUtilsPassword.commit(
+            user_id=user_id
+        )
+        status, failure_reason, public_ids = result
+
 
 
         return SecureResponse()
