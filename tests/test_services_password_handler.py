@@ -963,6 +963,15 @@ class TestComplete():
             return self.sanitise_username_response
         monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
 
+        self.commit_called = []
+        self.commit_response = True, None, "fake_public_id"
+        def fake_commit(user_id):
+            self.commit_called.append(user_id)
+            return self.commit_response
+        monkeypatch.setattr(DBUtilsPassword, "commit", fake_commit)
+
+        yield
+
     def test_calls_open_session(self):
         """Should pass secure request to be opened"""
 
@@ -1100,6 +1109,32 @@ class TestComplete():
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
+
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            (0),
+            (15),
+            (350)
+        ]
+    )
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
+
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.complete(request)
+
+        assert len(self.commit_called) == 1
+        commit = self.commit_called[0]
+        assert commit == user_id
 
 
 if __name__ == '__main__':
