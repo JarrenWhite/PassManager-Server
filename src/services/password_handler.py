@@ -346,6 +346,12 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Call Util function
+        result = DBUtilsPassword.abort(
+            user_id=user_id
+        )
+        status, failure_reason = result
+
 
 
         return SecureResponse()
