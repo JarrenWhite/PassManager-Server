@@ -418,6 +418,17 @@ class PasswordHandler():
         if status:
             error_list.append(status.error_proto("public_id"))
 
+        # Return errors
+        if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+
 
 
         return SecureResponse()
