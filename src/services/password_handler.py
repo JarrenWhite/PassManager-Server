@@ -21,7 +21,7 @@ from passmanager.common.v0.error_pb2 import (
     Failure
 )
 
-from utils import ServiceUtils, SessionManager, DBUtilsPassword
+from utils import ServiceUtils, SessionManager, DBUtilsPassword, DBUtilsData
 from enums import FailureReason
 
 
@@ -427,6 +427,13 @@ class PasswordHandler():
                 success=False,
                 failure_data=failure
             )
+
+        # Call Util function
+        status, failure_reason, entry_name, entry_data = DBUtilsData.get_entry(
+            user_id=user_id,
+            public_id=request.public_id,
+            password_change=True
+        )
 
 
 
