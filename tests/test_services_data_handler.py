@@ -1408,8 +1408,8 @@ class TestGet:
 
         self.get_entry_called = []
         self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
-        def fake_get_entry(user_id, public_id):
-            self.get_entry_called.append((user_id, public_id))
+        def fake_get_entry(user_id, public_id, password_change = False):
+            self.get_entry_called.append((user_id, public_id, password_change))
             return self.get_entry_response
         monkeypatch.setattr(DBUtilsData, "get_entry", fake_get_entry)
 
@@ -1620,6 +1620,7 @@ class TestGet:
         create = self.get_entry_called[0]
         assert create[0] == user_id
         assert create[1] == public_id
+        assert create[2] == False
 
     @pytest.mark.parametrize(
         "failure_reason, field",

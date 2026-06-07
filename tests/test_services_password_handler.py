@@ -31,6 +31,7 @@ from passmanager.common.v0.error_pb2 import (
 from services.password_handler import PasswordHandler
 from utils.service_utils import ServiceUtils
 from utils.db_utils_password import DBUtilsPassword
+from utils.db_utils_data import DBUtilsData
 from utils.session_manager import SessionManager
 from enums.failure_reason import FailureReason
 
@@ -1684,6 +1685,13 @@ class TestGet():
             return self.sanitise_public_id_response
         monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
 
+        self.get_entry_called = []
+        self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
+        def fake_get_entry(user_id, public_id, password_change = False):
+            self.get_entry_called.append((user_id, public_id, password_change))
+            return self.get_entry_response
+        monkeypatch.setattr(DBUtilsData, "get_entry", fake_get_entry)
+
         yield
 
     def test_calls_open_session(self):
@@ -1842,6 +1850,36 @@ class TestGet():
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
         assert "public_id" in fields
+
+    @pytest.mark.parametrize(
+        "user_id, public_id",
+        [
+            (0,     "abc"),
+            (15,    ""),
+            (350,   "123"*8)
+        ]
+    )
+    def test_calls_util(self, user_id, public_id):
+        """Should call the util function"""
+
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.from_string_response.username_hash = b'fake_username_hash'
+        self.from_string_response.public_id = public_id
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.get(request)
+
+        assert len(self.get_entry_called) == 1
+
+        create = self.get_entry_called[0]
+        assert create[0] == user_id
+        assert create[1] == public_id
+        assert create[2] == True
 
 
 if __name__ == '__main__':
