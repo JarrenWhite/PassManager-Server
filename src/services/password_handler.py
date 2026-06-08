@@ -429,11 +429,25 @@ class PasswordHandler():
             )
 
         # Call Util function
-        status, failure_reason, entry_name, entry_data = DBUtilsData.get_entry(
+        result = DBUtilsData.get_entry(
             user_id=user_id,
             public_id=request.public_id,
             password_change=True
         )
+        status, failure_reason, entry_name, entry_data = result
+
+        # Return error
+        if not status:
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
 
 
