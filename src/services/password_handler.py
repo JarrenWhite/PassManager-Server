@@ -518,6 +518,15 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Call Util function
+        result = DBUtilsPassword.update(
+            user_id=user_id,
+            public_id=request.public_id,
+            entry_name=request.entry_name,
+            entry_data=request.entry_data
+        )
+        status, failure_reason = result
+
 
 
         return SecureResponse()
