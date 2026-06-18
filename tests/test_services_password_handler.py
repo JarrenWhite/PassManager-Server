@@ -2096,6 +2096,13 @@ class TestUpdate():
             return self.update_response
         monkeypatch.setattr(DBUtilsPassword, "update", fake_update)
 
+        self.serialize_to_string_called = []
+        self.serialize_to_string_response = b'fake_serialized_bytes'
+        def fake_serialize_to_string(input):
+            self.serialize_to_string_called.append(input)
+            return self.serialize_to_string_response
+        monkeypatch.setattr(PasswordUpdateResponse, "SerializeToString", fake_serialize_to_string)
+
     def test_calls_open_session(self):
         """Should pass secure request to be opened"""
 
@@ -2352,6 +2359,27 @@ class TestUpdate():
         assert error.field == field
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
+
+    def test_calls_convert_to_proto(self):
+        """Should convert protobuf to bytes"""
+
+        self.from_string_response.username_hash = b'fake_username_hash'
+        public_ids = ["", "123", "abc", "1a2b"*30]
+        self.commit_response = True, None, public_ids
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.update(request)
+
+        assert len(self.serialize_to_string_called) == 1
+
+        serialize_to_string = self.serialize_to_string_called[0]
+        assert isinstance(serialize_to_string, PasswordUpdateResponse)
+        assert serialize_to_string.username_hash == b'fake_username_hash'
 
 
 if __name__ == '__main__':
