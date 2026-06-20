@@ -540,6 +540,11 @@ class PasswordHandler():
                 failure_data=failure
             )
 
-
-
-        return SecureResponse()
+        # Successful Return
+        response = PasswordUpdateResponse(
+            username_hash=request.username_hash
+        )
+        return SessionManager.seal_session(
+            session_id=secure_request.session_id,
+            response=response.SerializeToString()
+        )
