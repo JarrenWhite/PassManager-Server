@@ -677,7 +677,7 @@ class TestEdit:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_public_id",    "public_id"),
+            ("sanitise_public_id",          "public_id"),
             ("sanitise_entry_name",         "entry_name"),
             ("sanitise_entry_data",         "entry_data")
         ]
@@ -1158,7 +1158,7 @@ class TestDelete:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_public_id",    "public_id")
+            ("sanitise_public_id",          "public_id")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -1545,7 +1545,7 @@ class TestGet:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_public_id",    "public_id")
+            ("sanitise_public_id",          "public_id")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
