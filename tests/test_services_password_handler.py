@@ -1193,7 +1193,6 @@ class TestComplete():
 
         self.from_string_response.username_hash = b'fake_username_hash'
         public_ids = ["", "123", "abc", "1a2b"*30]
-        self.commit_response = True, None, public_ids
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1550,7 +1549,6 @@ class TestAbort():
 
         self.from_string_response.username_hash = b'fake_username_hash'
         public_ids = ["", "123", "abc", "1a2b"*30]
-        self.commit_response = True, None, public_ids
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1937,7 +1935,6 @@ class TestGet():
 
         self.from_string_response.username_hash = b'fake_username_hash'
         public_ids = ["", "123", "abc", "1a2b"*30]
-        self.commit_response = True, None, public_ids
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -2380,7 +2377,6 @@ class TestUpdate():
 
         self.from_string_response.username_hash = b'fake_username_hash'
         public_ids = ["", "123", "abc", "1a2b"*30]
-        self.commit_response = True, None, public_ids
 
         request = SecureRequest(
             session_id="fake_session_id",
