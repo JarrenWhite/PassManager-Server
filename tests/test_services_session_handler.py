@@ -402,9 +402,11 @@ class TestAuth():
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_srp_salt_response = FailureReason.INVALID
-        self.sanitise_srp_verifier_response = FailureReason.INVALID
-        self.sanitise_master_key_salt_response = FailureReason.INVALID
+        self.sanitise_public_id_response = FailureReason.INVALID
+        self.sanitise_eph_val_a_response = FailureReason.INVALID
+        self.sanitise_proof_val_m1_response = FailureReason.INVALID
+        self.sanitise_maximum_requests_response = FailureReason.INVALID
+        self.sanitise_expiry_time_response = FailureReason.INVALID
 
         request = SessionAuthRequest(
             username_hash=b'fake_username_hash',
@@ -419,7 +421,7 @@ class TestAuth():
 
         assert isinstance(response, SessionAuthResponse)
         assert not response.success
-        assert len(response.failure_data.error_list) == 1
+        assert len(response.failure_data.error_list) == 6
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
