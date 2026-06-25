@@ -13,6 +13,13 @@ class ServiceUtils():
 
 
     @staticmethod
+    def sanitise_public_id(
+        input: str
+    ) -> Optional[FailureReason]:
+        return None
+
+
+    @staticmethod
     def sanitise_srp_salt(
         input: bytes
     ) -> Optional[FailureReason]:
@@ -43,13 +50,6 @@ class ServiceUtils():
     @staticmethod
     def sanitise_entry_data(
         input: bytes
-    ) -> Optional[FailureReason]:
-        return None
-
-
-    @staticmethod
-    def sanitise_public_id(
-        input: str
     ) -> Optional[FailureReason]:
         return None
 
