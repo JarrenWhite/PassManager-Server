@@ -11,8 +11,8 @@ A brief introduction to the possible responses for all defined APIs.
     3. [Delete User](#delete-user-user)
 3. [**Password**](#password)
     1. [Start Password Change](#start-password-change-password)
-    2. [Continue Password Change](#continue-password-change-password)
-    3. [Complete Password Change](#complete-password-change-password)
+    2. [Complete Password Auth](#complete-password-change-password)
+    3. [Commit Password Change](#commit-password-change-password)
     4. [Abort Password Change](#abort-password-change-password)
     5. [Get Entry](#get-entry-password)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry-password)
@@ -120,9 +120,9 @@ Messages which use a secure message response are shown in the documentation by d
 
 ---
 
-### Continue Password Change (Password)
+### Complete Password Auth (Password)
 
-**[Request Format](api_calls.md#continue-password-change-password)**
+**[Request Format](api_calls.md#complete-password-change-password)**
 
 **Protobuf Message:** `passmanager.password.<version>.PasswordAuthResponse`
 
@@ -136,11 +136,11 @@ Messages which use a secure message response are shown in the documentation by d
 
 ---
 
-### Complete Password Change (Password)
+### Commit Password Change (Password)
 
-**[Request Format](api_calls.md#complete-password-change-password)**
+**[Request Format](api_calls.md#commit-password-change-password)**
 
-**Protobuf Message:** `passmanager.password.<version>.PasswordCompleteResponse`
+**Protobuf Message:** `passmanager.password.<version>.PasswordCommitResponse`
 
 **Encryption Payload**
 | Field           | Type     | Description                                                  |
