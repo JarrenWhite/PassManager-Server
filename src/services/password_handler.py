@@ -8,8 +8,8 @@ from passmanager.password.v0.password_payloads_pb2 import (
     PasswordStartResponse,
     PasswordAuthRequest,
     PasswordAuthResponse,
-    PasswordCompleteRequest,
-    PasswordCompleteResponse,
+    PasswordCommitRequest,
+    PasswordCommitResponse,
     PasswordAbortRequest,
     PasswordAbortResponse,
     PasswordGetRequest,
@@ -216,7 +216,7 @@ class PasswordHandler():
 
 
     @staticmethod
-    def complete(secure_request: SecureRequest) -> SecureResponse:
+    def commit(secure_request: SecureRequest) -> SecureResponse:
         error_list = []
 
         # Open secure session
@@ -238,7 +238,7 @@ class PasswordHandler():
 
         # Convert to Protobuf Message
         try:
-            request = PasswordCompleteRequest.FromString(decrypted_bytes)
+            request = PasswordCommitRequest.FromString(decrypted_bytes)
         except DecodeError:
             error_list.append(FailureReason.DECRYPTION.error_proto())
 
@@ -285,7 +285,7 @@ class PasswordHandler():
             )
 
         # Successful Return
-        response = PasswordCompleteResponse(
+        response = PasswordCommitResponse(
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
