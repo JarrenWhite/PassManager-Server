@@ -25,8 +25,6 @@ from utils import ServiceUtils, SessionManager, DBUtilsPassword, DBUtilsData
 from enums import FailureReason
 
 
-# TODO - Placeholder class. Requires completion.
-
 class PasswordHandler():
 
     @staticmethod
