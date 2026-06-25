@@ -6,7 +6,7 @@ from enums import FailureReason
 class ServiceUtils():
 
     @staticmethod
-    def sanitise_username(
+    def sanitise_username_hash(
         input: bytes
     ) -> Optional[FailureReason]:
         return None

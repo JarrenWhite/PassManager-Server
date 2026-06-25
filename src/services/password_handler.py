@@ -63,7 +63,7 @@ class PasswordHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
         status = ServiceUtils.sanitise_srp_salt(request.srp_salt)
@@ -157,7 +157,7 @@ class PasswordHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
         status = ServiceUtils.sanitise_public_id(request.public_id)
@@ -251,7 +251,7 @@ class PasswordHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
 
@@ -330,7 +330,7 @@ class PasswordHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
 
@@ -409,7 +409,7 @@ class PasswordHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
         status = ServiceUtils.sanitise_public_id(request.public_id)
@@ -496,7 +496,7 @@ class PasswordHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
         status = ServiceUtils.sanitise_public_id(request.public_id)
