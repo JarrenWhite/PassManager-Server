@@ -1192,7 +1192,6 @@ class TestComplete():
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        public_ids = ["", "123", "abc", "1a2b"*30]
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1548,7 +1547,6 @@ class TestAbort():
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        public_ids = ["", "123", "abc", "1a2b"*30]
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1934,7 +1932,8 @@ class TestGet():
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        public_ids = ["", "123", "abc", "1a2b"*30]
+        self.from_string_response.public_id = "fake_public_id"
+        self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1949,6 +1948,9 @@ class TestGet():
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, PasswordGetResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
+        assert serialize_to_string.public_id == "fake_public_id"
+        assert serialize_to_string.entry_name == b'fake_entry_name'
+        assert serialize_to_string.entry_data == b'fake_entry_data'
 
     def test_calls_seal_session(self):
         """Should call to seal session"""
@@ -2378,7 +2380,7 @@ class TestUpdate():
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        public_ids = ["", "123", "abc", "1a2b"*30]
+        self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -2393,6 +2395,7 @@ class TestUpdate():
         serialize_to_string = self.serialize_to_string_called[0]
         assert isinstance(serialize_to_string, PasswordUpdateResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
+        assert serialize_to_string.public_id == "fake_public_id"
 
     def test_calls_seal_session(self):
         """Should call to seal session"""
