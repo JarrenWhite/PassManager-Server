@@ -2307,6 +2307,8 @@ class TestUpdate():
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
         assert "public_id" in fields
+        assert "entry_name" in fields
+        assert "entry_data" in fields
 
     @pytest.mark.parametrize(
         "user_id, public_id, entry_name, entry_data",

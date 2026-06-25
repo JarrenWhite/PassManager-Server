@@ -1941,7 +1941,6 @@ class TestList:
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
             session_id="fake_session_id",
