@@ -49,21 +49,18 @@ class PasswordStartResponse(_message.Message):
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
     PUBLIC_ID_FIELD_NUMBER: _builtins.int
-    SRP_SALT_FIELD_NUMBER: _builtins.int
     EPH_PUBLIC_B_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
     public_id: _builtins.str
-    srp_salt: _builtins.bytes
     eph_public_b: _builtins.bytes
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
         public_id: _builtins.str = ...,
-        srp_salt: _builtins.bytes = ...,
         eph_public_b: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_public_b", b"eph_public_b", "public_id", b"public_id", "srp_salt", b"srp_salt", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_public_b", b"eph_public_b", "public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordStartResponse: _TypeAlias = PasswordStartResponse  # noqa: Y015
