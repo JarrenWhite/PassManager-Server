@@ -223,12 +223,12 @@ class TestAuth():
             return self.sanitise_proof_val_m1_response
         monkeypatch.setattr(ServiceUtils, "sanitise_proof_val_m1", fake_sanitise_proof_val_m1)
 
-        self.sanitise_maximum_requests_called = []
-        self.sanitise_maximum_requests_response = None
-        def fake_sanitise_maximum_requests(input):
-            self.sanitise_maximum_requests_called.append(input)
-            return self.sanitise_maximum_requests_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_maximum_requests", fake_sanitise_maximum_requests)
+        self.sanitise_request_count_called = []
+        self.sanitise_request_count_response = None
+        def fake_sanitise_request_count(input):
+            self.sanitise_request_count_called.append(input)
+            return self.sanitise_request_count_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_request_count", fake_sanitise_request_count)
 
         self.sanitise_expiry_time_called = []
         self.sanitise_expiry_time_response = None
@@ -328,7 +328,7 @@ class TestAuth():
         assert len(self.sanitise_proof_val_m1_called) == 1
         assert self.sanitise_proof_val_m1_called[0] == b'fake_proof_val_m1'
 
-    def test_calls_sanitise_maximum_requests(self):
+    def test_calls_sanitise_request_count(self):
         """Should call sanitise maximum requests"""
 
         request = SessionAuthRequest(
@@ -342,8 +342,8 @@ class TestAuth():
 
         response = SessionHandler.auth(request)
 
-        assert len(self.sanitise_maximum_requests_called) == 1
-        assert self.sanitise_maximum_requests_called[0] == 5
+        assert len(self.sanitise_request_count_called) == 1
+        assert self.sanitise_request_count_called[0] == 5
 
     def test_calls_sanitise_expiry_time(self):
         """Should call sanitise expiry time"""
@@ -369,7 +369,7 @@ class TestAuth():
             ("sanitise_public_id",          "public_id"),
             ("sanitise_eph_val_a",          "eph_val_a"),
             ("sanitise_proof_val_m1",       "proof_val_m1"),
-            ("sanitise_maximum_requests",   "maximum_requests"),
+            ("sanitise_request_count",   "maximum_requests"),
             ("sanitise_expiry_time",        "expiry_time")
         ]
     )
@@ -405,7 +405,7 @@ class TestAuth():
         self.sanitise_public_id_response = FailureReason.INVALID
         self.sanitise_eph_val_a_response = FailureReason.INVALID
         self.sanitise_proof_val_m1_response = FailureReason.INVALID
-        self.sanitise_maximum_requests_response = FailureReason.INVALID
+        self.sanitise_request_count_response = FailureReason.INVALID
         self.sanitise_expiry_time_response = FailureReason.INVALID
 
         request = SessionAuthRequest(

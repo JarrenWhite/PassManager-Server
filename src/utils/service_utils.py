@@ -69,7 +69,7 @@ class ServiceUtils():
 
 
     @staticmethod
-    def sanitise_maximum_requests(
+    def sanitise_request_count(
         input: int
     )-> Optional[FailureReason]:
       return None
