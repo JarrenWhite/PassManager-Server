@@ -110,7 +110,7 @@ Two for each data entry, plus one request to complete the change.
 - **Result:** Returns validation details for new credentials
 - **RPC Method:** `Password.Start`
 
-#### 2. Continue Password Change
+#### 2. Complete Password Auth
 - **Requirement:** Active login session
 - **Action:** Completes SRP authentication for new credentials
 - **Result:** Returns session details and list of all entry public IDs
@@ -125,11 +125,11 @@ Two for each data entry, plus one request to complete the change.
 - **Constraint:** Must process all entries before completion
 - **RPC Methods:** `Password.Get`, `Password.Update`
 
-#### 4. Complete Password Change
+#### 4. Commit Password Change
 - **Requirement:** All entries processed & Password change session
 - **Action:** Finalises password change and cleans up
 - **Result:** Old credentials erased, new credentials activated
-- **RPC Method:** `Password.Complete`
+- **RPC Method:** `Password.Commit`
 
 #### 5. Abort Password Change (Optional)
 - **Requirement:** Any active session
