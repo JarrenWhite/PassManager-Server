@@ -112,7 +112,6 @@ class PasswordHandler():
         response = PasswordStartResponse(
             username_hash=request.username_hash,
             public_id=public_id,
-            srp_salt=srp_salt,
             eph_public_b=public_ephemeral_b
         )
         return SessionManager.seal_session(

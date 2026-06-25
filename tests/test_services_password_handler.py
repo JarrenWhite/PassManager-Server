@@ -400,7 +400,6 @@ class TestStart():
         assert isinstance(serialize_to_string, PasswordStartResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
-        assert serialize_to_string.srp_salt == b'fake_srp_salt'
         assert serialize_to_string.eph_public_b == b'fake_eph_public_b'
 
     def test_calls_seal_session(self):

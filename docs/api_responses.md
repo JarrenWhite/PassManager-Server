@@ -115,7 +115,6 @@ Messages which use a secure message response are shown in the documentation by d
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
 | public_id       | string   | The public ID of the in progress auth request.               |
-| srp_salt        | bytes    | The salt used to create the verifier in SRP.                 |
 | eph_public_b    | bytes    | Unique server ephemeral value (B) for this SRP auth attempt. |
 
 ---
