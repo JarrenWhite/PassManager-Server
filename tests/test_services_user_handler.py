@@ -193,8 +193,8 @@ class TestRegister:
         assert "srp_verifier" in fields
         assert "master_key_salt" in fields
 
-    def test_calls_create(self):
-        """Should call the user create function"""
+    def test_calls_util(self):
+        """Should call the util function"""
 
         request = UserRegisterRequest(
             new_username=b'fake_username_hash',
@@ -222,8 +222,8 @@ class TestRegister:
             (FailureReason.NOT_FOUND,           "new_username")
         ]
     )
-    def test_returns_error_create_call_fails(self, failure_reason, field):
-        """Should return correct error if user create function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.create_response = False, failure_reason
 
@@ -269,7 +269,7 @@ class TestUsername:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -340,12 +340,12 @@ class TestUsername:
         response = UserHandler.username(request)
 
         assert len(self.open_session_called) == 1
-        assert self.open_session_called[0] == (request, True, True)
+        assert self.open_session_called[0] == (request, False, True)
 
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -507,10 +507,10 @@ class TestUsername:
             350
         ]
     )
-    def test_calls_change_username(self, user_id):
-        """Should call the user change username function"""
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.new_username = b'fake_new_username'
 
         request = SecureRequest(
@@ -536,8 +536,8 @@ class TestUsername:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_change_username_call_fails(self, failure_reason, field):
-        """Should return correct error if user change username function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.change_username_response = False, failure_reason
 
@@ -663,7 +663,7 @@ class TestDelete():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -730,12 +730,12 @@ class TestDelete():
         response = UserHandler.delete(request)
 
         assert len(self.open_session_called) == 1
-        assert self.open_session_called[0] == (request, True, True)
+        assert self.open_session_called[0] == (request, False, True)
 
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -836,10 +836,10 @@ class TestDelete():
             350
         ]
     )
-    def test_calls_delete(self, user_id):
-        """Should call the user delete function"""
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
@@ -862,8 +862,8 @@ class TestDelete():
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_delete_call_fails(self, failure_reason, field):
-        """Should return correct error if user delete function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.delete_response = False, failure_reason
 

@@ -119,7 +119,7 @@ class SessionHandler:
             maximum_requests=request.maximum_requests,
             expiry_time=request.expiry_time
         )
-        status, failure_reason, session_public_id, server_proof_val = result
+        status, failure_reason, session_public_id, server_proof_m2 = result
 
         # Return error
         if not status:
@@ -137,7 +137,7 @@ class SessionHandler:
         # Successful Return
         success_data = SessionAuthResponse.Success(
             session_id=session_public_id,
-            server_proof=server_proof_val
+            server_proof=server_proof_m2
         )
         return SessionAuthResponse(
             success=True,
@@ -153,7 +153,7 @@ class SessionHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())
@@ -235,7 +235,7 @@ class SessionHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, decrypted_bytes, user_id, failure_reason = open_session
+        status, failure_reason, decrypted_bytes, user_id = open_session
         if not status:
             assert failure_reason
             error_list.append(failure_reason.error_proto())

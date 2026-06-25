@@ -19,7 +19,7 @@ These definitions are used for all calls to or from the server.
 
 
 ## Tests
-Each completed implementation file has an associated test file. . Each function is tested within that test file. The test file name is determined by the implementation file's package and filename, following the format `test_[package]_[filename].py`.
+Each completed implementation file has an associated test file. Each function is tested within that test file. The test file name is determined by the implementation file's package and filename, following the format `test_[package]_[filename].py`.
 
 The tests make use of the pytest framework. As well as being runnable using a pytest command, each test file has been configured to run all tests if being run in standard python. Additionally, the `all_tests.py` file has been configured to run all tests if run in standard python.
 

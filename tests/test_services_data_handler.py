@@ -40,7 +40,7 @@ class TestCreate:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -128,7 +128,7 @@ class TestCreate:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -295,10 +295,10 @@ class TestCreate:
             (350,   b'qcd'*100, b'ghi'*300)
         ]
     )
-    def test_calls_create(self, user_id, entry_name, entry_data):
-        """Should call the data create function"""
+    def test_calls_util(self, user_id, entry_name, entry_data):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.entry_name = entry_name
         self.from_string_response.entry_data = entry_data
@@ -327,8 +327,8 @@ class TestCreate:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_create_call_fails(self, failure_reason, field):
-        """Should return correct error if data create function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.create_response = False, failure_reason, ""
 
@@ -456,7 +456,7 @@ class TestEdit:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -552,7 +552,7 @@ class TestEdit:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -677,7 +677,7 @@ class TestEdit:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_public_id",    "public_id"),
+            ("sanitise_public_id",          "public_id"),
             ("sanitise_entry_name",         "entry_name"),
             ("sanitise_entry_data",         "entry_data")
         ]
@@ -738,10 +738,10 @@ class TestEdit:
             (350,   "123"*8,b'qcd'*100, b'ghi'*300)
         ]
     )
-    def test_calls_edit(self, user_id, public_id, entry_name, entry_data):
-        """Should call the data edit function"""
+    def test_calls_util(self, user_id, public_id, entry_name, entry_data):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
         self.from_string_response.entry_name = entry_name
@@ -772,8 +772,8 @@ class TestEdit:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_edit_call_fails(self, failure_reason, field):
-        """Should return correct error if data edit function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.edit_response = False, failure_reason
 
@@ -985,7 +985,7 @@ class TestDelete:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1065,7 +1065,7 @@ class TestDelete:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1158,7 +1158,7 @@ class TestDelete:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_public_id",    "public_id")
+            ("sanitise_public_id",          "public_id")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -1213,10 +1213,10 @@ class TestDelete:
             (350,   "123"*8)
         ]
     )
-    def test_calls_delete(self, user_id, public_id):
-        """Should call the data delete function"""
+    def test_calls_util(self, user_id, public_id):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
@@ -1243,8 +1243,8 @@ class TestDelete:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_delete_call_fails(self, failure_reason, field):
-        """Should return correct error if data delete function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.delete_response = False, failure_reason
 
@@ -1372,7 +1372,7 @@ class TestGet:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1408,8 +1408,8 @@ class TestGet:
 
         self.get_entry_called = []
         self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
-        def fake_get_entry(user_id, public_id):
-            self.get_entry_called.append((user_id, public_id))
+        def fake_get_entry(user_id, public_id, password_change = False):
+            self.get_entry_called.append((user_id, public_id, password_change))
             return self.get_entry_response
         monkeypatch.setattr(DBUtilsData, "get_entry", fake_get_entry)
 
@@ -1452,7 +1452,7 @@ class TestGet:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1545,7 +1545,7 @@ class TestGet:
         "failing_sanitiser, field",
         [
             ("sanitise_username",           "username_hash"),
-            ("sanitise_public_id",    "public_id")
+            ("sanitise_public_id",          "public_id")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -1600,10 +1600,10 @@ class TestGet:
             (350,   "123"*8)
         ]
     )
-    def test_calls_get_entry(self, user_id, public_id):
-        """Should call the data get entry function"""
+    def test_calls_util(self, user_id, public_id):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
@@ -1620,6 +1620,7 @@ class TestGet:
         create = self.get_entry_called[0]
         assert create[0] == user_id
         assert create[1] == public_id
+        assert create[2] == False
 
     @pytest.mark.parametrize(
         "failure_reason, field",
@@ -1630,8 +1631,8 @@ class TestGet:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_get_call_fails(self, failure_reason, field):
-        """Should return correct error if data get function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.get_entry_response = False, failure_reason, b'', b''
 
@@ -1763,7 +1764,7 @@ class TestList:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, b'fake_decrypted_bytes', 0, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1835,7 +1836,7 @@ class TestList:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, b'', 0, FailureReason.DECRYPTION
+        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1940,7 +1941,6 @@ class TestList:
         """Should fetch all missing errors if all sanitising fails"""
 
         self.sanitise_username_response = FailureReason.INVALID
-        self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1965,10 +1965,10 @@ class TestList:
             350
         ]
     )
-    def test_calls_get_list(self, user_id):
-        """Should call the data get list function"""
+    def test_calls_util(self, user_id):
+        """Should call the util function"""
 
-        self.open_session_response = True, b'fake_decrypted_bytes', user_id, None
+        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
@@ -1993,8 +1993,8 @@ class TestList:
             (FailureReason.NOT_FOUND,           "unknown")
         ]
     )
-    def test_returns_error_list_call_fails(self, failure_reason, field):
-        """Should return correct error if data list function fails"""
+    def test_returns_error_util_call_fails(self, failure_reason, field):
+        """Should return correct error if util function fails"""
 
         self.get_list_response = False, failure_reason, []
 
