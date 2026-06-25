@@ -94,7 +94,7 @@ class TestStart():
         monkeypatch.setattr(ServiceUtils, "sanitise_master_key_salt", fake_sanitise_master_key_salt)
 
         self.start_password_session_called = []
-        self.start_password_session_response = True, None, "fake_public_id", b'fake_srp_salt', b'fake_eph_public_b'
+        self.start_password_session_response = True, None, "fake_public_id", b'fake_eph_public_b'
         def fake_start_password_session(user_id, srp_salt, srp_verifier, master_key_salt):
             self.start_password_session_called.append((user_id, srp_salt, srp_verifier, master_key_salt))
             return self.start_password_session_response
@@ -361,7 +361,7 @@ class TestStart():
     def test_returns_error_util_call_fails(self, failure_reason, field):
         """Should return correct error if util function fails"""
 
-        self.start_password_session_response = False, failure_reason, "", b'', b''
+        self.start_password_session_response = False, failure_reason, "", b''
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -384,7 +384,7 @@ class TestStart():
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.start_password_session_response = True, None, "fake_public_id", b'fake_srp_salt', b'fake_eph_public_b'
+        self.start_password_session_response = True, None, "fake_public_id", b'fake_eph_public_b'
 
         request = SecureRequest(
             session_id="fake_session_id",

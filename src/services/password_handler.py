@@ -93,7 +93,7 @@ class PasswordHandler():
             srp_verifier=request.srp_verifier,
             master_key_salt=request.master_key_salt
         )
-        status, failure_reason, public_id, srp_salt, public_ephemeral_b = result
+        status, failure_reason, public_id, public_ephemeral_b = result
 
         # Return error
         if not status:
