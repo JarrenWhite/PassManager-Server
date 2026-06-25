@@ -28,7 +28,7 @@ class UserHandler():
         error_list = []
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.new_username)
+        status = ServiceUtils.sanitise_username_hash(request.new_username)
         if status:
             error_list.append(status.error_proto("new_username"))
         status = ServiceUtils.sanitise_srp_salt(request.srp_salt)
@@ -119,10 +119,10 @@ class UserHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
-        status = ServiceUtils.sanitise_username(request.new_username)
+        status = ServiceUtils.sanitise_username_hash(request.new_username)
         if status:
             error_list.append(status.error_proto("new_username"))
 
@@ -202,7 +202,7 @@ class UserHandler():
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
 

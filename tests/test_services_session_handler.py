@@ -39,12 +39,12 @@ class TestStart():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
-        self.sanitise_username_called = []
-        self.sanitise_username_response = None
-        def fake_sanitise_username(input):
-            self.sanitise_username_called.append(input)
-            return self.sanitise_username_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+        self.sanitise_username_hash_called = []
+        self.sanitise_username_hash_response = None
+        def fake_sanitise_username_hash(input):
+            self.sanitise_username_hash_called.append(input)
+            return self.sanitise_username_hash_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username_hash", fake_sanitise_username_hash)
 
         self.start_new_session_called = []
         self.start_new_session_response = (
@@ -62,7 +62,7 @@ class TestStart():
 
         yield
 
-    def test_calls_sanitise_username(self):
+    def test_calls_sanitise_username_hash(self):
         """Should call sanitise username"""
 
         request = SessionStartRequest(
@@ -71,13 +71,13 @@ class TestStart():
 
         response = SessionHandler.start(request)
 
-        assert len(self.sanitise_username_called) == 1
-        assert self.sanitise_username_called[0] == b'fake_username_hash'
+        assert len(self.sanitise_username_hash_called) == 1
+        assert self.sanitise_username_hash_called[0] == b'fake_username_hash'
 
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_username",           "username_hash")
+            ("sanitise_username_hash",           "username_hash")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -103,7 +103,7 @@ class TestStart():
     def test_all_sanitising_functions_fail(self):
         """Should fetch all missing errors if all sanitising fails"""
 
-        self.sanitise_username_response = FailureReason.INVALID
+        self.sanitise_username_hash_response = FailureReason.INVALID
 
         request = SessionStartRequest(
             username_hash=b'fake_username_hash'
@@ -195,12 +195,12 @@ class TestAuth():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
-        self.sanitise_username_called = []
-        self.sanitise_username_response = None
-        def fake_sanitise_username(input):
-            self.sanitise_username_called.append(input)
-            return self.sanitise_username_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+        self.sanitise_username_hash_called = []
+        self.sanitise_username_hash_response = None
+        def fake_sanitise_username_hash(input):
+            self.sanitise_username_hash_called.append(input)
+            return self.sanitise_username_hash_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username_hash", fake_sanitise_username_hash)
 
         self.sanitise_public_id_called = []
         self.sanitise_public_id_response = None
@@ -223,12 +223,12 @@ class TestAuth():
             return self.sanitise_proof_val_m1_response
         monkeypatch.setattr(ServiceUtils, "sanitise_proof_val_m1", fake_sanitise_proof_val_m1)
 
-        self.sanitise_maximum_requests_called = []
-        self.sanitise_maximum_requests_response = None
-        def fake_sanitise_maximum_requests(input):
-            self.sanitise_maximum_requests_called.append(input)
-            return self.sanitise_maximum_requests_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_maximum_requests", fake_sanitise_maximum_requests)
+        self.sanitise_request_count_called = []
+        self.sanitise_request_count_response = None
+        def fake_sanitise_request_count(input):
+            self.sanitise_request_count_called.append(input)
+            return self.sanitise_request_count_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_request_count", fake_sanitise_request_count)
 
         self.sanitise_expiry_time_called = []
         self.sanitise_expiry_time_response = None
@@ -260,7 +260,7 @@ class TestAuth():
 
         yield
 
-    def test_calls_sanitise_username(self):
+    def test_calls_sanitise_username_hash(self):
         """Should call sanitise username"""
 
         request = SessionAuthRequest(
@@ -274,8 +274,8 @@ class TestAuth():
 
         response = SessionHandler.auth(request)
 
-        assert len(self.sanitise_username_called) == 1
-        assert self.sanitise_username_called[0] == b'fake_username_hash'
+        assert len(self.sanitise_username_hash_called) == 1
+        assert self.sanitise_username_hash_called[0] == b'fake_username_hash'
 
     def test_calls_sanitise_public_id(self):
         """Should call sanitise public id"""
@@ -328,7 +328,7 @@ class TestAuth():
         assert len(self.sanitise_proof_val_m1_called) == 1
         assert self.sanitise_proof_val_m1_called[0] == b'fake_proof_val_m1'
 
-    def test_calls_sanitise_maximum_requests(self):
+    def test_calls_sanitise_request_count(self):
         """Should call sanitise maximum requests"""
 
         request = SessionAuthRequest(
@@ -342,8 +342,8 @@ class TestAuth():
 
         response = SessionHandler.auth(request)
 
-        assert len(self.sanitise_maximum_requests_called) == 1
-        assert self.sanitise_maximum_requests_called[0] == 5
+        assert len(self.sanitise_request_count_called) == 1
+        assert self.sanitise_request_count_called[0] == 5
 
     def test_calls_sanitise_expiry_time(self):
         """Should call sanitise expiry time"""
@@ -365,11 +365,11 @@ class TestAuth():
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_username",           "username_hash"),
+            ("sanitise_username_hash",           "username_hash"),
             ("sanitise_public_id",          "public_id"),
             ("sanitise_eph_val_a",          "eph_val_a"),
             ("sanitise_proof_val_m1",       "proof_val_m1"),
-            ("sanitise_maximum_requests",   "maximum_requests"),
+            ("sanitise_request_count",   "maximum_requests"),
             ("sanitise_expiry_time",        "expiry_time")
         ]
     )
@@ -401,11 +401,11 @@ class TestAuth():
     def test_all_sanitising_functions_fail(self):
         """Should fetch all missing errors if all sanitising fails"""
 
-        self.sanitise_username_response = FailureReason.INVALID
+        self.sanitise_username_hash_response = FailureReason.INVALID
         self.sanitise_public_id_response = FailureReason.INVALID
         self.sanitise_eph_val_a_response = FailureReason.INVALID
         self.sanitise_proof_val_m1_response = FailureReason.INVALID
-        self.sanitise_maximum_requests_response = FailureReason.INVALID
+        self.sanitise_request_count_response = FailureReason.INVALID
         self.sanitise_expiry_time_response = FailureReason.INVALID
 
         request = SessionAuthRequest(
@@ -535,12 +535,12 @@ class TestDelete():
                 return self.from_string_response
         monkeypatch.setattr(SessionDeleteRequest, "FromString", fake_from_string)
 
-        self.sanitise_username_called = []
-        self.sanitise_username_response = None
-        def fake_sanitise_username(input):
-            self.sanitise_username_called.append(input)
-            return self.sanitise_username_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+        self.sanitise_username_hash_called = []
+        self.sanitise_username_hash_response = None
+        def fake_sanitise_username_hash(input):
+            self.sanitise_username_hash_called.append(input)
+            return self.sanitise_username_hash_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username_hash", fake_sanitise_username_hash)
 
         self.sanitise_public_id_called = []
         self.sanitise_public_id_response = None
@@ -652,7 +652,7 @@ class TestDelete():
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
 
-    def test_calls_sanitise_username(self):
+    def test_calls_sanitise_username_hash(self):
         """Should call sanitise username"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -665,8 +665,8 @@ class TestDelete():
 
         response = SessionHandler.delete(request)
 
-        assert len(self.sanitise_username_called) == 1
-        assert self.sanitise_username_called[0] == b'fake_username_hash'
+        assert len(self.sanitise_username_hash_called) == 1
+        assert self.sanitise_username_hash_called[0] == b'fake_username_hash'
 
     def test_calls_sanitise_public_id(self):
         """Should call sanitise public id"""
@@ -687,7 +687,7 @@ class TestDelete():
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_username",           "username_hash"),
+            ("sanitise_username_hash",           "username_hash"),
             ("sanitise_public_id",          "session_id")
         ]
     )
@@ -716,7 +716,7 @@ class TestDelete():
     def test_all_sanitising_functions_fail(self):
         """Should fetch all missing errors if all sanitising fails"""
 
-        self.sanitise_username_response = FailureReason.INVALID
+        self.sanitise_username_hash_response = FailureReason.INVALID
         self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
@@ -918,12 +918,12 @@ class TestClean():
                 return self.from_string_response
         monkeypatch.setattr(SessionCleanRequest, "FromString", fake_from_string)
 
-        self.sanitise_username_called = []
-        self.sanitise_username_response = None
-        def fake_sanitise_username(input):
-            self.sanitise_username_called.append(input)
-            return self.sanitise_username_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_username", fake_sanitise_username)
+        self.sanitise_username_hash_called = []
+        self.sanitise_username_hash_response = None
+        def fake_sanitise_username_hash(input):
+            self.sanitise_username_hash_called.append(input)
+            return self.sanitise_username_hash_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_username_hash", fake_sanitise_username_hash)
 
         self.clean_user_called = []
         self.clean_user_response = True, None
@@ -1028,7 +1028,7 @@ class TestClean():
         assert error.code == ErrorCode.RQS01
         assert error.description == FailureReason.DECRYPTION.description
 
-    def test_calls_sanitise_username(self):
+    def test_calls_sanitise_username_hash(self):
         """Should call sanitise username"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
@@ -1041,13 +1041,13 @@ class TestClean():
 
         response = SessionHandler.clean(request)
 
-        assert len(self.sanitise_username_called) == 1
-        assert self.sanitise_username_called[0] == b'fake_username_hash'
+        assert len(self.sanitise_username_hash_called) == 1
+        assert self.sanitise_username_hash_called[0] == b'fake_username_hash'
 
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_username",           "username_hash")
+            ("sanitise_username_hash",           "username_hash")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
@@ -1075,7 +1075,7 @@ class TestClean():
     def test_all_sanitising_functions_fail(self):
         """Should fetch all missing errors if all sanitising fails"""
 
-        self.sanitise_username_response = FailureReason.INVALID
+        self.sanitise_username_hash_response = FailureReason.INVALID
 
         request = SecureRequest(
             session_id="fake_session_id",

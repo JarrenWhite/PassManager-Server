@@ -30,7 +30,7 @@ class SessionHandler:
         error_list = []
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
 
@@ -81,7 +81,7 @@ class SessionHandler:
         error_list = []
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
         status = ServiceUtils.sanitise_public_id(request.public_id)
@@ -93,7 +93,7 @@ class SessionHandler:
         status = ServiceUtils.sanitise_proof_val_m1(request.proof_val_m1)
         if status:
             error_list.append(status.error_proto("proof_val_m1"))
-        status = ServiceUtils.sanitise_maximum_requests(request.maximum_requests)
+        status = ServiceUtils.sanitise_request_count(request.maximum_requests)
         if status:
             error_list.append(status.error_proto("maximum_requests"))
         status = ServiceUtils.sanitise_expiry_time(request.expiry_time)
@@ -181,7 +181,7 @@ class SessionHandler:
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
         status = ServiceUtils.sanitise_public_id(request.session_id)
@@ -263,7 +263,7 @@ class SessionHandler:
             )
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_username(request.username_hash)
+        status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
 

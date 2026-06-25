@@ -6,8 +6,15 @@ from enums import FailureReason
 class ServiceUtils():
 
     @staticmethod
-    def sanitise_username(
+    def sanitise_username_hash(
         input: bytes
+    ) -> Optional[FailureReason]:
+        return None
+
+
+    @staticmethod
+    def sanitise_public_id(
+        input: str
     ) -> Optional[FailureReason]:
         return None
 
@@ -48,13 +55,6 @@ class ServiceUtils():
 
 
     @staticmethod
-    def sanitise_public_id(
-        input: str
-    ) -> Optional[FailureReason]:
-        return None
-
-
-    @staticmethod
     def sanitise_eph_val_a(
         input: bytes
     )-> Optional[FailureReason]:
@@ -69,7 +69,7 @@ class ServiceUtils():
 
 
     @staticmethod
-    def sanitise_maximum_requests(
+    def sanitise_request_count(
         input: int
     )-> Optional[FailureReason]:
       return None
