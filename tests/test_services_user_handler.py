@@ -502,9 +502,9 @@ class TestUsername:
     @pytest.mark.parametrize(
         "user_id, new_username",
         [
-            (0,     "abc"),
-            (15,    ""),
-            (350,   "123"*8)
+            (0,     b'abc'),
+            (15,    b''),
+            (350,   b'123'*8)
         ]
     )
     def test_calls_util(self, user_id, new_username):
