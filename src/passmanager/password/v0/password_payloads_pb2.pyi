@@ -120,7 +120,7 @@ class PasswordAuthResponse(_message.Message):
 Global___PasswordAuthResponse: _TypeAlias = PasswordAuthResponse  # noqa: Y015
 
 @_typing.final
-class PasswordCompleteRequest(_message.Message):
+class PasswordCommitRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
@@ -133,10 +133,10 @@ class PasswordCompleteRequest(_message.Message):
     _ClearFieldArgType: _TypeAlias = _typing.Literal["username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
-Global___PasswordCompleteRequest: _TypeAlias = PasswordCompleteRequest  # noqa: Y015
+Global___PasswordCommitRequest: _TypeAlias = PasswordCommitRequest  # noqa: Y015
 
 @_typing.final
-class PasswordCompleteResponse(_message.Message):
+class PasswordCommitResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
@@ -149,7 +149,7 @@ class PasswordCompleteResponse(_message.Message):
     _ClearFieldArgType: _TypeAlias = _typing.Literal["username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
-Global___PasswordCompleteResponse: _TypeAlias = PasswordCompleteResponse  # noqa: Y015
+Global___PasswordCommitResponse: _TypeAlias = PasswordCommitResponse  # noqa: Y015
 
 @_typing.final
 class PasswordAbortRequest(_message.Message):

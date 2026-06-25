@@ -45,8 +45,8 @@ class PasswordStub(object):
                 request_serializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureRequest.SerializeToString,
                 response_deserializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureResponse.FromString,
                 _registered_method=True)
-        self.Complete = channel.unary_unary(
-                '/passmanager.password.v0.Password/Complete',
+        self.Commit = channel.unary_unary(
+                '/passmanager.password.v0.Password/Commit',
                 request_serializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureRequest.SerializeToString,
                 response_deserializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureResponse.FromString,
                 _registered_method=True)
@@ -87,7 +87,7 @@ class PasswordServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Complete(self, request, context):
+    def Commit(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -130,8 +130,8 @@ def add_PasswordServicer_to_server(servicer, server):
                     request_deserializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureRequest.FromString,
                     response_serializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureResponse.SerializeToString,
             ),
-            'Complete': grpc.unary_unary_rpc_method_handler(
-                    servicer.Complete,
+            'Commit': grpc.unary_unary_rpc_method_handler(
+                    servicer.Commit,
                     request_deserializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureRequest.FromString,
                     response_serializer=passmanager_dot_common_dot_v0_dot_secure__pb2.SecureResponse.SerializeToString,
             ),
@@ -221,7 +221,7 @@ class Password(object):
             _registered_method=True)
 
     @staticmethod
-    def Complete(request,
+    def Commit(request,
             target,
             options=(),
             channel_credentials=None,
@@ -234,7 +234,7 @@ class Password(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/passmanager.password.v0.Password/Complete',
+            '/passmanager.password.v0.Password/Commit',
             passmanager_dot_common_dot_v0_dot_secure__pb2.SecureRequest.SerializeToString,
             passmanager_dot_common_dot_v0_dot_secure__pb2.SecureResponse.FromString,
             options,
