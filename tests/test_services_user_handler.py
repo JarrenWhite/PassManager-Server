@@ -500,18 +500,18 @@ class TestUsername:
         assert "new_username" in fields
 
     @pytest.mark.parametrize(
-        "user_id",
+        "user_id, new_username",
         [
-            0,
-            15,
-            350
+            (0,     "abc"),
+            (15,    ""),
+            (350,   "123"*8)
         ]
     )
-    def test_calls_util(self, user_id):
+    def test_calls_util(self, user_id, new_username):
         """Should call the util function"""
 
         self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
-        self.from_string_response.new_username = b'fake_new_username'
+        self.from_string_response.new_username = new_username
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -525,7 +525,7 @@ class TestUsername:
 
         change_username = self.change_username_called[0]
         assert change_username[0] == user_id
-        assert change_username[1] == b'fake_new_username'
+        assert change_username[1] == new_username
 
     @pytest.mark.parametrize(
         "failure_reason, field",
