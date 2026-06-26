@@ -5,7 +5,7 @@ A brief introduction to the API, its purpose, and how to make API calls.
 
 > **API Base URL:** `https://[GRPC_URL]`
 
-> **TODO:** *Replace `[GRPC_URL]` and `[GRPC_PORT]` with the actual domain when determined*
+> **# TODO:** *Replace `[GRPC_URL]` and `[GRPC_PORT]` with the actual domain when determined*
 
 ## Overview
 1. [**gRPC Details**](#grpc-details)
