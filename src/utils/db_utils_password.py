@@ -146,16 +146,7 @@ class DBUtilsPassword():
                 public_ids = []
 
                 for secure_data in user.secure_data:
-                    if not secure_data.new_entry_name or not secure_data.new_entry_data:
-                        logger.debug("User: %s password change failed: Secure Data not all updated.", user.username_hash)
-                        DBUtilsPassword.clean_password_change(session, user)
-                        return False, FailureReason.INCOMPLETE, "", []
-
                     public_ids.append(secure_data.public_id)
-                    secure_data.entry_name = secure_data.new_entry_name
-                    secure_data.entry_data = secure_data.new_entry_data
-                    secure_data.new_entry_name = None
-                    secure_data.new_entry_data = None
 
                 logger.info("Password Login Session: %s created.", login_session.public_id[-4:])
                 return True, None, login_session.public_id, public_ids
