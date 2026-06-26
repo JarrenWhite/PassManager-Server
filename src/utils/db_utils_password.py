@@ -161,7 +161,7 @@ class DBUtilsPassword():
     @staticmethod
     def commit(
         user_id: int
-    ) -> Tuple[bool, Optional[FailureReason], Optional[List[str]]]:
+    ) -> Tuple[bool, Optional[FailureReason]]:
         """
         Complete password change process
 
@@ -174,11 +174,11 @@ class DBUtilsPassword():
 
                 if user is None:
                     logger.debug("User id: %s not found.", user_id)
-                    return False, FailureReason.NOT_FOUND, []
+                    return False, FailureReason.NOT_FOUND
                 if not user.new_srp_salt or not user.new_srp_verifier or not user.new_master_key_salt:
                     logger.debug("User: %s password change failed: Insufficient new srp details.", user.username_hash)
                     DBUtilsPassword.clean_password_change(session, user)
-                    return False, FailureReason.INCOMPLETE, []
+                    return False, FailureReason.INCOMPLETE
 
                 user.password_change = False
                 user.srp_salt = user.new_srp_salt
@@ -191,28 +191,25 @@ class DBUtilsPassword():
                 for login_session in user.login_sessions:
                     session.delete(login_session)
 
-                public_ids = []
-
                 for secure_data in user.secure_data:
                     if not secure_data.new_entry_name or not secure_data.new_entry_data:
                         logger.debug("User: %s password change failed: Secure Data not all updated.", user.username_hash)
                         DBUtilsPassword.clean_password_change(session, user)
-                        return False, FailureReason.INCOMPLETE, []
+                        return False, FailureReason.INCOMPLETE
 
-                    public_ids.append(secure_data.public_id)
                     secure_data.entry_name = secure_data.new_entry_name
                     secure_data.entry_data = secure_data.new_entry_data
                     secure_data.new_entry_name = None
                     secure_data.new_entry_data = None
 
                 logger.info("Password change for User: %s completed.", user.username_hash[-4:])
-                return True, None, public_ids
+                return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, []
+            return False, FailureReason.DATABASE_UNINITIALISED
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, []
+            return False, FailureReason.UNKNOWN_EXCEPTION
 
 
     @staticmethod

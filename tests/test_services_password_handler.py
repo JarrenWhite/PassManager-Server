@@ -964,7 +964,7 @@ class TestCommit():
         monkeypatch.setattr(ServiceUtils, "sanitise_username_hash", fake_sanitise_username_hash)
 
         self.commit_called = []
-        self.commit_response = True, None, None
+        self.commit_response = True, None
         def fake_commit(user_id):
             self.commit_called.append(user_id)
             return self.commit_response
@@ -1168,7 +1168,7 @@ class TestCommit():
     def test_returns_error_util_call_fails(self, failure_reason, field):
         """Should return correct error if util function fails"""
 
-        self.commit_response = False, failure_reason, None
+        self.commit_response = False, failure_reason
 
         request = SecureRequest(
             session_id="fake_session_id",

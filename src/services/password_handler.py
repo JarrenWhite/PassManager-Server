@@ -268,7 +268,7 @@ class PasswordHandler():
         result = DBUtilsPassword.commit(
             user_id=user_id
         )
-        status, failure_reason, public_ids = result
+        status, failure_reason = result
 
         # Return error
         if not status:
