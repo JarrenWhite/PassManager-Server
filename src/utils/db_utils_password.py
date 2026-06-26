@@ -97,12 +97,13 @@ class DBUtilsPassword():
         public_id: str,
         session_key: bytes,
         expiry: datetime
-    ) -> Tuple[bool, Optional[FailureReason], str]:
+    ) -> Tuple[bool, Optional[FailureReason], str, Optional[List[str]]]:
         """
         Complete password change login session creation
 
         Returns:
             (str)   public_id
+            ([str]) [public_id]
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -110,26 +111,27 @@ class DBUtilsPassword():
 
                 if auth_ephemeral is None:
                     logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, "", []
                 if auth_ephemeral.expiry_time < datetime.now():
                     if auth_ephemeral.password_change:
                         DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
                     else:
                         session.delete(auth_ephemeral)
                     logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, "", []
                 if auth_ephemeral.user.id != user_id:
                     logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, "", []
                 if not auth_ephemeral.password_change:
                     logger.debug("Auth Ephemeral: %s not password change type.", public_id[-4:])
-                    return False, FailureReason.INCOMPLETE, ""
+                    return False, FailureReason.INCOMPLETE, "", []
 
                 secure_data_count = len(auth_ephemeral.user.secure_data)
                 max_requests = (secure_data_count * 2) + 1
+                user = auth_ephemeral.user
 
                 login_session = LoginSession(
-                    user=auth_ephemeral.user,
+                    user=user,
                     session_key=session_key,
                     request_count=0,
                     last_used=datetime.now(),
@@ -141,14 +143,28 @@ class DBUtilsPassword():
                 session.flush()
                 session.delete(auth_ephemeral)
 
+                public_ids = []
+
+                for secure_data in user.secure_data:
+                    if not secure_data.new_entry_name or not secure_data.new_entry_data:
+                        logger.debug("User: %s password change failed: Secure Data not all updated.", user.username_hash)
+                        DBUtilsPassword.clean_password_change(session, user)
+                        return False, FailureReason.INCOMPLETE, "", []
+
+                    public_ids.append(secure_data.public_id)
+                    secure_data.entry_name = secure_data.new_entry_name
+                    secure_data.entry_data = secure_data.new_entry_data
+                    secure_data.new_entry_name = None
+                    secure_data.new_entry_data = None
+
                 logger.info("Password Login Session: %s created.", login_session.public_id[-4:])
-                return True, None, login_session.public_id
+                return True, None, login_session.public_id, public_ids
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, ""
+            return False, FailureReason.DATABASE_UNINITIALISED, "", []
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", []
 
 
     @staticmethod
