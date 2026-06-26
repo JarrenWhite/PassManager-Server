@@ -16,8 +16,8 @@ A brief introduction to the API, its purpose, and how to make API calls.
     4. [Health Check](#health-check-user)
 3. [**Password**](#password)
     1. [Start Password Change](#start-password-change-password)
-    2. [Continue Password Change](#continue-password-change-password)
-    3. [Complete Password Change](#complete-password-change-password)
+    2. [Complete Password Auth](#complete-password-auth-password)
+    3. [Commit Password Change](#commit-password-change-password)
     4. [Abort Password Change](#abort-password-change-password)
     5. [Get Entry](#get-entry-password)
     6. [Add New Encryption for Entry](#add-new-encryption-for-entry-password)
@@ -188,7 +188,7 @@ Begins the process of a password change, returning the user's validation details
 
 ---
 
-### Continue Password Change (Password)
+### Complete Password Auth (Password)
 **Method:** `passmanager.password.<version>.Auth`
 
 **Protobuf Message:** `passmanager.session.<version>.PasswordAuthRequest`
@@ -210,25 +210,25 @@ Completes the SRP authentication process by providing client ephemeral value and
 
 > **Note:** A user can only have one active password changing session.
 
-**[Response Format](api_responses.md#continue-password-change-password)**
+**[Response Format](api_responses.md#complete-password-auth-password)**
 
 
 ---
 
-### Complete Password Change (Password)
-**Method:** `passmanager.password.<version>.Complete`
+### Commit Password Change (Password)
+**Method:** `passmanager.password.<version>.Commit`
 
-**Protobuf Message:** `passmanager.session.<version>.PasswordCompleteRequest`
+**Protobuf Message:** `passmanager.session.<version>.PasswordCommitRequest`
 
 **Description**
-Complete a password change. If all entries have been completed, the change is confirmed, and the old password details are erased.
+Commit a password change. If all entries have been completed, the change is confirmed, and the old password details are erased.
 
 **Encryption Payload**
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
 
-**[Response Format](api_responses.md#complete-password-change-password)**
+**[Response Format](api_responses.md#commit-password-change-password)**
 
 
 ---

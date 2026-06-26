@@ -19,9 +19,9 @@ class PasswordService(PasswordServicer):
         logger.info("Auth called by: %s", context.peer())
         return PasswordHandler.auth(request)
 
-    def Complete(self, request, context):
-        logger.info("Complete called by: %s", context.peer())
-        return PasswordHandler.complete(request)
+    def Commit(self, request, context):
+        logger.info("Commit called by: %s", context.peer())
+        return PasswordHandler.commit(request)
 
     def Abort(self, request, context):
         logger.info("Abort called by: %s", context.peer())

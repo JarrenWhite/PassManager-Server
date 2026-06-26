@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n/passmanager/password/v0/password_payloads.proto\x12\x17passmanager.password.v0\"n\n\x14PasswordStartRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x10\n\x08srp_salt\x18\x02 \x01(\x0c\x12\x14\n\x0csrp_verifier\x18\x03 \x01(\x0c\x12\x17\n\x0fmaster_key_salt\x18\x04 \x01(\x0c\"i\n\x15PasswordStartResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x10\n\x08srp_salt\x18\x03 \x01(\x0c\x12\x14\n\x0c\x65ph_public_b\x18\x04 \x01(\x0c\"h\n\x13PasswordAuthRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x11\n\teph_val_a\x18\x03 \x01(\x0c\x12\x14\n\x0cproof_val_m1\x18\x04 \x01(\x0c\"n\n\x14PasswordAuthResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x12\n\nsession_id\x18\x02 \x01(\t\x12\x17\n\x0fserver_proof_m2\x18\x03 \x01(\x0c\x12\x12\n\npublic_ids\x18\x04 \x03(\t\"0\n\x17PasswordCompleteRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"1\n\x18PasswordCompleteResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"-\n\x14PasswordAbortRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\".\n\x15PasswordAbortResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\">\n\x12PasswordGetRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\"g\n\x13PasswordGetResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x12\n\nentry_name\x18\x03 \x01(\x0c\x12\x12\n\nentry_data\x18\x04 \x01(\x0c\"i\n\x15PasswordUpdateRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x12\n\nentry_name\x18\x03 \x01(\x0c\x12\x12\n\nentry_data\x18\x04 \x01(\x0c\"B\n\x16PasswordUpdateResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n/passmanager/password/v0/password_payloads.proto\x12\x17passmanager.password.v0\"n\n\x14PasswordStartRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x10\n\x08srp_salt\x18\x02 \x01(\x0c\x12\x14\n\x0csrp_verifier\x18\x03 \x01(\x0c\x12\x17\n\x0fmaster_key_salt\x18\x04 \x01(\x0c\"W\n\x15PasswordStartResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x14\n\x0c\x65ph_public_b\x18\x03 \x01(\x0c\"h\n\x13PasswordAuthRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x11\n\teph_val_a\x18\x03 \x01(\x0c\x12\x14\n\x0cproof_val_m1\x18\x04 \x01(\x0c\"n\n\x14PasswordAuthResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x12\n\nsession_id\x18\x02 \x01(\t\x12\x17\n\x0fserver_proof_m2\x18\x03 \x01(\x0c\x12\x12\n\npublic_ids\x18\x04 \x03(\t\".\n\x15PasswordCommitRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"/\n\x16PasswordCommitResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"-\n\x14PasswordAbortRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\".\n\x15PasswordAbortResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\">\n\x12PasswordGetRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\"g\n\x13PasswordGetResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x12\n\nentry_name\x18\x03 \x01(\x0c\x12\x12\n\nentry_data\x18\x04 \x01(\x0c\"i\n\x15PasswordUpdateRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\x12\x12\n\nentry_name\x18\x03 \x01(\x0c\x12\x12\n\nentry_data\x18\x04 \x01(\x0c\"B\n\x16PasswordUpdateResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\tb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,25 +34,25 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_PASSWORDSTARTREQUEST']._serialized_start=76
   _globals['_PASSWORDSTARTREQUEST']._serialized_end=186
   _globals['_PASSWORDSTARTRESPONSE']._serialized_start=188
-  _globals['_PASSWORDSTARTRESPONSE']._serialized_end=293
-  _globals['_PASSWORDAUTHREQUEST']._serialized_start=295
-  _globals['_PASSWORDAUTHREQUEST']._serialized_end=399
-  _globals['_PASSWORDAUTHRESPONSE']._serialized_start=401
-  _globals['_PASSWORDAUTHRESPONSE']._serialized_end=511
-  _globals['_PASSWORDCOMPLETEREQUEST']._serialized_start=513
-  _globals['_PASSWORDCOMPLETEREQUEST']._serialized_end=561
-  _globals['_PASSWORDCOMPLETERESPONSE']._serialized_start=563
-  _globals['_PASSWORDCOMPLETERESPONSE']._serialized_end=612
-  _globals['_PASSWORDABORTREQUEST']._serialized_start=614
-  _globals['_PASSWORDABORTREQUEST']._serialized_end=659
-  _globals['_PASSWORDABORTRESPONSE']._serialized_start=661
-  _globals['_PASSWORDABORTRESPONSE']._serialized_end=707
-  _globals['_PASSWORDGETREQUEST']._serialized_start=709
-  _globals['_PASSWORDGETREQUEST']._serialized_end=771
-  _globals['_PASSWORDGETRESPONSE']._serialized_start=773
-  _globals['_PASSWORDGETRESPONSE']._serialized_end=876
-  _globals['_PASSWORDUPDATEREQUEST']._serialized_start=878
-  _globals['_PASSWORDUPDATEREQUEST']._serialized_end=983
-  _globals['_PASSWORDUPDATERESPONSE']._serialized_start=985
-  _globals['_PASSWORDUPDATERESPONSE']._serialized_end=1051
+  _globals['_PASSWORDSTARTRESPONSE']._serialized_end=275
+  _globals['_PASSWORDAUTHREQUEST']._serialized_start=277
+  _globals['_PASSWORDAUTHREQUEST']._serialized_end=381
+  _globals['_PASSWORDAUTHRESPONSE']._serialized_start=383
+  _globals['_PASSWORDAUTHRESPONSE']._serialized_end=493
+  _globals['_PASSWORDCOMMITREQUEST']._serialized_start=495
+  _globals['_PASSWORDCOMMITREQUEST']._serialized_end=541
+  _globals['_PASSWORDCOMMITRESPONSE']._serialized_start=543
+  _globals['_PASSWORDCOMMITRESPONSE']._serialized_end=590
+  _globals['_PASSWORDABORTREQUEST']._serialized_start=592
+  _globals['_PASSWORDABORTREQUEST']._serialized_end=637
+  _globals['_PASSWORDABORTRESPONSE']._serialized_start=639
+  _globals['_PASSWORDABORTRESPONSE']._serialized_end=685
+  _globals['_PASSWORDGETREQUEST']._serialized_start=687
+  _globals['_PASSWORDGETREQUEST']._serialized_end=749
+  _globals['_PASSWORDGETRESPONSE']._serialized_start=751
+  _globals['_PASSWORDGETRESPONSE']._serialized_end=854
+  _globals['_PASSWORDUPDATEREQUEST']._serialized_start=856
+  _globals['_PASSWORDUPDATEREQUEST']._serialized_end=961
+  _globals['_PASSWORDUPDATERESPONSE']._serialized_start=963
+  _globals['_PASSWORDUPDATERESPONSE']._serialized_end=1029
 # @@protoc_insertion_point(module_scope)

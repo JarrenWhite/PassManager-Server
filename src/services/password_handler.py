@@ -8,8 +8,8 @@ from passmanager.password.v0.password_payloads_pb2 import (
     PasswordStartResponse,
     PasswordAuthRequest,
     PasswordAuthResponse,
-    PasswordCompleteRequest,
-    PasswordCompleteResponse,
+    PasswordCommitRequest,
+    PasswordCommitResponse,
     PasswordAbortRequest,
     PasswordAbortResponse,
     PasswordGetRequest,
@@ -93,7 +93,7 @@ class PasswordHandler():
             srp_verifier=request.srp_verifier,
             master_key_salt=request.master_key_salt
         )
-        status, failure_reason, public_id, srp_salt, public_ephemeral_b = result
+        status, failure_reason, public_id, public_ephemeral_b = result
 
         # Return error
         if not status:
@@ -112,7 +112,6 @@ class PasswordHandler():
         response = PasswordStartResponse(
             username_hash=request.username_hash,
             public_id=public_id,
-            srp_salt=srp_salt,
             eph_public_b=public_ephemeral_b
         )
         return SessionManager.seal_session(
@@ -216,7 +215,7 @@ class PasswordHandler():
 
 
     @staticmethod
-    def complete(secure_request: SecureRequest) -> SecureResponse:
+    def commit(secure_request: SecureRequest) -> SecureResponse:
         error_list = []
 
         # Open secure session
@@ -238,7 +237,7 @@ class PasswordHandler():
 
         # Convert to Protobuf Message
         try:
-            request = PasswordCompleteRequest.FromString(decrypted_bytes)
+            request = PasswordCommitRequest.FromString(decrypted_bytes)
         except DecodeError:
             error_list.append(FailureReason.DECRYPTION.error_proto())
 
@@ -269,7 +268,7 @@ class PasswordHandler():
         result = DBUtilsPassword.commit(
             user_id=user_id
         )
-        status, failure_reason, public_ids = result
+        status, failure_reason = result
 
         # Return error
         if not status:
@@ -285,7 +284,7 @@ class PasswordHandler():
             )
 
         # Successful Return
-        response = PasswordCompleteResponse(
+        response = PasswordCommitResponse(
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(

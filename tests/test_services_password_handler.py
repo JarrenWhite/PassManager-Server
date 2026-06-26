@@ -10,8 +10,8 @@ from passmanager.password.v0.password_payloads_pb2 import (
     PasswordStartResponse,
     PasswordAuthRequest,
     PasswordAuthResponse,
-    PasswordCompleteRequest,
-    PasswordCompleteResponse,
+    PasswordCommitRequest,
+    PasswordCommitResponse,
     PasswordAbortRequest,
     PasswordAbortResponse,
     PasswordGetRequest,
@@ -94,7 +94,7 @@ class TestStart():
         monkeypatch.setattr(ServiceUtils, "sanitise_master_key_salt", fake_sanitise_master_key_salt)
 
         self.start_password_session_called = []
-        self.start_password_session_response = True, None, "fake_public_id", b'fake_srp_salt', b'fake_eph_public_b'
+        self.start_password_session_response = True, None, "fake_public_id", b'fake_eph_public_b'
         def fake_start_password_session(user_id, srp_salt, srp_verifier, master_key_salt):
             self.start_password_session_called.append((user_id, srp_salt, srp_verifier, master_key_salt))
             return self.start_password_session_response
@@ -361,7 +361,7 @@ class TestStart():
     def test_returns_error_util_call_fails(self, failure_reason, field):
         """Should return correct error if util function fails"""
 
-        self.start_password_session_response = False, failure_reason, "", b'', b''
+        self.start_password_session_response = False, failure_reason, "", b''
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -384,7 +384,7 @@ class TestStart():
         """Should convert protobuf to bytes"""
 
         self.from_string_response.username_hash = b'fake_username_hash'
-        self.start_password_session_response = True, None, "fake_public_id", b'fake_srp_salt', b'fake_eph_public_b'
+        self.start_password_session_response = True, None, "fake_public_id", b'fake_eph_public_b'
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -400,7 +400,6 @@ class TestStart():
         assert isinstance(serialize_to_string, PasswordStartResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
-        assert serialize_to_string.srp_salt == b'fake_srp_salt'
         assert serialize_to_string.eph_public_b == b'fake_eph_public_b'
 
     def test_calls_seal_session(self):
@@ -931,8 +930,8 @@ class TestAuth():
         assert response == secure_response
 
 
-class TestComplete():
-    """Test cases for password complete function"""
+class TestCommit():
+    """Test cases for password commit function"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
@@ -945,7 +944,7 @@ class TestComplete():
         monkeypatch.setattr(SessionManager, "open_session", fake_open_session)
 
         self.from_string_called = []
-        self.from_string_response = PasswordCompleteRequest(
+        self.from_string_response = PasswordCommitRequest(
             username_hash=b'fake_username_hash'
         )
         self.from_string_exception = False
@@ -955,7 +954,7 @@ class TestComplete():
                 raise DecodeError("invalid bytes")
             else:
                 return self.from_string_response
-        monkeypatch.setattr(PasswordCompleteRequest, "FromString", fake_from_string)
+        monkeypatch.setattr(PasswordCommitRequest, "FromString", fake_from_string)
 
         self.sanitise_username_hash_called = []
         self.sanitise_username_hash_response = None
@@ -965,7 +964,7 @@ class TestComplete():
         monkeypatch.setattr(ServiceUtils, "sanitise_username_hash", fake_sanitise_username_hash)
 
         self.commit_called = []
-        self.commit_response = True, None, None
+        self.commit_response = True, None
         def fake_commit(user_id):
             self.commit_called.append(user_id)
             return self.commit_response
@@ -976,7 +975,7 @@ class TestComplete():
         def fake_serialize_to_string(input):
             self.serialize_to_string_called.append(input)
             return self.serialize_to_string_response
-        monkeypatch.setattr(PasswordCompleteResponse, "SerializeToString", fake_serialize_to_string)
+        monkeypatch.setattr(PasswordCommitResponse, "SerializeToString", fake_serialize_to_string)
 
         self.seal_session_called = []
         self.seal_session_response = SecureResponse(
@@ -1002,7 +1001,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert len(self.open_session_called) == 1
         assert self.open_session_called[0] == (request, False, False)
@@ -1018,7 +1017,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert isinstance(response, SecureResponse)
         assert not response.success
@@ -1040,7 +1039,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert len(self.from_string_called) == 1
         assert self.from_string_called[0] == b'fake_decrypted_bytes'
@@ -1056,7 +1055,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert isinstance(response, SecureResponse)
         assert not response.success
@@ -1078,7 +1077,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert len(self.sanitise_username_hash_called) == 1
         assert self.sanitise_username_hash_called[0] == b'fake_username_hash'
@@ -1100,7 +1099,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert isinstance(response, SecureResponse)
         assert not response.success
@@ -1122,7 +1121,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert isinstance(response, SecureResponse)
         assert not response.success
@@ -1151,7 +1150,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert len(self.commit_called) == 1
         commit = self.commit_called[0]
@@ -1169,7 +1168,7 @@ class TestComplete():
     def test_returns_error_util_call_fails(self, failure_reason, field):
         """Should return correct error if util function fails"""
 
-        self.commit_response = False, failure_reason, None
+        self.commit_response = False, failure_reason
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1177,7 +1176,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert isinstance(response, SecureResponse)
         assert not response.success
@@ -1199,12 +1198,12 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert len(self.serialize_to_string_called) == 1
 
         serialize_to_string = self.serialize_to_string_called[0]
-        assert isinstance(serialize_to_string, PasswordCompleteResponse)
+        assert isinstance(serialize_to_string, PasswordCommitResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
 
     def test_calls_seal_session(self):
@@ -1218,7 +1217,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert len(self.seal_session_called) == 1
 
@@ -1281,7 +1280,7 @@ class TestComplete():
             encrypted_data=b'fake_encryption_data'
         )
 
-        response = PasswordHandler.complete(request)
+        response = PasswordHandler.commit(request)
 
         assert response == secure_response
 
