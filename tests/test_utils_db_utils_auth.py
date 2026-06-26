@@ -62,11 +62,9 @@ class TestStart():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], str)
-        assert isinstance(response[3], bytes)
         assert response[0] == True
         assert response[1] == None
         assert response[2] == "fake_public_id"
-        assert response[3] == b'fake_srp_salt'
 
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 0
