@@ -22,6 +22,30 @@ class TestFetch():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
+        self.first_response = User(
+            id=1,
+            username_hash=b'fake_username_hash',
+            srp_salt=b'fake_srp_salt',
+            srp_verifier=b'fake_srp_verifier'
+        )
+        mock_query = _MockQuery([self.first_response])
+        def fake_query(self, model):
+            return mock_query
+        monkeypatch.setattr(_MockSession, "query", fake_query)
+
+        get_db_session_called = 0
+        get_db_session_exception = None
+        mock_session = _MockSession()
+        @contextmanager
+        def fake_get_db_session():
+            nonlocal get_db_session_called
+            get_db_session_called += 1
+            if get_db_session_exception:
+                raise get_db_session_exception
+            yield mock_session
+
+        monkeypatch.setattr(DatabaseSetup, "get_db_session", fake_get_db_session)
+
         yield
 
 
