@@ -48,6 +48,21 @@ class DBUtilsAuth():
 
 
     @staticmethod
+    def fetch(
+        username_hash: bytes
+    ) -> Tuple[bool, Optional[FailureReason], int, bytes, bytes]:
+        """
+        Fetch the details required to begin an authorisation process
+
+        Returns:
+            (int)   user_id
+            (bytes) srp_salt
+            (bytes) srp_verifier
+        """
+        return False, None, 0, b'', b''
+
+
+    @staticmethod
     def start(
         username_hash: bytes,
         eph_private_b: bytes,
