@@ -28,25 +28,98 @@ class TestFetch():
             srp_salt=b'fake_srp_salt',
             srp_verifier=b'fake_srp_verifier'
         )
-        mock_query = _MockQuery([self.first_response])
-        def fake_query(self, model):
-            return mock_query
+        self.mock_query = _MockQuery([self.first_response])
+        def fake_query(session, model):
+            return self.mock_query
         monkeypatch.setattr(_MockSession, "query", fake_query)
 
-        get_db_session_called = 0
-        get_db_session_exception = None
-        mock_session = _MockSession()
+        self.get_db_session_called = 0
+        self.get_db_session_exception = None
+        self.mock_session = _MockSession()
         @contextmanager
         def fake_get_db_session():
-            nonlocal get_db_session_called
-            get_db_session_called += 1
-            if get_db_session_exception:
-                raise get_db_session_exception
-            yield mock_session
-
+            self.get_db_session_called += 1
+            if self.get_db_session_exception:
+                raise self.get_db_session_exception
+            yield self.mock_session
         monkeypatch.setattr(DatabaseSetup, "get_db_session", fake_get_db_session)
 
         yield
+
+    @pytest.mark.parametrize(
+        "username_hash",
+        [
+            (b'abc'),
+            (b''),
+            (b'qcd'*100)
+        ]
+    )
+    def test_searches_correct_user(self, username_hash):
+        """Should return user id, srp salt and srp verifier"""
+
+        response = DBUtilsAuth.fetch(username_hash)
+
+        assert self.mock_query._filters[0].right.value == username_hash
+
+    @pytest.mark.parametrize(
+        "user_id, srp_salt, srp_verifier",
+        [
+            (0,     b'abc',     b'def'),
+            (15,    b'',        b''),
+            (350,   b'qcd'*100, b'ghi'*300)
+        ]
+    )
+    def test_return_details(self, user_id, srp_salt, srp_verifier):
+        """Should return user id, srp salt and srp verifier"""
+
+        self.first_response.id = user_id
+        self.first_response.srp_salt = srp_salt
+        self.first_response.srp_verifier = srp_verifier
+
+        username_hash = b'fake_username_hash'
+        response = DBUtilsAuth.fetch(username_hash)
+
+        assert response[0]
+        assert response[1] == None
+        assert response[2] == user_id
+        assert response[3] == srp_salt
+        assert response[4] == srp_verifier
+
+    def test_user_not_found(self):
+        """Should return NOT_FOUND when user does not exist"""
+        self.mock_query = _MockQuery([])
+
+        response = DBUtilsAuth.fetch(b'fake_username_hash')
+
+        assert not response[0]
+        assert response[1] == FailureReason.NOT_FOUND
+        assert response[2] == 0
+        assert response[3] == b''
+        assert response[4] == b''
+
+    def test_database_uninitialised(self):
+        """Should return DATABASE_UNINITIALISED when RuntimeError is raised"""
+        self.get_db_session_exception = RuntimeError("Database not initialised.")
+
+        response = DBUtilsAuth.fetch(b'fake_username_hash')
+
+        assert not response[0]
+        assert response[1] == FailureReason.DATABASE_UNINITIALISED
+        assert response[2] == 0
+        assert response[3] == b''
+        assert response[4] == b''
+
+    def test_unknown_exception(self):
+        """Should return UNKNOWN_EXCEPTION when an unexpected exception is raised"""
+        self.get_db_session_exception = Exception("Unexpected error.")
+
+        response = DBUtilsAuth.fetch(b'fake_username_hash')
+
+        assert not response[0]
+        assert response[1] == FailureReason.UNKNOWN_EXCEPTION
+        assert response[2] == 0
+        assert response[3] == b''
+        assert response[4] == b''
 
 
 class TestStart():
