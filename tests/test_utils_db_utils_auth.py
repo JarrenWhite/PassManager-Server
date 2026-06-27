@@ -16,6 +16,15 @@ from database.database_setup import DatabaseSetup
 from database.database_models import User, AuthEphemeral, LoginSession
 
 
+class TestFetch():
+    """Test cases for database utils auth fetch function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        yield
+
+
 class TestStart():
     """Test cases for database utils auth start function"""
 
