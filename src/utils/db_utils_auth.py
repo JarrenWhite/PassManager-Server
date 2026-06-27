@@ -59,7 +59,21 @@ class DBUtilsAuth():
             (bytes) srp_salt
             (bytes) srp_verifier
         """
-        return False, None, 0, b'', b''
+        try:
+            with DatabaseSetup.get_db_session() as session:
+                user = session.query(User).filter(User.username_hash == username_hash).first()
+
+                if user is None:
+                    logger.debug("User: %s not found.", username_hash[-4:])
+                    return False, FailureReason.NOT_FOUND, 0, b'', b''
+
+                return True, None, user.id, user.srp_salt, user.srp_verifier
+        except RuntimeError:
+            logger.warning("Database uninitialised.")
+            return False, FailureReason.DATABASE_UNINITIALISED, 0, b'', b''
+        except:
+            logger.exception("Unknown database session exception.")
+            return False, FailureReason.UNKNOWN_EXCEPTION, 0, b'', b''
 
 
     @staticmethod
