@@ -159,7 +159,7 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash=b'fake_hash',
+            user_id=15,
             eph_private_b=b'fake_eph_private_b',
             eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
@@ -190,8 +190,8 @@ class TestStart():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == b'fake_hash'
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 15
 
     def test_handles_database_unprepared_failure(self, monkeypatch):
         """Should return correct failure reason if database is not setup"""
@@ -203,7 +203,7 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash=b'fake_hash',
+            user_id=15,
             eph_private_b=b'fake_eph_private_b',
             eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
@@ -235,7 +235,7 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash=b'fake_hash',
+            user_id=15,
             eph_private_b=b'fake_eph_private_b',
             eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
@@ -274,7 +274,7 @@ class TestStart():
 
         expiry = datetime.now() + timedelta(hours=1)
         response = DBUtilsAuth.start(
-            username_hash=b'fake_hash',
+            user_id=15,
             eph_private_b=b'fake_eph_private_b',
             eph_public_b=b'fake_eph_public_b',
             expiry_time=expiry
@@ -293,8 +293,8 @@ class TestStart():
         assert len(mock_query._filters) == 1
         condition = mock_query._filters[0]
         assert isinstance(condition, BinaryExpression)
-        assert str(condition.left.name) == "username_hash"
-        assert condition.right.value == b'fake_hash'
+        assert str(condition.left.name) == "id"
+        assert condition.right.value == 15
 
 
 class TestGetDetails():
