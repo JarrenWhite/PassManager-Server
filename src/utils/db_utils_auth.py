@@ -78,7 +78,7 @@ class DBUtilsAuth():
 
     @staticmethod
     def start(
-        username_hash: bytes,
+        user_id: int,
         eph_private_b: bytes,
         eph_public_b: bytes,
         expiry_time: datetime
@@ -91,10 +91,10 @@ class DBUtilsAuth():
         """
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.username_hash == username_hash).first()
+                user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug("User: %s not found.", username_hash[-4:])
+                    logger.debug("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND, ""
 
                 auth_ephemeral = AuthEphemeral(
