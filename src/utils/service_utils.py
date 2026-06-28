@@ -3,6 +3,9 @@ from typing import Optional
 from enums import FailureReason
 
 
+# TODO - Placeholder class. Requires completion.
+
+
 class ServiceUtils():
 
     @staticmethod
