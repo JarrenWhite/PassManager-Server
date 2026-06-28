@@ -52,13 +52,11 @@ expiry_time: datetime
 
 Out
 public_id: str
+public_ids: [str]
 
 ## commit
 In
 user_id: int
-
-Out
-public_ids: [str]
 
 ## abort
 In
@@ -85,16 +83,24 @@ user: User
 
 # DBUtilsAuth
 
-## start
+## fetch
 In
 username_hash: bytes
+
+Out
+user_id: int
+srp_salt: bytes
+srp_verifier: bytes
+
+## start
+In
+user_id: int
 eph_private_b: bytes
 eph_public_b: bytes
 expiry_time: datetime
 
 Out
 public_id: str
-srp_salt: bytes
 
 ## get_details
 > Note: Risk of Insecure Direct Object Reference
