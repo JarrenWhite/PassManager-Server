@@ -6,6 +6,7 @@ from passmanager.common.v0.secure_pb2 import (
 )
 
 from enums import FailureReason
+from .db_utils_auth import DBUtilsAuth
 
 
 # TODO - Placeholder class. Requires completion.
@@ -25,6 +26,8 @@ class SessionManager():
             (bytes) Ephemeral Public ID
             (bytes) Master Key Salt
         """
+        DBUtilsAuth.fetch(username_hash=username_hash)
+
         return True, None, "", b'', b'', b''
 
     @staticmethod
