@@ -7,6 +7,7 @@ from passmanager.common.v0.secure_pb2 import (
 
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
+from cryptography import SRPUtils
 
 
 # TODO - Placeholder class. Requires completion.
@@ -28,6 +29,8 @@ class SessionManager():
         """
         result = DBUtilsAuth.fetch(username_hash=username_hash)
         success, failure_reason, user_id, srp_salt, srp_verifier = result
+
+        SRPUtils.generate_ephemeral(srp_verifier)
 
         if not success:
             return False, failure_reason, "", b'', b'', b''
