@@ -7,6 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 from utils.session_manager import SessionManager
 from utils.db_utils_auth import DBUtilsAuth
 from enums.failure_reason import FailureReason
+from cryptography.srp_utils import SRPUtils
 
 
 class TestStartNewSession():
@@ -21,6 +22,13 @@ class TestStartNewSession():
             self.fetch_called.append(username_hash)
             return self.fetch_response
         monkeypatch.setattr(DBUtilsAuth, "fetch", fake_fetch)
+
+        self.generate_ephemeral_called = []
+        self.generate_ephemeral_response = b'fake_public_ephemeral', b'fake_private_ephemeral'
+        def fake_generate_ephemeral(srp_verifier_v):
+            self.generate_ephemeral_called.append(srp_verifier_v)
+            return self.generate_ephemeral_response
+        monkeypatch.setattr(SRPUtils, "generate_ephemeral", fake_generate_ephemeral)
 
         yield
 
@@ -57,6 +65,24 @@ class TestStartNewSession():
 
         assert not result[0]
         assert result[1] == failure_reason
+
+    @pytest.mark.parametrize(
+        "srp_verifier",
+        [
+            (b'abc'),
+            (b''),
+            (b'123'*8)
+        ]
+    )
+    def test_calls_generate_ephemeral(self, srp_verifier):
+        """Should pass srp_verifier to generate_ephemeral"""
+
+        self.fetch_response = True, None, 0, b'fake_srp_salt', srp_verifier
+
+        result = SessionManager.start_new_session(b'fake_username_hash')
+
+        assert len(self.generate_ephemeral_called) == 1
+        assert self.generate_ephemeral_called[0] == srp_verifier
 
 
 if __name__ == '__main__':
