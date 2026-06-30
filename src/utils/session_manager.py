@@ -26,7 +26,11 @@ class SessionManager():
             (bytes) Ephemeral Public ID
             (bytes) Master Key Salt
         """
-        DBUtilsAuth.fetch(username_hash=username_hash)
+        result = DBUtilsAuth.fetch(username_hash=username_hash)
+        success, failure_reason, user_id, srp_salt, srp_verifier = result
+
+        if not success:
+            return False, failure_reason, "", b'', b'', b''
 
         return True, None, "", b'', b'', b''
 
