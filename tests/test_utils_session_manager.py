@@ -144,6 +144,24 @@ class TestStartNewSession():
 
         assert start[3] == self.now_response + datetime.timedelta(seconds=180)
 
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_start_call_fails(self, failure_reason):
+        """Should correctly handle failed start call"""
+
+        self.start_response = False, failure_reason, ""
+
+        result = SessionManager.start_new_session(b'fake_username_hash')
+
+        assert not result[0]
+        assert result[1] == failure_reason
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
