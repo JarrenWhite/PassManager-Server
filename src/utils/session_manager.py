@@ -1,4 +1,5 @@
 from typing import Tuple, Optional, List
+from datetime import datetime, timedelta
 
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
@@ -9,6 +10,7 @@ from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
 from cryptography import SRPUtils
 
+EPHEMERAL_DELAY = 180
 
 # TODO - Placeholder class. Requires completion.
 
@@ -30,10 +32,17 @@ class SessionManager():
         result = DBUtilsAuth.fetch(username_hash=username_hash)
         success, failure_reason, user_id, srp_salt, srp_verifier = result
 
-        SRPUtils.generate_ephemeral(srp_verifier)
-
         if not success:
             return False, failure_reason, "", b'', b'', b''
+
+        public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(srp_verifier)
+
+        DBUtilsAuth.start(
+            user_id=user_id,
+            eph_private_b=private_ephemeral,
+            eph_public_b=public_ephemeral,
+            expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY))
+        )
 
         return True, None, "", b'', b'', b''
 
