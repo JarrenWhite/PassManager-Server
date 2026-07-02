@@ -37,12 +37,16 @@ class SessionManager():
 
         public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(srp_verifier)
 
-        DBUtilsAuth.start(
+        result = DBUtilsAuth.start(
             user_id=user_id,
             eph_private_b=private_ephemeral,
             eph_public_b=public_ephemeral,
             expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY))
         )
+        success, failure_reason, public_id = result
+
+        if not success:
+            return False, failure_reason, "", b'', b'', b''
 
         return True, None, "", b'', b'', b''
 
