@@ -62,19 +62,20 @@ class TestFetch():
         assert self.mock_query._filters[0].right.value == username_hash
 
     @pytest.mark.parametrize(
-        "user_id, srp_salt, srp_verifier",
+        "user_id, srp_salt, srp_verifier, master_key_salt",
         [
-            (0,     b'abc',     b'def'),
-            (15,    b'',        b''),
-            (350,   b'qcd'*100, b'ghi'*300)
+            (0,     b'abc',     b'def',     b'xyz'),
+            (15,    b'',        b'',        b''),
+            (350,   b'qcd'*100, b'ghi'*300, b'lma'*50)
         ]
     )
-    def test_return_details(self, user_id, srp_salt, srp_verifier):
+    def test_return_details(self, user_id, srp_salt, srp_verifier, master_key_salt):
         """Should return user id, srp salt and srp verifier"""
 
         self.first_response.id = user_id
         self.first_response.srp_salt = srp_salt
         self.first_response.srp_verifier = srp_verifier
+        self.first_response.master_key_salt = master_key_salt
 
         username_hash = b'fake_username_hash'
         response = DBUtilsAuth.fetch(username_hash)
@@ -84,6 +85,7 @@ class TestFetch():
         assert response[2] == user_id
         assert response[3] == srp_salt
         assert response[4] == srp_verifier
+        assert response[5] == master_key_salt
 
     def test_user_not_found(self):
         """Should return NOT_FOUND when user does not exist"""
