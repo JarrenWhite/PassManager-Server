@@ -185,5 +185,14 @@ class TestStartNewSession():
         assert result[5] == master_key_salt
 
 
+class TestAuthNewSession():
+    """Test cases for the auth new session function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        yield
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
