@@ -43,7 +43,7 @@ class SessionManager():
             eph_public_b=public_ephemeral,
             expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY))
         )
-        success, failure_reason, public_id = result
+        success, failure_reason, public_id, master_key_salt = result
 
         if not success:
             return False, failure_reason, "", b'', b'', b''

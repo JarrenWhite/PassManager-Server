@@ -40,7 +40,7 @@ class TestStartNewSession():
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         self.start_called = []
-        self.start_response = True, None, "fake_public_id"
+        self.start_response = True, None, "fake_public_id", b'fake_master_key_salt'
         def fake_start(user_id, eph_private_b, eph_public_b, expiry_time):
             self.start_called.append((user_id, eph_private_b, eph_public_b, expiry_time))
             return self.start_response
@@ -155,7 +155,7 @@ class TestStartNewSession():
     def test_start_call_fails(self, failure_reason):
         """Should correctly handle failed start call"""
 
-        self.start_response = False, failure_reason, ""
+        self.start_response = False, failure_reason, "", b''
 
         result = SessionManager.start_new_session(b'fake_username_hash')
 
