@@ -48,7 +48,7 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b'', b'', b''
 
-        return True, None, "", b'', b'', b''
+        return True, None, public_id, srp_salt, srp_verifier, master_key_salt
 
     @staticmethod
     def auth_new_session(
