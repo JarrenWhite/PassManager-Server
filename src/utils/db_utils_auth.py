@@ -120,7 +120,7 @@ class DBUtilsAuth():
 
     @staticmethod
     def get_details(
-        user_id: int,
+        username_hash: bytes,
         public_id: str
     ) -> Tuple[bool, Optional[FailureReason], bytes, int, bytes, bytes]:
         """
@@ -139,7 +139,7 @@ class DBUtilsAuth():
                 if auth_ephemeral is None:
                     logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
-                if auth_ephemeral.user.id != user_id:
+                if auth_ephemeral.user.username_hash != username_hash:
                     logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
