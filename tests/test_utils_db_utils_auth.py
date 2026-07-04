@@ -171,6 +171,7 @@ class TestStart():
         assert response[0] == True
         assert response[1] == None
         assert response[2] == "fake_public_id"
+        assert response[3] == b'fake_master_key_salt'
 
         assert len(mock_session._added) == 1
         assert len(mock_session._deletes) == 0
