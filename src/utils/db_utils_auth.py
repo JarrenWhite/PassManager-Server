@@ -50,7 +50,7 @@ class DBUtilsAuth():
     @staticmethod
     def fetch(
         username_hash: bytes
-    ) -> Tuple[bool, Optional[FailureReason], int, bytes, bytes]:
+    ) -> Tuple[bool, Optional[FailureReason], int, bytes, bytes, bytes]:
         """
         Fetch the details required to begin an authorisation process
 
@@ -58,6 +58,7 @@ class DBUtilsAuth():
             (int)   user_id
             (bytes) srp_salt
             (bytes) srp_verifier
+            (bytes) master_key_salt
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -65,15 +66,15 @@ class DBUtilsAuth():
 
                 if user is None:
                     logger.debug("User: %s not found.", username_hash[-4:])
-                    return False, FailureReason.NOT_FOUND, 0, b'', b''
+                    return False, FailureReason.NOT_FOUND, 0, b'', b'', b''
 
-                return True, None, user.id, user.srp_salt, user.srp_verifier
+                return True, None, user.id, user.srp_salt, user.srp_verifier, user.master_key_salt
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, 0, b'', b''
+            return False, FailureReason.DATABASE_UNINITIALISED, 0, b'', b'', b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, 0, b'', b''
+            return False, FailureReason.UNKNOWN_EXCEPTION, 0, b'', b'', b''
 
 
     @staticmethod
