@@ -350,15 +350,13 @@ class TestGetDetails():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], bytes)
-        assert isinstance(response[3], int)
+        assert isinstance(response[3], bytes)
         assert isinstance(response[4], bytes)
-        assert isinstance(response[5], bytes)
         assert response[0] == True
         assert response[1] == None
-        assert response[2] == b'fake_hash'
-        assert response[3] == 123456
-        assert response[4] == b'fake_eph_private_b'
-        assert response[5] == b'fake_eph_public_b'
+        assert response[2] == b'fake_eph_private_b'
+        assert response[3] == b'fake_eph_public_b'
+        assert response[4] == b'fake_srp_verifier'
 
         assert len(mock_session._added) == 0
         assert len(mock_session._deletes) == 0
