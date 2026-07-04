@@ -162,6 +162,28 @@ class TestStartNewSession():
         assert not result[0]
         assert result[1] == failure_reason
 
+    @pytest.mark.parametrize(
+        "public_id, srp_salt, srp_verifier, master_key_salt",
+        [
+            ("abc",     b'abc',     b'def',     b''),
+            ("",        b'',        b'',        b''),
+            ("def"*150, b'qcd'*100, b'ghi'*300, b'')
+        ]
+    )
+    def test_returns_correct_values(self, public_id, srp_salt, srp_verifier, master_key_salt):
+        """Should return all correct values"""
+        self.fetch_response = True, None, 1, srp_salt, srp_verifier
+        self.start_response = True, None, public_id, master_key_salt
+
+        result = SessionManager.start_new_session(b'fake_username_hash')
+
+        assert result[0]
+        assert result[1] is None
+        assert result[2] == public_id
+        assert result[3] == srp_salt
+        assert result[4] == srp_verifier
+        assert result[5] == master_key_salt
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
