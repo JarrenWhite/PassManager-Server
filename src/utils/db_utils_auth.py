@@ -122,15 +122,14 @@ class DBUtilsAuth():
     def get_details(
         username_hash: bytes,
         public_id: str
-    ) -> Tuple[bool, Optional[FailureReason], bytes, int, bytes, bytes]:
+    ) -> Tuple[bool, Optional[FailureReason], bytes, bytes, bytes]:
         """
         Get the ephemeral details for the given ephemeral id
 
         Returns:
-            (bytes) username_hash
-            (int)   user_id
             (bytes) eph_private_b
             (bytes) eph_public_b
+            (bytes) srp_verifier
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -138,26 +137,25 @@ class DBUtilsAuth():
 
                 if auth_ephemeral is None:
                     logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
+                    return False, FailureReason.NOT_FOUND, b'', b'', b''
                 if auth_ephemeral.user.username_hash != username_hash:
                     logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
+                    return False, FailureReason.NOT_FOUND, b'', b'', b''
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
                     logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, b'', 0, b'', b''
+                    return False, FailureReason.NOT_FOUND, b'', b'', b''
 
                 return (True, None,
-                    auth_ephemeral.user.username_hash,
-                    auth_ephemeral.user.id,
                     auth_ephemeral.eph_private_b,
-                    auth_ephemeral.eph_public_b
+                    auth_ephemeral.eph_public_b,
+                    auth_ephemeral.user.srp_verifier
                 )
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, b'', 0, b'', b''
+            return False, FailureReason.DATABASE_UNINITIALISED, b'', b'', b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, b'', 0, b'', b''
+            return False, FailureReason.UNKNOWN_EXCEPTION, b'', b'', b''
 
 
     @staticmethod
