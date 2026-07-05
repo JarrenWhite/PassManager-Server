@@ -66,6 +66,11 @@ class SessionManager():
             (str)   Session Public ID
             (bytes) Server Proof (M2)
         """
+        DBUtilsAuth.get_details(
+            username_hash=username_hash,
+            public_id=public_id
+        )
+
         return True, None, "", b''
 
     @staticmethod
