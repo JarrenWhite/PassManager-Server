@@ -165,9 +165,9 @@ class TestStartNewSession():
     @pytest.mark.parametrize(
         "public_id, srp_salt, srp_verifier, master_key_salt",
         [
-            ("abc",     b'abc',     b'def',     b''),
+            ("abc",     b'abc',     b'def',     b'hij'),
             ("",        b'',        b'',        b''),
-            ("def"*150, b'qcd'*100, b'ghi'*300, b'')
+            ("def"*150, b'qcd'*100, b'ghi'*300, b'qew'*125)
         ]
     )
     def test_returns_correct_values(self, public_id, srp_salt, srp_verifier, master_key_salt):
@@ -191,7 +191,40 @@ class TestAuthNewSession():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
+        self.get_details_called = []
+        self.get_details_response = True, None, b'fake_eph_private_b', b'fake_eph_public_b', b'fake_srp_verifier'
+        def fake_get_details(username_hash, public_id):
+            self.get_details_called.append((username_hash, public_id))
+            return self.get_details_response
+        monkeypatch.setattr(DBUtilsAuth, "get_details", fake_get_details)
+
         yield
+
+    @pytest.mark.parametrize(
+        "username_hash, public_id",
+        [
+            (b'abc',     "abc"),
+            (b'',        ""),
+            (b'qcd'*100, "def"*150)
+        ]
+    )
+    def test_calls_get_details(self, username_hash, public_id):
+        """Should fetch ephemeral details"""
+
+        response = SessionManager.auth_new_session(
+            username_hash=username_hash,
+            public_id=public_id,
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert len(self.get_details_called) == 1
+
+        get_details = self.get_details_called[0]
+        assert get_details[0] == username_hash
+        assert get_details[1] == public_id
 
 
 if __name__ == '__main__':
