@@ -226,6 +226,31 @@ class TestAuthNewSession():
         assert get_details[0] == username_hash
         assert get_details[1] == public_id
 
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_get_details_fails(self, failure_reason):
+        """Should handle get_details failure"""
+
+        self.get_details_response = False, failure_reason, b'', b'', b''
+
+        response = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert not response[0]
+        assert response[1] == failure_reason
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
