@@ -198,6 +198,13 @@ class TestAuthNewSession():
             return self.get_details_response
         monkeypatch.setattr(DBUtilsAuth, "get_details", fake_get_details)
 
+        self.compute_session_key_called = []
+        self.compute_session_key_response = b''
+        def fake_compute_session_key(eph_val_a, eph_public_b, eph_private_b, srp_verifier_v):
+            self.compute_session_key_called.append((eph_val_a, eph_public_b, eph_private_b, srp_verifier_v))
+            return self.compute_session_key_response
+        monkeypatch.setattr(SRPUtils, "compute_session_key", fake_compute_session_key)
+
         yield
 
     @pytest.mark.parametrize(
@@ -250,6 +257,36 @@ class TestAuthNewSession():
 
         assert not response[0]
         assert response[1] == failure_reason
+
+    @pytest.mark.parametrize(
+        "eph_val_a, eph_public_b, eph_private_b, srp_verifier_v",
+        [
+            (b'xyz',    b'abc',     b'def',     b'hij'),
+            (b'',       b'',        b'',        b''),
+            (b'def'*150,b'qcd'*100, b'ghi'*300, b'qew'*125)
+        ]
+    )
+    def test_calls_compute_session_key(self, eph_val_a, eph_public_b, eph_private_b, srp_verifier_v):
+        """Should call to compute session key"""
+
+        self.get_details_response = True, None, eph_private_b, eph_public_b, srp_verifier_v
+
+        response = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=eph_val_a,
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert len(self.compute_session_key_called) == 1
+
+        compute_session_key = self.compute_session_key_called[0]
+        assert compute_session_key[0] == eph_val_a
+        assert compute_session_key[1] == eph_public_b
+        assert compute_session_key[2] == eph_private_b
+        assert compute_session_key[3] == srp_verifier_v
 
 
 if __name__ == '__main__':
