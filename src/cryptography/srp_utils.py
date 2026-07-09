@@ -41,11 +41,12 @@ class SRPUtils():
         eph_public_b: bytes,
         session_key_k: bytes,
         proof_val_m1: bytes
-    ) -> bytes:
+    ) -> Tuple[bool, bytes]:
         """
         Verify the proof of a matching session key
 
         Returns:
+            (bool) True if verified, false otherwise
             (bytes) Server Proof (M2)
         """
-        return b''
+        return True, b''
