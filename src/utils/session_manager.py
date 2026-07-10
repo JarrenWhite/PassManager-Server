@@ -75,11 +75,18 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b''
 
-        SRPUtils.compute_session_key(
+        session_key = SRPUtils.compute_session_key(
             eph_val_a=eph_val_a,
             eph_public_b=public_ephemeral,
             eph_private_b=private_ephemeral,
             srp_verifier_v=srp_verifier
+        )
+
+        SRPUtils.verify_proof(
+            eph_val_a=eph_val_a,
+            eph_public_b=public_ephemeral,
+            session_key_k=session_key,
+            proof_val_m1=proof_val_m1
         )
 
         return True, None, "", b''
