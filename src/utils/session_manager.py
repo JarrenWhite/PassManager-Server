@@ -94,6 +94,14 @@ class SessionManager():
         if not success:
             return False, FailureReason.NOT_FOUND, "", b''
 
+        # Store session details
+        DBUtilsAuth.complete(
+            public_id=public_id,
+            session_key=session_key,
+            maximum_requests=0,
+            expiry_time=datetime.now()
+        )
+
 
         return True, None, "", b''
 
