@@ -71,7 +71,6 @@ class SessionManager():
             public_id=public_id
         )
         success, failure_reason, private_ephemeral, public_ephemeral, srp_verifier = result
-
         if not success:
             return False, failure_reason, "", b''
 
@@ -88,9 +87,10 @@ class SessionManager():
             session_key_k=session_key,
             proof_val_m1=proof_val_m1
         )
-
         if not success:
             return False, FailureReason.NOT_FOUND, "", b''
+
+
 
         return True, None, "", b''
 
