@@ -29,14 +29,16 @@ class SessionManager():
             (bytes) Ephemeral Public ID
             (bytes) Master Key Salt
         """
+        # Fetch user auth details
         result = DBUtilsAuth.fetch(username_hash=username_hash)
         success, failure_reason, user_id, srp_salt, srp_verifier = result
-
         if not success:
             return False, failure_reason, "", b'', b'', b''
 
+        # Generate ephemeral
         public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(srp_verifier)
 
+        # Add details to database
         result = DBUtilsAuth.start(
             user_id=user_id,
             eph_private_b=private_ephemeral,
@@ -44,7 +46,6 @@ class SessionManager():
             expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY))
         )
         success, failure_reason, public_id, master_key_salt = result
-
         if not success:
             return False, failure_reason, "", b'', b'', b''
 
@@ -66,6 +67,7 @@ class SessionManager():
             (str)   Session Public ID
             (bytes) Server Proof (M2)
         """
+        # Get details
         result = DBUtilsAuth.get_details(
             username_hash=username_hash,
             public_id=public_id
@@ -74,6 +76,7 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b''
 
+        # Calculate session key
         session_key = SRPUtils.compute_session_key(
             eph_val_a=eph_val_a,
             eph_public_b=public_ephemeral,
@@ -81,6 +84,7 @@ class SessionManager():
             srp_verifier_v=srp_verifier
         )
 
+        # Verify client proof
         success, proof_val_m2 = SRPUtils.verify_proof(
             eph_val_a=eph_val_a,
             eph_public_b=public_ephemeral,
@@ -89,7 +93,6 @@ class SessionManager():
         )
         if not success:
             return False, FailureReason.NOT_FOUND, "", b''
-
 
 
         return True, None, "", b''
