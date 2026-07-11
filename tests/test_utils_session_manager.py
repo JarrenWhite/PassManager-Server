@@ -212,6 +212,13 @@ class TestAuthNewSession():
             return self.verify_proof_response
         monkeypatch.setattr(SRPUtils, "verify_proof", fake_verify_proof)
 
+        self.complete_called = []
+        self.complete_response = True, None, "fake_session_public_id"
+        def fake_complete(public_id, session_key, maximum_requests, expiry_time):
+            self.complete_called.append((public_id, session_key, maximum_requests, expiry_time))
+            return self.complete_response
+        monkeypatch.setattr(DBUtilsAuth, "complete", fake_complete)
+
         yield
 
     @pytest.mark.parametrize(
@@ -342,6 +349,34 @@ class TestAuthNewSession():
 
         assert not result[0]
         assert result[1] == FailureReason.NOT_FOUND
+
+    @pytest.mark.parametrize(
+        "public_id, session_key",
+        [
+            ("abc",     b'abc'),
+            ("",        b''),
+            ("def"*150, b'qcd'*100)
+        ]
+    )
+    def test_calls_complete(self, public_id, session_key):
+        """Should call to complete auth"""
+
+        self.compute_session_key_response = session_key
+
+        result = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id=public_id,
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert len(self.complete_called) == 1
+
+        complete = self.complete_called[0]
+        assert complete[0] == public_id
+        assert complete[1] == session_key
 
 
 if __name__ == '__main__':
