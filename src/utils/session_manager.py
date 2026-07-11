@@ -95,10 +95,11 @@ class SessionManager():
             return False, FailureReason.NOT_FOUND, "", b''
 
         # Store session details
+        max_reqs = None if maximum_requests < 0 else maximum_requests
         DBUtilsAuth.complete(
             public_id=public_id,
             session_key=session_key,
-            maximum_requests=0,
+            maximum_requests=max_reqs,
             expiry_time=datetime.now()
         )
 
