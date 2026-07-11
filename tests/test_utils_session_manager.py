@@ -219,6 +219,13 @@ class TestAuthNewSession():
             return self.complete_response
         monkeypatch.setattr(DBUtilsAuth, "complete", fake_complete)
 
+        self.now_response = datetime.datetime(2024, 1, 15, 12, 0, 0)
+        class FakeDatetime(datetime.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return self.now_response
+        monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
+
         yield
 
     @pytest.mark.parametrize(
@@ -379,14 +386,15 @@ class TestAuthNewSession():
         assert complete[1] == session_key
 
     @pytest.mark.parametrize(
-        "maximum_requests",
+        "maximum_requests, passed_argument",
         [
-            -1,
-            15,
-            100
+            (-30,   None),
+            (-1,    None),
+            (15,    15),
+            (100,   100)
         ]
     )
-    def test_complete_max_requests(self, maximum_requests):
+    def test_complete_max_requests(self, maximum_requests, passed_argument):
         """Should call complete with correct maximum requests"""
 
         result = SessionManager.auth_new_session(
@@ -399,7 +407,8 @@ class TestAuthNewSession():
         )
 
         complete = self.complete_called[0]
-        assert complete[2] == maximum_requests
+
+        assert complete[2] == passed_argument
 
 
 if __name__ == '__main__':
