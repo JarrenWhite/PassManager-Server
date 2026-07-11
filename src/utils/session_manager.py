@@ -82,12 +82,15 @@ class SessionManager():
             srp_verifier_v=srp_verifier
         )
 
-        SRPUtils.verify_proof(
+        success, proof_val_m2 = SRPUtils.verify_proof(
             eph_val_a=eph_val_a,
             eph_public_b=public_ephemeral,
             session_key_k=session_key,
             proof_val_m1=proof_val_m1
         )
+
+        if not success:
+            return False, FailureReason.NOT_FOUND, "", b''
 
         return True, None, "", b''
 
