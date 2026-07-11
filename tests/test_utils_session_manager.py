@@ -225,7 +225,7 @@ class TestAuthNewSession():
     def test_calls_get_details(self, username_hash, public_id):
         """Should fetch ephemeral details"""
 
-        response = SessionManager.auth_new_session(
+        result = SessionManager.auth_new_session(
             username_hash=username_hash,
             public_id=public_id,
             eph_val_a=b'fake_eph_val_a',
@@ -253,7 +253,7 @@ class TestAuthNewSession():
 
         self.get_details_response = False, failure_reason, b'', b'', b''
 
-        response = SessionManager.auth_new_session(
+        result = SessionManager.auth_new_session(
             username_hash=b'fake_username_hash',
             public_id="fake_public_id",
             eph_val_a=b'fake_eph_val_a',
@@ -262,8 +262,8 @@ class TestAuthNewSession():
             expiry_time=0
         )
 
-        assert not response[0]
-        assert response[1] == failure_reason
+        assert not result[0]
+        assert result[1] == failure_reason
 
     @pytest.mark.parametrize(
         "eph_val_a, eph_public_b, eph_private_b, srp_verifier_v",
@@ -278,7 +278,7 @@ class TestAuthNewSession():
 
         self.get_details_response = True, None, eph_private_b, eph_public_b, srp_verifier_v
 
-        response = SessionManager.auth_new_session(
+        result = SessionManager.auth_new_session(
             username_hash=b'fake_username_hash',
             public_id="fake_public_id",
             eph_val_a=eph_val_a,
@@ -309,7 +309,7 @@ class TestAuthNewSession():
         self.get_details_response = True, None, b'fake_eph_private_b', eph_public_b, b'fake_srp_verifier'
         self.compute_session_key_response = session_key_k
 
-        response = SessionManager.auth_new_session(
+        result = SessionManager.auth_new_session(
             username_hash=b'fake_username_hash',
             public_id="fake_public_id",
             eph_val_a=eph_val_a,
@@ -325,6 +325,23 @@ class TestAuthNewSession():
         assert verify_proof[1] == eph_public_b
         assert verify_proof[2] == session_key_k
         assert verify_proof[3] == proof_val_m1
+
+    def test_verify_proof_fails(self):
+        """Should handle verify proof failure"""
+
+        self.verify_proof_response = False, b''
+
+        result = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert not result[0]
+        assert result[1] == FailureReason.NOT_FOUND
 
 
 if __name__ == '__main__':
