@@ -378,6 +378,29 @@ class TestAuthNewSession():
         assert complete[0] == public_id
         assert complete[1] == session_key
 
+    @pytest.mark.parametrize(
+        "maximum_requests",
+        [
+            -1,
+            15,
+            100
+        ]
+    )
+    def test_complete_max_requests(self, maximum_requests):
+        """Should call complete with correct maximum requests"""
+
+        result = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=maximum_requests,
+            expiry_time=0
+        )
+
+        complete = self.complete_called[0]
+        assert complete[2] == maximum_requests
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
