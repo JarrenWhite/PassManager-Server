@@ -416,7 +416,7 @@ class TestAuthNewSession():
         [
             (-1,    datetime.datetime(2024, 1, 15, 12, 0, 0)),
             (0,     datetime.datetime(2000, 6, 1, 0, 0, 0)),
-            (86400, datetime.datetime(2005, 8, 6, 24, 8, 8)),
+            (86400, datetime.datetime(2005, 8, 6, 22, 8, 8)),
             (604800,datetime.datetime(1999, 12, 31, 23, 59, 59))
         ]
     )
