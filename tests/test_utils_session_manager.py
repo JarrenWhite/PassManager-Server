@@ -142,7 +142,7 @@ class TestStartNewSession():
         assert len(self.start_called) == 1
         start = self.start_called[0]
 
-        assert start[3] == self.now_response + datetime.timedelta(seconds=180)
+        assert start[3] == now + datetime.timedelta(seconds=180)
 
     @pytest.mark.parametrize(
         "failure_reason",
@@ -390,6 +390,7 @@ class TestAuthNewSession():
         [
             (-30,   None),
             (-1,    None),
+            (0,     100),
             (15,    15),
             (100,   100)
         ]
@@ -409,6 +410,40 @@ class TestAuthNewSession():
         complete = self.complete_called[0]
 
         assert complete[2] == passed_argument
+
+    @pytest.mark.parametrize(
+        "expiry_time, now",
+        [
+            (-1,    datetime.datetime(2024, 1, 15, 12, 0, 0)),
+            (0,     datetime.datetime(2000, 6, 1, 0, 0, 0)),
+            (86400, datetime.datetime(2005, 8, 6, 24, 8, 8)),
+            (604800,datetime.datetime(1999, 12, 31, 23, 59, 59))
+        ]
+    )
+    def test_sets_correct_expiry(self, expiry_time, now):
+        """Should create entry in database with correct expiry"""
+
+        self.now_response = now
+
+        result = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        complete = self.complete_called[0]
+
+        if expiry_time < 0:
+            expected_expiry = None
+        elif expiry_time == 0:
+            expected_expiry = now + datetime.timedelta(seconds=3600)
+        else:
+            expected_expiry = now + datetime.timedelta(seconds=expiry_time)
+
+        assert complete[3] == expected_expiry
 
 
 if __name__ == '__main__':
