@@ -431,7 +431,7 @@ class TestAuthNewSession():
             eph_val_a=b'fake_eph_val_a',
             proof_val_m1=b'fake_proof_val_b1',
             maximum_requests=0,
-            expiry_time=0
+            expiry_time=expiry_time
         )
 
         complete = self.complete_called[0]
