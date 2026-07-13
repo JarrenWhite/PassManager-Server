@@ -102,11 +102,18 @@ class SessionManager():
         else:
             max_reqs = maximum_requests
 
+        if expiry_time < 0:
+            ex_time = None
+        elif expiry_time == 0:
+            ex_time = datetime.now() + timedelta(seconds=3600)
+        else:
+            ex_time = datetime.now() + timedelta(seconds=expiry_time)
+
         DBUtilsAuth.complete(
             public_id=public_id,
             session_key=session_key,
             maximum_requests=max_reqs,
-            expiry_time=datetime.now()
+            expiry_time=ex_time
         )
 
 
