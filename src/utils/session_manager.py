@@ -94,7 +94,7 @@ class SessionManager():
         if not success:
             return False, FailureReason.NOT_FOUND, "", b''
 
-        # Store session details
+        # Determine expiry details
         if maximum_requests < 0:
             max_reqs = None
         elif maximum_requests == 0:
@@ -109,12 +109,16 @@ class SessionManager():
         else:
             ex_time = datetime.now() + timedelta(seconds=expiry_time)
 
-        DBUtilsAuth.complete(
+        # Store session details
+        result = DBUtilsAuth.complete(
             public_id=public_id,
             session_key=session_key,
             maximum_requests=max_reqs,
             expiry_time=ex_time
         )
+        success, failure_reason, session_public_id = result
+        if not success:
+            return False, failure_reason, "", b''
 
 
         return True, None, "", b''
