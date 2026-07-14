@@ -445,6 +445,31 @@ class TestAuthNewSession():
 
         assert complete[3] == expected_expiry
 
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_complete_fails(self, failure_reason):
+        """Should handle failure of complete call"""
+
+        self.complete_response = False, failure_reason, ""
+
+        result = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert not result[0]
+        assert result[1] == failure_reason
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
