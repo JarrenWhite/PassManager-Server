@@ -120,8 +120,7 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b''
 
-
-        return True, None, "", b''
+        return True, None, session_public_id, proof_val_m2
 
     @staticmethod
     def start_password_session(
