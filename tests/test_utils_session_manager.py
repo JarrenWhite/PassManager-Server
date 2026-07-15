@@ -470,6 +470,32 @@ class TestAuthNewSession():
         assert not result[0]
         assert result[1] == failure_reason
 
+    @pytest.mark.parametrize(
+        "session_public_id, server_proof_val_m2",
+        [
+            ("abc",     b'abc'),
+            ("",        b''),
+            ("def"*150, b'qcd'*100)
+        ]
+    )
+    def test_returns_correct_values(self, session_public_id, server_proof_val_m2):
+        """Should return the correct final values"""
+
+        self.verify_proof_response = True, server_proof_val_m2
+        self.complete_response = True, None, session_public_id
+
+        result = SessionManager.auth_new_session(
+            username_hash=b'fake_username_hash',
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1',
+            maximum_requests=0,
+            expiry_time=0
+        )
+
+        assert result[2] == session_public_id
+        assert result[3] == server_proof_val_m2
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
