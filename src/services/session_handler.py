@@ -48,7 +48,7 @@ class SessionHandler:
         result = SessionManager.start_new_session(
             username_hash=request.username_hash
         )
-        status, failure_reason, public_id, srp_salt, eph_public_b, master_key_salt = result
+        status, failure_reason, public_id, eph_public_b, srp_salt, master_key_salt = result
 
         # Return error
         if not status:
@@ -66,8 +66,8 @@ class SessionHandler:
         # Successful Return
         success_data = SessionStartResponse.Success(
             public_id=public_id,
-            srp_salt=srp_salt,
             eph_public_b=eph_public_b,
+            srp_salt=srp_salt,
             master_key_salt=master_key_salt
         )
         return SessionStartResponse(

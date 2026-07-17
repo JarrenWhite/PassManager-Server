@@ -106,14 +106,13 @@ public_id: str
 > Note: Risk of Insecure Direct Object Reference
 
 In
-user_id: int
+username_hash: bytes
 public_id: str
 
 Out
-username_hash: bytes
-user_id: int
 eph_private_b: bytes
 eph_public_b: bytes
+srp_verifier: bytes
 
 ## complete
 In

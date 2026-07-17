@@ -93,7 +93,7 @@ class PasswordHandler():
             srp_verifier=request.srp_verifier,
             master_key_salt=request.master_key_salt
         )
-        status, failure_reason, public_id, public_ephemeral_b = result
+        status, failure_reason, public_id, public_ephemeral_b, srp_salt, master_key_salt = result
 
         # Return error
         if not status:
@@ -112,7 +112,9 @@ class PasswordHandler():
         response = PasswordStartResponse(
             username_hash=request.username_hash,
             public_id=public_id,
-            eph_public_b=public_ephemeral_b
+            eph_public_b=public_ephemeral_b,
+            srp_salt=srp_salt,
+            master_key_salt=master_key_salt
         )
         return SessionManager.seal_session(
             session_id=secure_request.session_id,
