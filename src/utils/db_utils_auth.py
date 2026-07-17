@@ -49,7 +49,8 @@ class DBUtilsAuth():
 
     @staticmethod
     def fetch(
-        username_hash: bytes
+        username_hash: Optional[bytes] = None,
+        user_id: Optional[int] = None
     ) -> Tuple[bool, Optional[FailureReason], int, bytes, bytes]:
         """
         Fetch the details required to begin an authorisation process
@@ -59,12 +60,23 @@ class DBUtilsAuth():
             (bytes) srp_salt
             (bytes) srp_verifier
         """
+        if username_hash is None and user_id is None:
+            logger.error("Fetch called without arguments")
+            return False, FailureReason.SERVER_ERROR, 0, b'', b''
+
         try:
             with DatabaseSetup.get_db_session() as session:
-                user = session.query(User).filter(User.username_hash == username_hash).first()
+                query = session.query(User)
+                if username_hash is not None:
+                    query = query.filter(User.username_hash == username_hash)
+                else:
+                    query = query.filter(User.id == user_id)
+
+                user = query.first()
 
                 if user is None:
-                    logger.debug("User: %s not found.", username_hash[-4:])
+                    identifier = username_hash[-4:] if username_hash is not None else user_id
+                    logger.debug("User: %s not found.", identifier)
                     return False, FailureReason.NOT_FOUND, 0, b'', b''
 
                 return True, None, user.id, user.srp_salt, user.srp_verifier
