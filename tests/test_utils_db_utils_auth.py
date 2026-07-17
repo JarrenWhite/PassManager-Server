@@ -57,9 +57,38 @@ class TestFetch():
     def test_searches_correct_user(self, username_hash):
         """Should return user id, srp salt and srp verifier"""
 
-        response = DBUtilsAuth.fetch(username_hash)
+        response = DBUtilsAuth.fetch(username_hash=username_hash)
 
-        assert self.mock_query._filters[0].right.value == username_hash
+        assert len(self.mock_query._filters) == 1
+        filter_condition = self.mock_query._filters[0]
+        assert filter_condition.left.name == "username_hash"
+        assert filter_condition.right.value == username_hash
+
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            123,
+            0,
+            456
+        ]
+    )
+    def test_searches_correct_user_id(self, user_id):
+        """Should return user id, srp salt and srp verifier"""
+
+        response = DBUtilsAuth.fetch(user_id=user_id)
+
+        assert len(self.mock_query._filters) == 1
+        filter_condition = self.mock_query._filters[0]
+        assert filter_condition.left.name == "id"
+        assert filter_condition.right.value == user_id
+
+    def test_fails_if_no_parameters(self):
+        """Should fail if no parameters given"""
+
+        response = DBUtilsAuth.fetch()
+
+        assert response[0] == False
+        assert response[1] == FailureReason.SERVER_ERROR
 
     @pytest.mark.parametrize(
         "user_id, srp_salt, srp_verifier",
