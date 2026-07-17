@@ -42,19 +42,19 @@ class SessionStartResponse(_message.Message):
         DESCRIPTOR: _descriptor.Descriptor
 
         PUBLIC_ID_FIELD_NUMBER: _builtins.int
-        SRP_SALT_FIELD_NUMBER: _builtins.int
         EPH_PUBLIC_B_FIELD_NUMBER: _builtins.int
+        SRP_SALT_FIELD_NUMBER: _builtins.int
         MASTER_KEY_SALT_FIELD_NUMBER: _builtins.int
         public_id: _builtins.str
-        srp_salt: _builtins.bytes
         eph_public_b: _builtins.bytes
+        srp_salt: _builtins.bytes
         master_key_salt: _builtins.bytes
         def __init__(
             self,
             *,
             public_id: _builtins.str = ...,
-            srp_salt: _builtins.bytes = ...,
             eph_public_b: _builtins.bytes = ...,
+            srp_salt: _builtins.bytes = ...,
             master_key_salt: _builtins.bytes = ...,
         ) -> None: ...
         _ClearFieldArgType: _TypeAlias = _typing.Literal["eph_public_b", b"eph_public_b", "master_key_salt", b"master_key_salt", "public_id", b"public_id", "srp_salt", b"srp_salt"]  # noqa: Y015
