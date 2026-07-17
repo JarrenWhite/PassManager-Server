@@ -32,6 +32,7 @@ class _ErrorCodeEnumTypeWrapper(_enum_type_wrapper._EnumTypeWrapper[_ErrorCode.V
     RQS03: _ErrorCode.ValueType  # 13
     SVR00: _ErrorCode.ValueType  # 20
     SVR01: _ErrorCode.ValueType  # 21
+    SVR02: _ErrorCode.ValueType  # 22
     GNR00: _ErrorCode.ValueType  # 30
     GNR01: _ErrorCode.ValueType  # 31
     OPR00: _ErrorCode.ValueType  # 40
@@ -48,6 +49,7 @@ RQS02: ErrorCode.ValueType  # 12
 RQS03: ErrorCode.ValueType  # 13
 SVR00: ErrorCode.ValueType  # 20
 SVR01: ErrorCode.ValueType  # 21
+SVR02: ErrorCode.ValueType  # 22
 GNR00: ErrorCode.ValueType  # 30
 GNR01: ErrorCode.ValueType  # 31
 OPR00: ErrorCode.ValueType  # 40

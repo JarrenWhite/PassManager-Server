@@ -369,6 +369,7 @@ These errors can be returned to any possible request.
 | RQS03      | request         | Too many requests                                            |
 | SVR00      | server          | Server encountered an unexpected error                       |
 | SVR01      | server          | Temporary outage/maintenance                                 |
+| SVR02      | server          | Other server issue                                           |
 
 
 ### General Field Errors

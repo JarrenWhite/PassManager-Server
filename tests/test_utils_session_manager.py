@@ -20,8 +20,8 @@ class TestStartNewSession():
 
         self.fetch_called = []
         self.fetch_response = True, None, 123, b'fake_srp_salt', b'fake_srp_verifier'
-        def fake_fetch(username_hash):
-            self.fetch_called.append(username_hash)
+        def fake_fetch(username_hash = None, user_id = None):
+            self.fetch_called.append((username_hash, user_id))
             return self.fetch_response
         monkeypatch.setattr(DBUtilsAuth, "fetch", fake_fetch)
 
@@ -62,7 +62,10 @@ class TestStartNewSession():
         result = SessionManager.start_new_session(username_hash)
 
         assert len(self.fetch_called) == 1
-        assert self.fetch_called[0] == username_hash
+
+        fetch = self.fetch_called[0]
+        assert fetch[0] == username_hash
+        assert fetch[1] == None
 
     @pytest.mark.parametrize(
         "failure_reason",
@@ -279,6 +282,7 @@ class TestAuthNewSession():
 
         assert not result[0]
         assert result[1] == failure_reason
+        assert len(self.complete_called) == 0
 
     @pytest.mark.parametrize(
         "eph_val_a, eph_public_b, eph_private_b, srp_verifier_v",
@@ -357,6 +361,7 @@ class TestAuthNewSession():
 
         assert not result[0]
         assert result[1] == FailureReason.NOT_FOUND
+        assert len(self.complete_called) == 0
 
     @pytest.mark.parametrize(
         "public_id, session_key",
