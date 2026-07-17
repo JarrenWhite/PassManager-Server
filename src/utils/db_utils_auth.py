@@ -67,10 +67,10 @@ class DBUtilsAuth():
         try:
             with DatabaseSetup.get_db_session() as session:
                 query = session.query(User)
-                if username_hash is not None:
-                    query = query.filter(User.username_hash == username_hash)
-                else:
+                if user_id is not None:
                     query = query.filter(User.id == user_id)
+                else:
+                    query = query.filter(User.username_hash == username_hash)
 
                 user = query.first()
 
