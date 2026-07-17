@@ -51,8 +51,8 @@ class TestStart():
             True,
             None,
             "fake_public_id",
-            b'fake_srp_salt',
             b'fake_eph_public_b',
+            b'fake_srp_salt',
             b'fake_master_key_salt'
         )
         def fake_start_new_session(username_hash):
@@ -168,8 +168,8 @@ class TestStart():
             True,
             None,
             "fake_public_id",
-            b'fake_srp_salt',
             b'fake_eph_public_b',
+            b'fake_srp_salt',
             b'fake_master_key_salt'
         )
 
@@ -184,8 +184,8 @@ class TestStart():
 
         response_data = response.success_data
         assert response_data.public_id == "fake_public_id"
-        assert response_data.srp_salt == b'fake_srp_salt'
         assert response_data.eph_public_b == b'fake_eph_public_b'
+        assert response_data.srp_salt == b'fake_srp_salt'
         assert response_data.master_key_salt == b'fake_master_key_salt'
 
 
