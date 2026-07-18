@@ -503,5 +503,68 @@ class TestAuthNewSession():
         assert result[3] == server_proof_val_m2
 
 
+class TestStartPasswordSession():
+    """Test cases for the start password session function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.fetch_called = []
+        self.fetch_response = True, None, 123, b'fake_srp_salt', b'fake_srp_verifier'
+        def fake_fetch(username_hash = None, user_id = None):
+            self.fetch_called.append((username_hash, user_id))
+            return self.fetch_response
+        monkeypatch.setattr(DBUtilsAuth, "fetch", fake_fetch)
+
+        yield
+
+    @pytest.mark.parametrize(
+        "user_id",
+        [
+            123,
+            0,
+            789456
+        ]
+    )
+    def test_calls_fetch(self, user_id):
+        """Should fetch srp salt and verifier for the user"""
+
+        result = SessionManager.start_password_session(
+            user_id,
+            b'fake_public_ephemeral',
+            b'fake_srp_salt',
+            b'fake_master_key_salt'
+        )
+
+        assert len(self.fetch_called) == 1
+
+        fetch = self.fetch_called[0]
+        assert fetch[0] == None
+        assert fetch[1] == user_id
+
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_fetch_fails(self, failure_reason):
+        """Should return error if fetch fails"""
+
+        self.fetch_response = False, failure_reason, 0, b'', b''
+
+        result = SessionManager.start_password_session(
+            123,
+            b'fake_public_ephemeral',
+            b'fake_srp_salt',
+            b'fake_master_key_salt'
+        )
+
+        assert not result[0]
+        assert result[1] == failure_reason
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
