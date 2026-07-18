@@ -138,6 +138,13 @@ class SessionManager():
             (bytes) SRP Salt
             (bytes) Master Key Salt
         """
+        # Fetch user auth details
+        result = DBUtilsAuth.fetch(user_id=user_id)
+        success, failure_reason, user_id, srp_salt, srp_verifier = result
+        if not success:
+            return False, failure_reason, "", b'', b'', b''
+
+
         return True, None, "", b'', b'', b''
 
     @staticmethod
