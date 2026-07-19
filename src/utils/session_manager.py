@@ -144,6 +144,9 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b'', b'', b''
 
+        # Generate ephemeral
+        public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(srp_verifier)
+
 
         return True, None, "", b'', b'', b''
 
