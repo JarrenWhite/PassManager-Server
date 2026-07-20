@@ -8,6 +8,7 @@ from passmanager.common.v0.secure_pb2 import (
 
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
+from .db_utils_password import DBUtilsPassword
 from cryptography import SRPUtils
 
 EPHEMERAL_DELAY = 180
@@ -140,12 +141,23 @@ class SessionManager():
         """
         # Fetch user auth details
         result = DBUtilsAuth.fetch(user_id=user_id)
-        success, failure_reason, user_id, srp_salt, srp_verifier = result
+        success, failure_reason, user_id, existing_srp_salt, existing_srp_verifier = result
         if not success:
             return False, failure_reason, "", b'', b'', b''
 
         # Generate ephemeral
-        public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(srp_verifier)
+        public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(existing_srp_verifier)
+
+        # Add details to database
+        result = DBUtilsPassword.start(
+            user_id=user_id,
+            eph_private_b=private_ephemeral,
+            eph_public_b=public_ephemeral,
+            expiry_time=datetime.now(),
+            srp_salt=srp_salt,
+            srp_verifier=srp_verifier,
+            master_key_salt=master_key_salt
+        )
 
 
         return True, None, "", b'', b'', b''
