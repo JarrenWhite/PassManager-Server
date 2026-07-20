@@ -8,6 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 import utils.session_manager
 from utils.session_manager import SessionManager
 from utils.db_utils_auth import DBUtilsAuth
+from utils.db_utils_password import DBUtilsPassword
 from enums.failure_reason import FailureReason
 from cryptography.srp_utils import SRPUtils
 
@@ -523,6 +524,13 @@ class TestStartPasswordSession():
             return self.generate_ephemeral_response
         monkeypatch.setattr(SRPUtils, "generate_ephemeral", fake_generate_ephemeral)
 
+        self.start_called = []
+        self.start_response = True, None, "fake_public_id", b'fake_master_key_salt'
+        def fake_start(user_id, eph_private_b, eph_public_b, expiry_time, srp_salt, srp_verifier, master_key_salt):
+            self.start_called.append((user_id, eph_private_b, eph_public_b, expiry_time, srp_salt, srp_verifier, master_key_salt))
+            return self.start_response
+        monkeypatch.setattr(DBUtilsPassword, "start", fake_start)
+
         yield
 
     @pytest.mark.parametrize(
@@ -538,8 +546,8 @@ class TestStartPasswordSession():
 
         result = SessionManager.start_password_session(
             user_id,
-            b'fake_public_ephemeral',
             b'fake_srp_salt',
+            b'fake_srp_verifier',
             b'fake_master_key_salt'
         )
 
@@ -564,8 +572,8 @@ class TestStartPasswordSession():
 
         result = SessionManager.start_password_session(
             123,
-            b'fake_public_ephemeral',
             b'fake_srp_salt',
+            b'fake_srp_verifier',
             b'fake_master_key_salt'
         )
 
@@ -587,13 +595,68 @@ class TestStartPasswordSession():
 
         result = SessionManager.start_password_session(
             123,
-            b'fake_public_ephemeral',
             b'fake_srp_salt',
+            b'fake_srp_verifier',
             b'fake_master_key_salt'
         )
 
         assert len(self.generate_ephemeral_called) == 1
         assert self.generate_ephemeral_called[0] == srp_verifier
+
+    @pytest.mark.parametrize(
+        "user_id, eph_private_b, eph_public_b",
+        [
+            (0,     b'abc',     b'def'),
+            (15,    b'',        b''),
+            (350,   b'qcd'*100, b'ghi'*300)
+        ]
+    )
+    def test_create_db_entry_for_ephemerals(self, user_id, eph_private_b, eph_public_b):
+        """Should create entry in database with correct ephemeral values"""
+
+        self.fetch_response = True, None, user_id, b'fake_srp_salt', b'fake_srp_verifier'
+        self.generate_ephemeral_response = eph_public_b, eph_private_b
+
+        result = SessionManager.start_password_session(
+            123,
+            b'fake_srp_salt',
+            b'fake_srp_verifier',
+            b'fake_master_key_salt'
+        )
+
+        assert len(self.start_called) == 1
+
+        start = self.start_called[0]
+        assert start[0] == user_id
+        assert start[1] == eph_private_b
+        assert start[2] == eph_public_b
+
+    @pytest.mark.parametrize(
+        "srp_salt, srp_verifier, master_key_salt",
+        [
+            (b'abc',     b'def',    b'hij'),
+            (b'',        b'',       b''),
+            (b'qcd'*100, b'ghi'*300,b'red'*125)
+        ]
+    )
+    def test_create_db_entry_for_master_password(self, srp_salt, srp_verifier, master_key_salt):
+        """Should create entry in database with correct master password values"""
+
+        self.fetch_response = True, None, 1, b'fake_srp_salt', b'fake_srp_verifier'
+
+        result = SessionManager.start_password_session(
+            123,
+            srp_salt,
+            srp_verifier,
+            master_key_salt
+        )
+
+        assert len(self.start_called) == 1
+
+        start = self.start_called[0]
+        assert start[4] == srp_salt
+        assert start[5] == srp_verifier
+        assert start[6] == master_key_salt
 
 
 if __name__ == '__main__':
