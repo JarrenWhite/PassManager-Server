@@ -531,6 +531,13 @@ class TestStartPasswordSession():
             return self.start_response
         monkeypatch.setattr(DBUtilsPassword, "start", fake_start)
 
+        self.now_response = datetime.datetime(2024, 1, 15, 12, 0, 0)
+        class FakeDatetime(datetime.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return self.now_response
+        monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
+
         yield
 
     @pytest.mark.parametrize(
@@ -657,6 +664,31 @@ class TestStartPasswordSession():
         assert start[4] == srp_salt
         assert start[5] == srp_verifier
         assert start[6] == master_key_salt
+
+    @pytest.mark.parametrize(
+        "now",
+        [
+            datetime.datetime(2024, 1, 15, 12, 0, 0),
+            datetime.datetime(2000, 6, 1, 0, 0, 0),
+            datetime.datetime(1999, 12, 31, 23, 59, 59)
+        ]
+    )
+    def test_sets_correct_expiry(self, now):
+        """Should create entry in database with correct expiry"""
+
+        self.now_response = now
+
+        result = SessionManager.start_password_session(
+            123,
+            b'fake_srp_salt',
+            b'fake_srp_verifier',
+            b'fake_master_key_salt'
+        )
+
+        assert len(self.start_called) == 1
+        start = self.start_called[0]
+
+        assert start[3] == now + datetime.timedelta(seconds=180)
 
 
 if __name__ == '__main__':
