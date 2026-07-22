@@ -153,7 +153,7 @@ class SessionManager():
             user_id=user_id,
             eph_private_b=private_ephemeral,
             eph_public_b=public_ephemeral,
-            expiry_time=datetime.now(),
+            expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY)),
             srp_salt=srp_salt,
             srp_verifier=srp_verifier,
             master_key_salt=master_key_salt
