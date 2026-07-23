@@ -48,12 +48,13 @@ class DBUtilsPassword():
         srp_salt: bytes,
         srp_verifier: bytes,
         master_key_salt: bytes
-    ) -> Tuple[bool, Optional[FailureReason], str]:
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
         """
         Begin password auth ephemeral session for the user
 
         Returns:
             (str)   public_id
+            (bytes) master_key_salt
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -61,10 +62,10 @@ class DBUtilsPassword():
 
                 if user is None:
                     logger.debug("User id: %s not found.", user_id)
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, "", b''
                 if user.password_change:
                     logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
-                    return False, FailureReason.PASSWORD_CHANGE, ""
+                    return False, FailureReason.PASSWORD_CHANGE, "", b''
 
                 user.password_change = True
                 user.new_srp_salt = srp_salt
@@ -82,13 +83,13 @@ class DBUtilsPassword():
                 session.flush()
 
                 logger.info("Password Auth Ephemeral: %s created.", auth_ephemeral.public_id[-4:])
-                return True, None, auth_ephemeral.public_id
+                return True, None, auth_ephemeral.public_id, user.master_key_salt
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, ""
+            return False, FailureReason.DATABASE_UNINITIALISED, "", b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", b''
 
 
     @staticmethod

@@ -688,8 +688,10 @@ class TestStart():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], str)
+        assert isinstance(response[3], bytes)
         assert response[0] == True
         assert response[1] == None
+        assert response[3] == b'fake_master_key_salt'
 
         assert fake_user.password_change
         assert fake_user.srp_salt == b'fake_srp_salt'
