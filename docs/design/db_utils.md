@@ -40,6 +40,7 @@ master_key_salt: bytes
 
 Out
 public_id: str
+master_key_salt: bytes
 
 ## complete
 > Note: Risk of Insecure Direct Object Reference
