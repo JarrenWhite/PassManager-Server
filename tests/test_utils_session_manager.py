@@ -713,6 +713,34 @@ class TestStartPasswordSession():
         assert not result[0]
         assert result[1] == failure_reason
 
+    @pytest.mark.parametrize(
+        "public_id, eph_public_b, srp_salt, master_key_salt",
+        [
+            ("abc",     b'abc',     b'def',     b'hij'),
+            ("",        b'',        b'',        b''),
+            ("def"*150, b'qcd'*100, b'ghi'*300, b'qew'*125)
+        ]
+    )
+    def test_returns_correct_values(self, public_id, eph_public_b, srp_salt, master_key_salt):
+        """Should return all correct values"""
+        self.fetch_response = True, None, 1, srp_salt, b'fake_srp_verifier'
+        self.start_response = True, None, public_id, master_key_salt
+        self.generate_ephemeral_response = eph_public_b, b'fake_private_ephemeral'
+
+        result = SessionManager.start_password_session(
+            123,
+            b'fake_srp_salt',
+            b'fake_srp_verifier',
+            b'fake_master_key_salt'
+        )
+
+        assert result[0]
+        assert result[1] is None
+        assert result[2] == public_id
+        assert result[3] == eph_public_b
+        assert result[4] == srp_salt
+        assert result[5] == master_key_salt
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
