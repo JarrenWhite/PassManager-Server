@@ -690,6 +690,29 @@ class TestStartPasswordSession():
 
         assert start[3] == now + datetime.timedelta(seconds=180)
 
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_start_call_fails(self, failure_reason):
+        """Should correctly handle failed start call"""
+
+        self.start_response = False, failure_reason, "", b''
+
+        result = SessionManager.start_password_session(
+            123,
+            b'fake_srp_salt',
+            b'fake_srp_verifier',
+            b'fake_master_key_salt'
+        )
+
+        assert not result[0]
+        assert result[1] == failure_reason
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
