@@ -162,9 +162,7 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b'', b'', b''
 
-
-
-        return True, None, "", b'', b'', b''
+        return True, None, public_id, public_ephemeral, existing_srp_salt, existing_master_key_salt
 
     @staticmethod
     def auth_password_session(
