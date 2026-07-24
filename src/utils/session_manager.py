@@ -158,6 +158,10 @@ class SessionManager():
             srp_verifier=srp_verifier,
             master_key_salt=master_key_salt
         )
+        success, failure_reason, public_id, existing_master_key_salt = result
+        if not success:
+            return False, failure_reason, "", b'', b'', b''
+
 
 
         return True, None, "", b'', b'', b''
