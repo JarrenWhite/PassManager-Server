@@ -33,19 +33,19 @@ class TestStartNewSession():
             return self.generate_ephemeral_response
         monkeypatch.setattr(SRPUtils, "generate_ephemeral", fake_generate_ephemeral)
 
-        self.now_response = datetime.datetime(2024, 1, 15, 12, 0, 0)
-        class FakeDatetime(datetime.datetime):
-            @classmethod
-            def now(cls, tz=None):
-                return self.now_response
-        monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
-
         self.start_called = []
         self.start_response = True, None, "fake_public_id", b'fake_master_key_salt'
         def fake_start(user_id, eph_private_b, eph_public_b, expiry_time):
             self.start_called.append((user_id, eph_private_b, eph_public_b, expiry_time))
             return self.start_response
         monkeypatch.setattr(DBUtilsAuth, "start", fake_start)
+
+        self.now_response = datetime.datetime(2024, 1, 15, 12, 0, 0)
+        class FakeDatetime(datetime.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return self.now_response
+        monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
 
