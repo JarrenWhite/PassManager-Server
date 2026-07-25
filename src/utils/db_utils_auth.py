@@ -132,8 +132,9 @@ class DBUtilsAuth():
 
     @staticmethod
     def get_details(
-        username_hash: bytes,
-        public_id: str
+        public_id: str,
+        username_hash: Optional[bytes] = None,
+        user_id: Optional[int] = None
     ) -> Tuple[bool, Optional[FailureReason], bytes, bytes, bytes]:
         """
         Get the ephemeral details for the given ephemeral id
@@ -143,6 +144,10 @@ class DBUtilsAuth():
             (bytes) eph_public_b
             (bytes) srp_verifier
         """
+        if username_hash is None and user_id is None:
+            logger.error("Fetch called without arguments")
+            return False, FailureReason.SERVER_ERROR, b'', b'', b''
+
         try:
             with DatabaseSetup.get_db_session() as session:
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
@@ -150,7 +155,10 @@ class DBUtilsAuth():
                 if auth_ephemeral is None:
                     logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b'', b''
-                if auth_ephemeral.user.username_hash != username_hash:
+                if username_hash is not None and auth_ephemeral.user.username_hash != username_hash:
+                    logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
+                    return False, FailureReason.NOT_FOUND, b'', b'', b''
+                if user_id is not None and auth_ephemeral.user_id != user_id:
                     logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b'', b''
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
