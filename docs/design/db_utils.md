@@ -86,7 +86,8 @@ user: User
 
 ## fetch
 In
-username_hash: bytes
+user_id: int?
+username_hash: bytes?
 
 Out
 user_id: int
@@ -107,8 +108,9 @@ public_id: str
 > Note: Risk of Insecure Direct Object Reference
 
 In
-username_hash: bytes
 public_id: str
+username_hash: bytes?
+user_id: int?
 
 Out
 eph_private_b: bytes
