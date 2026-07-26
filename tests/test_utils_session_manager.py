@@ -198,8 +198,8 @@ class TestAuthNewSession():
 
         self.get_details_called = []
         self.get_details_response = True, None, b'fake_eph_private_b', b'fake_eph_public_b', b'fake_srp_verifier'
-        def fake_get_details(username_hash, public_id):
-            self.get_details_called.append((username_hash, public_id))
+        def fake_get_details(public_id, user_id = None, username_hash = None):
+            self.get_details_called.append((public_id, user_id, username_hash))
             return self.get_details_response
         monkeypatch.setattr(DBUtilsAuth, "get_details", fake_get_details)
 
@@ -256,8 +256,9 @@ class TestAuthNewSession():
         assert len(self.get_details_called) == 1
 
         get_details = self.get_details_called[0]
-        assert get_details[0] == username_hash
-        assert get_details[1] == public_id
+        assert get_details[0] == public_id
+        assert get_details[1] == None
+        assert get_details[2] == username_hash
 
     @pytest.mark.parametrize(
         "failure_reason",
@@ -740,6 +741,70 @@ class TestStartPasswordSession():
         assert result[3] == eph_public_b
         assert result[4] == srp_salt
         assert result[5] == master_key_salt
+
+
+class TestAuthPasswordSession():
+    """Test cases for the auth password session function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.get_details_called = []
+        self.get_details_response = True, None, b'fake_eph_private_b', b'fake_eph_public_b', b'fake_srp_verifier'
+        def fake_get_details(public_id, user_id = None, username_hash = None):
+            self.get_details_called.append((public_id, user_id, username_hash))
+            return self.get_details_response
+        monkeypatch.setattr(DBUtilsAuth, "get_details", fake_get_details)
+
+        yield
+
+    @pytest.mark.parametrize(
+        "user_id, public_id",
+        [
+            (1,     "abc"),
+            (20,        ""),
+            (357, "def"*150)
+        ]
+    )
+    def test_calls_get_details(self, user_id, public_id):
+        """Should fetch ephemeral details"""
+
+        result = SessionManager.auth_password_session(
+            user_id=user_id,
+            public_id=public_id,
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        assert len(self.get_details_called) == 1
+
+        get_details = self.get_details_called[0]
+        assert get_details[0] == public_id
+        assert get_details[1] == user_id
+        assert get_details[2] == None
+
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_get_details_fails(self, failure_reason):
+        """Should handle get_details failure"""
+
+        self.get_details_response = False, failure_reason, b'', b'', b''
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        assert not result[0]
+        assert result[1] == failure_reason
 
 
 if __name__ == '__main__':
