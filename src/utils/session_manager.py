@@ -179,6 +179,16 @@ class SessionManager():
             (bytes) Server Proof (M2)
             ([str]) Entry Public IDs
         """
+        # Get details
+        result = DBUtilsAuth.get_details(
+            user_id=user_id,
+            public_id=public_id
+        )
+        success, failure_reason, private_ephemeral, public_ephemeral, srp_verifier = result
+        if not success:
+            return False, failure_reason, "", b'', []
+
+
         return True, None, "", b'', []
 
     @staticmethod
