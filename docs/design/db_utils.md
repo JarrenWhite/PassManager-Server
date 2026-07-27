@@ -46,7 +46,6 @@ master_key_salt: bytes
 > Note: Risk of Insecure Direct Object Reference
 
 In
-user_id: int
 public_id: str
 session_key: bytes
 expiry_time: datetime

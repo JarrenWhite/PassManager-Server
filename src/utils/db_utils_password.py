@@ -94,7 +94,6 @@ class DBUtilsPassword():
 
     @staticmethod
     def complete(
-        user_id: int,
         public_id: str,
         session_key: bytes,
         expiry: datetime
@@ -119,9 +118,6 @@ class DBUtilsPassword():
                     else:
                         session.delete(auth_ephemeral)
                     logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, "", []
-                if auth_ephemeral.user.id != user_id:
-                    logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, "", []
                 if not auth_ephemeral.password_change:
                     logger.debug("Auth Ephemeral: %s not password change type.", public_id[-4:])
