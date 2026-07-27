@@ -763,6 +763,13 @@ class TestAuthPasswordSession():
             return self.compute_session_key_response
         monkeypatch.setattr(SRPUtils, "compute_session_key", fake_compute_session_key)
 
+        self.verify_proof_called = []
+        self.verify_proof_response  = True, b'fake_server_proof'
+        def fake_verify_proof(eph_val_a, eph_public_b, session_key_k, proof_val_m1):
+            self.verify_proof_called.append((eph_val_a, eph_public_b, session_key_k, proof_val_m1))
+            return self.verify_proof_response
+        monkeypatch.setattr(SRPUtils, "verify_proof", fake_verify_proof)
+
         yield
 
     @pytest.mark.parametrize(
@@ -840,6 +847,50 @@ class TestAuthPasswordSession():
         assert compute_session_key[1] == eph_public_b
         assert compute_session_key[2] == eph_private_b
         assert compute_session_key[3] == srp_verifier_v
+
+    @pytest.mark.parametrize(
+        "eph_val_a, eph_public_b, session_key_k, proof_val_m1",
+        [
+            (b'xyz',    b'abc',     b'def',     b'hij'),
+            (b'',       b'',        b'',        b''),
+            (b'def'*150,b'qcd'*100, b'ghi'*300, b'qew'*125)
+        ]
+    )
+    def test_calls_verify_proof(self, eph_val_a, eph_public_b, session_key_k, proof_val_m1):
+        """Should call to verify client proof"""
+
+        self.get_details_response = True, None, b'fake_eph_private_b', eph_public_b, b'fake_srp_verifier'
+        self.compute_session_key_response = session_key_k
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id="fake_public_id",
+            eph_val_a=eph_val_a,
+            proof_val_m1=proof_val_m1
+        )
+
+        assert len(self.verify_proof_called) == 1
+
+        verify_proof = self.verify_proof_called[0]
+        assert verify_proof[0] == eph_val_a
+        assert verify_proof[1] == eph_public_b
+        assert verify_proof[2] == session_key_k
+        assert verify_proof[3] == proof_val_m1
+
+    def test_verify_proof_fails(self):
+        """Should handle verify proof failure"""
+
+        self.verify_proof_response = False, b''
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        assert not result[0]
+        assert result[1] == FailureReason.NOT_FOUND
 
 
 if __name__ == '__main__':
