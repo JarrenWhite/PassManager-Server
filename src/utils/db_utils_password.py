@@ -97,7 +97,7 @@ class DBUtilsPassword():
         public_id: str,
         session_key: bytes,
         expiry_time: datetime
-    ) -> Tuple[bool, Optional[FailureReason], str, Optional[List[str]]]:
+    ) -> Tuple[bool, Optional[FailureReason], str, List[str]]:
         """
         Complete password change login session creation
 
