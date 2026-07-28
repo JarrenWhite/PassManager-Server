@@ -12,6 +12,9 @@ from .db_utils_password import DBUtilsPassword
 from cryptography import SRPUtils
 
 EPHEMERAL_DELAY = 180
+DEFAULT_AUTH_SESSION_LIFETIME = 3600
+DEFAULT_AUTH_SESSION_MAX_REQUESTS = 100
+PASSWORD_SESSION_LIFETIME = 360
 
 # TODO - Placeholder class. Requires completion.
 
@@ -99,14 +102,14 @@ class SessionManager():
         if maximum_requests < 0:
             max_reqs = None
         elif maximum_requests == 0:
-            max_reqs = 100
+            max_reqs = DEFAULT_AUTH_SESSION_MAX_REQUESTS
         else:
             max_reqs = maximum_requests
 
         if expiry_time < 0:
             ex_time = None
         elif expiry_time == 0:
-            ex_time = datetime.now() + timedelta(seconds=3600)
+            ex_time = datetime.now() + timedelta(seconds=DEFAULT_AUTH_SESSION_LIFETIME)
         else:
             ex_time = datetime.now() + timedelta(seconds=expiry_time)
 
@@ -205,6 +208,19 @@ class SessionManager():
         )
         if not success:
             return False, FailureReason.NOT_FOUND, "", b'', []
+
+        # Determine expiry details
+        ex_time = datetime.now() + timedelta(seconds=PASSWORD_SESSION_LIFETIME)
+
+        # Store session details
+        result = DBUtilsPassword.complete(
+            public_id=public_id,
+            session_key=session_key,
+            expiry_time=ex_time
+        )
+        success, failure_reason, session_public_id, data_entries = result
+        if not success:
+            return False, failure_reason, "", b'', []
 
 
 
