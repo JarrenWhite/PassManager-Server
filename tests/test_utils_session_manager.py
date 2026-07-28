@@ -770,6 +770,20 @@ class TestAuthPasswordSession():
             return self.verify_proof_response
         monkeypatch.setattr(SRPUtils, "verify_proof", fake_verify_proof)
 
+        self.complete_called = []
+        self.complete_response = True, None, "fake_session_public_id", []
+        def fake_complete(public_id, session_key, expiry_time):
+            self.complete_called.append((public_id, session_key, expiry_time))
+            return self.complete_response
+        monkeypatch.setattr(DBUtilsPassword, "complete", fake_complete)
+
+        self.now_response = datetime.datetime(2024, 1, 15, 12, 0, 0)
+        class FakeDatetime(datetime.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return self.now_response
+        monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
+
         yield
 
     @pytest.mark.parametrize(
@@ -891,6 +905,82 @@ class TestAuthPasswordSession():
 
         assert not result[0]
         assert result[1] == FailureReason.NOT_FOUND
+
+    @pytest.mark.parametrize(
+        "public_id, session_key",
+        [
+            ("abc",     b'abc'),
+            ("",        b''),
+            ("def"*150, b'qcd'*100)
+        ]
+    )
+    def test_calls_complete(self, public_id, session_key):
+        """Should call to complete auth"""
+
+        self.compute_session_key_response = session_key
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id=public_id,
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        assert len(self.complete_called) == 1
+
+        complete = self.complete_called[0]
+        assert complete[0] == public_id
+        assert complete[1] == session_key
+
+    @pytest.mark.parametrize(
+        "now",
+        [
+            datetime.datetime(2024, 1, 15, 12, 0, 0),
+            datetime.datetime(2000, 6, 1, 0, 0, 0),
+            datetime.datetime(2005, 8, 6, 22, 8, 8),
+            datetime.datetime(1999, 12, 31, 23, 59, 59)
+        ]
+    )
+    def test_sets_correct_expiry(self, now):
+        """Should create entry in database with correct expiry"""
+
+        self.now_response = now
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        complete = self.complete_called[0]
+
+        expected_expiry = now + datetime.timedelta(seconds=360)
+
+        assert complete[2] == expected_expiry
+
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_complete_fails(self, failure_reason):
+        """Should handle failure of complete call"""
+
+        self.complete_response = False, failure_reason, "", []
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        assert not result[0]
+        assert result[1] == failure_reason
 
 
 if __name__ == '__main__':
