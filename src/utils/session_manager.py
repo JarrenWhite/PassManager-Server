@@ -222,9 +222,7 @@ class SessionManager():
         if not success:
             return False, failure_reason, "", b'', []
 
-
-
-        return True, None, "", b'', []
+        return True, None, session_public_id, proof_val_m2, data_entries
 
     @staticmethod
     def open_session(
