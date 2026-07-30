@@ -982,6 +982,31 @@ class TestAuthPasswordSession():
         assert not result[0]
         assert result[1] == failure_reason
 
+    @pytest.mark.parametrize(
+        "session_public_id, server_proof_val_m2, data_entries",
+        [
+            ("abc",     b'abc',     ["a"]),
+            ("",        b'',        []),
+            ("def"*150, b'qcd'*100, ["123456", "abcdef", "852741"])
+        ]
+    )
+    def test_returns_correct_values(self, session_public_id, server_proof_val_m2, data_entries):
+        """Should return the correct final values"""
+
+        self.verify_proof_response = True, server_proof_val_m2
+        self.complete_response = True, None, session_public_id, data_entries
+
+        result = SessionManager.auth_password_session(
+            user_id=123,
+            public_id="fake_public_id",
+            eph_val_a=b'fake_eph_val_a',
+            proof_val_m1=b'fake_proof_val_b1'
+        )
+
+        assert result[2] == session_public_id
+        assert result[3] == server_proof_val_m2
+        assert result[4] == data_entries
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
