@@ -997,7 +997,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1111,7 +1111,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1171,7 +1171,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1231,7 +1231,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1255,7 +1255,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1286,7 +1286,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1324,7 +1324,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
@@ -1422,7 +1422,7 @@ class TestComplete():
         response = DBUtilsPassword.complete(
             public_id="ephemeral_fake_public_id",
             session_key=b'fake_session_key',
-            expiry=expiry
+            expiry_time=expiry
         )
 
         assert isinstance(response, tuple)
