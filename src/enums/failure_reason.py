@@ -41,6 +41,7 @@ class FailureReason(Enum):
 
     UNKNOWN_EXCEPTION       = (ErrorCode.SVR00,     "server",   "")
     DATABASE_UNINITIALISED  = (ErrorCode.SVR01,     "server",   "")
+    SERVER_ERROR            = (ErrorCode.SVR02,     "server",   "")
 
     USER_EXISTS             = (ErrorCode.OPR00,     "username", "")
     REQUEST_NUMBER          = (ErrorCode.OPR01,     "request",  "")

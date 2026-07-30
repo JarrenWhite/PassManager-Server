@@ -48,12 +48,13 @@ class DBUtilsPassword():
         srp_salt: bytes,
         srp_verifier: bytes,
         master_key_salt: bytes
-    ) -> Tuple[bool, Optional[FailureReason], str]:
+    ) -> Tuple[bool, Optional[FailureReason], str, bytes]:
         """
         Begin password auth ephemeral session for the user
 
         Returns:
             (str)   public_id
+            (bytes) master_key_salt
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -61,10 +62,10 @@ class DBUtilsPassword():
 
                 if user is None:
                     logger.debug("User id: %s not found.", user_id)
-                    return False, FailureReason.NOT_FOUND, ""
+                    return False, FailureReason.NOT_FOUND, "", b''
                 if user.password_change:
                     logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
-                    return False, FailureReason.PASSWORD_CHANGE, ""
+                    return False, FailureReason.PASSWORD_CHANGE, "", b''
 
                 user.password_change = True
                 user.new_srp_salt = srp_salt
@@ -82,22 +83,21 @@ class DBUtilsPassword():
                 session.flush()
 
                 logger.info("Password Auth Ephemeral: %s created.", auth_ephemeral.public_id[-4:])
-                return True, None, auth_ephemeral.public_id
+                return True, None, auth_ephemeral.public_id, user.master_key_salt
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, ""
+            return False, FailureReason.DATABASE_UNINITIALISED, "", b''
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, ""
+            return False, FailureReason.UNKNOWN_EXCEPTION, "", b''
 
 
     @staticmethod
     def complete(
-        user_id: int,
         public_id: str,
         session_key: bytes,
-        expiry: datetime
-    ) -> Tuple[bool, Optional[FailureReason], str, Optional[List[str]]]:
+        expiry_time: datetime
+    ) -> Tuple[bool, Optional[FailureReason], str, List[str]]:
         """
         Complete password change login session creation
 
@@ -119,9 +119,6 @@ class DBUtilsPassword():
                         session.delete(auth_ephemeral)
                     logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, "", []
-                if auth_ephemeral.user.id != user_id:
-                    logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, "", []
                 if not auth_ephemeral.password_change:
                     logger.debug("Auth Ephemeral: %s not password change type.", public_id[-4:])
                     return False, FailureReason.INCOMPLETE, "", []
@@ -136,7 +133,7 @@ class DBUtilsPassword():
                     request_count=0,
                     last_used=datetime.now(),
                     maximum_requests=max_requests,
-                    expiry_time=expiry,
+                    expiry_time=expiry_time,
                     password_change=True
                 )
                 session.add(login_session)

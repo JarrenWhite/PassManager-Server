@@ -163,7 +163,7 @@ None required.
 
 Handles the complex multi-step password change process with special security sessions.
 
-> **Note:** Password change operations use special "Password Change Sessions" that are distinct from regular login sessions. These sessions have limited lifetime (5 minutes) and limited request counts based on the number of password entries.
+> **Note:** Password change operations use special "Password Change Sessions" that are distinct from regular login sessions. These sessions have limited lifetime (5 minutes / 360 seconds) and limited request counts based on the number of password entries.
 
 ### Start Password Change (Password)
 **Method:** `passmanager.password.<version>.Start`
@@ -204,7 +204,7 @@ Completes the SRP authentication process by providing client ephemeral value and
 | eph_val_a       | bytes  | Client ephemeral value. (A)                           |
 | proof_val_m1    | bytes  | Client proof. (M1)                                    |
 
-> **Note:** Password changing sessions expire after 5 minutes.
+> **Note:** Password changing sessions expire after 5 minutes (360 seconds).
 
 > **Note:** Password changing sessions have a limited number of requests based on the user's number of password entries. (Enough requests to read and write to each password once, with an additional request to complete the password change.)
 

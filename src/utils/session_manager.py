@@ -8,9 +8,13 @@ from passmanager.common.v0.secure_pb2 import (
 
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
+from .db_utils_password import DBUtilsPassword
 from cryptography import SRPUtils
 
 EPHEMERAL_DELAY = 180
+DEFAULT_AUTH_SESSION_LIFETIME = 3600
+DEFAULT_AUTH_SESSION_MAX_REQUESTS = 100
+PASSWORD_SESSION_LIFETIME = 360
 
 # TODO - Placeholder class. Requires completion.
 
@@ -98,14 +102,14 @@ class SessionManager():
         if maximum_requests < 0:
             max_reqs = None
         elif maximum_requests == 0:
-            max_reqs = 100
+            max_reqs = DEFAULT_AUTH_SESSION_MAX_REQUESTS
         else:
             max_reqs = maximum_requests
 
         if expiry_time < 0:
             ex_time = None
         elif expiry_time == 0:
-            ex_time = datetime.now() + timedelta(seconds=3600)
+            ex_time = datetime.now() + timedelta(seconds=DEFAULT_AUTH_SESSION_LIFETIME)
         else:
             ex_time = datetime.now() + timedelta(seconds=expiry_time)
 
@@ -138,7 +142,30 @@ class SessionManager():
             (bytes) SRP Salt
             (bytes) Master Key Salt
         """
-        return True, None, "", b'', b'', b''
+        # Fetch user auth details
+        result = DBUtilsAuth.fetch(user_id=user_id)
+        success, failure_reason, user_id, existing_srp_salt, existing_srp_verifier = result
+        if not success:
+            return False, failure_reason, "", b'', b'', b''
+
+        # Generate ephemeral
+        public_ephemeral, private_ephemeral = SRPUtils.generate_ephemeral(existing_srp_verifier)
+
+        # Add details to database
+        result = DBUtilsPassword.start(
+            user_id=user_id,
+            eph_private_b=private_ephemeral,
+            eph_public_b=public_ephemeral,
+            expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY)),
+            srp_salt=srp_salt,
+            srp_verifier=srp_verifier,
+            master_key_salt=master_key_salt
+        )
+        success, failure_reason, public_id, existing_master_key_salt = result
+        if not success:
+            return False, failure_reason, "", b'', b'', b''
+
+        return True, None, public_id, public_ephemeral, existing_srp_salt, existing_master_key_salt
 
     @staticmethod
     def auth_password_session(
@@ -155,7 +182,47 @@ class SessionManager():
             (bytes) Server Proof (M2)
             ([str]) Entry Public IDs
         """
-        return True, None, "", b'', []
+        # Get details
+        result = DBUtilsAuth.get_details(
+            user_id=user_id,
+            public_id=public_id
+        )
+        success, failure_reason, private_ephemeral, public_ephemeral, srp_verifier = result
+        if not success:
+            return False, failure_reason, "", b'', []
+
+        # Calculate session key
+        session_key = SRPUtils.compute_session_key(
+            eph_val_a=eph_val_a,
+            eph_public_b=public_ephemeral,
+            eph_private_b=private_ephemeral,
+            srp_verifier_v=srp_verifier
+        )
+
+        # Verify client proof
+        success, proof_val_m2 = SRPUtils.verify_proof(
+            eph_val_a=eph_val_a,
+            eph_public_b=public_ephemeral,
+            session_key_k=session_key,
+            proof_val_m1=proof_val_m1
+        )
+        if not success:
+            return False, FailureReason.NOT_FOUND, "", b'', []
+
+        # Determine expiry details
+        ex_time = datetime.now() + timedelta(seconds=PASSWORD_SESSION_LIFETIME)
+
+        # Store session details
+        result = DBUtilsPassword.complete(
+            public_id=public_id,
+            session_key=session_key,
+            expiry_time=ex_time
+        )
+        success, failure_reason, session_public_id, data_entries = result
+        if not success:
+            return False, failure_reason, "", b'', []
+
+        return True, None, session_public_id, proof_val_m2, data_entries
 
     @staticmethod
     def open_session(
