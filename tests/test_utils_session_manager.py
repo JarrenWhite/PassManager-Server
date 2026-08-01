@@ -83,6 +83,8 @@ class TestStartNewSession():
 
         result = SessionManager.start_new_session(b'fake_username_hash')
 
+        assert len(self.start_called) == 0
+
         assert not result[0]
         assert result[1] == failure_reason
         assert len(self.start_called) == 0
@@ -282,6 +284,8 @@ class TestAuthNewSession():
             expiry_time=0
         )
 
+        assert len(self.complete_called) == 0
+
         assert not result[0]
         assert result[1] == failure_reason
         assert len(self.complete_called) == 0
@@ -360,6 +364,8 @@ class TestAuthNewSession():
             maximum_requests=0,
             expiry_time=0
         )
+
+        assert len(self.complete_called) == 0
 
         assert not result[0]
         assert result[1] == FailureReason.NOT_FOUND
@@ -584,6 +590,8 @@ class TestStartPasswordSession():
             b'fake_srp_verifier',
             b'fake_master_key_salt'
         )
+
+        assert len(self.start_called) == 0
 
         assert not result[0]
         assert result[1] == failure_reason
@@ -831,6 +839,8 @@ class TestAuthPasswordSession():
             proof_val_m1=b'fake_proof_val_b1'
         )
 
+        assert len(self.complete_called) == 0
+
         assert not result[0]
         assert result[1] == failure_reason
 
@@ -902,6 +912,8 @@ class TestAuthPasswordSession():
             eph_val_a=b'fake_eph_val_a',
             proof_val_m1=b'fake_proof_val_b1'
         )
+
+        assert len(self.complete_called) == 0
 
         assert not result[0]
         assert result[1] == FailureReason.NOT_FOUND
