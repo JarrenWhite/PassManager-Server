@@ -83,3 +83,9 @@ class ServiceUtils():
         input: int
     )-> Optional[FailureReason]:
       return None
+
+    @staticmethod
+    def sanitise_encrypted_request(
+       input: bytes
+    ) -> Optional[FailureReason]:
+       return None
