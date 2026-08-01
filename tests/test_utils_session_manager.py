@@ -1008,5 +1008,14 @@ class TestAuthPasswordSession():
         assert result[4] == data_entries
 
 
+class TestOpenSession():
+    """Test cases for the open session function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        yield
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
