@@ -241,6 +241,7 @@ class SessionManager():
 
         # Sanitise Inputs
         status = ServiceUtils.sanitise_public_id(request.session_id)
+        status = ServiceUtils.sanitise_request_count(request.request_number)
 
         return True, None, b'', 0
 
