@@ -1063,6 +1063,30 @@ class TestOpenSession():
         assert len(self.sanitise_public_id_called) == 1
         assert self.sanitise_public_id_called[0] == session_id
 
+    @pytest.mark.parametrize(
+        "request_number",
+        [
+            0,
+            123,
+            987987
+        ]
+    )
+    def test_calls_sanitise_request_number(self, request_number):
+        """Should sanitise request number"""
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=request_number,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.sanitise_request_count_called) == 1
+        assert self.sanitise_request_count_called[0] == request_number
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
