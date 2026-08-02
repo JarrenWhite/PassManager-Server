@@ -5,10 +5,16 @@ import datetime
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
+from passmanager.common.v0.secure_pb2 import (
+    SecureRequest,
+    SecureResponse
+)
+
 import utils.session_manager
 from utils.session_manager import SessionManager
 from utils.db_utils_auth import DBUtilsAuth
 from utils.db_utils_password import DBUtilsPassword
+from utils.service_utils import ServiceUtils
 from enums.failure_reason import FailureReason
 from cryptography.srp_utils import SRPUtils
 
@@ -1017,7 +1023,38 @@ class TestOpenSession():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
+        self.sanitise_session_id_called = []
+        self.sanitise_session_id_response = None
+        def fake_sanitise_session_id(input):
+            self.sanitise_session_id_called.append(input)
+            return self.sanitise_session_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_session_id", fake_sanitise_session_id)
+
         yield
+
+    @pytest.mark.parametrize(
+        "session_id",
+        [
+            "abc",
+            "",
+            "def"*50
+        ]
+    )
+    def test_calls_sanitise_session_id(self, session_id):
+        """Should sanitise session id"""
+
+        request = SecureRequest(
+            session_id=session_id,
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.sanitise_session_id_called) == 1
+        assert self.sanitise_session_id_called[0] == session_id
 
 
 if __name__ == '__main__':
