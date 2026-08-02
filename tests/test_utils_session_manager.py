@@ -1037,6 +1037,13 @@ class TestOpenSession():
             return self.sanitise_request_count_response
         monkeypatch.setattr(ServiceUtils, "sanitise_request_count", fake_sanitise_request_count)
 
+        self.sanitise_encrypted_request_called = []
+        self.sanitise_encrypted_request_response = None
+        def fake_sanitise_encrypted_request(input):
+            self.sanitise_encrypted_request_called.append(input)
+            return self.sanitise_encrypted_request_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_encrypted_request", fake_sanitise_encrypted_request)
+
         yield
 
     @pytest.mark.parametrize(
@@ -1086,6 +1093,30 @@ class TestOpenSession():
 
         assert len(self.sanitise_request_count_called) == 1
         assert self.sanitise_request_count_called[0] == request_number
+
+    @pytest.mark.parametrize(
+        "encrypted_data",
+        [
+            b'abc',
+            b'',
+            b'def'*50
+        ]
+    )
+    def test_calls_sanitise_encrypted_request(self, encrypted_data):
+        """Should sanitise encrypted data"""
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=encrypted_data
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.sanitise_encrypted_request_called) == 1
+        assert self.sanitise_encrypted_request_called[0] == encrypted_data
 
 
 if __name__ == '__main__':
