@@ -1023,12 +1023,19 @@ class TestOpenSession():
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
 
-        self.sanitise_session_id_called = []
-        self.sanitise_session_id_response = None
-        def fake_sanitise_session_id(input):
-            self.sanitise_session_id_called.append(input)
-            return self.sanitise_session_id_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_session_id", fake_sanitise_session_id)
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
+
+        self.sanitise_request_count_called = []
+        self.sanitise_request_count_response = None
+        def fake_sanitise_request_count(input):
+            self.sanitise_request_count_called.append(input)
+            return self.sanitise_request_count_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_request_count", fake_sanitise_request_count)
 
         yield
 
@@ -1053,8 +1060,8 @@ class TestOpenSession():
             request=request
         )
 
-        assert len(self.sanitise_session_id_called) == 1
-        assert self.sanitise_session_id_called[0] == session_id
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == session_id
 
 
 if __name__ == '__main__':
