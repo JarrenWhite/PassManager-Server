@@ -9,6 +9,7 @@ from passmanager.common.v0.secure_pb2 import (
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
 from .db_utils_password import DBUtilsPassword
+from .service_utils import ServiceUtils
 from cryptography import SRPUtils
 
 EPHEMERAL_DELAY = 180
@@ -237,6 +238,10 @@ class SessionManager():
             (bytes) Decrypted Bytes
             (int)   User ID
         """
+
+        # Sanitise Inputs
+        status = ServiceUtils.sanitise_public_id(request.session_id)
+
         return True, None, b'', 0
 
     @staticmethod
