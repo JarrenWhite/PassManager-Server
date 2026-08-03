@@ -1037,12 +1037,12 @@ class TestOpenSession():
             return self.sanitise_request_count_response
         monkeypatch.setattr(ServiceUtils, "sanitise_request_count", fake_sanitise_request_count)
 
-        self.sanitise_encrypted_request_called = []
-        self.sanitise_encrypted_request_response = None
-        def fake_sanitise_encrypted_request(input):
-            self.sanitise_encrypted_request_called.append(input)
-            return self.sanitise_encrypted_request_response
-        monkeypatch.setattr(ServiceUtils, "sanitise_encrypted_request", fake_sanitise_encrypted_request)
+        self.sanitise_encrypted_protobuf_called = []
+        self.sanitise_encrypted_protobuf_response = None
+        def fake_sanitise_encrypted_protobuf(input):
+            self.sanitise_encrypted_protobuf_called.append(input)
+            return self.sanitise_encrypted_protobuf_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_encrypted_protobuf", fake_sanitise_encrypted_protobuf)
 
         yield
 
@@ -1102,7 +1102,7 @@ class TestOpenSession():
             b'def'*50
         ]
     )
-    def test_calls_sanitise_encrypted_request(self, encrypted_data):
+    def test_calls_sanitise_encrypted_protobuf(self, encrypted_data):
         """Should sanitise encrypted data"""
 
         request = SecureRequest(
@@ -1115,8 +1115,8 @@ class TestOpenSession():
             request=request
         )
 
-        assert len(self.sanitise_encrypted_request_called) == 1
-        assert self.sanitise_encrypted_request_called[0] == encrypted_data
+        assert len(self.sanitise_encrypted_protobuf_called) == 1
+        assert self.sanitise_encrypted_protobuf_called[0] == encrypted_data
 
 
 if __name__ == '__main__':

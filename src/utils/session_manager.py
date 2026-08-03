@@ -242,7 +242,7 @@ class SessionManager():
         # Sanitise Inputs
         status = ServiceUtils.sanitise_public_id(request.session_id)
         status = ServiceUtils.sanitise_request_count(request.request_number)
-        status = ServiceUtils.sanitise_encrypted_request(request.encrypted_data)
+        status = ServiceUtils.sanitise_encrypted_protobuf(request.encrypted_data)
 
         return True, None, b'', 0
 

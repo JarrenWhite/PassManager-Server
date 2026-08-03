@@ -85,7 +85,7 @@ class ServiceUtils():
       return None
 
     @staticmethod
-    def sanitise_encrypted_request(
+    def sanitise_encrypted_protobuf(
        input: bytes
     ) -> Optional[FailureReason]:
        return None
