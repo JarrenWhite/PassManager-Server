@@ -144,7 +144,7 @@ class TestRegister:
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 

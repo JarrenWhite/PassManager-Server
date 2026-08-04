@@ -81,7 +81,7 @@ class TestStart():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -374,7 +374,7 @@ class TestAuth():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -692,7 +692,7 @@ class TestDelete():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -1051,7 +1051,7 @@ class TestClean():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 

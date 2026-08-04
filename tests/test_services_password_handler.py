@@ -270,7 +270,7 @@ class TestStart():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -717,7 +717,7 @@ class TestAuth():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -1091,7 +1091,7 @@ class TestCommit():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -1446,7 +1446,7 @@ class TestAbort():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -1825,7 +1825,7 @@ class TestGet():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -2266,7 +2266,7 @@ class TestUpdate():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
