@@ -137,7 +137,7 @@ class TestRegister:
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_username_hash",           "new_username"),
+            ("sanitise_username_hash",      "new_username"),
             ("sanitise_srp_salt",           "srp_salt"),
             ("sanitise_srp_verifier",       "srp_verifier"),
             ("sanitise_master_key_salt",    "master_key_salt")
