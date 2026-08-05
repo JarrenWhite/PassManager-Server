@@ -230,7 +230,7 @@ class SessionManager():
         request: SecureRequest,
         password_session: bool = False,
         first_request: bool = False
-    ) -> Tuple[bool, Optional[FailureReason], bytes, int]:
+    ) -> Tuple[bool, List[FailureReason], bytes, int]:
         """
         Decrypt a message sent in a secure request
 
@@ -244,7 +244,7 @@ class SessionManager():
         status = ServiceUtils.sanitise_request_count(request.request_number)
         status = ServiceUtils.sanitise_encrypted_protobuf(request.encrypted_data)
 
-        return True, None, b'', 0
+        return True, [], b'', 0
 
     @staticmethod
     def seal_session(

@@ -91,10 +91,9 @@ class UserHandler():
             request=secure_request,
             first_request=True
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend([error.error_proto() for error in failure_reasons])
 
             failure = Failure(
                 error_list=error_list
@@ -144,8 +143,7 @@ class UserHandler():
 
         # Return error
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend([error.error_proto() for error in failure_reasons])
 
             failure = Failure(
                 error_list=error_list
@@ -174,10 +172,9 @@ class UserHandler():
             request=secure_request,
             first_request=True
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend([error.error_proto() for error in failure_reasons])
 
             failure = Failure(
                 error_list=error_list
@@ -223,8 +220,7 @@ class UserHandler():
 
         # Return error
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend([error.error_proto() for error in failure_reasons])
 
             failure = Failure(
                 error_list=error_list
