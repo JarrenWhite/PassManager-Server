@@ -5,6 +5,9 @@ from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
     SecureResponse
 )
+from passmanager.common.v0.error_pb2 import (
+    Error
+)
 
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
@@ -230,7 +233,7 @@ class SessionManager():
         request: SecureRequest,
         password_session: bool = False,
         first_request: bool = False
-    ) -> Tuple[bool, List[FailureReason], bytes, int]:
+    ) -> Tuple[bool, List[Error], bytes, int]:
         """
         Decrypt a message sent in a secure request
 

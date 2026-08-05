@@ -155,7 +155,7 @@ class SessionHandler:
         )
         status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            error_list.extend([error.error_proto() for error in failure_reasons])
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -205,7 +205,7 @@ class SessionHandler:
 
         # Return error
         if not status:
-            error_list.extend([error.error_proto() for error in failure_reasons])
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -235,7 +235,7 @@ class SessionHandler:
         )
         status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            error_list.extend([error.error_proto() for error in failure_reasons])
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -281,7 +281,7 @@ class SessionHandler:
 
         # Return error
         if not status:
-            error_list.extend([error.error_proto() for error in failure_reasons])
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
