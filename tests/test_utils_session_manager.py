@@ -50,7 +50,18 @@ class TestStartNewSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -234,7 +245,18 @@ class TestAuthNewSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -542,7 +564,18 @@ class TestStartPasswordSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -788,7 +821,18 @@ class TestAuthPasswordSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
