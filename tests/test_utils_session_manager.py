@@ -1118,6 +1118,37 @@ class TestOpenSession():
         assert len(self.sanitise_encrypted_protobuf_called) == 1
         assert self.sanitise_encrypted_protobuf_called[0] == encrypted_data
 
+    @pytest.mark.parametrize(
+        "failing_sanitiser, field",
+        [
+            ("sanitise_public_id",          "session_id"),
+            ("sanitise_request_count",      "request_number"),
+            ("sanitise_encrypted_protobuf", "encrypted_data")
+        ]
+    )
+    def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
+        """Should handle invalid error for each sanitation fail"""
+
+        setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 1
+        assert failure_reasons[0] == FailureReason.INVALID.error_proto(field)
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
