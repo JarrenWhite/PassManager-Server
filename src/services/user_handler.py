@@ -143,7 +143,8 @@ class UserHandler():
 
         # Return error
         if not status:
-            error_list.extend(failure_reasons)
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
 
             failure = Failure(
                 error_list=error_list
@@ -220,7 +221,8 @@ class UserHandler():
 
         # Return error
         if not status:
-            error_list.extend(failure_reasons)
+            assert failure_reason
+            error_list.append(failure_reason.error_proto())
 
             failure = Failure(
                 error_list=error_list
