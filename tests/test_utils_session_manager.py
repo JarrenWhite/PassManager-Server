@@ -1193,6 +1193,34 @@ class TestOpenSession():
         assert len(failure_reasons) == 1
         assert failure_reasons[0] == FailureReason.INVALID.error_proto(field)
 
+    def test_all_sanitising_functions_fail(self):
+        """Should fetch all missing errors if all sanitising fails"""
+
+        self.sanitise_public_id_response = FailureReason.INVALID
+        self.sanitise_request_count_response = FailureReason.INVALID
+        self.sanitise_encrypted_protobuf_response = FailureReason.INVALID
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 3
+
+        fields = [error.field for error in failure_reasons]
+        assert "session_id" in fields
+        assert "request_number" in fields
+        assert "encrypted_data" in fields
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
