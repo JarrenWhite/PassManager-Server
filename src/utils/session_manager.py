@@ -241,11 +241,21 @@ class SessionManager():
             (bytes) Decrypted Bytes
             (int)   User ID
         """
+        error_list = []
 
         # Sanitise Inputs
         status = ServiceUtils.sanitise_public_id(request.session_id)
+        if status:
+            error_list.append(status.error_proto("session_id"))
         status = ServiceUtils.sanitise_request_count(request.request_number)
+        if status:
+            error_list.append(status.error_proto("request_number"))
         status = ServiceUtils.sanitise_encrypted_protobuf(request.encrypted_data)
+        if status:
+            error_list.append(status.error_proto("encrypted_data"))
+
+        if len(error_list) > 0:
+            return False, error_list, b'', 0
 
         return True, [], b'', 0
 
