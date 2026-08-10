@@ -12,6 +12,7 @@ from passmanager.common.v0.error_pb2 import (
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
 from .db_utils_password import DBUtilsPassword
+from .db_utils_session import DBUtilsSession
 from .service_utils import ServiceUtils
 from cryptography import SRPUtils
 
@@ -256,6 +257,10 @@ class SessionManager():
 
         if len(error_list) > 0:
             return False, error_list, b'', 0
+
+        DBUtilsSession.get_details(request.session_id)
+
+
 
         return True, [], b'', 0
 
