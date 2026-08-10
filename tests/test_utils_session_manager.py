@@ -14,6 +14,7 @@ import utils.session_manager
 from utils.session_manager import SessionManager
 from utils.db_utils_auth import DBUtilsAuth
 from utils.db_utils_password import DBUtilsPassword
+from utils.db_utils_session import DBUtilsSession
 from utils.service_utils import ServiceUtils
 from enums.failure_reason import FailureReason
 from cryptography.srp_utils import SRPUtils
@@ -1088,6 +1089,13 @@ class TestOpenSession():
             return self.sanitise_encrypted_protobuf_response
         monkeypatch.setattr(ServiceUtils, "sanitise_encrypted_protobuf", fake_sanitise_encrypted_protobuf)
 
+        self.get_details_called = []
+        self.get_details_response = None
+        def fake_get_details(public_id):
+            self.get_details_called.append(public_id)
+            return self.get_details_response
+        monkeypatch.setattr(DBUtilsSession, "get_details", fake_get_details)
+
         yield
 
     @pytest.mark.parametrize(
@@ -1220,6 +1228,30 @@ class TestOpenSession():
         assert "session_id" in fields
         assert "request_number" in fields
         assert "encrypted_data" in fields
+
+    @pytest.mark.parametrize(
+        "session_id",
+        [
+            "abc",
+            "",
+            "def"*50
+        ]
+    )
+    def test_fetch_session_details(self, session_id):
+        """Should fetch the session details"""
+
+        request = SecureRequest(
+            session_id=session_id,
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.get_details_called) == 1
+        assert self.get_details_called[0] == session_id
 
 
 if __name__ == '__main__':
