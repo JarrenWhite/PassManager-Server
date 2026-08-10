@@ -258,7 +258,18 @@ class SessionManager():
         if len(error_list) > 0:
             return False, error_list, b'', 0
 
-        DBUtilsSession.get_details(request.session_id)
+        result = DBUtilsSession.get_details(request.session_id)
+        (
+            success,
+            failure_reason,
+            user_id,
+            username_hash,
+            session_id,
+            session_key,
+            request_count,
+            password_change
+        ) = result
+
 
 
 
