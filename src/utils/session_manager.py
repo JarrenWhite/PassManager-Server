@@ -270,6 +270,9 @@ class SessionManager():
             password_change
         ) = result
 
+        # Check Session type is correct
+        if password_session != password_change:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
 
 
