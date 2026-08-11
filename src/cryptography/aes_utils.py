@@ -5,8 +5,8 @@ from typing import Optional, Tuple
 
 class AESUtils():
 
+    @staticmethod
     def encrypt_request(
-        self,
         plaintext: bytes,
         aes_key: bytes,
         add: Optional[bytes] = None,
@@ -21,8 +21,8 @@ class AESUtils():
         return True, b''
 
 
+    @staticmethod
     def decrypt_request(
-        self,
         payload: bytes,
         key: bytes,
         add: Optional[bytes] = None,
