@@ -1198,7 +1198,6 @@ class TestOpenSession():
             encrypted_data=b'fake_encrypted_data'
         )
 
-
         result = SessionManager.open_session(
             request=request
         )
