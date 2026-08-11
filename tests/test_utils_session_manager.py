@@ -1090,7 +1090,16 @@ class TestOpenSession():
         monkeypatch.setattr(ServiceUtils, "sanitise_encrypted_protobuf", fake_sanitise_encrypted_protobuf)
 
         self.get_details_called = []
-        self.get_details_response = None
+        self.get_details_response = (
+            True,
+            None,
+            "fake_user_id",
+            "fake_username_hash",
+            "fake_session_id",
+            b'session_key',
+            0,
+            False
+        )
         def fake_get_details(public_id):
             self.get_details_called.append(public_id)
             return self.get_details_response
@@ -1252,6 +1261,51 @@ class TestOpenSession():
 
         assert len(self.get_details_called) == 1
         assert self.get_details_called[0] == session_id
+
+    @pytest.mark.parametrize(
+        "request_password_change, session_password_change",
+        [
+            (False,     False),
+            (False,     True),
+            (True,      False),
+            (True,      True)
+        ]
+    )
+    def test_check_password_state_matches(self, request_password_change, session_password_change):
+        """Should check and handle password change state"""
+
+        self.get_details_response = (
+            True,
+            None,
+            "fake_user_id",
+            "fake_username_hash",
+            "fake_session_id",
+            b'session_key',
+            0,
+            session_password_change
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request,
+            password_session=request_password_change
+        )
+
+        if request_password_change == session_password_change:
+            assert result[0]
+
+        else:
+            assert not result[0]
+
+            failure_reasons = result[1]
+            assert isinstance(failure_reasons, list)
+            assert len(failure_reasons) == 1
+            assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
 
 
 if __name__ == '__main__':
