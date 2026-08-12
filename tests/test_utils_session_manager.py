@@ -18,6 +18,7 @@ from utils.db_utils_session import DBUtilsSession
 from utils.service_utils import ServiceUtils
 from enums.failure_reason import FailureReason
 from cryptography.srp_utils import SRPUtils
+from cryptography.aes_utils import AESUtils
 
 
 class TestStartNewSession():
@@ -1105,6 +1106,13 @@ class TestOpenSession():
             return self.get_details_response
         monkeypatch.setattr(DBUtilsSession, "get_details", fake_get_details)
 
+        self.decrypt_request_called = []
+        self.decrypt_request_response = True, b'fake_decrypted_payload'
+        def fake_decrypt_request(payload, key, add = None):
+            self.decrypt_request_called.append((payload, key, add))
+            return self.decrypt_request_response
+        monkeypatch.setattr(AESUtils, "decrypt_request", fake_decrypt_request)
+
         yield
 
     @pytest.mark.parametrize(
@@ -1305,6 +1313,45 @@ class TestOpenSession():
             assert isinstance(failure_reasons, list)
             assert len(failure_reasons) == 1
             assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+    @pytest.mark.parametrize(
+        "payload, key, add, request_number",
+        [
+            (b'abc',    b'def',     b'\x00\x00\x03\xe7',    999),
+            (b'',       b'',        b'\x00\x00\x00\x00',    0),
+            (b'123'*50, b'456'*25,  b'\x78\x56\x34\x12',    2018915346)
+        ]
+    )
+    def test_calls_decrypt_request(self, payload, key, add, request_number):
+        """Test calls to decrypt request"""
+
+        self.get_details_response = (
+            True,
+            None,
+            "fake_user_id",
+            "fake_username_hash",
+            "fake_session_id",
+            key,
+            request_number,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=payload
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.decrypt_request_called) == 1
+
+        decrypted = self.decrypt_request_called[0]
+        assert decrypted[0] == payload
+        assert decrypted[1] == key
+        assert decrypted[2] == add
 
 
 if __name__ == '__main__':
