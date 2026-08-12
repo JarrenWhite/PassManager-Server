@@ -14,7 +14,7 @@ from .db_utils_auth import DBUtilsAuth
 from .db_utils_password import DBUtilsPassword
 from .db_utils_session import DBUtilsSession
 from .service_utils import ServiceUtils
-from cryptography import SRPUtils
+from cryptography import SRPUtils, AESUtils
 
 EPHEMERAL_DELAY = 180
 DEFAULT_AUTH_SESSION_LIFETIME = 3600
@@ -273,6 +273,13 @@ class SessionManager():
         # Check Session type is correct
         if password_session != password_change:
             return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+
+        # Decrypt Request
+        AESUtils.decrypt_request(
+            payload=request.encrypted_data,
+            key=session_key,
+            add=request_count.to_bytes(4, byteorder='big', signed=True)
+        )
 
 
 
