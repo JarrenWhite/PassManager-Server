@@ -273,6 +273,8 @@ class SessionManager():
         # Check Session type is correct
         if password_session != password_change:
             return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        if first_request and request_count != 0:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
         # Decrypt Request
         AESUtils.decrypt_request(
