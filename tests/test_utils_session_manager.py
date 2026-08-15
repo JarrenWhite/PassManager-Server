@@ -1360,6 +1360,50 @@ class TestOpenSession():
             assert result[0]
 
     @pytest.mark.parametrize(
+        "given_request_number, known_request_number",
+        [
+            (0,     0),
+            (15,    15),
+            (14,    13),
+            (0,     1)
+        ]
+    )
+    def test_compares_request_count(self, given_request_number, known_request_number):
+        """Should compare request counts and fail if not matching"""
+
+        self.get_details_response = (
+            True,
+            None,
+            "fake_user_id",
+            "fake_username_hash",
+            "fake_session_id",
+            b'session_key',
+            known_request_number,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=given_request_number,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        if known_request_number != given_request_number:
+            assert not result[0]
+
+            failure_reasons = result[1]
+            assert isinstance(failure_reasons, list)
+            assert len(failure_reasons) == 1
+            assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+        else:
+            assert result[0]
+
+    @pytest.mark.parametrize(
         "payload, key, add, request_number",
         [
             (b'abc',    b'def',     b'\x00\x00\x03\xe7',    999),
@@ -1383,7 +1427,7 @@ class TestOpenSession():
 
         request = SecureRequest(
             session_id="fake_session_id",
-            request_number=0,
+            request_number=request_number,
             encrypted_data=payload
         )
 
