@@ -1481,6 +1481,28 @@ class TestOpenSession():
         assert decrypted[1] == key
         assert decrypted[2] == add
 
+    def test_decrypt_request_fails(self):
+        """Should handle decryption failure"""
+
+        self.decrypt_request_response = False, b''
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 1
+        assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
