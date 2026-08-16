@@ -269,6 +269,10 @@ class SessionManager():
             request_count,
             password_change
         ) = result
+        if not success:
+            if not failure_reason:
+                failure_reason = FailureReason.SERVER_ERROR
+            return False, [failure_reason.error_proto()], b'', 0
 
         # Check Session type is correct
         if password_session != password_change:
