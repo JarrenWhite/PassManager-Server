@@ -1270,6 +1270,45 @@ class TestOpenSession():
         assert self.get_details_called[0] == session_id
 
     @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_fetch_session_details_fails(self, failure_reason):
+        """Should handle failure of get details call"""
+
+        self.get_details_response = (
+            False,
+            failure_reason,
+            "",
+            "",
+            "",
+            b'',
+            0,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 1
+        assert failure_reasons[0] == failure_reason.error_proto()
+
+    @pytest.mark.parametrize(
         "request_password_change, session_password_change",
         [
             (False,     False),
