@@ -258,6 +258,10 @@ class SessionManager():
         if len(error_list) > 0:
             return False, error_list, b'', 0
 
+        # Check first request
+        if first_request and request.request_number != 0:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+
         result = DBUtilsSession.get_details(request.session_id)
         (
             success,
@@ -274,10 +278,8 @@ class SessionManager():
                 failure_reason = FailureReason.SERVER_ERROR
             return False, [failure_reason.error_proto()], b'', 0
 
-        # Check Session type is correct
+        # Check fetched details match
         if password_session != password_change:
-            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
-        if first_request and request_count != 0:
             return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
         if request.request_number != request_count:
             return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
