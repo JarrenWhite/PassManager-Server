@@ -5,12 +5,20 @@ import datetime
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
+from passmanager.common.v0.secure_pb2 import (
+    SecureRequest,
+    SecureResponse
+)
+
 import utils.session_manager
 from utils.session_manager import SessionManager
 from utils.db_utils_auth import DBUtilsAuth
 from utils.db_utils_password import DBUtilsPassword
+from utils.db_utils_session import DBUtilsSession
+from utils.service_utils import ServiceUtils
 from enums.failure_reason import FailureReason
 from cryptography.srp_utils import SRPUtils
+from cryptography.aes_utils import AESUtils
 
 
 class TestStartNewSession():
@@ -44,7 +52,18 @@ class TestStartNewSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -228,7 +247,18 @@ class TestAuthNewSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -536,7 +566,18 @@ class TestStartPasswordSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -587,6 +628,7 @@ class TestStartPasswordSession():
 
         assert not result[0]
         assert result[1] == failure_reason
+        assert len(self.start_called) == 0
 
     @pytest.mark.parametrize(
         "srp_verifier",
@@ -781,7 +823,18 @@ class TestAuthPasswordSession():
         class FakeDatetime(datetime.datetime):
             @classmethod
             def now(cls, tz=None):
-                return self.now_response
+                d = self.now_response
+                return cls(
+                    d.year,
+                    d.month,
+                    d.day,
+                    d.hour,
+                    d.minute,
+                    d.second,
+                    d.microsecond,
+                    tzinfo=d.tzinfo,
+                    fold=d.fold,
+                )
         monkeypatch.setattr(utils.session_manager, "datetime", FakeDatetime)
 
         yield
@@ -833,6 +886,7 @@ class TestAuthPasswordSession():
 
         assert not result[0]
         assert result[1] == failure_reason
+        assert len(self.complete_called) == 0
 
     @pytest.mark.parametrize(
         "eph_val_a, eph_public_b, eph_private_b, srp_verifier_v",
@@ -905,6 +959,7 @@ class TestAuthPasswordSession():
 
         assert not result[0]
         assert result[1] == FailureReason.NOT_FOUND
+        assert len(self.complete_called) == 0
 
     @pytest.mark.parametrize(
         "public_id, session_key",
@@ -1006,6 +1061,486 @@ class TestAuthPasswordSession():
         assert result[2] == session_public_id
         assert result[3] == server_proof_val_m2
         assert result[4] == data_entries
+
+
+class TestOpenSession():
+    """Test cases for the open session function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+
+        self.sanitise_public_id_called = []
+        self.sanitise_public_id_response = None
+        def fake_sanitise_public_id(input):
+            self.sanitise_public_id_called.append(input)
+            return self.sanitise_public_id_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_public_id", fake_sanitise_public_id)
+
+        self.sanitise_request_count_called = []
+        self.sanitise_request_count_response = None
+        def fake_sanitise_request_count(input):
+            self.sanitise_request_count_called.append(input)
+            return self.sanitise_request_count_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_request_count", fake_sanitise_request_count)
+
+        self.sanitise_encrypted_protobuf_called = []
+        self.sanitise_encrypted_protobuf_response = None
+        def fake_sanitise_encrypted_protobuf(input):
+            self.sanitise_encrypted_protobuf_called.append(input)
+            return self.sanitise_encrypted_protobuf_response
+        monkeypatch.setattr(ServiceUtils, "sanitise_encrypted_protobuf", fake_sanitise_encrypted_protobuf)
+
+        self.get_details_called = []
+        self.get_details_response = (
+            True,
+            None,
+            0,
+            b'fake_username_hash',
+            0,
+            b'session_key',
+            0,
+            False
+        )
+        def fake_get_details(public_id):
+            self.get_details_called.append(public_id)
+            return self.get_details_response
+        monkeypatch.setattr(DBUtilsSession, "get_details", fake_get_details)
+
+        self.decrypt_request_called = []
+        self.decrypt_request_response = True, b'fake_decrypted_payload'
+        def fake_decrypt_request(payload, key, add = None):
+            self.decrypt_request_called.append((payload, key, add))
+            return self.decrypt_request_response
+        monkeypatch.setattr(AESUtils, "decrypt_request", fake_decrypt_request)
+
+        yield
+
+    @pytest.mark.parametrize(
+        "session_id",
+        [
+            "abc",
+            "",
+            "def"*50
+        ]
+    )
+    def test_calls_sanitise_session_id(self, session_id):
+        """Should sanitise session id"""
+
+        request = SecureRequest(
+            session_id=session_id,
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.sanitise_public_id_called) == 1
+        assert self.sanitise_public_id_called[0] == session_id
+
+    @pytest.mark.parametrize(
+        "request_number",
+        [
+            0,
+            123,
+            987987
+        ]
+    )
+    def test_calls_sanitise_request_number(self, request_number):
+        """Should sanitise request number"""
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=request_number,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.sanitise_request_count_called) == 1
+        assert self.sanitise_request_count_called[0] == request_number
+
+    @pytest.mark.parametrize(
+        "encrypted_data",
+        [
+            b'abc',
+            b'',
+            b'def'*50
+        ]
+    )
+    def test_calls_sanitise_encrypted_protobuf(self, encrypted_data):
+        """Should sanitise encrypted data"""
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=encrypted_data
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.sanitise_encrypted_protobuf_called) == 1
+        assert self.sanitise_encrypted_protobuf_called[0] == encrypted_data
+
+    @pytest.mark.parametrize(
+        "failing_sanitiser, field",
+        [
+            ("sanitise_public_id",          "session_id"),
+            ("sanitise_request_count",      "request_number"),
+            ("sanitise_encrypted_protobuf", "encrypted_data")
+        ]
+    )
+    def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
+        """Should handle invalid error for each sanitation fail"""
+
+        setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 1
+        assert failure_reasons[0] == FailureReason.INVALID.error_proto(field)
+
+    def test_all_sanitising_functions_fail(self):
+        """Should fetch all missing errors if all sanitising fails"""
+
+        self.sanitise_public_id_response = FailureReason.INVALID
+        self.sanitise_request_count_response = FailureReason.INVALID
+        self.sanitise_encrypted_protobuf_response = FailureReason.INVALID
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 3
+
+        fields = [error.field for error in failure_reasons]
+        assert "session_id" in fields
+        assert "request_number" in fields
+        assert "encrypted_data" in fields
+
+    @pytest.mark.parametrize(
+        "session_id",
+        [
+            "abc",
+            "",
+            "def"*50
+        ]
+    )
+    def test_fetch_session_details(self, session_id):
+        """Should fetch the session details"""
+
+        request = SecureRequest(
+            session_id=session_id,
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.get_details_called) == 1
+        assert self.get_details_called[0] == session_id
+
+    @pytest.mark.parametrize(
+        "failure_reason",
+        [
+            FailureReason.NOT_FOUND,
+            FailureReason.DATABASE_UNINITIALISED,
+            FailureReason.UNKNOWN_EXCEPTION
+        ]
+    )
+    def test_fetch_session_details_fails(self, failure_reason):
+        """Should handle failure of get details call"""
+
+        self.get_details_response = (
+            False,
+            failure_reason,
+            0,
+            b'',
+            0,
+            b'',
+            0,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 1
+        assert failure_reasons[0] == failure_reason.error_proto()
+
+    @pytest.mark.parametrize(
+        "request_password_change, session_password_change",
+        [
+            (False,     False),
+            (False,     True),
+            (True,      False),
+            (True,      True)
+        ]
+    )
+    def test_check_password_state_matches(self, request_password_change, session_password_change):
+        """Should check and handle password change state"""
+
+        self.get_details_response = (
+            True,
+            None,
+            0,
+            b'fake_username_hash',
+            0,
+            b'session_key',
+            0,
+            session_password_change
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request,
+            password_session=request_password_change
+        )
+
+        if request_password_change == session_password_change:
+            assert result[0]
+
+        else:
+            assert not result[0]
+
+            failure_reasons = result[1]
+            assert isinstance(failure_reasons, list)
+            assert len(failure_reasons) == 1
+            assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+    @pytest.mark.parametrize(
+        "request_number, first_request",
+        [
+            (0,     True),
+            (0,     False),
+            (15,    True),
+            (15,    False)
+        ]
+    )
+    def test_first_request(self, request_number, first_request):
+        """Should check and handle first request argument"""
+
+        self.get_details_response = (
+            True,
+            None,
+            0,
+            b'fake_username_hash',
+            0,
+            b'session_key',
+            request_number,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=request_number,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request,
+            first_request=first_request
+        )
+
+        if first_request and request_number != 0:
+            assert not result[0]
+
+            failure_reasons = result[1]
+            assert isinstance(failure_reasons, list)
+            assert len(failure_reasons) == 1
+            assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+        else:
+            assert result[0]
+
+    @pytest.mark.parametrize(
+        "given_request_number, known_request_number",
+        [
+            (0,     0),
+            (15,    15),
+            (14,    13),
+            (0,     1)
+        ]
+    )
+    def test_compares_request_count(self, given_request_number, known_request_number):
+        """Should compare request counts and fail if not matching"""
+
+        self.get_details_response = (
+            True,
+            None,
+            0,
+            b'fake_username_hash',
+            0,
+            b'session_key',
+            known_request_number,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=given_request_number,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        if known_request_number != given_request_number:
+            assert not result[0]
+
+            failure_reasons = result[1]
+            assert isinstance(failure_reasons, list)
+            assert len(failure_reasons) == 1
+            assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+        else:
+            assert result[0]
+
+    @pytest.mark.parametrize(
+        "payload, key, add, request_number",
+        [
+            (b'abc',    b'def',     b'\x00\x00\x03\xe7',    999),
+            (b'',       b'',        b'\x00\x00\x00\x00',    0),
+            (b'123'*50, b'456'*25,  b'\x78\x56\x34\x12',    2018915346)
+        ]
+    )
+    def test_calls_decrypt_request(self, payload, key, add, request_number):
+        """Test calls to decrypt request"""
+
+        self.get_details_response = (
+            True,
+            None,
+            0,
+            b'fake_username_hash',
+            0,
+            key,
+            request_number,
+            False
+        )
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=request_number,
+            encrypted_data=payload
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert len(self.decrypt_request_called) == 1
+
+        decrypted = self.decrypt_request_called[0]
+        assert decrypted[0] == payload
+        assert decrypted[1] == key
+        assert decrypted[2] == add
+
+    def test_decrypt_request_fails(self):
+        """Should handle decryption failure"""
+
+        self.decrypt_request_response = False, b''
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert not result[0]
+
+        failure_reasons = result[1]
+        assert isinstance(failure_reasons, list)
+        assert len(failure_reasons) == 1
+        assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+    @pytest.mark.parametrize(
+        "decrypted_request, user_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*25, 34857)
+        ]
+    )
+    def test_returns_correct_values(self, decrypted_request, user_id):
+        """Should return the correct final values"""
+
+        self.get_details_response = (
+            True,
+            None,
+            user_id,
+            b'fake_username_hash',
+            0,
+            b'session_key',
+            0,
+            False
+        )
+
+        self.decrypt_request_response = True, decrypted_request
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert result[0]
+        assert len(result[1]) == 0
+        assert result[2] == decrypted_request
+        assert result[3] == user_id
 
 
 if __name__ == '__main__':

@@ -137,14 +137,14 @@ class TestRegister:
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_username_hash",           "new_username"),
+            ("sanitise_username_hash",      "new_username"),
             ("sanitise_srp_salt",           "srp_salt"),
             ("sanitise_srp_verifier",       "srp_verifier"),
             ("sanitise_master_key_salt",    "master_key_salt")
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -269,7 +269,7 @@ class TestUsername:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -345,7 +345,7 @@ class TestUsername:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -510,7 +510,7 @@ class TestUsername:
     def test_calls_util(self, user_id, new_username):
         """Should call the util function"""
 
-        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
         self.from_string_response.new_username = new_username
 
         request = SecureRequest(
@@ -663,7 +663,7 @@ class TestDelete():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -735,7 +735,7 @@ class TestDelete():
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -839,7 +839,7 @@ class TestDelete():
     def test_calls_util(self, user_id):
         """Should call the util function"""
 
-        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(

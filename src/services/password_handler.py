@@ -35,10 +35,9 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -130,10 +129,9 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -224,10 +222,9 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -303,10 +300,9 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -382,10 +378,9 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list
@@ -469,10 +464,9 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reason, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id = open_session
         if not status:
-            assert failure_reason
-            error_list.append(failure_reason.error_proto())
+            error_list.extend(failure_reasons)
 
             failure = Failure(
                 error_list=error_list

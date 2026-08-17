@@ -5,11 +5,16 @@ from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
     SecureResponse
 )
+from passmanager.common.v0.error_pb2 import (
+    Error
+)
 
 from enums import FailureReason
 from .db_utils_auth import DBUtilsAuth
 from .db_utils_password import DBUtilsPassword
-from cryptography import SRPUtils
+from .db_utils_session import DBUtilsSession
+from .service_utils import ServiceUtils
+from cryptography import SRPUtils, AESUtils
 
 EPHEMERAL_DELAY = 180
 DEFAULT_AUTH_SESSION_LIFETIME = 3600
@@ -229,7 +234,7 @@ class SessionManager():
         request: SecureRequest,
         password_session: bool = False,
         first_request: bool = False
-    ) -> Tuple[bool, Optional[FailureReason], bytes, int]:
+    ) -> Tuple[bool, List[Error], bytes, int]:
         """
         Decrypt a message sent in a secure request
 
@@ -237,7 +242,59 @@ class SessionManager():
             (bytes) Decrypted Bytes
             (int)   User ID
         """
-        return True, None, b'', 0
+        error_list = []
+
+        # Sanitise Inputs
+        status = ServiceUtils.sanitise_public_id(request.session_id)
+        if status:
+            error_list.append(status.error_proto("session_id"))
+        status = ServiceUtils.sanitise_request_count(request.request_number)
+        if status:
+            error_list.append(status.error_proto("request_number"))
+        status = ServiceUtils.sanitise_encrypted_protobuf(request.encrypted_data)
+        if status:
+            error_list.append(status.error_proto("encrypted_data"))
+
+        if len(error_list) > 0:
+            return False, error_list, b'', 0
+
+        # Check first request
+        if first_request and request.request_number != 0:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+
+        result = DBUtilsSession.get_details(request.session_id)
+        (
+            success,
+            failure_reason,
+            user_id,
+            username_hash,
+            session_id,
+            session_key,
+            request_count,
+            password_change
+        ) = result
+        if not success:
+            if not failure_reason:
+                failure_reason = FailureReason.SERVER_ERROR
+            return False, [failure_reason.error_proto()], b'', 0
+
+        # Check fetched details match
+        if password_session != password_change:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        if request.request_number != request_count:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+
+        # Decrypt Request
+        success, decrypted_data = AESUtils.decrypt_request(
+            payload=request.encrypted_data,
+            key=session_key,
+            add=request_count.to_bytes(4, byteorder='big', signed=True)
+        )
+
+        if not success:
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+
+        return True, [], decrypted_data, user_id
 
     @staticmethod
     def seal_session(

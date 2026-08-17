@@ -10,7 +10,7 @@ This document defines the cryptographic standards and implementation requirement
 5. [**Master Key Derivation**](#master-key-derivation)
 6. [**Session Key Derivation**](#session-key-derivation)
 7. [**Specific Encryption Settings**](#specific-encryption-settings)
-8. [**Data Encoding**](#data-encoding)
+8. [**Auth Tag (ADD)**](#auth-tag-add)
 
 ---
 
@@ -243,3 +243,13 @@ During user registration, the client must generate an SRP verifier:
 - **Ciphertext:** `passmanager.common.<version>.EntryData`
 
 > **Note:** Some cryptographic libraries combine ciphertext and auth tag, others return separately. These must be correctly arranged before being sent to the server.
+
+## Auth Tag (ADD)
+
+### ADD Format
+
+For secure API requests, the the auth tag must be the request number encoded as a 4-byte big endian signed integer. This must match the request number issued in the secure request protobuf.
+
+```
+request_number (4 bytes, big-endian, signed)
+```

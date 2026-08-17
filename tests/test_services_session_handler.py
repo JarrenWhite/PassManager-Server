@@ -81,7 +81,7 @@ class TestStart():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -374,7 +374,7 @@ class TestAuth():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -515,7 +515,7 @@ class TestDelete():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -595,7 +595,7 @@ class TestDelete():
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -692,7 +692,7 @@ class TestDelete():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -746,7 +746,7 @@ class TestDelete():
     def test_calls_util(self, user_id, session_id):
         """Should call the util function"""
 
-        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.session_id = session_id
 
@@ -899,7 +899,7 @@ class TestClean():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, None, b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -971,7 +971,7 @@ class TestClean():
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, FailureReason.DECRYPTION, b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
         request = SecureRequest(
             session_id="fake_session_id",
@@ -1051,7 +1051,7 @@ class TestClean():
         ]
     )
     def test_each_sanitising_invalid_failure(self, failing_sanitiser, field):
-        """Should fetch invalid error for each sanitation fail"""
+        """Should handle invalid error for each sanitation fail"""
 
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
@@ -1103,7 +1103,7 @@ class TestClean():
     def test_calls_util(self, user_id):
         """Should call the util function"""
 
-        self.open_session_response = True, None, b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
