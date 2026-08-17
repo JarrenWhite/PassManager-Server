@@ -35,7 +35,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -129,7 +129,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -222,7 +222,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -300,7 +300,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -378,7 +378,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -464,7 +464,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 

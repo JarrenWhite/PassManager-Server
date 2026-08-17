@@ -1504,14 +1504,14 @@ class TestOpenSession():
         assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
 
     @pytest.mark.parametrize(
-        "decrypted_request, user_id",
+        "decrypted_request, user_id, session_id",
         [
-            (b'abc',    15),
-            (b'',       0),
-            (b'def'*25, 34857)
+            (b'abc',    15,     85),
+            (b'',       0,      0),
+            (b'def'*25, 34857,  79585)
         ]
     )
-    def test_returns_correct_values(self, decrypted_request, user_id):
+    def test_returns_correct_values(self, decrypted_request, user_id, session_id):
         """Should return the correct final values"""
 
         self.get_details_response = (
@@ -1519,7 +1519,7 @@ class TestOpenSession():
             None,
             user_id,
             b'fake_username_hash',
-            0,
+            session_id,
             b'session_key',
             0,
             False
@@ -1541,6 +1541,7 @@ class TestOpenSession():
         assert len(result[1]) == 0
         assert result[2] == decrypted_request
         assert result[3] == user_id
+        assert result[4] == session_id
 
 
 if __name__ == '__main__':
