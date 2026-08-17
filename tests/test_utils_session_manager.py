@@ -1095,8 +1095,8 @@ class TestOpenSession():
             True,
             None,
             0,
-            "fake_username_hash",
-            "fake_session_id",
+            b'fake_username_hash',
+            0,
             b'session_key',
             0,
             False
@@ -1283,9 +1283,9 @@ class TestOpenSession():
         self.get_details_response = (
             False,
             failure_reason,
-            "",
-            "",
-            "",
+            0,
+            b'',
+            0,
             b'',
             0,
             False
@@ -1324,8 +1324,8 @@ class TestOpenSession():
             True,
             None,
             0,
-            "fake_username_hash",
-            "fake_session_id",
+            b'fake_username_hash',
+            0,
             b'session_key',
             0,
             session_password_change
@@ -1369,8 +1369,8 @@ class TestOpenSession():
             True,
             None,
             0,
-            "fake_username_hash",
-            "fake_session_id",
+            b'fake_username_hash',
+            0,
             b'session_key',
             request_number,
             False
@@ -1414,8 +1414,8 @@ class TestOpenSession():
             True,
             None,
             0,
-            "fake_username_hash",
-            "fake_session_id",
+            b'fake_username_hash',
+            0,
             b'session_key',
             known_request_number,
             False
@@ -1457,8 +1457,8 @@ class TestOpenSession():
             True,
             None,
             0,
-            "fake_username_hash",
-            "fake_session_id",
+            b'fake_username_hash',
+            0,
             key,
             request_number,
             False
@@ -1518,8 +1518,8 @@ class TestOpenSession():
             True,
             None,
             user_id,
-            "fake_username_hash",
-            "fake_session_id",
+            b'fake_username_hash',
+            0,
             b'session_key',
             0,
             False
