@@ -1094,7 +1094,7 @@ class TestOpenSession():
         self.get_details_response = (
             True,
             None,
-            "fake_user_id",
+            0,
             "fake_username_hash",
             "fake_session_id",
             b'session_key',
@@ -1323,7 +1323,7 @@ class TestOpenSession():
         self.get_details_response = (
             True,
             None,
-            "fake_user_id",
+            0,
             "fake_username_hash",
             "fake_session_id",
             b'session_key',
@@ -1368,7 +1368,7 @@ class TestOpenSession():
         self.get_details_response = (
             True,
             None,
-            "fake_user_id",
+            0,
             "fake_username_hash",
             "fake_session_id",
             b'session_key',
@@ -1413,7 +1413,7 @@ class TestOpenSession():
         self.get_details_response = (
             True,
             None,
-            "fake_user_id",
+            0,
             "fake_username_hash",
             "fake_session_id",
             b'session_key',
@@ -1456,7 +1456,7 @@ class TestOpenSession():
         self.get_details_response = (
             True,
             None,
-            "fake_user_id",
+            0,
             "fake_username_hash",
             "fake_session_id",
             key,
@@ -1502,6 +1502,45 @@ class TestOpenSession():
         assert isinstance(failure_reasons, list)
         assert len(failure_reasons) == 1
         assert failure_reasons[0] == FailureReason.DECRYPTION.error_proto()
+
+    @pytest.mark.parametrize(
+        "decrypted_request, user_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*25, 34857)
+        ]
+    )
+    def test_returns_correct_values(self, decrypted_request, user_id):
+        """Should return the correct final values"""
+
+        self.get_details_response = (
+            True,
+            None,
+            user_id,
+            "fake_username_hash",
+            "fake_session_id",
+            b'session_key',
+            0,
+            False
+        )
+
+        self.decrypt_request_response = True, decrypted_request
+
+        request = SecureRequest(
+            session_id="fake_session_id",
+            request_number=0,
+            encrypted_data=b'fake_encrypted_data'
+        )
+
+        result = SessionManager.open_session(
+            request=request
+        )
+
+        assert result[0]
+        assert len(result[1]) == 0
+        assert result[2] == decrypted_request
+        assert result[3] == user_id
 
 
 if __name__ == '__main__':
