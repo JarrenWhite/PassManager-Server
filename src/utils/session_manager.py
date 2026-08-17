@@ -294,9 +294,7 @@ class SessionManager():
         if not success:
             return False, [FailureReason.DECRYPTION.error_proto()], b'', 0
 
-
-
-        return True, [], b'', 0
+        return True, [], decrypted_data, user_id
 
     @staticmethod
     def seal_session(
