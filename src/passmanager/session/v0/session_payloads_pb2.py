@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n-passmanager/session/v0/session_payloads.proto\x12\x16passmanager.session.v0\"A\n\x14SessionDeleteRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x12\n\nsession_id\x18\x02 \x01(\t\".\n\x15SessionDeleteResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\",\n\x13SessionCleanRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"-\n\x14SessionCleanResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n-passmanager/session/v0/session_payloads.proto\x12\x16passmanager.session.v0\"@\n\x14SessionDeleteRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x12\x11\n\tpublic_id\x18\x02 \x01(\t\".\n\x15SessionDeleteResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\",\n\x13SessionCleanRequest\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\"-\n\x14SessionCleanResponse\x12\x15\n\rusername_hash\x18\x01 \x01(\x0c\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,11 +32,11 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'passmanager.session.v0.sess
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_SESSIONDELETEREQUEST']._serialized_start=73
-  _globals['_SESSIONDELETEREQUEST']._serialized_end=138
-  _globals['_SESSIONDELETERESPONSE']._serialized_start=140
-  _globals['_SESSIONDELETERESPONSE']._serialized_end=186
-  _globals['_SESSIONCLEANREQUEST']._serialized_start=188
-  _globals['_SESSIONCLEANREQUEST']._serialized_end=232
-  _globals['_SESSIONCLEANRESPONSE']._serialized_start=234
-  _globals['_SESSIONCLEANRESPONSE']._serialized_end=279
+  _globals['_SESSIONDELETEREQUEST']._serialized_end=137
+  _globals['_SESSIONDELETERESPONSE']._serialized_start=139
+  _globals['_SESSIONDELETERESPONSE']._serialized_end=185
+  _globals['_SESSIONCLEANREQUEST']._serialized_start=187
+  _globals['_SESSIONCLEANREQUEST']._serialized_end=231
+  _globals['_SESSIONCLEANRESPONSE']._serialized_start=233
+  _globals['_SESSIONCLEANRESPONSE']._serialized_end=278
 # @@protoc_insertion_point(module_scope)

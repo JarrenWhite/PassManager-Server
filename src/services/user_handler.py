@@ -159,7 +159,7 @@ class UserHandler():
             new_username=request.new_username
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -237,6 +237,6 @@ class UserHandler():
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )

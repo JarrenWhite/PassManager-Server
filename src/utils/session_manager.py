@@ -246,7 +246,7 @@ class SessionManager():
         error_list = []
 
         # Sanitise Inputs
-        status = ServiceUtils.sanitise_public_id(request.session_id)
+        status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
             error_list.append(status.error_proto("session_id"))
         status = ServiceUtils.sanitise_request_count(request.request_number)
@@ -263,7 +263,7 @@ class SessionManager():
         if first_request and request.request_number != 0:
             return False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
 
-        result = DBUtilsSession.get_details(request.session_id)
+        result = DBUtilsSession.get_details(request.public_id)
         (
             success,
             failure_reason,

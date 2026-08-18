@@ -124,17 +124,17 @@ class SessionAuthResponse(_message.Message):
     class Success(_message.Message):
         DESCRIPTOR: _descriptor.Descriptor
 
-        SESSION_ID_FIELD_NUMBER: _builtins.int
+        PUBLIC_ID_FIELD_NUMBER: _builtins.int
         SERVER_PROOF_FIELD_NUMBER: _builtins.int
-        session_id: _builtins.str
+        public_id: _builtins.str
         server_proof: _builtins.bytes
         def __init__(
             self,
             *,
-            session_id: _builtins.str = ...,
+            public_id: _builtins.str = ...,
             server_proof: _builtins.bytes = ...,
         ) -> None: ...
-        _ClearFieldArgType: _TypeAlias = _typing.Literal["server_proof", b"server_proof", "session_id", b"session_id"]  # noqa: Y015
+        _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "server_proof", b"server_proof"]  # noqa: Y015
         def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
     SUCCESS_FIELD_NUMBER: _builtins.int

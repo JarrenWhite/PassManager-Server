@@ -116,7 +116,7 @@ class PasswordHandler():
             master_key_salt=master_key_salt
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -204,12 +204,12 @@ class PasswordHandler():
         # Successful Return
         response = PasswordAuthResponse(
             username_hash=request.username_hash,
-            session_id=session_id,
+            public_id=session_id,
             server_proof_m2=server_proof_m2,
             public_ids=public_ids
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -287,7 +287,7 @@ class PasswordHandler():
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -365,7 +365,7 @@ class PasswordHandler():
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -451,7 +451,7 @@ class PasswordHandler():
             entry_data=entry_data
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -542,6 +542,6 @@ class PasswordHandler():
             public_id=request.public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )

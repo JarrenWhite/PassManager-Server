@@ -136,7 +136,7 @@ class SessionHandler:
 
         # Successful Return
         success_data = SessionAuthResponse.Success(
-            session_id=session_public_id,
+            public_id=session_public_id,
             server_proof=server_proof_m2
         )
         return SessionAuthResponse(
@@ -183,7 +183,7 @@ class SessionHandler:
         status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
-        status = ServiceUtils.sanitise_public_id(request.session_id)
+        status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
             error_list.append(status.error_proto("session_id"))
 
@@ -200,7 +200,7 @@ class SessionHandler:
         # Call Util function
         status, failure_reason = DBUtilsSession.delete(
             user_id=user_id,
-            public_id=request.session_id
+            public_id=request.public_id
         )
 
         # Return error
@@ -221,7 +221,7 @@ class SessionHandler:
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -298,6 +298,6 @@ class SessionHandler:
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )

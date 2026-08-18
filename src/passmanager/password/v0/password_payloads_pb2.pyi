@@ -101,11 +101,11 @@ class PasswordAuthResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    SESSION_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     SERVER_PROOF_M2_FIELD_NUMBER: _builtins.int
     PUBLIC_IDS_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    session_id: _builtins.str
+    public_id: _builtins.str
     server_proof_m2: _builtins.bytes
     @_builtins.property
     def public_ids(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]: ...
@@ -113,11 +113,11 @@ class PasswordAuthResponse(_message.Message):
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        session_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         server_proof_m2: _builtins.bytes = ...,
         public_ids: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_ids", b"public_ids", "server_proof_m2", b"server_proof_m2", "session_id", b"session_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "public_ids", b"public_ids", "server_proof_m2", b"server_proof_m2", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___PasswordAuthResponse: _TypeAlias = PasswordAuthResponse  # noqa: Y015

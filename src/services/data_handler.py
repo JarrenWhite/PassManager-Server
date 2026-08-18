@@ -106,7 +106,7 @@ class DataHandler:
             public_id=public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -198,7 +198,7 @@ class DataHandler:
             public_id=request.public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -280,7 +280,7 @@ class DataHandler:
             public_id=request.public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -364,7 +364,7 @@ class DataHandler:
             entry_data=entry_data
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -448,6 +448,6 @@ class DataHandler:
             ]
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
