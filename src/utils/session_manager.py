@@ -248,7 +248,7 @@ class SessionManager():
         # Sanitise Inputs
         status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
-            error_list.append(status.error_proto("session_id"))
+            error_list.append(status.error_proto("public_id"))
         status = ServiceUtils.sanitise_request_count(request.request_number)
         if status:
             error_list.append(status.error_proto("request_number"))
