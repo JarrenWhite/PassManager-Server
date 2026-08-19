@@ -1116,18 +1116,18 @@ class TestOpenSession():
         yield
 
     @pytest.mark.parametrize(
-        "session_id",
+        "public_id",
         [
             "abc",
             "",
             "def"*50
         ]
     )
-    def test_calls_sanitise_session_id(self, session_id):
+    def test_calls_sanitise_session_id(self, public_id):
         """Should sanitise session id"""
 
         request = SecureRequest(
-            session_id=session_id,
+            public_id=public_id,
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1137,7 +1137,7 @@ class TestOpenSession():
         )
 
         assert len(self.sanitise_public_id_called) == 1
-        assert self.sanitise_public_id_called[0] == session_id
+        assert self.sanitise_public_id_called[0] == public_id
 
     @pytest.mark.parametrize(
         "request_number",
@@ -1151,7 +1151,7 @@ class TestOpenSession():
         """Should sanitise request number"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=request_number,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1175,7 +1175,7 @@ class TestOpenSession():
         """Should sanitise encrypted data"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=encrypted_data
         )
@@ -1190,7 +1190,7 @@ class TestOpenSession():
     @pytest.mark.parametrize(
         "failing_sanitiser, field",
         [
-            ("sanitise_public_id",          "session_id"),
+            ("sanitise_public_id",          "public_id"),
             ("sanitise_request_count",      "request_number"),
             ("sanitise_encrypted_protobuf", "encrypted_data")
         ]
@@ -1201,7 +1201,7 @@ class TestOpenSession():
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1225,7 +1225,7 @@ class TestOpenSession():
         self.sanitise_encrypted_protobuf_response = FailureReason.INVALID
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1241,23 +1241,23 @@ class TestOpenSession():
         assert len(failure_reasons) == 3
 
         fields = [error.field for error in failure_reasons]
-        assert "session_id" in fields
+        assert "public_id" in fields
         assert "request_number" in fields
         assert "encrypted_data" in fields
 
     @pytest.mark.parametrize(
-        "session_id",
+        "public_id",
         [
             "abc",
             "",
             "def"*50
         ]
     )
-    def test_fetch_session_details(self, session_id):
+    def test_fetch_session_details(self, public_id):
         """Should fetch the session details"""
 
         request = SecureRequest(
-            session_id=session_id,
+            public_id=public_id,
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1267,7 +1267,7 @@ class TestOpenSession():
         )
 
         assert len(self.get_details_called) == 1
-        assert self.get_details_called[0] == session_id
+        assert self.get_details_called[0] == public_id
 
     @pytest.mark.parametrize(
         "failure_reason",
@@ -1292,7 +1292,7 @@ class TestOpenSession():
         )
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1332,7 +1332,7 @@ class TestOpenSession():
         )
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1377,7 +1377,7 @@ class TestOpenSession():
         )
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=request_number,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1422,7 +1422,7 @@ class TestOpenSession():
         )
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=given_request_number,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1465,7 +1465,7 @@ class TestOpenSession():
         )
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=request_number,
             encrypted_data=payload
         )
@@ -1487,7 +1487,7 @@ class TestOpenSession():
         self.decrypt_request_response = False, b''
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
@@ -1528,7 +1528,7 @@ class TestOpenSession():
         self.decrypt_request_response = True, decrypted_request
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encrypted_data'
         )
