@@ -299,7 +299,7 @@ class SessionManager():
 
     @staticmethod
     def seal_session(
-        session_id: str,
+        session_id: int,
         response: bytes
     ) -> SecureResponse:
         """
