@@ -91,7 +91,7 @@ class UserHandler():
             request=secure_request,
             first_request=True
         )
-        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -173,7 +173,7 @@ class UserHandler():
             request=secure_request,
             first_request=True
         )
-        status, failure_reasons, decrypted_bytes, user_id, session_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 

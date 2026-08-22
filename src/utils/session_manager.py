@@ -234,12 +234,13 @@ class SessionManager():
         request: SecureRequest,
         password_session: bool = False,
         first_request: bool = False
-    ) -> Tuple[bool, List[Error], bytes, int, int]:
+    ) -> Tuple[bool, List[Error], bytes, bytes, int, int]:
         """
         Decrypt a message sent in a secure request
 
         Returns:
             (bytes) Decrypted Bytes
+            (bytes) Username Hash
             (int)   User ID
             (int)   Session ID
         """
@@ -257,11 +258,11 @@ class SessionManager():
             error_list.append(status.error_proto("encrypted_data"))
 
         if len(error_list) > 0:
-            return False, error_list, b'', 0, 0
+            return False, error_list, b'', b'', 0, 0
 
         # Check first request
         if first_request and request.request_number != 0:
-            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         result = DBUtilsSession.get_details(request.public_id)
         (
@@ -277,13 +278,13 @@ class SessionManager():
         if not success:
             if not failure_reason:
                 failure_reason = FailureReason.SERVER_ERROR
-            return False, [failure_reason.error_proto()], b'', 0, 0
+            return False, [failure_reason.error_proto()], b'', b'', 0, 0
 
         # Check fetched details match
         if password_session != password_change:
-            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
         if request.request_number != request_count:
-            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         # Decrypt Request
         success, decrypted_data = AESUtils.decrypt_request(
@@ -293,9 +294,9 @@ class SessionManager():
         )
 
         if not success:
-            return False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
+            return False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
-        return True, [], decrypted_data, user_id, session_id
+        return True, [], decrypted_data, username_hash, user_id, session_id
 
     @staticmethod
     def seal_session(
