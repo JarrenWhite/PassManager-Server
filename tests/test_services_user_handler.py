@@ -577,10 +577,19 @@ class TestUsername:
         assert isinstance(serialize_to_string, UserUsernameResponse)
         assert serialize_to_string.new_username == b'fake_new_username'
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -593,8 +602,8 @@ class TestUsername:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -903,10 +912,19 @@ class TestDelete():
         assert isinstance(serialize_to_string, UserDeleteResponse)
         assert serialize_to_string.username_hash == b'fake_username_hash'
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -919,8 +937,8 @@ class TestDelete():
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
