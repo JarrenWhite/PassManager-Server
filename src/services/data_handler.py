@@ -80,6 +80,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason, public_id = DBUtilsData.create(
             user_id=user_id,
@@ -163,6 +175,18 @@ class DataHandler:
 
         # Return Errors
         if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
             failure = Failure(
                 error_list=error_list
             )
@@ -255,6 +279,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsData.delete(
             user_id=user_id,
@@ -337,6 +373,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason, entry_name, entry_data = DBUtilsData.get_entry(
             user_id=user_id,
@@ -410,6 +458,18 @@ class DataHandler:
 
         # Return Errors
         if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
             failure = Failure(
                 error_list=error_list
             )
