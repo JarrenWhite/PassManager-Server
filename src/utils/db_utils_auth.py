@@ -145,7 +145,7 @@ class DBUtilsAuth():
             (bytes) srp_verifier
         """
         if username_hash is None and user_id is None:
-            logger.error("Fetch called without arguments")
+            logger.error("Get detailed called without arguments")
             return False, FailureReason.SERVER_ERROR, b'', b'', b''
 
         try:
