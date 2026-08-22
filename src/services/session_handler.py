@@ -197,6 +197,18 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsSession.delete(
             user_id=user_id,
@@ -267,6 +279,18 @@ class SessionHandler:
 
         # Return errors
         if len(error_list) > 0:
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
             failure = Failure(
                 error_list=error_list
             )
