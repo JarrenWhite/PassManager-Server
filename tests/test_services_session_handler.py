@@ -515,7 +515,7 @@ class TestDelete():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -595,7 +595,7 @@ class TestDelete():
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -746,7 +746,7 @@ class TestDelete():
     def test_calls_util(self, user_id, public_id):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id, 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
@@ -824,7 +824,7 @@ class TestDelete():
     def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
         self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
@@ -908,7 +908,7 @@ class TestClean():
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -980,7 +980,7 @@ class TestClean():
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0, 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -1112,7 +1112,7 @@ class TestClean():
     def test_calls_util(self, user_id):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id, 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
@@ -1188,7 +1188,7 @@ class TestClean():
     def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
         self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
