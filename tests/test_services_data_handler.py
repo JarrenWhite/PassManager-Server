@@ -370,10 +370,19 @@ class TestCreate:
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -386,8 +395,8 @@ class TestCreate:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -815,10 +824,19 @@ class TestEdit:
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -831,8 +849,8 @@ class TestEdit:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -1286,10 +1304,19 @@ class TestDelete:
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -1302,8 +1329,8 @@ class TestDelete:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -1678,10 +1705,19 @@ class TestGet:
         assert serialize_to_string.entry_name == b'fake_entry_name'
         assert serialize_to_string.entry_data == b'fake_entry_data'
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -1694,8 +1730,8 @@ class TestGet:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -2041,10 +2077,19 @@ class TestList:
         assert len(entry_details) == len(result_list)
         assert {e.public_id: e.entry_name for e in entry_details} == result_list
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
             public_id="fake_public_id",
@@ -2057,8 +2102,8 @@ class TestList:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_public_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
