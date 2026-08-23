@@ -317,6 +317,31 @@ class TestStart():
         assert "srp_verifier" in fields
         assert "master_key_salt" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.start(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.start_password_session_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, srp_salt, srp_verifier, master_key_salt",
         [
@@ -773,6 +798,31 @@ class TestAuth():
         assert "eph_val_a" in fields
         assert "proof_val_m1" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.auth(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.auth_password_session_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, public_id, eph_val_a, proof_val_m1",
         [
@@ -1150,6 +1200,31 @@ class TestCommit():
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.commit(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.commit_called) == 0
+
     @pytest.mark.parametrize(
         "user_id",
         [
@@ -1513,6 +1588,31 @@ class TestAbort():
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
+
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.abort(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.abort_called) == 0
 
     @pytest.mark.parametrize(
         "user_id",
@@ -1903,6 +2003,31 @@ class TestGet():
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
         assert "public_id" in fields
+
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.get(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.get_entry_called) == 0
 
     @pytest.mark.parametrize(
         "user_id, public_id",
@@ -2357,6 +2482,31 @@ class TestUpdate():
         assert "public_id" in fields
         assert "entry_name" in fields
         assert "entry_data" in fields
+
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = PasswordHandler.update(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.update_called) == 0
 
     @pytest.mark.parametrize(
         "user_id, public_id, entry_name, entry_data",
