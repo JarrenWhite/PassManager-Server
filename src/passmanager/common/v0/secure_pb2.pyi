@@ -21,20 +21,20 @@ DESCRIPTOR: _descriptor.FileDescriptor
 class SecureRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
-    SESSION_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     REQUEST_NUMBER_FIELD_NUMBER: _builtins.int
     ENCRYPTED_DATA_FIELD_NUMBER: _builtins.int
-    session_id: _builtins.str
+    public_id: _builtins.str
     request_number: _builtins.int
     encrypted_data: _builtins.bytes
     def __init__(
         self,
         *,
-        session_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
         request_number: _builtins.int = ...,
         encrypted_data: _builtins.bytes = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["encrypted_data", b"encrypted_data", "request_number", b"request_number", "session_id", b"session_id"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["encrypted_data", b"encrypted_data", "public_id", b"public_id", "request_number", b"request_number"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___SecureRequest: _TypeAlias = SecureRequest  # noqa: Y015
@@ -47,17 +47,17 @@ class SecureResponse(_message.Message):
     class Success(_message.Message):
         DESCRIPTOR: _descriptor.Descriptor
 
-        SESSION_ID_FIELD_NUMBER: _builtins.int
+        PUBLIC_ID_FIELD_NUMBER: _builtins.int
         ENCRYPTED_DATA_FIELD_NUMBER: _builtins.int
-        session_id: _builtins.str
+        public_id: _builtins.str
         encrypted_data: _builtins.bytes
         def __init__(
             self,
             *,
-            session_id: _builtins.str = ...,
+            public_id: _builtins.str = ...,
             encrypted_data: _builtins.bytes = ...,
         ) -> None: ...
-        _ClearFieldArgType: _TypeAlias = _typing.Literal["encrypted_data", b"encrypted_data", "session_id", b"session_id"]  # noqa: Y015
+        _ClearFieldArgType: _TypeAlias = _typing.Literal["encrypted_data", b"encrypted_data", "public_id", b"public_id"]  # noqa: Y015
         def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
     SUCCESS_FIELD_NUMBER: _builtins.int

@@ -50,9 +50,9 @@ The `failure_data` field contains the Failure protobuf message.
 That message, and its contents, are further defined in the [Errors](#errors) section of this document.
 
 ### Secure Message
-If the message was issued as part of a secured session, the response will be included in a SecureResponse protobuf message `passmanager.common.<version>.SecureResponse`. This message will contain a `success` flag, and either `success_data` or `failure_data`, as with any other message. However, if successful, the `success_data` field will contain the fields `session_id` and `encrypted_data`.
+If the message was issued as part of a secured session, the response will be included in a SecureResponse protobuf message `passmanager.common.<version>.SecureResponse`. This message will contain a `success` flag, and either `success_data` or `failure_data`, as with any other message. However, if successful, the `success_data` field will contain the fields `public_id` and `encrypted_data`.
 
-`session_id` gives a reference to the session which this message was secured with, to allow the client to find the relevant session key for decryption.
+`public_id` gives a reference to the session which this message was secured with, to allow the client to find the relevant session key for decryption.
 
 `encrypted_data` contains a protobuf message which has been encrypted using the shared session key.
 The type of the encrypted message is defined for each response in the documentation below.
@@ -131,7 +131,7 @@ Messages which use a secure message response are shown in the documentation by d
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
 | username_hash   | bytes    | Hash of the user's username.                                 |
-| session_id      | string   | The public ID of the created password session.               |
+| public_id       | string   | The public ID of the created password session.               |
 | server_proof_m2 | bytes    | The server's proof of authentication.                        |
 | public_ids      | [string] | The public IDs of all stored data entries.                   |
 
@@ -221,7 +221,7 @@ Messages which use a secure message response are shown in the documentation by d
 **Response Fields**
 | Field           | Type     | Description                                                  |
 |-----------------|----------|--------------------------------------------------------------|
-| session_id      | string   | The public ID of the created session.                        |
+| public_id       | string   | The public ID of the created session.                        |
 | server_proof_m2 | bytes    | The server's proof of authentication.                        |
 
 ---

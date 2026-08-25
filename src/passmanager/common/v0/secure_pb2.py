@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from passmanager.common.v0 import error_pb2 as passmanager_dot_common_dot_v0_dot_error__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"passmanager/common/v0/secure.proto\x12\x15passmanager.common.v0\x1a!passmanager/common/v0/error.proto\"S\n\rSecureRequest\x12\x12\n\nsession_id\x18\x01 \x01(\t\x12\x16\n\x0erequest_number\x18\x02 \x01(\x05\x12\x16\n\x0e\x65ncrypted_data\x18\x03 \x01(\x0c\"\xe1\x01\n\x0eSecureResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x45\n\x0csuccess_data\x18\x02 \x01(\x0b\x32-.passmanager.common.v0.SecureResponse.SuccessH\x00\x12\x36\n\x0c\x66\x61ilure_data\x18\x03 \x01(\x0b\x32\x1e.passmanager.common.v0.FailureH\x00\x1a\x35\n\x07Success\x12\x12\n\nsession_id\x18\x01 \x01(\t\x12\x16\n\x0e\x65ncrypted_data\x18\x02 \x01(\x0c\x42\x08\n\x06resultb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"passmanager/common/v0/secure.proto\x12\x15passmanager.common.v0\x1a!passmanager/common/v0/error.proto\"R\n\rSecureRequest\x12\x11\n\tpublic_id\x18\x01 \x01(\t\x12\x16\n\x0erequest_number\x18\x02 \x01(\x05\x12\x16\n\x0e\x65ncrypted_data\x18\x03 \x01(\x0c\"\xe0\x01\n\x0eSecureResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x45\n\x0csuccess_data\x18\x02 \x01(\x0b\x32-.passmanager.common.v0.SecureResponse.SuccessH\x00\x12\x36\n\x0c\x66\x61ilure_data\x18\x03 \x01(\x0b\x32\x1e.passmanager.common.v0.FailureH\x00\x1a\x34\n\x07Success\x12\x11\n\tpublic_id\x18\x01 \x01(\t\x12\x16\n\x0e\x65ncrypted_data\x18\x02 \x01(\x0c\x42\x08\n\x06resultb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,9 +33,9 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'passmanager.common.v0.secur
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_SECUREREQUEST']._serialized_start=96
-  _globals['_SECUREREQUEST']._serialized_end=179
-  _globals['_SECURERESPONSE']._serialized_start=182
-  _globals['_SECURERESPONSE']._serialized_end=407
-  _globals['_SECURERESPONSE_SUCCESS']._serialized_start=344
-  _globals['_SECURERESPONSE_SUCCESS']._serialized_end=397
+  _globals['_SECUREREQUEST']._serialized_end=178
+  _globals['_SECURERESPONSE']._serialized_start=181
+  _globals['_SECURERESPONSE']._serialized_end=405
+  _globals['_SECURERESPONSE_SUCCESS']._serialized_start=343
+  _globals['_SECURERESPONSE_SUCCESS']._serialized_end=395
 # @@protoc_insertion_point(module_scope)

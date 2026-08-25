@@ -91,7 +91,7 @@ class UserHandler():
             request=secure_request,
             first_request=True
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -135,6 +135,18 @@ class UserHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsUser.change_username(
             user_id=user_id,
@@ -159,7 +171,7 @@ class UserHandler():
             new_username=request.new_username
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -173,7 +185,7 @@ class UserHandler():
             request=secure_request,
             first_request=True
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -214,6 +226,18 @@ class UserHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsUser.delete(
             user_id=user_id
@@ -237,6 +261,6 @@ class UserHandler():
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )

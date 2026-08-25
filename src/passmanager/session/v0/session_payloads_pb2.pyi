@@ -21,16 +21,16 @@ class SessionDeleteRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     USERNAME_HASH_FIELD_NUMBER: _builtins.int
-    SESSION_ID_FIELD_NUMBER: _builtins.int
+    PUBLIC_ID_FIELD_NUMBER: _builtins.int
     username_hash: _builtins.bytes
-    session_id: _builtins.str
+    public_id: _builtins.str
     def __init__(
         self,
         *,
         username_hash: _builtins.bytes = ...,
-        session_id: _builtins.str = ...,
+        public_id: _builtins.str = ...,
     ) -> None: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["session_id", b"session_id", "username_hash", b"username_hash"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["public_id", b"public_id", "username_hash", b"username_hash"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
 
 Global___SessionDeleteRequest: _TypeAlias = SessionDeleteRequest  # noqa: Y015

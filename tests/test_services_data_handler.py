@@ -40,7 +40,7 @@ class TestCreate:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -100,7 +100,7 @@ class TestCreate:
         self.seal_session_response = SecureResponse(
             success=True,
             success_data=SecureResponse.Success(
-                session_id="fake_session_id",
+                public_id="fake_public_id",
                 encrypted_data=b'fake_encrypted_data'
             )
         )
@@ -115,7 +115,7 @@ class TestCreate:
         """Should pass secure request to be opened"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -128,10 +128,10 @@ class TestCreate:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -153,7 +153,7 @@ class TestCreate:
         self.from_string_response = DataCreateRequest()
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -169,7 +169,7 @@ class TestCreate:
         self.from_string_exception = True
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -191,7 +191,7 @@ class TestCreate:
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -207,7 +207,7 @@ class TestCreate:
         self.from_string_response.entry_name = b'fake_entry_name'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -223,7 +223,7 @@ class TestCreate:
         self.from_string_response.entry_data = b'fake_entry_data'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -247,7 +247,7 @@ class TestCreate:
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -271,7 +271,7 @@ class TestCreate:
         self.sanitise_entry_data_response = FailureReason.INVALID
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -287,6 +287,31 @@ class TestCreate:
         assert "entry_name" in fields
         assert "entry_data" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.create(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.create_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, entry_name, entry_data",
         [
@@ -298,13 +323,13 @@ class TestCreate:
     def test_calls_util(self, user_id, entry_name, entry_data):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.entry_name = entry_name
         self.from_string_response.entry_data = entry_data
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -333,7 +358,7 @@ class TestCreate:
         self.create_response = False, failure_reason, ""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -356,7 +381,7 @@ class TestCreate:
         self.create_response = True, None, "fake_public_id"
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -370,13 +395,22 @@ class TestCreate:
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -386,8 +420,8 @@ class TestCreate:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_session_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -395,21 +429,21 @@ class TestCreate:
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="",
+                    public_id="",
                     encrypted_data=b''
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="fake_session_id",
+                    public_id="fake_public_id",
                     encrypted_data=b'fake_encrypted_data'
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="abc123",
+                    public_id="abc123",
                     encrypted_data=b'987zyx'
                 )
             ),
@@ -439,7 +473,7 @@ class TestCreate:
         self.seal_session_response = secure_response
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -456,7 +490,7 @@ class TestEdit:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -524,7 +558,7 @@ class TestEdit:
         self.seal_session_response = SecureResponse(
             success=True,
             success_data=SecureResponse.Success(
-                session_id="fake_session_id",
+                public_id="fake_public_id",
                 encrypted_data=b'fake_encrypted_data'
             )
         )
@@ -539,7 +573,7 @@ class TestEdit:
         """Should pass secure request to be opened"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -552,10 +586,10 @@ class TestEdit:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -577,7 +611,7 @@ class TestEdit:
         self.from_string_response = DataEditRequest()
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -593,7 +627,7 @@ class TestEdit:
         self.from_string_exception = True
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -615,7 +649,7 @@ class TestEdit:
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -631,7 +665,7 @@ class TestEdit:
         self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -647,7 +681,7 @@ class TestEdit:
         self.from_string_response.entry_name = b'fake_entry_name'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -663,7 +697,7 @@ class TestEdit:
         self.from_string_response.entry_data = b'fake_entry_data'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -688,7 +722,7 @@ class TestEdit:
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -713,7 +747,7 @@ class TestEdit:
         self.sanitise_entry_data_response = FailureReason.INVALID
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -730,6 +764,31 @@ class TestEdit:
         assert "entry_name" in fields
         assert "entry_data" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.edit(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.edit_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, public_id, entry_name, entry_data",
         [
@@ -741,14 +800,14 @@ class TestEdit:
     def test_calls_util(self, user_id, public_id, entry_name, entry_data):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
         self.from_string_response.entry_name = entry_name
         self.from_string_response.entry_data = entry_data
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -778,7 +837,7 @@ class TestEdit:
         self.edit_response = False, failure_reason
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -801,7 +860,7 @@ class TestEdit:
         self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -815,13 +874,22 @@ class TestEdit:
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -831,8 +899,8 @@ class TestEdit:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_session_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -840,21 +908,21 @@ class TestEdit:
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="",
+                    public_id="",
                     encrypted_data=b''
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="fake_session_id",
+                    public_id="fake_public_id",
                     encrypted_data=b'fake_encrypted_data'
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="abc123",
+                    public_id="abc123",
                     encrypted_data=b'987zyx'
                 )
             ),
@@ -884,7 +952,7 @@ class TestEdit:
         self.seal_session_response = secure_response
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -899,7 +967,7 @@ class TestEdit:
         self.from_string_response.ClearField("entry_name")
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -914,7 +982,7 @@ class TestEdit:
         self.from_string_response.ClearField("entry_data")
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -930,7 +998,7 @@ class TestEdit:
         self.from_string_response.entry_data = b'fake_entry_data'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -947,7 +1015,7 @@ class TestEdit:
         self.from_string_response.ClearField("entry_data")
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -964,7 +1032,7 @@ class TestEdit:
         self.from_string_response.ClearField("entry_data")
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -985,7 +1053,7 @@ class TestDelete:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1037,7 +1105,7 @@ class TestDelete:
         self.seal_session_response = SecureResponse(
             success=True,
             success_data=SecureResponse.Success(
-                session_id="fake_session_id",
+                public_id="fake_public_id",
                 encrypted_data=b'fake_encrypted_data'
             )
         )
@@ -1052,7 +1120,7 @@ class TestDelete:
         """Should pass secure request to be opened"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1065,10 +1133,10 @@ class TestDelete:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1090,7 +1158,7 @@ class TestDelete:
         self.from_string_response = DataDeleteRequest()
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1106,7 +1174,7 @@ class TestDelete:
         self.from_string_exception = True
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1128,7 +1196,7 @@ class TestDelete:
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1144,7 +1212,7 @@ class TestDelete:
         self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1167,7 +1235,7 @@ class TestDelete:
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1190,7 +1258,7 @@ class TestDelete:
         self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1205,6 +1273,31 @@ class TestDelete:
         assert "username_hash" in fields
         assert "public_id" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.delete(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.delete_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, public_id",
         [
@@ -1216,12 +1309,12 @@ class TestDelete:
     def test_calls_util(self, user_id, public_id):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1249,7 +1342,7 @@ class TestDelete:
         self.delete_response = False, failure_reason
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1272,7 +1365,7 @@ class TestDelete:
         self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1286,13 +1379,22 @@ class TestDelete:
         assert serialize_to_string.username_hash == b'fake_username_hash'
         assert serialize_to_string.public_id == "fake_public_id"
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1302,8 +1404,8 @@ class TestDelete:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_session_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -1311,21 +1413,21 @@ class TestDelete:
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="",
+                    public_id="",
                     encrypted_data=b''
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="fake_session_id",
+                    public_id="fake_public_id",
                     encrypted_data=b'fake_encrypted_data'
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="abc123",
+                    public_id="abc123",
                     encrypted_data=b'987zyx'
                 )
             ),
@@ -1355,7 +1457,7 @@ class TestDelete:
         self.seal_session_response = secure_response
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1372,7 +1474,7 @@ class TestGet:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1424,7 +1526,7 @@ class TestGet:
         self.seal_session_response = SecureResponse(
             success=True,
             success_data=SecureResponse.Success(
-                session_id="fake_session_id",
+                public_id="fake_public_id",
                 encrypted_data=b'fake_encrypted_data'
             )
         )
@@ -1439,7 +1541,7 @@ class TestGet:
         """Should pass secure request to be opened"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1452,10 +1554,10 @@ class TestGet:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1477,7 +1579,7 @@ class TestGet:
         self.from_string_response = DataGetRequest()
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1493,7 +1595,7 @@ class TestGet:
         self.from_string_exception = True
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1515,7 +1617,7 @@ class TestGet:
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1531,7 +1633,7 @@ class TestGet:
         self.from_string_response.public_id = "fake_public_id"
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1554,7 +1656,7 @@ class TestGet:
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1577,7 +1679,7 @@ class TestGet:
         self.sanitise_public_id_response = FailureReason.INVALID
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1592,6 +1694,31 @@ class TestGet:
         assert "username_hash" in fields
         assert "public_id" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.get(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.get_entry_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, public_id",
         [
@@ -1603,12 +1730,12 @@ class TestGet:
     def test_calls_util(self, user_id, public_id):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
         self.from_string_response.public_id = public_id
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1637,7 +1764,7 @@ class TestGet:
         self.get_entry_response = False, failure_reason, b'', b''
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1662,7 +1789,7 @@ class TestGet:
         self.get_entry_response = True, None, b'fake_entry_name', b'fake_entry_data'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1678,13 +1805,22 @@ class TestGet:
         assert serialize_to_string.entry_name == b'fake_entry_name'
         assert serialize_to_string.entry_data == b'fake_entry_data'
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1694,8 +1830,8 @@ class TestGet:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_session_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -1703,21 +1839,21 @@ class TestGet:
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="",
+                    public_id="",
                     encrypted_data=b''
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="fake_session_id",
+                    public_id="fake_public_id",
                     encrypted_data=b'fake_encrypted_data'
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="abc123",
+                    public_id="abc123",
                     encrypted_data=b'987zyx'
                 )
             ),
@@ -1747,7 +1883,7 @@ class TestGet:
         self.seal_session_response = secure_response
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1764,7 +1900,7 @@ class TestList:
     def setup_teardown(self, monkeypatch):
 
         self.open_session_called = []
-        self.open_session_response = True, [], b'fake_decrypted_bytes', 0
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, 0
         def fake_open_session(request, password_session = False, first_request = False):
             self.open_session_called.append((request, password_session, first_request))
             return self.open_session_response
@@ -1808,7 +1944,7 @@ class TestList:
         self.seal_session_response = SecureResponse(
             success=True,
             success_data=SecureResponse.Success(
-                session_id="fake_session_id",
+                public_id="fake_public_id",
                 encrypted_data=b'fake_encrypted_data'
             )
         )
@@ -1823,7 +1959,7 @@ class TestList:
         """Should pass secure request to be opened"""
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1836,10 +1972,10 @@ class TestList:
     def test_open_session_fails(self):
         """Should return error if open session fails"""
 
-        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', 0
+        self.open_session_response = False, [FailureReason.DECRYPTION.error_proto()], b'', b'', 0, 0
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1861,7 +1997,7 @@ class TestList:
         self.from_string_response = DataListRequest()
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1877,7 +2013,7 @@ class TestList:
         self.from_string_exception = True
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1899,7 +2035,7 @@ class TestList:
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1921,7 +2057,7 @@ class TestList:
         setattr(self, f"{failing_sanitiser}_response", FailureReason.INVALID)
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1943,7 +2079,7 @@ class TestList:
         self.sanitise_username_hash_response = FailureReason.INVALID
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1957,6 +2093,31 @@ class TestList:
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = DataHandler.list(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.get_list_called) == 0
+
     @pytest.mark.parametrize(
         "user_id",
         [
@@ -1968,11 +2129,11 @@ class TestList:
     def test_calls_util(self, user_id):
         """Should call the util function"""
 
-        self.open_session_response = True, [], b'fake_decrypted_bytes', user_id
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', user_id, 0
         self.from_string_response.username_hash = b'fake_username_hash'
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -1999,7 +2160,7 @@ class TestList:
         self.get_list_response = False, failure_reason, []
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -2024,7 +2185,7 @@ class TestList:
         self.get_list_response = True, None, result_list
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -2041,13 +2202,22 @@ class TestList:
         assert len(entry_details) == len(result_list)
         assert {e.public_id: e.entry_name for e in entry_details} == result_list
 
-    def test_calls_seal_session(self):
+    @pytest.mark.parametrize(
+        "serialized_bytes, session_id",
+        [
+            (b'abc',    15),
+            (b'',       0),
+            (b'def'*50, 9514354)
+        ]
+    )
+    def test_calls_seal_session(self, serialized_bytes, session_id):
         """Should call to seal session"""
 
-        self.serialize_to_string_response = b'fake_serialized_bytes'
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_username_hash', 0, session_id
+        self.serialize_to_string_response = serialized_bytes
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )
@@ -2057,8 +2227,8 @@ class TestList:
         assert len(self.seal_session_called) == 1
 
         sealed = self.seal_session_called[0]
-        assert sealed[0] == "fake_session_id"
-        assert sealed[1] == b'fake_serialized_bytes'
+        assert sealed[0] == session_id
+        assert sealed[1] == serialized_bytes
 
     @pytest.mark.parametrize(
         "secure_response",
@@ -2066,21 +2236,21 @@ class TestList:
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="",
+                    public_id="",
                     encrypted_data=b''
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="fake_session_id",
+                    public_id="fake_public_id",
                     encrypted_data=b'fake_encrypted_data'
                 )
             ),
             SecureResponse(
                 success=True,
                 success_data=SecureResponse.Success(
-                    session_id="abc123",
+                    public_id="abc123",
                     encrypted_data=b'987zyx'
                 )
             ),
@@ -2110,7 +2280,7 @@ class TestList:
         self.seal_session_response = secure_response
 
         request = SecureRequest(
-            session_id="fake_session_id",
+            public_id="fake_public_id",
             request_number=0,
             encrypted_data=b'fake_encryption_data'
         )

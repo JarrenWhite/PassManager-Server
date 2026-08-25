@@ -33,7 +33,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -80,6 +80,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason, public_id = DBUtilsData.create(
             user_id=user_id,
@@ -106,7 +118,7 @@ class DataHandler:
             public_id=public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -119,7 +131,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -171,6 +183,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsData.edit(
             user_id=user_id,
@@ -198,7 +222,7 @@ class DataHandler:
             public_id=request.public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -211,7 +235,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -255,6 +279,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsData.delete(
             user_id=user_id,
@@ -280,7 +316,7 @@ class DataHandler:
             public_id=request.public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -293,7 +329,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -337,6 +373,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason, entry_name, entry_data = DBUtilsData.get_entry(
             user_id=user_id,
@@ -364,7 +412,7 @@ class DataHandler:
             entry_data=entry_data
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -377,7 +425,7 @@ class DataHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -418,6 +466,18 @@ class DataHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason, entry_list = DBUtilsData.get_list(
             user_id=user_id
@@ -448,6 +508,6 @@ class DataHandler:
             ]
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )

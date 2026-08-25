@@ -64,9 +64,9 @@ Data:      passmanager.data.<version>.Data
 ```
 
 ### Secure Messages:
-If the message needs to be issued as part of a secured session, the message will need to be included in a SecureRequest protobuf message `passmanager.common.<version>.SecureRequest`. This message needs to contain fields for `session_id`, `request_number`, and `encrypted_data`.
+If the message needs to be issued as part of a secured session, the message will need to be included in a SecureRequest protobuf message `passmanager.common.<version>.SecureRequest`. This message needs to contain fields for `public_id`, `request_number`, and `encrypted_data`.
 
-`session_id` is a reference to the session which this message was secured with, to allow the server to find the relevant session key for decryption.
+`public_id` is a reference to the public id of the session which this message was secured with, to allow the server to find the relevant session key for decryption.
 
 `encrypted_data` is a protobuf message which is encrypted using the shared session key.
 The type of the encrypted message is defined for each response in the documentation below.
@@ -379,7 +379,7 @@ Delete the given auth session from the database, preventing further use.
 | Field           | Type   | Description                                      |
 |-----------------|--------|--------------------------------------------------|
 | username_hash   | bytes  | Hash of the user's username.                     |
-| session_id      | string | Public ID of the session to be deleted.          |
+| public_id       | string | Public ID of the session to be deleted.          |
 
 > **Note:** The session being deleted does not need to be the one in use.
 

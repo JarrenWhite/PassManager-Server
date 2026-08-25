@@ -35,7 +35,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -85,6 +85,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         result = SessionManager.start_password_session(
             user_id=user_id,
@@ -116,7 +128,7 @@ class PasswordHandler():
             master_key_salt=master_key_salt
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -129,7 +141,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -179,6 +191,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         result = SessionManager.auth_password_session(
             user_id=user_id,
@@ -186,7 +210,7 @@ class PasswordHandler():
             eph_val_a=request.eph_val_a,
             proof_val_m1=request.proof_val_m1
         )
-        status, failure_reason, session_id, server_proof_m2, public_ids = result
+        status, failure_reason, session_public_id, server_proof_m2, public_ids = result
 
         # Return error
         if not status:
@@ -204,12 +228,12 @@ class PasswordHandler():
         # Successful Return
         response = PasswordAuthResponse(
             username_hash=request.username_hash,
-            session_id=session_id,
+            public_id=session_public_id,
             server_proof_m2=server_proof_m2,
             public_ids=public_ids
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -222,7 +246,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -263,6 +287,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         result = DBUtilsPassword.commit(
             user_id=user_id
@@ -287,7 +323,7 @@ class PasswordHandler():
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -300,7 +336,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -341,6 +377,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         result = DBUtilsPassword.abort(
             user_id=user_id
@@ -365,7 +413,7 @@ class PasswordHandler():
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -378,7 +426,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -422,6 +470,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         result = DBUtilsData.get_entry(
             user_id=user_id,
@@ -451,7 +511,7 @@ class PasswordHandler():
             entry_data=entry_data
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -464,7 +524,7 @@ class PasswordHandler():
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -514,6 +574,18 @@ class PasswordHandler():
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         result = DBUtilsPassword.update(
             user_id=user_id,
@@ -542,6 +614,6 @@ class PasswordHandler():
             public_id=request.public_id
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )

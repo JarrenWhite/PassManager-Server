@@ -136,7 +136,7 @@ class SessionHandler:
 
         # Successful Return
         success_data = SessionAuthResponse.Success(
-            session_id=session_public_id,
+            public_id=session_public_id,
             server_proof=server_proof_m2
         )
         return SessionAuthResponse(
@@ -153,7 +153,7 @@ class SessionHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -183,9 +183,9 @@ class SessionHandler:
         status = ServiceUtils.sanitise_username_hash(request.username_hash)
         if status:
             error_list.append(status.error_proto("username_hash"))
-        status = ServiceUtils.sanitise_public_id(request.session_id)
+        status = ServiceUtils.sanitise_public_id(request.public_id)
         if status:
-            error_list.append(status.error_proto("session_id"))
+            error_list.append(status.error_proto("public_id"))
 
         # Return errors
         if len(error_list) > 0:
@@ -197,10 +197,22 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsSession.delete(
             user_id=user_id,
-            public_id=request.session_id
+            public_id=request.public_id
         )
 
         # Return error
@@ -221,7 +233,7 @@ class SessionHandler:
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )
 
@@ -234,7 +246,7 @@ class SessionHandler:
         open_session = SessionManager.open_session(
             request=secure_request
         )
-        status, failure_reasons, decrypted_bytes, user_id = open_session
+        status, failure_reasons, decrypted_bytes, username_hash, user_id, session_id = open_session
         if not status:
             error_list.extend(failure_reasons)
 
@@ -275,6 +287,18 @@ class SessionHandler:
                 failure_data=failure
             )
 
+        # Check username hashes match
+        if username_hash != request.username_hash:
+            error_list.append(FailureReason.DECRYPTION.error_proto())
+
+            failure = Failure(
+                error_list=error_list
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
         # Call Util function
         status, failure_reason = DBUtilsSession.clean_user(
             user_id=user_id
@@ -298,6 +322,6 @@ class SessionHandler:
             username_hash=request.username_hash
         )
         return SessionManager.seal_session(
-            session_id=secure_request.session_id,
+            session_id=session_id,
             response=response.SerializeToString()
         )

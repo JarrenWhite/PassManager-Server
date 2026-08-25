@@ -3,6 +3,8 @@
 Lightweight server deployment for a password manager utilising trust free architecture.
 Intended to be deployable using small scale infrastructure, without compromising on security.
 
+> **⚠️ CRITICAL:** This is a personal project built to learn and practice secure system design. It is not a production level password manager. In some places, functionality may be implemented from scratch rather than utilising established and audited libraries. Treat this as a hobby/educational project only. It should only be used for fake or non-critical passwords and secrets.
+
 
 ## Documentation
 1. [Cryptographic Implementation](docs/cryptographic_implementation.md) - Details on encryption algorithms, key management, and security protocols used in the password manager
