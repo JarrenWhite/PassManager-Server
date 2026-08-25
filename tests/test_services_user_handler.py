@@ -499,6 +499,31 @@ class TestUsername:
         assert "username_hash" in fields
         assert "new_username" in fields
 
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.username(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.change_username_called) == 0
+
     @pytest.mark.parametrize(
         "user_id, new_username",
         [
@@ -836,6 +861,31 @@ class TestDelete():
 
         fields = [error.field for error in response.failure_data.error_list]
         assert "username_hash" in fields
+
+    def test_username_hash_not_matching(self):
+        """Should fail if username hash does not match"""
+
+        self.open_session_response = True, [], b'fake_decrypted_bytes', b'fake_un_hash', 0, 0
+        self.from_string_response.username_hash = b'fake_username_hash'
+
+        request = SecureRequest(
+            public_id="fake_public_id",
+            request_number=0,
+            encrypted_data=b'fake_encryption_data'
+        )
+
+        response = UserHandler.delete(request)
+
+        assert isinstance(response, SecureResponse)
+        assert not response.success
+        assert len(response.failure_data.error_list) == 1
+
+        error = response.failure_data.error_list[0]
+        assert error.field == "request"
+        assert error.code == ErrorCode.RQS01
+        assert error.description == FailureReason.DECRYPTION.description
+
+        assert len(self.delete_called) == 0
 
     @pytest.mark.parametrize(
         "user_id",
