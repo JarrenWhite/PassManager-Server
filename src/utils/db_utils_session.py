@@ -106,7 +106,7 @@ class DBUtilsSession():
 
         Returns:
             (bytes) session_key
-            (int)   request_count
+            (int)   Previous request_count
         """
         try:
             with DatabaseSetup.get_db_session() as session:
