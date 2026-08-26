@@ -100,12 +100,13 @@ class DBUtilsSession():
     @staticmethod
     def log_use(
         session_id: int
-    ) -> Tuple[bool, Optional[FailureReason], bytes]:
+    ) -> Tuple[bool, Optional[FailureReason], bytes, int]:
         """
         Log the use of a login session
 
         Returns:
             (bytes) session_key
+            (int)   request_count
         """
         try:
             with DatabaseSetup.get_db_session() as session:
@@ -113,21 +114,22 @@ class DBUtilsSession():
 
                 if login_session is None:
                     logger.debug("Login Session id: %s not found.", session_id)
-                    return False, FailureReason.NOT_FOUND, b''
+                    return False, FailureReason.NOT_FOUND, b'', 0
                 if DBUtilsSession._check_expiry(session, login_session):
                     logger.debug("Login Session: %s expired.", login_session.public_id[-4:])
-                    return False, FailureReason.NOT_FOUND, b''
+                    return False, FailureReason.NOT_FOUND, b'', 0
 
-                login_session.request_count += 1
+                request_count = login_session.request_count
+                login_session.request_count = request_count + 1
 
                 logger.debug("Login Session: %s request count incremented.", login_session.public_id[-4:])
-                return True, None, login_session.session_key
+                return True, None, login_session.session_key, request_count
         except RuntimeError:
             logger.warning("Database uninitialised.")
-            return False, FailureReason.DATABASE_UNINITIALISED, b''
+            return False, FailureReason.DATABASE_UNINITIALISED, b'', 0
         except:
             logger.exception("Unknown database session exception.")
-            return False, FailureReason.UNKNOWN_EXCEPTION, b''
+            return False, FailureReason.UNKNOWN_EXCEPTION, b'', 0
 
 
     @staticmethod

@@ -341,9 +341,11 @@ class TestLogUse():
         assert isinstance(response, tuple)
         assert isinstance(response[0], bool)
         assert isinstance(response[2], bytes)
+        assert isinstance(response[3], int)
         assert response[0] == True
         assert response[1] == None
         assert response[2] == b'fake_session_key'
+        assert response[3] == 3
         assert fake_login_session.request_count == 4
 
         assert len(mock_query._filters) == 1
