@@ -1545,5 +1545,13 @@ class TestOpenSession():
         assert result[5] == session_id
 
 
+class TestSealSession():
+    """Test cases for the seal session function"""
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, monkeypatch):
+        yield
+
+
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
