@@ -1550,7 +1550,34 @@ class TestSealSession():
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, monkeypatch):
+
+        self.log_use_called = []
+        self.log_use_response = True, None, b'fake_session_key', 0
+        def fake_log_use(session_id: int):
+            self.log_use_called.append(session_id)
+            return self.log_use_response
+        monkeypatch.setattr(DBUtilsSession, "log_use", fake_log_use)
+
         yield
+
+    @pytest.mark.parametrize(
+        "session_id",
+        [
+            15,
+            0,
+            879456
+        ]
+    )
+    def test_calls_log_use(self, session_id):
+        """Should call log_use"""
+
+        result = SessionManager.seal_session(
+            session_id=session_id,
+            response=b''
+        )
+
+        assert len(self.log_use_called) == 1
+        assert self.log_use_called[0] == session_id
 
 
 if __name__ == '__main__':
