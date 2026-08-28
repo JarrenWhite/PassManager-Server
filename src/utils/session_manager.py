@@ -309,4 +309,7 @@ class SessionManager():
         Returns:
             (SecureResponse)    Secured response
         """
+
+        DBUtilsSession.log_use(session_id)
+
         return SecureResponse()
