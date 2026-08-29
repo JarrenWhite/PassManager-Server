@@ -1569,15 +1569,42 @@ class TestSealSession():
         ]
     )
     def test_calls_log_use(self, session_id):
-        """Should call log_use"""
+        """Should call log use"""
 
         result = SessionManager.seal_session(
             session_id=session_id,
-            response=b''
+            response=b'fake_response'
         )
 
         assert len(self.log_use_called) == 1
         assert self.log_use_called[0] == session_id
+
+    @pytest.mark.parametrize(
+        "failure_reason, field",
+        [
+            (FailureReason.NOT_FOUND,               "unknown"),
+            (FailureReason.DATABASE_UNINITIALISED,  "server"),
+            (FailureReason.UNKNOWN_EXCEPTION,       "server")
+        ]
+    )
+    def test_log_use_fails(self, failure_reason, field):
+        """Should handle failure of log use call"""
+
+        self.log_use_response = False, failure_reason, b'', 0
+
+        result = SessionManager.seal_session(
+            session_id=123,
+            response=b'fake_response'
+        )
+
+        assert isinstance(result, SecureResponse)
+        assert not result.success
+        assert len(result.failure_data.error_list) == 1
+
+        error = result.failure_data.error_list[0]
+        assert error.field == field
+        assert error.code == failure_reason.error_code
+        assert error.description == failure_reason.description
 
 
 if __name__ == '__main__':
