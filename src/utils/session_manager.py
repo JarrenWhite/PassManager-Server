@@ -6,7 +6,8 @@ from passmanager.common.v0.secure_pb2 import (
     SecureResponse
 )
 from passmanager.common.v0.error_pb2 import (
-    Error
+    Error,
+    Failure
 )
 
 from enums import FailureReason
@@ -310,6 +311,18 @@ class SessionManager():
             (SecureResponse)    Secured response
         """
 
-        DBUtilsSession.log_use(session_id)
+        result = DBUtilsSession.log_use(session_id)
+        status, failure_reason, session_key, request_count = result
+
+        if not status:
+            assert failure_reason
+
+            failure = Failure(
+                error_list=[failure_reason.error_proto()]
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
         return SecureResponse()
