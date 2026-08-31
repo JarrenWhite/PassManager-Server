@@ -1558,6 +1558,13 @@ class TestSealSession():
             return self.log_use_response
         monkeypatch.setattr(DBUtilsSession, "log_use", fake_log_use)
 
+        self.encrypt_request_called = []
+        self.encrypt_request_response = True, b'fake_encrypted_response'
+        def fake_encrypt_request(plaintext, aes_key, add = None):
+            self.encrypt_request_called.append((plaintext, aes_key, add))
+            return self.encrypt_request_response
+        monkeypatch.setattr(AESUtils, "encrypt_request", fake_encrypt_request)
+
         yield
 
     @pytest.mark.parametrize(
@@ -1605,6 +1612,31 @@ class TestSealSession():
         assert error.field == field
         assert error.code == failure_reason.error_code
         assert error.description == failure_reason.description
+
+    @pytest.mark.parametrize(
+        "plaintext, aes_key, add, request_number",
+        [
+            (b'abc',    b'hij',     b'\x00\x00\x03\xe7',    999),
+            (b'',       b'',        b'\x00\x00\x00\x00',    0),
+            (b'def'*50, b'klm'*25,  b'\x78\x56\x34\x12',    2018915346)
+        ]
+    )
+    def test_calls_encrypt_request(self, plaintext, aes_key, add, request_number):
+        """Should call encrypt request"""
+
+        self.log_use_response = True, None, aes_key, request_number
+
+        result = SessionManager.seal_session(
+            session_id=123,
+            response=plaintext
+        )
+
+        assert len(self.encrypt_request_called) == 1
+
+        encrypt_request = self.encrypt_request_called[0]
+        assert encrypt_request[0] == plaintext
+        assert encrypt_request[1] == aes_key
+        assert encrypt_request[2] == add
 
 
 if __name__ == '__main__':
