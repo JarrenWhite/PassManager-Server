@@ -325,4 +325,12 @@ class SessionManager():
                 failure_data=failure
             )
 
+        # Encrypt Request
+        AESUtils.encrypt_request(
+            plaintext=response,
+            aes_key=session_key,
+            add=request_count.to_bytes(4, byteorder='big', signed=True)
+        )
+
+
         return SecureResponse()
