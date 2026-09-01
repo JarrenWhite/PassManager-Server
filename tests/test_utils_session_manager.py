@@ -1638,6 +1638,25 @@ class TestSealSession():
         assert encrypt_request[1] == aes_key
         assert encrypt_request[2] == add
 
+    def test_handles_encrypt_failure(self):
+        """Should handle failing encryption request"""
+
+        self.encrypt_request_response = False, b'fake_encrypted_response'
+
+        result = SessionManager.seal_session(
+            session_id=123,
+            response=b'fake_response'
+        )
+
+        assert isinstance(result, SecureResponse)
+        assert not result.success
+        assert len(result.failure_data.error_list) == 1
+
+        error = result.failure_data.error_list[0]
+        assert error.field == "server"
+        assert error.code == FailureReason.SERVER_ERROR.error_code
+        assert error.description == FailureReason.SERVER_ERROR.description
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
