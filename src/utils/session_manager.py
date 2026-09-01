@@ -311,6 +311,7 @@ class SessionManager():
             (SecureResponse)    Secured response
         """
 
+        # Fetch details
         result = DBUtilsSession.log_use(session_id)
         status, failure_reason, session_key, request_count = result
 
@@ -326,11 +327,20 @@ class SessionManager():
             )
 
         # Encrypt Request
-        AESUtils.encrypt_request(
+        status, cyphertext = AESUtils.encrypt_request(
             plaintext=response,
             aes_key=session_key,
             add=request_count.to_bytes(4, byteorder='big', signed=True)
         )
+
+        if not status:
+            failure = Failure(
+                error_list=[FailureReason.SERVER_ERROR.error_proto()]
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
 
 
         return SecureResponse()
