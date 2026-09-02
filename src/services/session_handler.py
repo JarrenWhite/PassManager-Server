@@ -234,6 +234,7 @@ class SessionHandler:
         )
         return SessionManager.seal_session(
             session_id=session_id,
+            public_session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
 
@@ -323,5 +324,6 @@ class SessionHandler:
         )
         return SessionManager.seal_session(
             session_id=session_id,
+            public_session_id=secure_request.public_id,
             response=response.SerializeToString()
         )
