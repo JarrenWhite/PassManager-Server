@@ -1657,6 +1657,29 @@ class TestSealSession():
         assert error.code == FailureReason.SERVER_ERROR.error_code
         assert error.description == FailureReason.SERVER_ERROR.description
 
+    @pytest.mark.parametrize(
+        "public_id, encrypted_data",
+        [
+            ("abc",     b'hij'),
+            ("",        b''),
+            ("def"*25,  b'kel'*50)
+        ]
+    )
+    def test_returns_session(self, public_id, encrypted_data):
+
+        self.encrypt_request_response = True, encrypted_data
+
+        result = SessionManager.seal_session(
+            session_id=123,
+            public_session_id=public_id,
+            response=b'fake_response'
+        )
+
+        assert isinstance(result, SecureResponse)
+        assert result.success
+        assert result.success_data.public_id == public_id
+        assert result.success_data.encrypted_data == encrypted_data
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
