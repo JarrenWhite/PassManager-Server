@@ -1580,6 +1580,7 @@ class TestSealSession():
 
         result = SessionManager.seal_session(
             session_id=session_id,
+            public_session_id="fake_public_id",
             response=b'fake_response'
         )
 
@@ -1601,6 +1602,7 @@ class TestSealSession():
 
         result = SessionManager.seal_session(
             session_id=123,
+            public_session_id="fake_public_id",
             response=b'fake_response'
         )
 
@@ -1628,6 +1630,7 @@ class TestSealSession():
 
         result = SessionManager.seal_session(
             session_id=123,
+            public_session_id="fake_public_id",
             response=plaintext
         )
 
@@ -1645,6 +1648,7 @@ class TestSealSession():
 
         result = SessionManager.seal_session(
             session_id=123,
+            public_session_id="fake_public_id",
             response=b'fake_response'
         )
 
