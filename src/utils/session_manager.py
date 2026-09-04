@@ -343,5 +343,10 @@ class SessionManager():
                 failure_data=failure
             )
 
-
-        return SecureResponse()
+        return SecureResponse(
+            success=True,
+            success_data=SecureResponse.Success(
+                public_id=public_session_id,
+                encrypted_data=cyphertext
+            )
+        )
