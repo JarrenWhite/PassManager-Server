@@ -571,8 +571,8 @@ class TestDelete():
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(session_id, response):
-            self.seal_session_called.append((session_id, response))
+        def fake_seal_session(session_id, public_session_id, response):
+            self.seal_session_called.append((session_id, public_session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
@@ -981,8 +981,8 @@ class TestClean():
                 encrypted_data=b'fake_encrypted_data'
             )
         )
-        def fake_seal_session(session_id, response):
-            self.seal_session_called.append((session_id, response))
+        def fake_seal_session(session_id, public_session_id, response):
+            self.seal_session_called.append((session_id, public_session_id, response))
             return self.seal_session_response
         monkeypatch.setattr(SessionManager, "seal_session", fake_seal_session)
 
