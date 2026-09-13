@@ -51,7 +51,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Encryption Key:** 32 bytes (256 bits) symmetric key
 - **Nonce:** 12 bytes (96 bits), randomly generate for each encryption
 - **Plaintext:** Data to be encrypted
-- **AAD (Optional):** The AAD (Additional Authenticated Data) adds integrity protection. It is currently only used for API requests (specified in the Data Encoding).
+- **AAD (Optional):** The AAD (Additional Authenticated Data) adds integrity protection. It is currently only used for API requests. Further details in the ADD Format.
 
 ### Output
 - **Ciphertext:** Encrypted data
@@ -70,7 +70,7 @@ This document defines the cryptographic standards and implementation requirement
 - **Nonce:** 12 bytes (96 bits), stored with encrypted data
 - **Ciphertext:** Encrypted data from storage
 - **Authentication Tag:** 16 bytes (128 bits), for integrity verification
-- **AAD (Optional):** This is only required where it was used in the encryption. Currently, that only includes API requests.
+- **AAD (Optional):** This is only required where it was used in the encryption. Currently, that only includes API requests. Further details in the ADD Format.
 
 ### Output
 - **Plaintext:** Original unencrypted data
@@ -248,7 +248,7 @@ During user registration, the client must generate an SRP verifier:
 
 ### ADD Format
 
-For secure API requests, the the auth tag must be the request number encoded as a 4-byte big endian signed integer. This must match the request number issued in the secure request protobuf.
+For secure API requests, the the auth tag must be the request number encoded as a 4-byte big endian signed integer. This must match the request number issued in the secure request protobuf. For API calls, the same ADD is used for both the request, and the response.
 
 ```
 request_number (4 bytes, big-endian, signed)

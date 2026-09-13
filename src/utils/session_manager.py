@@ -6,7 +6,8 @@ from passmanager.common.v0.secure_pb2 import (
     SecureResponse
 )
 from passmanager.common.v0.error_pb2 import (
-    Error
+    Error,
+    Failure
 )
 
 from enums import FailureReason
@@ -301,6 +302,7 @@ class SessionManager():
     @staticmethod
     def seal_session(
         session_id: int,
+        public_session_id: str,
         response: bytes
     ) -> SecureResponse:
         """
@@ -309,4 +311,42 @@ class SessionManager():
         Returns:
             (SecureResponse)    Secured response
         """
-        return SecureResponse()
+
+        # Fetch details
+        result = DBUtilsSession.log_use(session_id)
+        status, failure_reason, session_key, request_count = result
+
+        if not status:
+            assert failure_reason
+
+            failure = Failure(
+                error_list=[failure_reason.error_proto()]
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+        # Encrypt Request
+        status, cyphertext = AESUtils.encrypt_request(
+            plaintext=response,
+            aes_key=session_key,
+            add=request_count.to_bytes(4, byteorder='big', signed=True)
+        )
+
+        if not status:
+            failure = Failure(
+                error_list=[FailureReason.SERVER_ERROR.error_proto()]
+            )
+            return SecureResponse(
+                success=False,
+                failure_data=failure
+            )
+
+        return SecureResponse(
+            success=True,
+            success_data=SecureResponse.Success(
+                public_id=public_session_id,
+                encrypted_data=cyphertext
+            )
+        )

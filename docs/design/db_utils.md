@@ -214,6 +214,7 @@ public_id: int
 
 Out
 session_key: bytes
+request_count: int
 
 ## delete
 > Note: Risk of Insecure Direct Object Reference
