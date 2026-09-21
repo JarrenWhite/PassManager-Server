@@ -22,7 +22,6 @@ DEFAULT_AUTH_SESSION_LIFETIME = 3600
 DEFAULT_AUTH_SESSION_MAX_REQUESTS = 100
 PASSWORD_SESSION_LIFETIME = 360
 
-# TODO - Placeholder class. Requires completion.
 
 class SessionManager():
 
