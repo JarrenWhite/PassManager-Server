@@ -10,7 +10,7 @@ from passmanager.common.v0.error_pb2 import (
     Failure
 )
 
-from enums import FailureReason
+from enums import FailureReason, ServerConstants
 from .db_utils_auth import DBUtilsAuth
 from .db_utils_password import DBUtilsPassword
 from .db_utils_session import DBUtilsSession
