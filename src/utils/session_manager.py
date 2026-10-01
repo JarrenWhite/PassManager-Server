@@ -17,11 +17,6 @@ from .db_utils_session import DBUtilsSession
 from .service_utils import ServiceUtils
 from cryptography import SRPUtils, AESUtils
 
-EPHEMERAL_DELAY = 180
-DEFAULT_AUTH_SESSION_LIFETIME = 3600
-DEFAULT_AUTH_SESSION_MAX_REQUESTS = 100
-PASSWORD_SESSION_LIFETIME = 360
-
 
 class SessionManager():
 
@@ -52,7 +47,7 @@ class SessionManager():
             user_id=user_id,
             eph_private_b=private_ephemeral,
             eph_public_b=public_ephemeral,
-            expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY))
+            expiry_time=(datetime.now() + timedelta(seconds=ServerConstants.EPHEMERAL_LIFETIME.value))
         )
         success, failure_reason, public_id, master_key_salt = result
         if not success:
@@ -107,14 +102,14 @@ class SessionManager():
         if maximum_requests < 0:
             max_reqs = None
         elif maximum_requests == 0:
-            max_reqs = DEFAULT_AUTH_SESSION_MAX_REQUESTS
+            max_reqs = ServerConstants.DEFAULT_AUTH_SESSION_MAX_REQUESTS.value
         else:
             max_reqs = maximum_requests
 
         if expiry_time < 0:
             ex_time = None
         elif expiry_time == 0:
-            ex_time = datetime.now() + timedelta(seconds=DEFAULT_AUTH_SESSION_LIFETIME)
+            ex_time = datetime.now() + timedelta(seconds=ServerConstants.DEFAULT_AUTH_SESSION_LIFETIME.value)
         else:
             ex_time = datetime.now() + timedelta(seconds=expiry_time)
 
@@ -161,7 +156,7 @@ class SessionManager():
             user_id=user_id,
             eph_private_b=private_ephemeral,
             eph_public_b=public_ephemeral,
-            expiry_time=(datetime.now() + timedelta(seconds=EPHEMERAL_DELAY)),
+            expiry_time=(datetime.now() + timedelta(seconds=ServerConstants.EPHEMERAL_LIFETIME.value)),
             srp_salt=srp_salt,
             srp_verifier=srp_verifier,
             master_key_salt=master_key_salt
@@ -215,7 +210,7 @@ class SessionManager():
             return False, FailureReason.NOT_FOUND, "", b'', []
 
         # Determine expiry details
-        ex_time = datetime.now() + timedelta(seconds=PASSWORD_SESSION_LIFETIME)
+        ex_time = datetime.now() + timedelta(seconds=ServerConstants.PASSWORD_SESSION_LIFETIME.value)
 
         # Store session details
         result = DBUtilsPassword.complete(
