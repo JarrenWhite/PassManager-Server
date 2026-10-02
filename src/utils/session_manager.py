@@ -1,6 +1,9 @@
 from typing import Tuple, Optional, List
 from datetime import datetime, timedelta
 
+from logging import getLogger
+logger = getLogger("database")
+
 from passmanager.common.v0.secure_pb2 import (
     SecureRequest,
     SecureResponse
