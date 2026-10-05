@@ -23,7 +23,7 @@ class DatabaseSetup:
         logger.info("Initialising database...")
 
         if DatabaseSetup._session_maker is not None:
-            logger.warning("Cannot init DB: _session_maker is not None")
+            logger.warning("Cannot init DB: _session_maker is not None.")
             raise RuntimeError("Database already initialised.")
 
         try:
@@ -31,7 +31,7 @@ class DatabaseSetup:
             with tempfile.NamedTemporaryFile(dir=directory.parent, delete=True):
                 pass
         except (PermissionError, OSError) as e:
-            logger.error(f"Cannot init DB to directory: {e}")
+            logger.exception("Cannot init DB to directory.")
             raise PermissionError(f"Permission denied: Cannot write to directory {directory.parent}") from e
 
         engine = create_engine(f"sqlite:///{directory}")
@@ -58,8 +58,8 @@ class DatabaseSetup:
         try:
             yield session
             session.commit()
-        except Exception as e:
-            logger.error(f"Could not generate db session: {e}")
+        except Exception:
+            logger.exception("Could not generate db session.")
             session.rollback()
             raise
         finally:

@@ -42,7 +42,7 @@ def main():
         initialise_logging()
         initialise_database()
     except Exception:
-        logger.exception("Failed during application initialisation")
+        logger.exception("Failed during application initialisation.")
         sys.exit(1)
 
 

@@ -49,5 +49,5 @@ def serve():
     server.add_secure_port("[::]:50051", server_credentials)
     server.start()
 
-    logger.info("Server running on port 50051")
+    logger.info("Server running on port 50051.")
     server.wait_for_termination()
