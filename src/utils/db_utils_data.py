@@ -27,10 +27,10 @@ class DBUtilsData():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug("User id: %s not found.", user_id)
+                    logger.info("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND, ""
                 if user.password_change:
-                    logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
+                    logger.info("User: %s undergoing password change.", user.username_hash[-4:])
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 secure_data = SecureData(
@@ -69,13 +69,13 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if not secure_data:
-                    logger.debug("Secure Data: %s not found.", public_id[-4:])
+                    logger.info("Secure Data: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.id != user_id:
-                    logger.debug("Secure Data: %s does not belong to user.", public_id[-4:])
+                    logger.info("Secure Data: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
-                    logger.debug("Secure Data: %s undergoing password change.", secure_data.public_id[-4:])
+                    logger.info("Secure Data: %s undergoing password change.", secure_data.public_id[-4:])
                     return False, FailureReason.PASSWORD_CHANGE
 
                 if entry_name:
@@ -104,13 +104,13 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if not secure_data:
-                    logger.debug("Secure Data: %s not found.", public_id[-4:])
+                    logger.info("Secure Data: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.id != user_id:
-                    logger.debug("Secure Data: %s does not belong to user.", public_id[-4:])
+                    logger.info("Secure Data: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.password_change:
-                    logger.debug("Secure Data: %s undergoing password change.", secure_data.public_id[-4:])
+                    logger.info("Secure Data: %s undergoing password change.", secure_data.public_id[-4:])
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(secure_data)
@@ -143,13 +143,13 @@ class DBUtilsData():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if not secure_data:
-                    logger.debug("Secure Data: %s not found.", public_id[-4:])
+                    logger.info("Secure Data: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b''
                 if secure_data.user.id != user_id:
-                    logger.debug("Secure Data: %s does not belong to user.", public_id[-4:])
+                    logger.info("Secure Data: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b''
                 if secure_data.user.password_change and not password_change:
-                    logger.debug("Secure Data: %s undergoing password change.", secure_data.public_id[-4:])
+                    logger.info("Secure Data: %s undergoing password change.", secure_data.public_id[-4:])
                     return False, FailureReason.PASSWORD_CHANGE, b'', b''
 
                 logger.info("Secure Data: %s requested.", public_id[-4:])
@@ -179,10 +179,10 @@ class DBUtilsData():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if not user:
-                    logger.debug("User id: %s not found.", user_id)
+                    logger.info("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND, {}
                 if user.password_change:
-                    logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
+                    logger.info("User: %s undergoing password change.", user.username_hash[-4:])
                     return False, FailureReason.PASSWORD_CHANGE, {}
 
                 all_entries = {data.public_id: data.entry_name for data in user.secure_data}
