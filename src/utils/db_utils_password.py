@@ -19,8 +19,6 @@ class DBUtilsPassword():
         user: User
     ):
         """Remove all partial password change entries, ephemerals and login sessions"""
-        logger.info("Cleaned password change for User: %s.", user.username_hash[-4:])
-
         user.password_change = False
         user.new_srp_salt = None
         user.new_srp_verifier = None
@@ -37,6 +35,8 @@ class DBUtilsPassword():
         for secure_data in user.secure_data:
             secure_data.new_entry_name = None
             secure_data.new_entry_data = None
+
+        logger.info("Cleaned password change for User: %s.", user.username_hash[-4:])
 
 
     @staticmethod
@@ -61,10 +61,10 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug("User id: %s not found.", user_id)
+                    logger.info("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND, "", b''
                 if user.password_change:
-                    logger.debug("User: %s undergoing password change.", user.username_hash[-4:])
+                    logger.info("User: %s undergoing password change.", user.username_hash[-4:])
                     return False, FailureReason.PASSWORD_CHANGE, "", b''
 
                 user.password_change = True
@@ -110,17 +110,17 @@ class DBUtilsPassword():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, "", []
                 if auth_ephemeral.expiry_time < datetime.now():
                     if auth_ephemeral.password_change:
                         DBUtilsPassword.clean_password_change(session, auth_ephemeral.user)
                     else:
                         session.delete(auth_ephemeral)
-                    logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, "", []
                 if not auth_ephemeral.password_change:
-                    logger.debug("Auth Ephemeral: %s not password change type.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s not password change type.", public_id[-4:])
                     return False, FailureReason.INCOMPLETE, "", []
 
                 secure_data_count = len(auth_ephemeral.user.secure_data)
@@ -170,10 +170,10 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug("User id: %s not found.", user_id)
+                    logger.info("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND
                 if not user.new_srp_salt or not user.new_srp_verifier or not user.new_master_key_salt:
-                    logger.debug("User: %s password change failed: Insufficient new srp details.", user.username_hash)
+                    logger.info("User: %s password change failed: Insufficient new srp details.", user.username_hash)
                     DBUtilsPassword.clean_password_change(session, user)
                     return False, FailureReason.INCOMPLETE
 
@@ -190,7 +190,7 @@ class DBUtilsPassword():
 
                 for secure_data in user.secure_data:
                     if not secure_data.new_entry_name or not secure_data.new_entry_data:
-                        logger.debug("User: %s password change failed: Secure Data not all updated.", user.username_hash)
+                        logger.info("User: %s password change failed: Secure Data not all updated.", user.username_hash)
                         DBUtilsPassword.clean_password_change(session, user)
                         return False, FailureReason.INCOMPLETE
 
@@ -219,7 +219,7 @@ class DBUtilsPassword():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug("User id: %s not found.", user_id)
+                    logger.info("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND
 
                 DBUtilsPassword.clean_password_change(session, user)
@@ -247,13 +247,13 @@ class DBUtilsPassword():
                 secure_data = session.query(SecureData).filter(SecureData.public_id == public_id).first()
 
                 if secure_data is None:
-                    logger.debug("Secure Data: %s not found.", public_id[-4:])
+                    logger.info("Secure Data: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if secure_data.user.id != user_id:
-                    logger.debug("Secure Data: %s does not belong to user.", public_id[-4:])
+                    logger.info("Secure Data: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if secure_data.new_entry_name or secure_data.new_entry_data:
-                    logger.debug("Secure Data: %s has already been updated.", public_id[-4:])
+                    logger.info("Secure Data: %s has already been updated.", public_id[-4:])
                     DBUtilsPassword.clean_password_change(session, secure_data.user)
                     return False, FailureReason.ENTRY_UPDATED
 
