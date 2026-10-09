@@ -61,7 +61,7 @@ class DBUtilsAuth():
             (bytes) srp_verifier
         """
         if username_hash is None and user_id is None:
-            logger.error("Fetch called without arguments")
+            logger.error("Fetch called without arguments.")
             return False, FailureReason.SERVER_ERROR, 0, b'', b''
 
         try:
@@ -107,7 +107,7 @@ class DBUtilsAuth():
                 user = session.query(User).filter(User.id == user_id).first()
 
                 if user is None:
-                    logger.debug("User id: %s not found.", user_id)
+                    logger.info("User id: %s not found.", user_id)
                     return False, FailureReason.NOT_FOUND, "", b''
 
                 auth_ephemeral = AuthEphemeral(
@@ -153,16 +153,16 @@ class DBUtilsAuth():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b'', b''
                 if username_hash is not None and auth_ephemeral.user.username_hash != username_hash:
-                    logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b'', b''
                 if user_id is not None and auth_ephemeral.user_id != user_id:
-                    logger.debug("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b'', b''
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
-                    logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', b'', b''
 
                 return (True, None,
@@ -196,13 +196,13 @@ class DBUtilsAuth():
                 auth_ephemeral = session.query(AuthEphemeral).filter(AuthEphemeral.public_id == public_id).first()
 
                 if auth_ephemeral is None:
-                    logger.debug("Auth Ephemeral: %s not found.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, ""
                 if DBUtilsAuth._check_expiry(session, auth_ephemeral):
-                    logger.debug("Auth Ephemeral: %s expired.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, ""
                 if auth_ephemeral.password_change:
-                    logger.debug("Auth Ephemeral: %s is password change type.", public_id[-4:])
+                    logger.info("Auth Ephemeral: %s is password change type.", public_id[-4:])
                     return False, FailureReason.PASSWORD_CHANGE, ""
 
                 login_session = LoginSession(
