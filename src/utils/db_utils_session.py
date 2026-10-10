@@ -40,9 +40,9 @@ class DBUtilsSession():
             is_expired = True
 
         if is_expired:
-            logger.debug("Login Session: %s has expired.", login_session.public_id[-4:])
+            logger.info("Login Session: %s has expired.", login_session.public_id[-4:])
             if login_session.password_change:
-                logger.debug("Password Login Session being passed for cleaning.")
+                logger.info("Password Login Session being passed for cleaning.")
                 DBUtilsPassword.clean_password_change(
                     db_session=db_session,
                     user=login_session.user
@@ -73,13 +73,13 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if login_session is None:
-                    logger.debug("Login Session: %s not found.", public_id[-4:])
+                    logger.info("Login Session: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, 0, b'', 0, b'', 0, False
                 if DBUtilsSession._check_expiry(session, login_session):
-                    logger.debug("Login Session: %s expired.", public_id[-4:])
+                    logger.info("Login Session: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND, 0, b'', 0, b'', 0, False
 
-                logger.debug("Login Session: %s requested.", public_id[-4:])
+                logger.info("Login Session: %s requested.", public_id[-4:])
                 return (
                     True, None,
                     login_session.user.id,
@@ -113,16 +113,16 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.id == session_id).first()
 
                 if login_session is None:
-                    logger.debug("Login Session id: %s not found.", session_id)
+                    logger.info("Login Session id: %s not found.", session_id)
                     return False, FailureReason.NOT_FOUND, b'', 0
                 if DBUtilsSession._check_expiry(session, login_session):
-                    logger.debug("Login Session: %s expired.", login_session.public_id[-4:])
+                    logger.info("Login Session: %s expired.", login_session.public_id[-4:])
                     return False, FailureReason.NOT_FOUND, b'', 0
 
                 request_count = login_session.request_count
                 login_session.request_count = request_count + 1
 
-                logger.debug("Login Session: %s request count incremented.", login_session.public_id[-4:])
+                logger.info("Login Session: %s request count incremented.", login_session.public_id[-4:])
                 return True, None, login_session.session_key, request_count
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -143,21 +143,21 @@ class DBUtilsSession():
                 login_session = session.query(LoginSession).filter(LoginSession.public_id == public_id).first()
 
                 if not login_session:
-                    logger.debug("Login Session: %s not found.", public_id[-4:])
+                    logger.info("Login Session: %s not found.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if DBUtilsSession._check_expiry(session, login_session):
-                    logger.debug("Login Session: %s expired.", public_id[-4:])
+                    logger.info("Login Session: %s expired.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if login_session.user.id != user_id:
-                    logger.debug("Login Session: %s does not belong to user.", public_id[-4:])
+                    logger.info("Login Session: %s does not belong to user.", public_id[-4:])
                     return False, FailureReason.NOT_FOUND
                 if login_session.password_change:
-                    logger.debug("Login Session: %s is password change type.", public_id[-4:])
+                    logger.info("Login Session: %s is password change type.", public_id[-4:])
                     return False, FailureReason.PASSWORD_CHANGE
 
                 session.delete(login_session)
 
-                logger.debug("Login Session: %s deleted.", public_id[-4:])
+                logger.info("Login Session: %s deleted.", public_id[-4:])
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -190,7 +190,7 @@ class DBUtilsSession():
                     else:
                         session.delete(login_session)
 
-                logger.debug("Login Sessions cleaned for User: %s.", user.username_hash[-4:])
+                logger.info("Login Sessions cleaned for User: %s.", user.username_hash[-4:])
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
@@ -210,7 +210,7 @@ class DBUtilsSession():
                 for login_session in login_sessions:
                     _ = DBUtilsSession._check_expiry(session, login_session)
 
-                logger.debug("Login Sessions cleaned.")
+                logger.info("Login Sessions cleaned.")
                 return True, None
         except RuntimeError:
             logger.warning("Database uninitialised.")
